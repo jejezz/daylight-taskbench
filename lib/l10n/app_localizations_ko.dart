@@ -3437,4 +3437,922 @@ class AppLocalizationsKo extends AppLocalizations {
   String bdDoneToolPathReset(String tool) {
     return '$tool을(를) PATH에서 찾습니다';
   }
+
+  @override
+  String get fdSecretsTooltip => '릴리스 시크릿';
+
+  @override
+  String get fdSecretsTitle => '릴리스 시크릿 등록';
+
+  @override
+  String get fdSecretsIntro =>
+      'macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.';
+
+  @override
+  String get fdSecretsRepoLabel => '저장소 (owner/repo)';
+
+  @override
+  String get fdSecretsPickFolder => '프로젝트 폴더에서 읽기';
+
+  @override
+  String get fdSecretsRefresh => '등록 상태 새로 고침';
+
+  @override
+  String get fdSecretsRepoInvalid => 'owner/repo 형식으로 입력하세요';
+
+  @override
+  String get fdSecretsFolderNoRemote => '이 폴더에서 GitHub 원격(origin)을 찾지 못했습니다';
+
+  @override
+  String get fdSecretsGhMissing => 'GitHub CLI(gh)가 없습니다. 터미널에서 이 명령으로 설치하세요:';
+
+  @override
+  String get fdSecretsGhNotLoggedIn => 'gh에 로그인하지 않았습니다. 터미널에서 이 명령을 실행하세요:';
+
+  @override
+  String get fdSecretsListFailed => '등록 상태를 읽지 못했습니다. 저장소 이름과 권한을 확인하세요';
+
+  @override
+  String fdSecretStatusRegistered(String date) {
+    return '등록됨 · $date';
+  }
+
+  @override
+  String get fdSecretStatusMissing => '미등록';
+
+  @override
+  String get fdSecretStatusUnknown => '확인 안 됨';
+
+  @override
+  String get fdSecretSet => '등록';
+
+  @override
+  String get fdSecretOverwrite => '덮어쓰기';
+
+  @override
+  String get fdSecretPickFile => '파일 선택…';
+
+  @override
+  String get fdSecretNoFile => '선택한 파일 없음';
+
+  @override
+  String fdSecretFileLoaded(String name, int bytes) {
+    return '$name · $bytes바이트';
+  }
+
+  @override
+  String get fdSecretGenerate => '무작위 생성';
+
+  @override
+  String get fdSecretGenerated => '무작위 값을 만들었습니다 (화면에 표시하지 않음)';
+
+  @override
+  String get fdSecretViaStdin => '값은 명령 인자가 아니라 표준 입력으로 전달되어 명령 기록에 남지 않습니다.';
+
+  @override
+  String get fdSecretIssueEmpty => '값을 입력하세요';
+
+  @override
+  String get fdSecretIssueEmail => '이메일 형식이 아닙니다';
+
+  @override
+  String get fdSecretIssueTeamId => 'Team ID는 영문 대문자·숫자 10자입니다';
+
+  @override
+  String fdSecretSaved(String name) {
+    return '$name 등록했습니다';
+  }
+
+  @override
+  String fdSecretFailed(String name) {
+    return '$name 등록에 실패했습니다';
+  }
+
+  @override
+  String fdSecretOverwriteTitle(String name) {
+    return '$name을(를) 덮어쓸까요?';
+  }
+
+  @override
+  String get fdSecretOverwriteBody => '이미 등록된 값을 새 값으로 바꿉니다. 되돌릴 수 없습니다.';
+
+  @override
+  String get fdSecretHelpP12 =>
+      '키체인 접근에서 \'Developer ID Application\' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.';
+
+  @override
+  String get fdSecretHelpP12Password => '.p12를 내보낼 때 지정한 암호입니다.';
+
+  @override
+  String get fdSecretHelpKeychain =>
+      'CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.';
+
+  @override
+  String get fdSecretHelpAppleId => '공증(notarization)에 쓰는 Apple ID 이메일입니다.';
+
+  @override
+  String get fdSecretHelpApplePassword =>
+      '앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.';
+
+  @override
+  String get fdSecretHelpTeamId =>
+      'developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.';
+
+  @override
+  String get fdSecretOpenAppleId => 'appleid.apple.com 열기';
+
+  @override
+  String get fdSecretOpenDeveloper => 'developer.apple.com/account 열기';
+
+  @override
+  String get fdCommandBarEmpty => '아직 실행한 명령이 없습니다';
+
+  @override
+  String get fdHomeProjectTitle => '프로젝트';
+
+  @override
+  String get fdHomeProjectOpen => '프로젝트 열기';
+
+  @override
+  String get fdHomeProjectReload => '이 프로젝트 다시 읽기';
+
+  @override
+  String get fdHomeProjectDrop =>
+      'Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요';
+
+  @override
+  String fdHomeProjectNotFlutter(String path) {
+    return 'Flutter 프로젝트가 아닙니다: $path';
+  }
+
+  @override
+  String get fdHomePlatformIos => 'iOS';
+
+  @override
+  String get fdHomePlatformAndroid => 'Android';
+
+  @override
+  String get fdHomeDevicesTitle => '기기';
+
+  @override
+  String get fdHomeDevicesRefresh => '기기 새로 고침';
+
+  @override
+  String get fdHomeDevicesNone =>
+      'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요';
+
+  @override
+  String get fdHomeLinkUsb => 'USB';
+
+  @override
+  String get fdHomeLinkWireless => '무선';
+
+  @override
+  String get fdHomeBuildTitle => '빌드';
+
+  @override
+  String get fdHomeModeDebug => 'Debug';
+
+  @override
+  String get fdHomeModeRelease => 'Release';
+
+  @override
+  String get fdHomeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get fdHomeTeamHelp =>
+      '프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요';
+
+  @override
+  String get fdHomeStepsTitle => '실행할 명령';
+
+  @override
+  String get fdHomeStepPrepare => '준비';
+
+  @override
+  String get fdHomeStepBuild => '빌드';
+
+  @override
+  String get fdHomeStepInstall => '설치';
+
+  @override
+  String get fdHomeStepLaunch => '실행';
+
+  @override
+  String get fdHomeStepRun => '실행 (핫 리로드)';
+
+  @override
+  String get fdHomeActionInstall => '빌드 & 설치';
+
+  @override
+  String get fdHomeActionBuildRun => '빌드 & 실행';
+
+  @override
+  String get fdHomeActionInstallOnly => '설치만';
+
+  @override
+  String get fdHomeActionClean => '정리 후 패키지 다시 받기';
+
+  @override
+  String get fdHomeCleanHelp =>
+      'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
+
+  @override
+  String get fdOptTitle => '빌드 옵션';
+
+  @override
+  String get fdOptDefault => '기본값';
+
+  @override
+  String get fdOptFlavor => 'Flavor';
+
+  @override
+  String get fdOptFlavorHelp =>
+      '--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)';
+
+  @override
+  String get fdOptFlavorInvalid => '영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다';
+
+  @override
+  String get fdOptHelp => '도움말';
+
+  @override
+  String get fdOptHelpLink =>
+      '선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다';
+
+  @override
+  String get fdOptTarget => '진입 파일';
+
+  @override
+  String get fdOptTargetHelp => '-t. 비우면 lib/main.dart';
+
+  @override
+  String get fdOptDefineFile => 'dart-define 파일';
+
+  @override
+  String get fdOptDefineFileHelp =>
+      '--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다';
+
+  @override
+  String get fdOptFileMissing => '파일을 찾을 수 없습니다';
+
+  @override
+  String get fdOptAppId => '앱 ID (선택)';
+
+  @override
+  String get fdOptAppIdHelp =>
+      'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)';
+
+  @override
+  String get fdOptExtra => '추가 인자';
+
+  @override
+  String get fdOptExtraHelp =>
+      '예: --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get fdOptPick => '파일 고르기';
+
+  @override
+  String get fdOptClear => '옵션 지우기';
+
+  @override
+  String get fdHomeCleanDone => '정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.';
+
+  @override
+  String get fdHomeCleanFailed => '정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.';
+
+  @override
+  String get fdHomeActionRun => '디버그 실행';
+
+  @override
+  String get fdHomeActionCancel => '취소';
+
+  @override
+  String get fdHomeActionStop => '중지';
+
+  @override
+  String get fdHomeHotReload => '핫 리로드';
+
+  @override
+  String get fdHomeHotRestart => '핫 리스타트';
+
+  @override
+  String get fdHomeOutputTitle => '출력';
+
+  @override
+  String get fdHomeCopyCommand => '명령 복사';
+
+  @override
+  String get fdBlockerNoProject => '먼저 Flutter 프로젝트를 여세요';
+
+  @override
+  String get fdBlockerNoDevice => '기기를 연결하고 선택하세요';
+
+  @override
+  String get fdBlockerPlatformMissing =>
+      '이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다';
+
+  @override
+  String get fdBlockerIosNeedsMac => 'iPhone에 설치하려면 macOS와 Xcode가 필요합니다';
+
+  @override
+  String get fdBlockerWireless =>
+      '무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)';
+
+  @override
+  String get fdBlockerDeveloperModeOff =>
+      'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요';
+
+  @override
+  String get fdBlockerAndroidUnauthorized =>
+      '폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요';
+
+  @override
+  String get fdBlockerNeedsTeamId => 'iOS 서명에 쓸 Apple Team ID를 입력하세요';
+
+  @override
+  String get fdHintUseUsb => '연결이 끊겼습니다. 무선이 아니라 USB 케이블로 연결했는지 확인하세요';
+
+  @override
+  String get fdHintUnlockDevice => 'iPhone이 잠겨 있습니다. 잠금을 풀고 다시 시도하세요';
+
+  @override
+  String get fdHintDeveloperMode =>
+      'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드';
+
+  @override
+  String get fdHintSigning =>
+      '서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요';
+
+  @override
+  String get fdHintTrustComputer => 'iPhone에서 \'이 컴퓨터를 신뢰\'를 누르세요';
+
+  @override
+  String get fdHintNoAdb =>
+      'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요';
+
+  @override
+  String fdHintMissingCommand(String command) {
+    return '$command 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요';
+  }
+
+  @override
+  String get fdTabInstall => '실행';
+
+  @override
+  String get fdTabDevices => '기기';
+
+  @override
+  String get fdTabSigning => '서명';
+
+  @override
+  String get fdTabDoctor => '점검';
+
+  @override
+  String get fdTabLog => '기록';
+
+  @override
+  String get fdBannerNextStep => '지금 할 일';
+
+  @override
+  String get fdBannerShowSteps => '해결 방법 보기';
+
+  @override
+  String get fdDoctorRun => '다시 점검';
+
+  @override
+  String get fdDoctorRunning => '점검 중…';
+
+  @override
+  String get fdDoctorNever => '아직 점검하지 않았습니다';
+
+  @override
+  String fdDoctorCollected(String time) {
+    return '$time에 점검함';
+  }
+
+  @override
+  String get fdDoctorAllGood => '문제가 없습니다';
+
+  @override
+  String get fdSigningTeams => '서명 Team';
+
+  @override
+  String get fdSigningTeamsHelp =>
+      '키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다';
+
+  @override
+  String get fdSigningNoTeams => '사용할 수 있는 개발 인증서가 없습니다';
+
+  @override
+  String get fdSigningCerts => '개발 인증서';
+
+  @override
+  String get fdSigningProfiles => '이 프로젝트의 프로파일';
+
+  @override
+  String get fdSigningNoProfiles => '아직 없습니다 — 첫 빌드에서 Xcode가 자동으로 만듭니다';
+
+  @override
+  String get fdSigningShortLived => '7일 프로파일';
+
+  @override
+  String get fdSigningNoKey => '개인 키 없음';
+
+  @override
+  String fdSigningDaysLeft(String days) {
+    return '$days일 남음';
+  }
+
+  @override
+  String get fdSigningExpired => '만료됨';
+
+  @override
+  String get fdSigningAndroid => 'Android 릴리스 서명';
+
+  @override
+  String get fdSigningMacOnly => 'iOS 서명 점검은 macOS에서만 합니다';
+
+  @override
+  String get fdElevatedTitle => '관리자 권한으로 실행 중입니다';
+
+  @override
+  String get fdElevatedBody =>
+      '관리자 권한으로 실행하면 flutter 빌드(CMake)가 실패할 수 있습니다. 앱을 종료하고 일반 권한으로 다시 엽니다.';
+
+  @override
+  String get fdElevatedQuit => '종료 후 다시 열기';
+
+  @override
+  String get fdLogClear => '기록 지우기';
+
+  @override
+  String get fdOutputCopyAll => '출력 전체 복사';
+
+  @override
+  String get fdOutputCopied => '출력을 복사했습니다';
+
+  @override
+  String get fdOutputViewer => '뷰어로 보기';
+
+  @override
+  String get fdViewerPause => '갱신 멈추기 (텍스트 선택용)';
+
+  @override
+  String get fdViewerResume => '실시간 갱신 다시 켜기';
+
+  @override
+  String fdViewerLines(Object count) {
+    return '$count줄';
+  }
+
+  @override
+  String get fdLogEmpty => '아직 실행한 명령이 없습니다';
+
+  @override
+  String get fdLogRunning => '실행 중';
+
+  @override
+  String fdLogExit(String code) {
+    return '종료 코드 $code';
+  }
+
+  @override
+  String fdCheckFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String fdCheckFlutterRunFail(String error) {
+    return 'flutter를 실행했지만 실패했습니다: $error';
+  }
+
+  @override
+  String get fdCheckFlutterFail => 'flutter를 찾지 못했습니다';
+
+  @override
+  String fdCheckXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get fdCheckXcodeFail => 'Xcode를 찾지 못했습니다';
+
+  @override
+  String fdCheckAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get fdCheckAdbWarn => 'adb를 찾지 못했습니다 (Android 설치에 필요)';
+
+  @override
+  String fdCheckConnectionOk(String name) {
+    return '$name: USB로 연결됨';
+  }
+
+  @override
+  String fdCheckConnectionFail(String name) {
+    return '$name: USB가 아니라 무선으로 연결됨';
+  }
+
+  @override
+  String get fdCheckDeveloperModeOk => 'iPhone 개발자 모드 켜짐';
+
+  @override
+  String get fdCheckDeveloperModeFail => 'iPhone 개발자 모드가 꺼져 있음';
+
+  @override
+  String get fdCheckAndroidAuthOk => 'USB 디버깅 승인됨';
+
+  @override
+  String get fdCheckAndroidAuthFail => 'USB 디버깅을 승인하지 않음';
+
+  @override
+  String fdCheckCertificateOk(String count) {
+    return '개발 인증서 $count개 (개인 키 있음)';
+  }
+
+  @override
+  String get fdCheckCertificateFail => '사용할 수 있는 Apple Development 인증서가 없음';
+
+  @override
+  String fdCheckCertExpiryOk(String name, String days) {
+    return '$name · $days일 남음';
+  }
+
+  @override
+  String fdCheckCertExpiryWarn(String name, String days) {
+    return '$name · $days일 뒤 만료';
+  }
+
+  @override
+  String fdCheckCertExpiryFail(String name) {
+    return '$name · 만료됨';
+  }
+
+  @override
+  String fdCheckTeamOk(String team) {
+    return '서명 Team $team';
+  }
+
+  @override
+  String get fdCheckTeamFail => '서명할 Team ID가 정해지지 않음';
+
+  @override
+  String fdCheckTeamWarn(String team) {
+    return 'Team $team의 인증서가 이 Mac에 없음';
+  }
+
+  @override
+  String fdCheckProfileOk(String bundle, String days) {
+    return '$bundle 프로파일 · $days일 남음';
+  }
+
+  @override
+  String fdCheckProfileWarn(String bundle, String days) {
+    return '$bundle 프로파일이 곧 만료됨 ($days일 남음)';
+  }
+
+  @override
+  String fdCheckProfileFail(String bundle) {
+    return '$bundle 프로파일이 만료됨';
+  }
+
+  @override
+  String fdCheckProfileInfo(String bundle) {
+    return '$bundle 프로파일 없음 — 첫 빌드에서 자동으로 만들어짐';
+  }
+
+  @override
+  String get fdCheckProfileShort => '무료 계정의 7일 프로파일입니다. 만료되면 다시 빌드해서 설치하세요';
+
+  @override
+  String get fdCheckAndroidSigningDebugKey =>
+      '키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)';
+
+  @override
+  String get fdCheckAndroidSigningKeystore => '릴리스 키스토어로 서명';
+
+  @override
+  String get fdCheckAndroidSigningMissing => 'key.properties가 가리키는 키스토어 파일이 없음';
+
+  @override
+  String get fdStepsWireless =>
+      '1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다';
+
+  @override
+  String get fdStepsDeveloperMode =>
+      '1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다';
+
+  @override
+  String get fdStepsAndroidAuth =>
+      '1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다';
+
+  @override
+  String get fdStepsTeamId =>
+      '1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다';
+
+  @override
+  String get fdStepsCertificate =>
+      '1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get fdStepsFlutterMissing =>
+      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다';
+
+  @override
+  String get fdStepsFlutterMissingWindows =>
+      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get fdStepsXcodeMissing =>
+      '1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다';
+
+  @override
+  String get fdStepsAdbMissing =>
+      '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get fdStepsAndroidKeystore =>
+      '1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다';
+
+  @override
+  String get fdStepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
+
+  @override
+  String get fdHomeOpenVsCode => 'VS Code로 열기';
+
+  @override
+  String get fdVscodeNotFound => 'VS Code를 찾지 못했습니다';
+
+  @override
+  String get fdVscodeDownload => '받기';
+
+  @override
+  String get fdVscodeOpenFailed => 'VS Code를 열지 못했습니다';
+
+  @override
+  String get fdSecretFileTitle => '파일에서 한 번에 등록';
+
+  @override
+  String get fdSecretFileHelp =>
+      'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.';
+
+  @override
+  String get fdSecretFileEmpty => 'NAME=값 형식의 항목이 없습니다';
+
+  @override
+  String fdSecretFileUnknown(String names) {
+    return '릴리스 시크릿이 아닌 항목도 함께 등록됩니다: $names';
+  }
+
+  @override
+  String fdSecretFileMissing(String names) {
+    return '파일에 없는 릴리스 시크릿: $names';
+  }
+
+  @override
+  String get fdSecretFileRegister => '파일로 등록';
+
+  @override
+  String fdSecretFileConfirmTitle(int count) {
+    return '$count개 시크릿을 등록할까요?';
+  }
+
+  @override
+  String fdSecretFileSaved(int count) {
+    return '$count개 시크릿을 등록했습니다';
+  }
+
+  @override
+  String get fdSecretFileFailed => '파일로 등록하지 못했습니다';
+
+  @override
+  String get fdToolPathsOpen => '도구 경로 지정…';
+
+  @override
+  String get fdToolPathsTitle => '도구 경로';
+
+  @override
+  String get fdToolPathsHelp =>
+      'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.';
+
+  @override
+  String get fdToolPathNotFound => '찾지 못함';
+
+  @override
+  String get fdToolPathChoose => '찾아서 지정…';
+
+  @override
+  String get fdToolPathAuto => '자동으로';
+
+  @override
+  String get fdToolPathCustom => '직접 지정';
+
+  @override
+  String get fdToolPathFlutter => 'flutter';
+
+  @override
+  String get fdToolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get fdHomeDevicesCauses => '기기가 안 보이는 이유일 수 있는 것';
+
+  @override
+  String get fdStepsNoDevice =>
+      '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
+
+  @override
+  String get fdHomeThisMac => '이 Mac';
+
+  @override
+  String get fdHomeThisPc => '이 PC';
+
+  @override
+  String get fdHomeLinkLocal => '이 컴퓨터';
+
+  @override
+  String get fdHomePlatformMacos => 'macOS';
+
+  @override
+  String get fdHomePlatformWindows => 'Windows';
+
+  @override
+  String get fdHintCocoapods => 'CocoaPods가 없어 macOS 앱을 빌드하지 못했습니다';
+
+  @override
+  String get fdHintVisualStudio =>
+      'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다';
+
+  @override
+  String get fdHintRestartApp =>
+      '빌드 환경이 아직 준비되지 않아 실패했습니다 (플러그인 링크를 찾지 못함). 앱을 종료하고 다시 실행하면 해결됩니다';
+
+  @override
+  String get fdHintStaleBuildCache =>
+      '이전 버전의 Visual Studio로 만든 빌드 캐시가 남아 있어 Windows 빌드가 실패했습니다 (Visual Studio를 새 버전으로 바꾼 뒤에 생깁니다). 정리하면 해결됩니다';
+
+  @override
+  String get fdStepsStaleBuildCache =>
+      '1. 아래 \'정리 후 패키지 다시 받기\'를 누릅니다 (build 폴더를 지우고 패키지를 다시 받습니다)\n2. 다시 빌드합니다';
+
+  @override
+  String get fdRestartAppButton => '종료 후 다시 실행';
+
+  @override
+  String get fdHomeActionBuildOnly => '빌드만';
+
+  @override
+  String get fdHomeActionRunOnly => '실행만';
+
+  @override
+  String get fdHomeRunOnlyNeedsBuild => '실행할 release 결과물이 없습니다. 먼저 빌드하세요';
+
+  @override
+  String get fdGitTitle => 'Git';
+
+  @override
+  String get fdTabGit => 'Git';
+
+  @override
+  String get fdTitleMenuTooltip => '최근 프로젝트 · 폴더 열기 · 창 붙이기';
+
+  @override
+  String get fdMenuRecent => '최근 프로젝트';
+
+  @override
+  String get fdMenuRecentEmpty => '아직 연 프로젝트가 없습니다';
+
+  @override
+  String get fdMenuOpenFolder => '다른 폴더 열기…';
+
+  @override
+  String get fdMenuDockRight => '화면 오른쪽에 붙이기';
+
+  @override
+  String get fdMenuDockLeft => '화면 왼쪽에 붙이기';
+
+  @override
+  String get fdGitNotRepo => '이 프로젝트 폴더는 git 저장소가 아닙니다';
+
+  @override
+  String get fdGitChipUpToDate => '✓ 최신';
+
+  @override
+  String fdGitChipBehind(int count) {
+    return '↓ $count개 받을 수 있음';
+  }
+
+  @override
+  String fdGitChipAhead(int count) {
+    return '↑ $count개 앞섬';
+  }
+
+  @override
+  String get fdGitChipNoUpstream => '추적 브랜치 없음';
+
+  @override
+  String get fdGitChipDirty => '● 변경 있음';
+
+  @override
+  String get fdGitWorktree => 'Worktree';
+
+  @override
+  String get fdGitWorktreeHelp =>
+      '다른 worktree를 고르면 그 폴더의 같은 프로젝트를 엽니다. 파일은 바꾸지 않습니다';
+
+  @override
+  String get fdGitDetached => '분리된 HEAD';
+
+  @override
+  String get fdGitUpToDate => '원격과 같음';
+
+  @override
+  String fdGitAhead(int count) {
+    return '로컬이 $count개 앞섬';
+  }
+
+  @override
+  String fdGitBehind(int count) {
+    return '원격이 $count개 앞섬';
+  }
+
+  @override
+  String get fdGitNoUpstream => '추적하는 원격 브랜치 없음';
+
+  @override
+  String get fdGitDirty => '커밋하지 않은 변경 있음';
+
+  @override
+  String get fdGitNoRemote => '원격 주소 없음';
+
+  @override
+  String get fdGitOpenRemote => '브라우저로 원격 저장소 열기';
+
+  @override
+  String get fdGitFetch => '가져오기 (fetch)';
+
+  @override
+  String get fdGitPull => '받기 (pull)';
+
+  @override
+  String get fdGitPullHelp => 'git pull --ff-only — 충돌 없이 앞으로만 합칩니다';
+
+  @override
+  String get fdGitPullBlockedDirty => '커밋하지 않은 변경이 있어 받지 않습니다';
+
+  @override
+  String get fdGitPullBlockedDiverged => '로컬과 원격이 갈라졌습니다. 터미널에서 병합하세요';
+
+  @override
+  String get fdGitPullBlockedNoUpstream => '추적하는 원격 브랜치가 없습니다';
+
+  @override
+  String get fdGitPullBlockedUpToDate => '받을 변경이 없습니다 (먼저 가져오기를 누르세요)';
+
+  @override
+  String get fdGitFetchDone => '가져왔습니다';
+
+  @override
+  String get fdGitPullDone => '받았습니다';
+
+  @override
+  String get fdGitFailed =>
+      '실패했습니다. 기록 탭에서 출력을 확인하세요. 자격 증명이 필요하면 터미널에서 한 번 로그인해 두세요';
+
+  @override
+  String get fdStepsCocoapods =>
+      '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
+
+  @override
+  String get fdCheckWindowsDevModeOk => 'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)';
+
+  @override
+  String get fdCheckWindowsDevModeWarn =>
+      'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)';
+
+  @override
+  String fdCheckVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ 도구 있음)';
+  }
+
+  @override
+  String get fdCheckVisualStudioFail =>
+      'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)';
+
+  @override
+  String get fdStepsWindowsDevMode =>
+      '1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get fdStepsVisualStudio =>
+      '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
+
+  @override
+  String fdBranchChangedWhileRunning(String branch) {
+    return '실행 중인 빌드가 있는 동안 브랜치가 $branch(으)로 바뀌었습니다. 빌드는 이전 파일로 계속됩니다.';
+  }
 }

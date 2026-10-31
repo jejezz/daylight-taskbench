@@ -145,7 +145,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  final List<DockModule> _docks = createDocks();
+  late final List<DockModule> _docks = createDocks(tools: widget.tools);
 
   @override
   void initState() {

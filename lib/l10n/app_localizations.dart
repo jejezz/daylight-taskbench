@@ -5803,6 +5803,1596 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{tool}을(를) PATH에서 찾습니다'**
   String bdDoneToolPathReset(String tool);
+
+  /// No description provided for @fdSecretsTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 시크릿'**
+  String get fdSecretsTooltip;
+
+  /// No description provided for @fdSecretsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 시크릿 등록'**
+  String get fdSecretsTitle;
+
+  /// No description provided for @fdSecretsIntro.
+  ///
+  /// In ko, this message translates to:
+  /// **'macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.'**
+  String get fdSecretsIntro;
+
+  /// No description provided for @fdSecretsRepoLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 (owner/repo)'**
+  String get fdSecretsRepoLabel;
+
+  /// No description provided for @fdSecretsPickFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 폴더에서 읽기'**
+  String get fdSecretsPickFolder;
+
+  /// No description provided for @fdSecretsRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록 상태 새로 고침'**
+  String get fdSecretsRefresh;
+
+  /// No description provided for @fdSecretsRepoInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'owner/repo 형식으로 입력하세요'**
+  String get fdSecretsRepoInvalid;
+
+  /// No description provided for @fdSecretsFolderNoRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 폴더에서 GitHub 원격(origin)을 찾지 못했습니다'**
+  String get fdSecretsFolderNoRemote;
+
+  /// No description provided for @fdSecretsGhMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'GitHub CLI(gh)가 없습니다. 터미널에서 이 명령으로 설치하세요:'**
+  String get fdSecretsGhMissing;
+
+  /// No description provided for @fdSecretsGhNotLoggedIn.
+  ///
+  /// In ko, this message translates to:
+  /// **'gh에 로그인하지 않았습니다. 터미널에서 이 명령을 실행하세요:'**
+  String get fdSecretsGhNotLoggedIn;
+
+  /// No description provided for @fdSecretsListFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록 상태를 읽지 못했습니다. 저장소 이름과 권한을 확인하세요'**
+  String get fdSecretsListFailed;
+
+  /// No description provided for @fdSecretStatusRegistered.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록됨 · {date}'**
+  String fdSecretStatusRegistered(String date);
+
+  /// No description provided for @fdSecretStatusMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'미등록'**
+  String get fdSecretStatusMissing;
+
+  /// No description provided for @fdSecretStatusUnknown.
+  ///
+  /// In ko, this message translates to:
+  /// **'확인 안 됨'**
+  String get fdSecretStatusUnknown;
+
+  /// No description provided for @fdSecretSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록'**
+  String get fdSecretSet;
+
+  /// No description provided for @fdSecretOverwrite.
+  ///
+  /// In ko, this message translates to:
+  /// **'덮어쓰기'**
+  String get fdSecretOverwrite;
+
+  /// No description provided for @fdSecretPickFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 선택…'**
+  String get fdSecretPickFile;
+
+  /// No description provided for @fdSecretNoFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 파일 없음'**
+  String get fdSecretNoFile;
+
+  /// No description provided for @fdSecretFileLoaded.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {bytes}바이트'**
+  String fdSecretFileLoaded(String name, int bytes);
+
+  /// No description provided for @fdSecretGenerate.
+  ///
+  /// In ko, this message translates to:
+  /// **'무작위 생성'**
+  String get fdSecretGenerate;
+
+  /// No description provided for @fdSecretGenerated.
+  ///
+  /// In ko, this message translates to:
+  /// **'무작위 값을 만들었습니다 (화면에 표시하지 않음)'**
+  String get fdSecretGenerated;
+
+  /// No description provided for @fdSecretViaStdin.
+  ///
+  /// In ko, this message translates to:
+  /// **'값은 명령 인자가 아니라 표준 입력으로 전달되어 명령 기록에 남지 않습니다.'**
+  String get fdSecretViaStdin;
+
+  /// No description provided for @fdSecretIssueEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'값을 입력하세요'**
+  String get fdSecretIssueEmpty;
+
+  /// No description provided for @fdSecretIssueEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 형식이 아닙니다'**
+  String get fdSecretIssueEmail;
+
+  /// No description provided for @fdSecretIssueTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'Team ID는 영문 대문자·숫자 10자입니다'**
+  String get fdSecretIssueTeamId;
+
+  /// No description provided for @fdSecretSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 등록했습니다'**
+  String fdSecretSaved(String name);
+
+  /// No description provided for @fdSecretFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 등록에 실패했습니다'**
+  String fdSecretFailed(String name);
+
+  /// No description provided for @fdSecretOverwriteTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}을(를) 덮어쓸까요?'**
+  String fdSecretOverwriteTitle(String name);
+
+  /// No description provided for @fdSecretOverwriteBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 등록된 값을 새 값으로 바꿉니다. 되돌릴 수 없습니다.'**
+  String get fdSecretOverwriteBody;
+
+  /// No description provided for @fdSecretHelpP12.
+  ///
+  /// In ko, this message translates to:
+  /// **'키체인 접근에서 \'Developer ID Application\' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.'**
+  String get fdSecretHelpP12;
+
+  /// No description provided for @fdSecretHelpP12Password.
+  ///
+  /// In ko, this message translates to:
+  /// **'.p12를 내보낼 때 지정한 암호입니다.'**
+  String get fdSecretHelpP12Password;
+
+  /// No description provided for @fdSecretHelpKeychain.
+  ///
+  /// In ko, this message translates to:
+  /// **'CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.'**
+  String get fdSecretHelpKeychain;
+
+  /// No description provided for @fdSecretHelpAppleId.
+  ///
+  /// In ko, this message translates to:
+  /// **'공증(notarization)에 쓰는 Apple ID 이메일입니다.'**
+  String get fdSecretHelpAppleId;
+
+  /// No description provided for @fdSecretHelpApplePassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.'**
+  String get fdSecretHelpApplePassword;
+
+  /// No description provided for @fdSecretHelpTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.'**
+  String get fdSecretHelpTeamId;
+
+  /// No description provided for @fdSecretOpenAppleId.
+  ///
+  /// In ko, this message translates to:
+  /// **'appleid.apple.com 열기'**
+  String get fdSecretOpenAppleId;
+
+  /// No description provided for @fdSecretOpenDeveloper.
+  ///
+  /// In ko, this message translates to:
+  /// **'developer.apple.com/account 열기'**
+  String get fdSecretOpenDeveloper;
+
+  /// No description provided for @fdCommandBarEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 실행한 명령이 없습니다'**
+  String get fdCommandBarEmpty;
+
+  /// No description provided for @fdHomeProjectTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트'**
+  String get fdHomeProjectTitle;
+
+  /// No description provided for @fdHomeProjectOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 열기'**
+  String get fdHomeProjectOpen;
+
+  /// No description provided for @fdHomeProjectReload.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트 다시 읽기'**
+  String get fdHomeProjectReload;
+
+  /// No description provided for @fdHomeProjectDrop.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요'**
+  String get fdHomeProjectDrop;
+
+  /// No description provided for @fdHomeProjectNotFlutter.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 프로젝트가 아닙니다: {path}'**
+  String fdHomeProjectNotFlutter(String path);
+
+  /// No description provided for @fdHomePlatformIos.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS'**
+  String get fdHomePlatformIos;
+
+  /// No description provided for @fdHomePlatformAndroid.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android'**
+  String get fdHomePlatformAndroid;
+
+  /// No description provided for @fdHomeDevicesTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get fdHomeDevicesTitle;
+
+  /// No description provided for @fdHomeDevicesRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기 새로 고침'**
+  String get fdHomeDevicesRefresh;
+
+  /// No description provided for @fdHomeDevicesNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요'**
+  String get fdHomeDevicesNone;
+
+  /// No description provided for @fdHomeLinkUsb.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB'**
+  String get fdHomeLinkUsb;
+
+  /// No description provided for @fdHomeLinkWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'무선'**
+  String get fdHomeLinkWireless;
+
+  /// No description provided for @fdHomeBuildTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get fdHomeBuildTitle;
+
+  /// No description provided for @fdHomeModeDebug.
+  ///
+  /// In ko, this message translates to:
+  /// **'Debug'**
+  String get fdHomeModeDebug;
+
+  /// No description provided for @fdHomeModeRelease.
+  ///
+  /// In ko, this message translates to:
+  /// **'Release'**
+  String get fdHomeModeRelease;
+
+  /// No description provided for @fdHomeTeamLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'Apple Team ID'**
+  String get fdHomeTeamLabel;
+
+  /// No description provided for @fdHomeTeamHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요'**
+  String get fdHomeTeamHelp;
+
+  /// No description provided for @fdHomeStepsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get fdHomeStepsTitle;
+
+  /// No description provided for @fdHomeStepPrepare.
+  ///
+  /// In ko, this message translates to:
+  /// **'준비'**
+  String get fdHomeStepPrepare;
+
+  /// No description provided for @fdHomeStepBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get fdHomeStepBuild;
+
+  /// No description provided for @fdHomeStepInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치'**
+  String get fdHomeStepInstall;
+
+  /// No description provided for @fdHomeStepLaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get fdHomeStepLaunch;
+
+  /// No description provided for @fdHomeStepRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 (핫 리로드)'**
+  String get fdHomeStepRun;
+
+  /// No description provided for @fdHomeActionInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 & 설치'**
+  String get fdHomeActionInstall;
+
+  /// No description provided for @fdHomeActionBuildRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 & 실행'**
+  String get fdHomeActionBuildRun;
+
+  /// No description provided for @fdHomeActionInstallOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치만'**
+  String get fdHomeActionInstallOnly;
+
+  /// No description provided for @fdHomeActionClean.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리 후 패키지 다시 받기'**
+  String get fdHomeActionClean;
+
+  /// No description provided for @fdHomeCleanHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.'**
+  String get fdHomeCleanHelp;
+
+  /// No description provided for @fdOptTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 옵션'**
+  String get fdOptTitle;
+
+  /// No description provided for @fdOptDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본값'**
+  String get fdOptDefault;
+
+  /// No description provided for @fdOptFlavor.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flavor'**
+  String get fdOptFlavor;
+
+  /// No description provided for @fdOptFlavorHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)'**
+  String get fdOptFlavorHelp;
+
+  /// No description provided for @fdOptFlavorInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다'**
+  String get fdOptFlavorInvalid;
+
+  /// No description provided for @fdOptHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get fdOptHelp;
+
+  /// No description provided for @fdOptHelpLink.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다'**
+  String get fdOptHelpLink;
+
+  /// No description provided for @fdOptTarget.
+  ///
+  /// In ko, this message translates to:
+  /// **'진입 파일'**
+  String get fdOptTarget;
+
+  /// No description provided for @fdOptTargetHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'-t. 비우면 lib/main.dart'**
+  String get fdOptTargetHelp;
+
+  /// No description provided for @fdOptDefineFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'dart-define 파일'**
+  String get fdOptDefineFile;
+
+  /// No description provided for @fdOptDefineFileHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다'**
+  String get fdOptDefineFileHelp;
+
+  /// No description provided for @fdOptFileMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 찾을 수 없습니다'**
+  String get fdOptFileMissing;
+
+  /// No description provided for @fdOptAppId.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 ID (선택)'**
+  String get fdOptAppId;
+
+  /// No description provided for @fdOptAppIdHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)'**
+  String get fdOptAppIdHelp;
+
+  /// No description provided for @fdOptExtra.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가 인자'**
+  String get fdOptExtra;
+
+  /// No description provided for @fdOptExtraHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: --obfuscate --split-debug-info=build/symbols'**
+  String get fdOptExtraHelp;
+
+  /// No description provided for @fdOptPick.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 고르기'**
+  String get fdOptPick;
+
+  /// No description provided for @fdOptClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'옵션 지우기'**
+  String get fdOptClear;
+
+  /// No description provided for @fdHomeCleanDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.'**
+  String get fdHomeCleanDone;
+
+  /// No description provided for @fdHomeCleanFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.'**
+  String get fdHomeCleanFailed;
+
+  /// No description provided for @fdHomeActionRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'디버그 실행'**
+  String get fdHomeActionRun;
+
+  /// No description provided for @fdHomeActionCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get fdHomeActionCancel;
+
+  /// No description provided for @fdHomeActionStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지'**
+  String get fdHomeActionStop;
+
+  /// No description provided for @fdHomeHotReload.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리로드'**
+  String get fdHomeHotReload;
+
+  /// No description provided for @fdHomeHotRestart.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리스타트'**
+  String get fdHomeHotRestart;
+
+  /// No description provided for @fdHomeOutputTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력'**
+  String get fdHomeOutputTitle;
+
+  /// No description provided for @fdHomeCopyCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'명령 복사'**
+  String get fdHomeCopyCommand;
+
+  /// No description provided for @fdBlockerNoProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'먼저 Flutter 프로젝트를 여세요'**
+  String get fdBlockerNoProject;
+
+  /// No description provided for @fdBlockerNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기를 연결하고 선택하세요'**
+  String get fdBlockerNoDevice;
+
+  /// No description provided for @fdBlockerPlatformMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다'**
+  String get fdBlockerPlatformMissing;
+
+  /// No description provided for @fdBlockerIosNeedsMac.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone에 설치하려면 macOS와 Xcode가 필요합니다'**
+  String get fdBlockerIosNeedsMac;
+
+  /// No description provided for @fdBlockerWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)'**
+  String get fdBlockerWireless;
+
+  /// No description provided for @fdBlockerDeveloperModeOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요'**
+  String get fdBlockerDeveloperModeOff;
+
+  /// No description provided for @fdBlockerAndroidUnauthorized.
+  ///
+  /// In ko, this message translates to:
+  /// **'폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요'**
+  String get fdBlockerAndroidUnauthorized;
+
+  /// No description provided for @fdBlockerNeedsTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS 서명에 쓸 Apple Team ID를 입력하세요'**
+  String get fdBlockerNeedsTeamId;
+
+  /// No description provided for @fdHintUseUsb.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결이 끊겼습니다. 무선이 아니라 USB 케이블로 연결했는지 확인하세요'**
+  String get fdHintUseUsb;
+
+  /// No description provided for @fdHintUnlockDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone이 잠겨 있습니다. 잠금을 풀고 다시 시도하세요'**
+  String get fdHintUnlockDevice;
+
+  /// No description provided for @fdHintDeveloperMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드'**
+  String get fdHintDeveloperMode;
+
+  /// No description provided for @fdHintSigning.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요'**
+  String get fdHintSigning;
+
+  /// No description provided for @fdHintTrustComputer.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone에서 \'이 컴퓨터를 신뢰\'를 누르세요'**
+  String get fdHintTrustComputer;
+
+  /// No description provided for @fdHintNoAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요'**
+  String get fdHintNoAdb;
+
+  /// No description provided for @fdHintMissingCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'{command} 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요'**
+  String fdHintMissingCommand(String command);
+
+  /// No description provided for @fdTabInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get fdTabInstall;
+
+  /// No description provided for @fdTabDevices.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get fdTabDevices;
+
+  /// No description provided for @fdTabSigning.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명'**
+  String get fdTabSigning;
+
+  /// No description provided for @fdTabDoctor.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검'**
+  String get fdTabDoctor;
+
+  /// No description provided for @fdTabLog.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록'**
+  String get fdTabLog;
+
+  /// No description provided for @fdBannerNextStep.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 할 일'**
+  String get fdBannerNextStep;
+
+  /// No description provided for @fdBannerShowSteps.
+  ///
+  /// In ko, this message translates to:
+  /// **'해결 방법 보기'**
+  String get fdBannerShowSteps;
+
+  /// No description provided for @fdDoctorRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 점검'**
+  String get fdDoctorRun;
+
+  /// No description provided for @fdDoctorRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중…'**
+  String get fdDoctorRunning;
+
+  /// No description provided for @fdDoctorNever.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 점검하지 않았습니다'**
+  String get fdDoctorNever;
+
+  /// No description provided for @fdDoctorCollected.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time}에 점검함'**
+  String fdDoctorCollected(String time);
+
+  /// No description provided for @fdDoctorAllGood.
+  ///
+  /// In ko, this message translates to:
+  /// **'문제가 없습니다'**
+  String get fdDoctorAllGood;
+
+  /// No description provided for @fdSigningTeams.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 Team'**
+  String get fdSigningTeams;
+
+  /// No description provided for @fdSigningTeamsHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다'**
+  String get fdSigningTeamsHelp;
+
+  /// No description provided for @fdSigningNoTeams.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용할 수 있는 개발 인증서가 없습니다'**
+  String get fdSigningNoTeams;
+
+  /// No description provided for @fdSigningCerts.
+  ///
+  /// In ko, this message translates to:
+  /// **'개발 인증서'**
+  String get fdSigningCerts;
+
+  /// No description provided for @fdSigningProfiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트의 프로파일'**
+  String get fdSigningProfiles;
+
+  /// No description provided for @fdSigningNoProfiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 없습니다 — 첫 빌드에서 Xcode가 자동으로 만듭니다'**
+  String get fdSigningNoProfiles;
+
+  /// No description provided for @fdSigningShortLived.
+  ///
+  /// In ko, this message translates to:
+  /// **'7일 프로파일'**
+  String get fdSigningShortLived;
+
+  /// No description provided for @fdSigningNoKey.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인 키 없음'**
+  String get fdSigningNoKey;
+
+  /// No description provided for @fdSigningDaysLeft.
+  ///
+  /// In ko, this message translates to:
+  /// **'{days}일 남음'**
+  String fdSigningDaysLeft(String days);
+
+  /// No description provided for @fdSigningExpired.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료됨'**
+  String get fdSigningExpired;
+
+  /// No description provided for @fdSigningAndroid.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android 릴리스 서명'**
+  String get fdSigningAndroid;
+
+  /// No description provided for @fdSigningMacOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS 서명 점검은 macOS에서만 합니다'**
+  String get fdSigningMacOnly;
+
+  /// No description provided for @fdElevatedTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 권한으로 실행 중입니다'**
+  String get fdElevatedTitle;
+
+  /// No description provided for @fdElevatedBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 권한으로 실행하면 flutter 빌드(CMake)가 실패할 수 있습니다. 앱을 종료하고 일반 권한으로 다시 엽니다.'**
+  String get fdElevatedBody;
+
+  /// No description provided for @fdElevatedQuit.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 후 다시 열기'**
+  String get fdElevatedQuit;
+
+  /// No description provided for @fdLogClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록 지우기'**
+  String get fdLogClear;
+
+  /// No description provided for @fdOutputCopyAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력 전체 복사'**
+  String get fdOutputCopyAll;
+
+  /// No description provided for @fdOutputCopied.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력을 복사했습니다'**
+  String get fdOutputCopied;
+
+  /// No description provided for @fdOutputViewer.
+  ///
+  /// In ko, this message translates to:
+  /// **'뷰어로 보기'**
+  String get fdOutputViewer;
+
+  /// No description provided for @fdViewerPause.
+  ///
+  /// In ko, this message translates to:
+  /// **'갱신 멈추기 (텍스트 선택용)'**
+  String get fdViewerPause;
+
+  /// No description provided for @fdViewerResume.
+  ///
+  /// In ko, this message translates to:
+  /// **'실시간 갱신 다시 켜기'**
+  String get fdViewerResume;
+
+  /// No description provided for @fdViewerLines.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}줄'**
+  String fdViewerLines(Object count);
+
+  /// No description provided for @fdLogEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 실행한 명령이 없습니다'**
+  String get fdLogEmpty;
+
+  /// No description provided for @fdLogRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중'**
+  String get fdLogRunning;
+
+  /// No description provided for @fdLogExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 코드 {code}'**
+  String fdLogExit(String code);
+
+  /// No description provided for @fdCheckFlutterOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter {version}'**
+  String fdCheckFlutterOk(String version);
+
+  /// No description provided for @fdCheckFlutterRunFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter를 실행했지만 실패했습니다: {error}'**
+  String fdCheckFlutterRunFail(String error);
+
+  /// No description provided for @fdCheckFlutterFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter를 찾지 못했습니다'**
+  String get fdCheckFlutterFail;
+
+  /// No description provided for @fdCheckXcodeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode {version}'**
+  String fdCheckXcodeOk(String version);
+
+  /// No description provided for @fdCheckXcodeFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode를 찾지 못했습니다'**
+  String get fdCheckXcodeFail;
+
+  /// No description provided for @fdCheckAdbOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb {version}'**
+  String fdCheckAdbOk(String version);
+
+  /// No description provided for @fdCheckAdbWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb를 찾지 못했습니다 (Android 설치에 필요)'**
+  String get fdCheckAdbWarn;
+
+  /// No description provided for @fdCheckConnectionOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}: USB로 연결됨'**
+  String fdCheckConnectionOk(String name);
+
+  /// No description provided for @fdCheckConnectionFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}: USB가 아니라 무선으로 연결됨'**
+  String fdCheckConnectionFail(String name);
+
+  /// No description provided for @fdCheckDeveloperModeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone 개발자 모드 켜짐'**
+  String get fdCheckDeveloperModeOk;
+
+  /// No description provided for @fdCheckDeveloperModeFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone 개발자 모드가 꺼져 있음'**
+  String get fdCheckDeveloperModeFail;
+
+  /// No description provided for @fdCheckAndroidAuthOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB 디버깅 승인됨'**
+  String get fdCheckAndroidAuthOk;
+
+  /// No description provided for @fdCheckAndroidAuthFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB 디버깅을 승인하지 않음'**
+  String get fdCheckAndroidAuthFail;
+
+  /// No description provided for @fdCheckCertificateOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'개발 인증서 {count}개 (개인 키 있음)'**
+  String fdCheckCertificateOk(String count);
+
+  /// No description provided for @fdCheckCertificateFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용할 수 있는 Apple Development 인증서가 없음'**
+  String get fdCheckCertificateFail;
+
+  /// No description provided for @fdCheckCertExpiryOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 남음'**
+  String fdCheckCertExpiryOk(String name, String days);
+
+  /// No description provided for @fdCheckCertExpiryWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 뒤 만료'**
+  String fdCheckCertExpiryWarn(String name, String days);
+
+  /// No description provided for @fdCheckCertExpiryFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · 만료됨'**
+  String fdCheckCertExpiryFail(String name);
+
+  /// No description provided for @fdCheckTeamOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 Team {team}'**
+  String fdCheckTeamOk(String team);
+
+  /// No description provided for @fdCheckTeamFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명할 Team ID가 정해지지 않음'**
+  String get fdCheckTeamFail;
+
+  /// No description provided for @fdCheckTeamWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Team {team}의 인증서가 이 Mac에 없음'**
+  String fdCheckTeamWarn(String team);
+
+  /// No description provided for @fdCheckProfileOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일 · {days}일 남음'**
+  String fdCheckProfileOk(String bundle, String days);
+
+  /// No description provided for @fdCheckProfileWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일이 곧 만료됨 ({days}일 남음)'**
+  String fdCheckProfileWarn(String bundle, String days);
+
+  /// No description provided for @fdCheckProfileFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일이 만료됨'**
+  String fdCheckProfileFail(String bundle);
+
+  /// No description provided for @fdCheckProfileInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일 없음 — 첫 빌드에서 자동으로 만들어짐'**
+  String fdCheckProfileInfo(String bundle);
+
+  /// No description provided for @fdCheckProfileShort.
+  ///
+  /// In ko, this message translates to:
+  /// **'무료 계정의 7일 프로파일입니다. 만료되면 다시 빌드해서 설치하세요'**
+  String get fdCheckProfileShort;
+
+  /// No description provided for @fdCheckAndroidSigningDebugKey.
+  ///
+  /// In ko, this message translates to:
+  /// **'키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)'**
+  String get fdCheckAndroidSigningDebugKey;
+
+  /// No description provided for @fdCheckAndroidSigningKeystore.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 키스토어로 서명'**
+  String get fdCheckAndroidSigningKeystore;
+
+  /// No description provided for @fdCheckAndroidSigningMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'key.properties가 가리키는 키스토어 파일이 없음'**
+  String get fdCheckAndroidSigningMissing;
+
+  /// No description provided for @fdStepsWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다'**
+  String get fdStepsWireless;
+
+  /// No description provided for @fdStepsDeveloperMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다'**
+  String get fdStepsDeveloperMode;
+
+  /// No description provided for @fdStepsAndroidAuth.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다'**
+  String get fdStepsAndroidAuth;
+
+  /// No description provided for @fdStepsTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다'**
+  String get fdStepsTeamId;
+
+  /// No description provided for @fdStepsCertificate.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get fdStepsCertificate;
+
+  /// No description provided for @fdStepsFlutterMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다'**
+  String get fdStepsFlutterMissing;
+
+  /// No description provided for @fdStepsFlutterMissingWindows.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다'**
+  String get fdStepsFlutterMissingWindows;
+
+  /// No description provided for @fdStepsXcodeMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다'**
+  String get fdStepsXcodeMissing;
+
+  /// No description provided for @fdStepsAdbMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get fdStepsAdbMissing;
+
+  /// No description provided for @fdStepsAndroidKeystore.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다'**
+  String get fdStepsAndroidKeystore;
+
+  /// No description provided for @fdStepsCertExpiry.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다'**
+  String get fdStepsCertExpiry;
+
+  /// No description provided for @fdHomeOpenVsCode.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code로 열기'**
+  String get fdHomeOpenVsCode;
+
+  /// No description provided for @fdVscodeNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code를 찾지 못했습니다'**
+  String get fdVscodeNotFound;
+
+  /// No description provided for @fdVscodeDownload.
+  ///
+  /// In ko, this message translates to:
+  /// **'받기'**
+  String get fdVscodeDownload;
+
+  /// No description provided for @fdVscodeOpenFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code를 열지 못했습니다'**
+  String get fdVscodeOpenFailed;
+
+  /// No description provided for @fdSecretFileTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일에서 한 번에 등록'**
+  String get fdSecretFileTitle;
+
+  /// No description provided for @fdSecretFileHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.'**
+  String get fdSecretFileHelp;
+
+  /// No description provided for @fdSecretFileEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'NAME=값 형식의 항목이 없습니다'**
+  String get fdSecretFileEmpty;
+
+  /// No description provided for @fdSecretFileUnknown.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 시크릿이 아닌 항목도 함께 등록됩니다: {names}'**
+  String fdSecretFileUnknown(String names);
+
+  /// No description provided for @fdSecretFileMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일에 없는 릴리스 시크릿: {names}'**
+  String fdSecretFileMissing(String names);
+
+  /// No description provided for @fdSecretFileRegister.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일로 등록'**
+  String get fdSecretFileRegister;
+
+  /// No description provided for @fdSecretFileConfirmTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 시크릿을 등록할까요?'**
+  String fdSecretFileConfirmTitle(int count);
+
+  /// No description provided for @fdSecretFileSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 시크릿을 등록했습니다'**
+  String fdSecretFileSaved(int count);
+
+  /// No description provided for @fdSecretFileFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일로 등록하지 못했습니다'**
+  String get fdSecretFileFailed;
+
+  /// No description provided for @fdToolPathsOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로 지정…'**
+  String get fdToolPathsOpen;
+
+  /// No description provided for @fdToolPathsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로'**
+  String get fdToolPathsTitle;
+
+  /// No description provided for @fdToolPathsHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.'**
+  String get fdToolPathsHelp;
+
+  /// No description provided for @fdToolPathNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾지 못함'**
+  String get fdToolPathNotFound;
+
+  /// No description provided for @fdToolPathChoose.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾아서 지정…'**
+  String get fdToolPathChoose;
+
+  /// No description provided for @fdToolPathAuto.
+  ///
+  /// In ko, this message translates to:
+  /// **'자동으로'**
+  String get fdToolPathAuto;
+
+  /// No description provided for @fdToolPathCustom.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 지정'**
+  String get fdToolPathCustom;
+
+  /// No description provided for @fdToolPathFlutter.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter'**
+  String get fdToolPathFlutter;
+
+  /// No description provided for @fdToolPathAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb (Android SDK platform-tools)'**
+  String get fdToolPathAdb;
+
+  /// No description provided for @fdHomeDevicesCauses.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기가 안 보이는 이유일 수 있는 것'**
+  String get fdHomeDevicesCauses;
+
+  /// No description provided for @fdStepsNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다'**
+  String get fdStepsNoDevice;
+
+  /// No description provided for @fdHomeThisMac.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 Mac'**
+  String get fdHomeThisMac;
+
+  /// No description provided for @fdHomeThisPc.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 PC'**
+  String get fdHomeThisPc;
+
+  /// No description provided for @fdHomeLinkLocal.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 컴퓨터'**
+  String get fdHomeLinkLocal;
+
+  /// No description provided for @fdHomePlatformMacos.
+  ///
+  /// In ko, this message translates to:
+  /// **'macOS'**
+  String get fdHomePlatformMacos;
+
+  /// No description provided for @fdHomePlatformWindows.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows'**
+  String get fdHomePlatformWindows;
+
+  /// No description provided for @fdHintCocoapods.
+  ///
+  /// In ko, this message translates to:
+  /// **'CocoaPods가 없어 macOS 앱을 빌드하지 못했습니다'**
+  String get fdHintCocoapods;
+
+  /// No description provided for @fdHintVisualStudio.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다'**
+  String get fdHintVisualStudio;
+
+  /// No description provided for @fdHintRestartApp.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 환경이 아직 준비되지 않아 실패했습니다 (플러그인 링크를 찾지 못함). 앱을 종료하고 다시 실행하면 해결됩니다'**
+  String get fdHintRestartApp;
+
+  /// No description provided for @fdHintStaleBuildCache.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 버전의 Visual Studio로 만든 빌드 캐시가 남아 있어 Windows 빌드가 실패했습니다 (Visual Studio를 새 버전으로 바꾼 뒤에 생깁니다). 정리하면 해결됩니다'**
+  String get fdHintStaleBuildCache;
+
+  /// No description provided for @fdStepsStaleBuildCache.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. 아래 \'정리 후 패키지 다시 받기\'를 누릅니다 (build 폴더를 지우고 패키지를 다시 받습니다)\n2. 다시 빌드합니다'**
+  String get fdStepsStaleBuildCache;
+
+  /// No description provided for @fdRestartAppButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 후 다시 실행'**
+  String get fdRestartAppButton;
+
+  /// No description provided for @fdHomeActionBuildOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드만'**
+  String get fdHomeActionBuildOnly;
+
+  /// No description provided for @fdHomeActionRunOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행만'**
+  String get fdHomeActionRunOnly;
+
+  /// No description provided for @fdHomeRunOnlyNeedsBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 release 결과물이 없습니다. 먼저 빌드하세요'**
+  String get fdHomeRunOnlyNeedsBuild;
+
+  /// No description provided for @fdGitTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git'**
+  String get fdGitTitle;
+
+  /// No description provided for @fdTabGit.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git'**
+  String get fdTabGit;
+
+  /// No description provided for @fdTitleMenuTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트 · 폴더 열기 · 창 붙이기'**
+  String get fdTitleMenuTooltip;
+
+  /// No description provided for @fdMenuRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트'**
+  String get fdMenuRecent;
+
+  /// No description provided for @fdMenuRecentEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 연 프로젝트가 없습니다'**
+  String get fdMenuRecentEmpty;
+
+  /// No description provided for @fdMenuOpenFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 폴더 열기…'**
+  String get fdMenuOpenFolder;
+
+  /// No description provided for @fdMenuDockRight.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 오른쪽에 붙이기'**
+  String get fdMenuDockRight;
+
+  /// No description provided for @fdMenuDockLeft.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 왼쪽에 붙이기'**
+  String get fdMenuDockLeft;
+
+  /// No description provided for @fdGitNotRepo.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트 폴더는 git 저장소가 아닙니다'**
+  String get fdGitNotRepo;
+
+  /// No description provided for @fdGitChipUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'✓ 최신'**
+  String get fdGitChipUpToDate;
+
+  /// No description provided for @fdGitChipBehind.
+  ///
+  /// In ko, this message translates to:
+  /// **'↓ {count}개 받을 수 있음'**
+  String fdGitChipBehind(int count);
+
+  /// No description provided for @fdGitChipAhead.
+  ///
+  /// In ko, this message translates to:
+  /// **'↑ {count}개 앞섬'**
+  String fdGitChipAhead(int count);
+
+  /// No description provided for @fdGitChipNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적 브랜치 없음'**
+  String get fdGitChipNoUpstream;
+
+  /// No description provided for @fdGitChipDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'● 변경 있음'**
+  String get fdGitChipDirty;
+
+  /// No description provided for @fdGitWorktree.
+  ///
+  /// In ko, this message translates to:
+  /// **'Worktree'**
+  String get fdGitWorktree;
+
+  /// No description provided for @fdGitWorktreeHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 worktree를 고르면 그 폴더의 같은 프로젝트를 엽니다. 파일은 바꾸지 않습니다'**
+  String get fdGitWorktreeHelp;
+
+  /// No description provided for @fdGitDetached.
+  ///
+  /// In ko, this message translates to:
+  /// **'분리된 HEAD'**
+  String get fdGitDetached;
+
+  /// No description provided for @fdGitUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격과 같음'**
+  String get fdGitUpToDate;
+
+  /// No description provided for @fdGitAhead.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬이 {count}개 앞섬'**
+  String fdGitAhead(int count);
+
+  /// No description provided for @fdGitBehind.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격이 {count}개 앞섬'**
+  String fdGitBehind(int count);
+
+  /// No description provided for @fdGitNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적하는 원격 브랜치 없음'**
+  String get fdGitNoUpstream;
+
+  /// No description provided for @fdGitDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경 있음'**
+  String get fdGitDirty;
+
+  /// No description provided for @fdGitNoRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 주소 없음'**
+  String get fdGitNoRemote;
+
+  /// No description provided for @fdGitOpenRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'브라우저로 원격 저장소 열기'**
+  String get fdGitOpenRemote;
+
+  /// No description provided for @fdGitFetch.
+  ///
+  /// In ko, this message translates to:
+  /// **'가져오기 (fetch)'**
+  String get fdGitFetch;
+
+  /// No description provided for @fdGitPull.
+  ///
+  /// In ko, this message translates to:
+  /// **'받기 (pull)'**
+  String get fdGitPull;
+
+  /// No description provided for @fdGitPullHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'git pull --ff-only — 충돌 없이 앞으로만 합칩니다'**
+  String get fdGitPullHelp;
+
+  /// No description provided for @fdGitPullBlockedDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경이 있어 받지 않습니다'**
+  String get fdGitPullBlockedDirty;
+
+  /// No description provided for @fdGitPullBlockedDiverged.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬과 원격이 갈라졌습니다. 터미널에서 병합하세요'**
+  String get fdGitPullBlockedDiverged;
+
+  /// No description provided for @fdGitPullBlockedNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적하는 원격 브랜치가 없습니다'**
+  String get fdGitPullBlockedNoUpstream;
+
+  /// No description provided for @fdGitPullBlockedUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'받을 변경이 없습니다 (먼저 가져오기를 누르세요)'**
+  String get fdGitPullBlockedUpToDate;
+
+  /// No description provided for @fdGitFetchDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'가져왔습니다'**
+  String get fdGitFetchDone;
+
+  /// No description provided for @fdGitPullDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'받았습니다'**
+  String get fdGitPullDone;
+
+  /// No description provided for @fdGitFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'실패했습니다. 기록 탭에서 출력을 확인하세요. 자격 증명이 필요하면 터미널에서 한 번 로그인해 두세요'**
+  String get fdGitFailed;
+
+  /// No description provided for @fdStepsCocoapods.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다'**
+  String get fdStepsCocoapods;
+
+  /// No description provided for @fdCheckWindowsDevModeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)'**
+  String get fdCheckWindowsDevModeOk;
+
+  /// No description provided for @fdCheckWindowsDevModeWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)'**
+  String get fdCheckWindowsDevModeWarn;
+
+  /// No description provided for @fdCheckVisualStudioOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio {version} (C++ 도구 있음)'**
+  String fdCheckVisualStudioOk(String version);
+
+  /// No description provided for @fdCheckVisualStudioFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)'**
+  String get fdCheckVisualStudioFail;
+
+  /// No description provided for @fdStepsWindowsDevMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다'**
+  String get fdStepsWindowsDevMode;
+
+  /// No description provided for @fdStepsVisualStudio.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다'**
+  String get fdStepsVisualStudio;
+
+  /// No description provided for @fdBranchChangedWhileRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중인 빌드가 있는 동안 브랜치가 {branch}(으)로 바뀌었습니다. 빌드는 이전 파일로 계속됩니다.'**
+  String fdBranchChangedWhileRunning(String branch);
 }
 
 class _AppLocalizationsDelegate

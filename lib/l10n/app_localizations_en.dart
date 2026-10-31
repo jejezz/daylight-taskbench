@@ -3667,4 +3667,949 @@ class AppLocalizationsEn extends AppLocalizations {
   String bdDoneToolPathReset(String tool) {
     return 'Searching PATH for $tool';
   }
+
+  @override
+  String get fdSecretsTooltip => 'Release secrets';
+
+  @override
+  String get fdSecretsTitle => 'Register release secrets';
+
+  @override
+  String get fdSecretsIntro =>
+      'Registers the GitHub Actions secrets that the macOS release workflow uses for signing and notarization, through gh. Values are not stored in this app.';
+
+  @override
+  String get fdSecretsRepoLabel => 'Repository (owner/repo)';
+
+  @override
+  String get fdSecretsPickFolder => 'Read from a project folder';
+
+  @override
+  String get fdSecretsRefresh => 'Refresh registration status';
+
+  @override
+  String get fdSecretsRepoInvalid => 'Use the owner/repo form';
+
+  @override
+  String get fdSecretsFolderNoRemote =>
+      'No GitHub remote (origin) found in that folder';
+
+  @override
+  String get fdSecretsGhMissing =>
+      'GitHub CLI (gh) isn\'t installed. Install it in a terminal with:';
+
+  @override
+  String get fdSecretsGhNotLoggedIn =>
+      'gh isn\'t signed in. Run this in a terminal:';
+
+  @override
+  String get fdSecretsListFailed =>
+      'Couldn\'t read the registration status. Check the repository name and your access';
+
+  @override
+  String fdSecretStatusRegistered(String date) {
+    return 'Registered · $date';
+  }
+
+  @override
+  String get fdSecretStatusMissing => 'Not registered';
+
+  @override
+  String get fdSecretStatusUnknown => 'Unknown';
+
+  @override
+  String get fdSecretSet => 'Register';
+
+  @override
+  String get fdSecretOverwrite => 'Overwrite';
+
+  @override
+  String get fdSecretPickFile => 'Choose file…';
+
+  @override
+  String get fdSecretNoFile => 'No file chosen';
+
+  @override
+  String fdSecretFileLoaded(String name, int bytes) {
+    return '$name · $bytes bytes';
+  }
+
+  @override
+  String get fdSecretGenerate => 'Generate';
+
+  @override
+  String get fdSecretGenerated => 'A random value was generated (not shown)';
+
+  @override
+  String get fdSecretViaStdin =>
+      'The value is passed on standard input, not as a command argument, so it never appears in the command log.';
+
+  @override
+  String get fdSecretIssueEmpty => 'Enter a value';
+
+  @override
+  String get fdSecretIssueEmail => 'Not an email address';
+
+  @override
+  String get fdSecretIssueTeamId =>
+      'A Team ID is 10 uppercase letters or digits';
+
+  @override
+  String fdSecretSaved(String name) {
+    return 'Registered $name';
+  }
+
+  @override
+  String fdSecretFailed(String name) {
+    return 'Couldn\'t register $name';
+  }
+
+  @override
+  String fdSecretOverwriteTitle(String name) {
+    return 'Overwrite $name?';
+  }
+
+  @override
+  String get fdSecretOverwriteBody =>
+      'This replaces the registered value with the new one. It can\'t be undone.';
+
+  @override
+  String get fdSecretHelpP12 =>
+      'Choose the \'Developer ID Application\' certificate exported as .p12 from Keychain Access. The app registers it as base64.';
+
+  @override
+  String get fdSecretHelpP12Password =>
+      'The password you set when exporting the .p12.';
+
+  @override
+  String get fdSecretHelpKeychain =>
+      'A temporary keychain password CI uses only during the build. Any value works, so it can be generated for you.';
+
+  @override
+  String get fdSecretHelpAppleId => 'The Apple ID email used for notarization.';
+
+  @override
+  String get fdSecretHelpApplePassword =>
+      'An app-specific password, not your account password.';
+
+  @override
+  String get fdSecretHelpTeamId =>
+      'The 10-character Team ID from Membership details at developer.apple.com/account.';
+
+  @override
+  String get fdSecretOpenAppleId => 'Open appleid.apple.com';
+
+  @override
+  String get fdSecretOpenDeveloper => 'Open developer.apple.com/account';
+
+  @override
+  String get fdCommandBarEmpty => 'No commands run yet';
+
+  @override
+  String get fdHomeProjectTitle => 'Project';
+
+  @override
+  String get fdHomeProjectOpen => 'Open project';
+
+  @override
+  String get fdHomeProjectReload => 'Reload this project';
+
+  @override
+  String get fdHomeProjectDrop =>
+      'Drop a Flutter project folder here, or press Open project';
+
+  @override
+  String fdHomeProjectNotFlutter(String path) {
+    return 'Not a Flutter project: $path';
+  }
+
+  @override
+  String get fdHomePlatformIos => 'iOS';
+
+  @override
+  String get fdHomePlatformAndroid => 'Android';
+
+  @override
+  String get fdHomeDevicesTitle => 'Devices';
+
+  @override
+  String get fdHomeDevicesRefresh => 'Refresh devices';
+
+  @override
+  String get fdHomeDevicesNone =>
+      'No device is connected over USB. Plug in your phone, unlock it, then refresh';
+
+  @override
+  String get fdHomeLinkUsb => 'USB';
+
+  @override
+  String get fdHomeLinkWireless => 'Wireless';
+
+  @override
+  String get fdHomeBuildTitle => 'Build';
+
+  @override
+  String get fdHomeModeDebug => 'Debug';
+
+  @override
+  String get fdHomeModeRelease => 'Release';
+
+  @override
+  String get fdHomeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get fdHomeTeamHelp =>
+      'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
+
+  @override
+  String get fdHomeStepsTitle => 'Commands to run';
+
+  @override
+  String get fdHomeStepPrepare => 'Prepare';
+
+  @override
+  String get fdHomeStepBuild => 'Build';
+
+  @override
+  String get fdHomeStepInstall => 'Install';
+
+  @override
+  String get fdHomeStepLaunch => 'Launch';
+
+  @override
+  String get fdHomeStepRun => 'Run (hot reload)';
+
+  @override
+  String get fdHomeActionInstall => 'Build & install';
+
+  @override
+  String get fdHomeActionBuildRun => 'Build & run';
+
+  @override
+  String get fdHomeActionInstallOnly => 'Install only';
+
+  @override
+  String get fdHomeActionClean => 'Clean & get packages';
+
+  @override
+  String get fdHomeCleanHelp =>
+      'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
+
+  @override
+  String get fdOptTitle => 'Build options';
+
+  @override
+  String get fdOptDefault => 'Defaults';
+
+  @override
+  String get fdOptFlavor => 'Flavor';
+
+  @override
+  String get fdOptFlavorHelp =>
+      '--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)';
+
+  @override
+  String get fdOptFlavorInvalid =>
+      'Start with a letter; letters, digits, _ and - only';
+
+  @override
+  String get fdOptHelp => 'Help';
+
+  @override
+  String get fdOptHelpLink =>
+      'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
+
+  @override
+  String get fdOptTarget => 'Entry point';
+
+  @override
+  String get fdOptTargetHelp => '-t. Empty means lib/main.dart';
+
+  @override
+  String get fdOptDefineFile => 'dart-define file';
+
+  @override
+  String get fdOptDefineFileHelp =>
+      '--dart-define-from-file. Only the path is stored; the file is never read or saved';
+
+  @override
+  String get fdOptFileMissing => 'File not found';
+
+  @override
+  String get fdOptAppId => 'App ID (optional)';
+
+  @override
+  String get fdOptAppIdHelp =>
+      'When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)';
+
+  @override
+  String get fdOptExtra => 'Extra arguments';
+
+  @override
+  String get fdOptExtraHelp =>
+      'e.g. --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get fdOptPick => 'Choose file';
+
+  @override
+  String get fdOptClear => 'Clear options';
+
+  @override
+  String get fdHomeCleanDone =>
+      'Cleaned and packages restored. Try building again.';
+
+  @override
+  String get fdHomeCleanFailed =>
+      'Clean failed. Check the output in the Log tab.';
+
+  @override
+  String get fdHomeActionRun => 'Run debug';
+
+  @override
+  String get fdHomeActionCancel => 'Cancel';
+
+  @override
+  String get fdHomeActionStop => 'Stop';
+
+  @override
+  String get fdHomeHotReload => 'Hot reload';
+
+  @override
+  String get fdHomeHotRestart => 'Hot restart';
+
+  @override
+  String get fdHomeOutputTitle => 'Output';
+
+  @override
+  String get fdHomeCopyCommand => 'Copy command';
+
+  @override
+  String get fdBlockerNoProject => 'Open a Flutter project first';
+
+  @override
+  String get fdBlockerNoDevice => 'Connect and select a device';
+
+  @override
+  String get fdBlockerPlatformMissing =>
+      'This project has no folder (ios/ or android/) for the selected device\'s platform';
+
+  @override
+  String get fdBlockerIosNeedsMac =>
+      'Installing on an iPhone needs macOS and Xcode';
+
+  @override
+  String get fdBlockerWireless =>
+      'This device is connected wirelessly. Use a USB cable — installs drop over wireless';
+
+  @override
+  String get fdBlockerDeveloperModeOff =>
+      'Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart';
+
+  @override
+  String get fdBlockerAndroidUnauthorized =>
+      'Approve this computer in the \'Allow USB debugging\' prompt on the phone';
+
+  @override
+  String get fdBlockerNeedsTeamId =>
+      'Enter the Apple Team ID to sign iOS builds with';
+
+  @override
+  String get fdHintUseUsb =>
+      'The connection dropped. Make sure the phone is on a USB cable, not wireless';
+
+  @override
+  String get fdHintUnlockDevice =>
+      'The iPhone is locked. Unlock it and try again';
+
+  @override
+  String get fdHintDeveloperMode =>
+      'Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode';
+
+  @override
+  String get fdHintSigning =>
+      'A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account';
+
+  @override
+  String get fdHintTrustComputer => 'Tap \'Trust This Computer\' on the iPhone';
+
+  @override
+  String get fdHintNoAdb =>
+      'adb wasn\'t found. Install the Android SDK platform-tools and add it to PATH';
+
+  @override
+  String fdHintMissingCommand(String command) {
+    return 'The $command command wasn\'t found. Install it and make sure it is on PATH';
+  }
+
+  @override
+  String get fdTabInstall => 'Run';
+
+  @override
+  String get fdTabDevices => 'Devices';
+
+  @override
+  String get fdTabSigning => 'Signing';
+
+  @override
+  String get fdTabDoctor => 'Doctor';
+
+  @override
+  String get fdTabLog => 'Log';
+
+  @override
+  String get fdBannerNextStep => 'Next step';
+
+  @override
+  String get fdBannerShowSteps => 'Show how to fix';
+
+  @override
+  String get fdDoctorRun => 'Check again';
+
+  @override
+  String get fdDoctorRunning => 'Checking…';
+
+  @override
+  String get fdDoctorNever => 'Not checked yet';
+
+  @override
+  String fdDoctorCollected(String time) {
+    return 'Checked at $time';
+  }
+
+  @override
+  String get fdDoctorAllGood => 'No problems found';
+
+  @override
+  String get fdSigningTeams => 'Signing team';
+
+  @override
+  String get fdSigningTeamsHelp =>
+      'Teams of certificates whose private key is in your keychain. Tap one to sign with it';
+
+  @override
+  String get fdSigningNoTeams => 'No usable development certificate';
+
+  @override
+  String get fdSigningCerts => 'Development certificates';
+
+  @override
+  String get fdSigningProfiles => 'Profiles for this project';
+
+  @override
+  String get fdSigningNoProfiles =>
+      'None yet — Xcode creates one on the first build';
+
+  @override
+  String get fdSigningShortLived => '7-day profile';
+
+  @override
+  String get fdSigningNoKey => 'No private key';
+
+  @override
+  String fdSigningDaysLeft(String days) {
+    return '$days days left';
+  }
+
+  @override
+  String get fdSigningExpired => 'Expired';
+
+  @override
+  String get fdSigningAndroid => 'Android release signing';
+
+  @override
+  String get fdSigningMacOnly => 'iOS signing checks run on macOS only';
+
+  @override
+  String get fdElevatedTitle => 'Running as administrator';
+
+  @override
+  String get fdElevatedBody =>
+      'Builds with flutter (CMake) can fail when run as administrator. The app will close and reopen with normal permissions.';
+
+  @override
+  String get fdElevatedQuit => 'Close and reopen';
+
+  @override
+  String get fdLogClear => 'Clear log';
+
+  @override
+  String get fdOutputCopyAll => 'Copy all output';
+
+  @override
+  String get fdOutputCopied => 'Output copied';
+
+  @override
+  String get fdOutputViewer => 'Open in viewer';
+
+  @override
+  String get fdViewerPause => 'Pause updates (to select text)';
+
+  @override
+  String get fdViewerResume => 'Resume live updates';
+
+  @override
+  String fdViewerLines(Object count) {
+    return '$count lines';
+  }
+
+  @override
+  String get fdLogEmpty => 'No commands run yet';
+
+  @override
+  String get fdLogRunning => 'Running';
+
+  @override
+  String fdLogExit(String code) {
+    return 'Exit code $code';
+  }
+
+  @override
+  String fdCheckFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String fdCheckFlutterRunFail(String error) {
+    return 'flutter ran but failed: $error';
+  }
+
+  @override
+  String get fdCheckFlutterFail => 'flutter wasn\'t found';
+
+  @override
+  String fdCheckXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get fdCheckXcodeFail => 'Xcode wasn\'t found';
+
+  @override
+  String fdCheckAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get fdCheckAdbWarn =>
+      'adb wasn\'t found (needed to install on Android)';
+
+  @override
+  String fdCheckConnectionOk(String name) {
+    return '$name: connected over USB';
+  }
+
+  @override
+  String fdCheckConnectionFail(String name) {
+    return '$name: connected wirelessly, not over USB';
+  }
+
+  @override
+  String get fdCheckDeveloperModeOk => 'Developer Mode is on';
+
+  @override
+  String get fdCheckDeveloperModeFail => 'Developer Mode is off on the iPhone';
+
+  @override
+  String get fdCheckAndroidAuthOk => 'USB debugging approved';
+
+  @override
+  String get fdCheckAndroidAuthFail => 'USB debugging not approved';
+
+  @override
+  String fdCheckCertificateOk(String count) {
+    return '$count development certificate(s) with a private key';
+  }
+
+  @override
+  String get fdCheckCertificateFail =>
+      'No usable Apple Development certificate';
+
+  @override
+  String fdCheckCertExpiryOk(String name, String days) {
+    return '$name · $days days left';
+  }
+
+  @override
+  String fdCheckCertExpiryWarn(String name, String days) {
+    return '$name · expires in $days days';
+  }
+
+  @override
+  String fdCheckCertExpiryFail(String name) {
+    return '$name · expired';
+  }
+
+  @override
+  String fdCheckTeamOk(String team) {
+    return 'Signing team $team';
+  }
+
+  @override
+  String get fdCheckTeamFail => 'No signing Team ID chosen';
+
+  @override
+  String fdCheckTeamWarn(String team) {
+    return 'No certificate for team $team on this Mac';
+  }
+
+  @override
+  String fdCheckProfileOk(String bundle, String days) {
+    return '$bundle profile · $days days left';
+  }
+
+  @override
+  String fdCheckProfileWarn(String bundle, String days) {
+    return '$bundle profile expires soon ($days days left)';
+  }
+
+  @override
+  String fdCheckProfileFail(String bundle) {
+    return '$bundle profile expired';
+  }
+
+  @override
+  String fdCheckProfileInfo(String bundle) {
+    return 'No $bundle profile yet — it is created automatically on the first build';
+  }
+
+  @override
+  String get fdCheckProfileShort =>
+      'A 7-day profile from a free account. When it expires, build and install again';
+
+  @override
+  String get fdCheckAndroidSigningDebugKey =>
+      'No keystore configured — signed with the debug key (fine for installing on your own device)';
+
+  @override
+  String get fdCheckAndroidSigningKeystore =>
+      'Signed with the release keystore';
+
+  @override
+  String get fdCheckAndroidSigningMissing =>
+      'The keystore file key.properties points to is missing';
+
+  @override
+  String get fdStepsWireless =>
+      '1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap \'Trust This Computer\'\n3. Press Refresh devices and check the USB badge appears';
+
+  @override
+  String get fdStepsDeveloperMode =>
+      '1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap \'Turn On\' in the confirmation prompt';
+
+  @override
+  String get fdStepsAndroidAuth =>
+      '1. Connect the phone over USB and unlock it\n2. Allow this computer in the \'Allow USB debugging\' prompt\n3. If no prompt appears, enable USB debugging in Developer options';
+
+  @override
+  String get fdStepsTeamId =>
+      '1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab';
+
+  @override
+  String get fdStepsCertificate =>
+      '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
+
+  @override
+  String get fdStepsFlutterMissing =>
+      '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
+
+  @override
+  String get fdStepsFlutterMissingWindows =>
+      '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
+
+  @override
+  String get fdStepsXcodeMissing =>
+      '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
+
+  @override
+  String get fdStepsAdbMissing =>
+      '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
+
+  @override
+  String get fdStepsAndroidKeystore =>
+      '1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build';
+
+  @override
+  String get fdStepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
+
+  @override
+  String get fdHomeOpenVsCode => 'Open in VS Code';
+
+  @override
+  String get fdVscodeNotFound => 'VS Code wasn\'t found';
+
+  @override
+  String get fdVscodeDownload => 'Get it';
+
+  @override
+  String get fdVscodeOpenFailed => 'Couldn\'t open VS Code';
+
+  @override
+  String get fdSecretFileTitle => 'Register from a file';
+
+  @override
+  String get fdSecretFileHelp =>
+      'Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn\'t keep the values — it only shows the names; gh reads the file itself.';
+
+  @override
+  String get fdSecretFileEmpty => 'No NAME=value entries found';
+
+  @override
+  String fdSecretFileUnknown(String names) {
+    return 'Entries that aren\'t release secrets are registered too: $names';
+  }
+
+  @override
+  String fdSecretFileMissing(String names) {
+    return 'Release secrets not in the file: $names';
+  }
+
+  @override
+  String get fdSecretFileRegister => 'Register file';
+
+  @override
+  String fdSecretFileConfirmTitle(int count) {
+    return 'Register $count secrets?';
+  }
+
+  @override
+  String fdSecretFileSaved(int count) {
+    return 'Registered $count secrets';
+  }
+
+  @override
+  String get fdSecretFileFailed => 'Couldn\'t register from the file';
+
+  @override
+  String get fdToolPathsOpen => 'Set tool paths…';
+
+  @override
+  String get fdToolPathsTitle => 'Tool paths';
+
+  @override
+  String get fdToolPathsHelp =>
+      'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
+
+  @override
+  String get fdToolPathNotFound => 'Not found';
+
+  @override
+  String get fdToolPathChoose => 'Locate…';
+
+  @override
+  String get fdToolPathAuto => 'Automatic';
+
+  @override
+  String get fdToolPathCustom => 'Custom';
+
+  @override
+  String get fdToolPathFlutter => 'flutter';
+
+  @override
+  String get fdToolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get fdHomeDevicesCauses => 'Possible reasons no device shows up';
+
+  @override
+  String get fdStepsNoDevice =>
+      '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
+
+  @override
+  String get fdHomeThisMac => 'This Mac';
+
+  @override
+  String get fdHomeThisPc => 'This PC';
+
+  @override
+  String get fdHomeLinkLocal => 'This computer';
+
+  @override
+  String get fdHomePlatformMacos => 'macOS';
+
+  @override
+  String get fdHomePlatformWindows => 'Windows';
+
+  @override
+  String get fdHintCocoapods =>
+      'CocoaPods is missing, so the macOS app couldn\'t be built';
+
+  @override
+  String get fdHintVisualStudio =>
+      'Visual Studio\'s \'Desktop development with C++\' workload is missing, so the Windows app couldn\'t be built';
+
+  @override
+  String get fdHintRestartApp =>
+      'The build failed because the build environment wasn\'t ready (plugin links not found). Closing and reopening the app fixes it';
+
+  @override
+  String get fdHintStaleBuildCache =>
+      'The Windows build failed because a build cache from an older Visual Studio is left over (it happens after switching Visual Studio versions). Cleaning fixes it';
+
+  @override
+  String get fdStepsStaleBuildCache =>
+      '1. Press \'Clean and re-fetch packages\' below (it deletes the build folder and fetches packages again)\n2. Build again';
+
+  @override
+  String get fdRestartAppButton => 'Close and reopen';
+
+  @override
+  String get fdHomeActionBuildOnly => 'Build only';
+
+  @override
+  String get fdHomeActionRunOnly => 'Run only';
+
+  @override
+  String get fdHomeRunOnlyNeedsBuild => 'No release build to run. Build first';
+
+  @override
+  String get fdGitTitle => 'Git';
+
+  @override
+  String get fdTabGit => 'Git';
+
+  @override
+  String get fdTitleMenuTooltip =>
+      'Recent projects, open a folder, dock the window';
+
+  @override
+  String get fdMenuRecent => 'Recent projects';
+
+  @override
+  String get fdMenuRecentEmpty => 'No project opened yet';
+
+  @override
+  String get fdMenuOpenFolder => 'Open another folder…';
+
+  @override
+  String get fdMenuDockRight => 'Dock to the right edge';
+
+  @override
+  String get fdMenuDockLeft => 'Dock to the left edge';
+
+  @override
+  String get fdGitNotRepo => 'This project folder is not a git repository';
+
+  @override
+  String get fdGitChipUpToDate => '✓ Up to date';
+
+  @override
+  String fdGitChipBehind(int count) {
+    return '↓ $count to pull';
+  }
+
+  @override
+  String fdGitChipAhead(int count) {
+    return '↑ $count ahead';
+  }
+
+  @override
+  String get fdGitChipNoUpstream => 'No upstream';
+
+  @override
+  String get fdGitChipDirty => '● Changes';
+
+  @override
+  String get fdGitWorktree => 'Worktree';
+
+  @override
+  String get fdGitWorktreeHelp =>
+      'Choosing another worktree opens the same project in that folder. No files are changed';
+
+  @override
+  String get fdGitDetached => 'Detached HEAD';
+
+  @override
+  String get fdGitUpToDate => 'Up to date with the remote';
+
+  @override
+  String fdGitAhead(int count) {
+    return '$count ahead of the remote';
+  }
+
+  @override
+  String fdGitBehind(int count) {
+    return '$count behind the remote';
+  }
+
+  @override
+  String get fdGitNoUpstream => 'No upstream branch';
+
+  @override
+  String get fdGitDirty => 'Uncommitted changes';
+
+  @override
+  String get fdGitNoRemote => 'No remote';
+
+  @override
+  String get fdGitOpenRemote => 'Open the remote repository in a browser';
+
+  @override
+  String get fdGitFetch => 'Fetch';
+
+  @override
+  String get fdGitPull => 'Pull';
+
+  @override
+  String get fdGitPullHelp =>
+      'git pull --ff-only — fast-forwards only, never merges';
+
+  @override
+  String get fdGitPullBlockedDirty =>
+      'Not pulling: there are uncommitted changes';
+
+  @override
+  String get fdGitPullBlockedDiverged =>
+      'Local and remote have diverged. Merge in a terminal';
+
+  @override
+  String get fdGitPullBlockedNoUpstream => 'This branch has no upstream';
+
+  @override
+  String get fdGitPullBlockedUpToDate => 'Nothing to pull (fetch first)';
+
+  @override
+  String get fdGitFetchDone => 'Fetched';
+
+  @override
+  String get fdGitPullDone => 'Pulled';
+
+  @override
+  String get fdGitFailed =>
+      'Failed. See the output in the Log tab. If credentials are needed, sign in once in a terminal';
+
+  @override
+  String get fdStepsCocoapods =>
+      '1. Run brew install cocoapods in a terminal\n2. Build again';
+
+  @override
+  String get fdCheckWindowsDevModeOk =>
+      'Windows Developer Mode is on (plugin links can be created)';
+
+  @override
+  String get fdCheckWindowsDevModeWarn =>
+      'Windows Developer Mode is off (builds can fail because plugin links can\'t be created)';
+
+  @override
+  String fdCheckVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ tools found)';
+  }
+
+  @override
+  String get fdCheckVisualStudioFail =>
+      'Visual Studio\'s \'Desktop development with C++\' is missing (needed to build the Windows app)';
+
+  @override
+  String get fdStepsWindowsDevMode =>
+      '1. Open Windows Settings and search for \'For developers\'\n2. Turn on \'Developer Mode\'\n3. Press Check again';
+
+  @override
+  String get fdStepsVisualStudio =>
+      '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
+
+  @override
+  String fdBranchChangedWhileRunning(String branch) {
+    return 'The branch changed to $branch while a build is running. The build continues with the previous files.';
+  }
 }

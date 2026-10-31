@@ -509,6 +509,21 @@ Branch Dock 이식 완료. 실제 저장소로 앱을 띄워 확인했다(공유
 - **색 규칙**: 화면 코드의 `AppColors`·색 리터럴을 모두 없앴다(Branch 의 중복 Tone/StatusPill 은 공통 위젯으로 통합, 그래프 줄 색은 `lib/theme/graph_colors.dart`). `test/theme_rules_test.dart` 가 어기면 실패한다.
 - **알려 둠**: 공유 영역 칩의 전환 메뉴는 실제 클릭으로 아직 확인하지 못했다(전환 로직 `withStashRetry`는 원본 테스트가 지킨다). 위젯 테스트 안에서 실제 프로세스를 도는 동작(git init 단추 등)은 단위 테스트로 대신 지킨다.
 
+### 단계 4 결과 (2026-10-31)
+
+Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로젝트 머리·탭 5개, 점검 탭의 실제 flutter/Xcode/adb/인증서 점검, 설정 "도구" 구역에 flutter·adb 줄). `flutter analyze` 0, 테스트 379개 통과.
+
+- 원본의 `flutter/`·`devices/`·`doctor/`·`install/`·`secrets/`와 탭 화면을 `lib/docks/flutty/` 로 옮겼다 (원본 수정 없음). `InstallController` → **`FluttyController`**: 프로젝트 열기·최근 목록·git 상태·worktree·VS Code 열기·도구 경로를 걷어냈다. 프로젝트는 칸이 `setProject()` 로 넘긴다.
+- **FluttyDock**: 공유 폴더에서 depth 0→1 로 찾고(여럿이면 머리의 드롭다운), 고른 프로젝트 상세(`FlutterProject.detect`)를 컨트롤러에 준다. 브랜치·커밋이 바뀌면 다시 찾는다. 실행 중에 브랜치가 바뀌면 **배너만** 띄우고 멈추지 않는다 (§1.10). 파일이 사라지는 경쟁(브랜치 전환 중 pubspec)은 "없음"으로 본다.
+- **늦은 시작**: 기기 목록·환경 점검은 칸을 처음 펼칠 때 시작한다 (`ensureStarted`) — 앱 시작에 xcrun/adb 가 돌지 않는다.
+- **mood/busy**: 실행·정리 중이면 working+busy, 실패 단계가 있으면 failed, 모두 끝났으면 success.
+- **탭 5개** (실행·기기·서명·점검·기록; Git 탭은 Branch Dock 과 공유 영역으로). 저장 키는 모두 `flutty.` 접두어 (`ios_team_id`·`build_mode`·`last_tab_id`·`build_options:`·`project_mode:`·`project_device:`·`secrets_repo`). 옛 앱의 값은 가져오지 않는다 (결정 §6).
+- **시크릿 화면 → 설정 "릴리스 시크릿" 구역** (macOS 에서만, 칸·워크스페이스가 있을 때). Scaffold 를 걷어낸 `SecretsPanel`, 앱 공용 실행기를 써서 `gh` 경로 지정이 그대로 적용된다. 좁은 폭에서는 칩 줄이 가로로 스크롤된다.
+- **도구 경로**: `FluttyDock(tools:)` 가 `flutter`·`adb` 를 `ToolPaths` 에 등록하고, 바뀌면 기기·점검을 다시 읽는다. 배너·기기 탭·점검 탭의 "도구 경로 지정" 은 설정 창 "도구" 구역을 연다.
+- **공통 UI** → `lib/core/ui/`: output_viewer·copy_output_button·command_text (CheckTile·CheckText 는 Flutty 점검 모델에 묶여 칸 안에 남겼다). 번역 키 264개는 `fd` 접두어로 합쳤고(같은 값 59개는 공유), 상태색은 `toneColor` 로 읽는다.
+- **테스트 이식**: 원본 22개 중 칸에 해당하는 9개(build_options·desktop_build·doctor·windows_checks·install·banner_adb·devices_tab·secrets·stale_build_cache)를 `test/flutty/` 로 옮겼고, 칸 모듈 테스트 3개를 새로 썼다. 나머지(about·app_settings·high_contrast·update·vscode·tool_paths·title_menu·window_vscode·worktrees·home_screen·tabs·git_and_phase·command_output_decode)는 셸·공통 코어가 이미 같은 일을 하는 테스트가 있거나 화면이 사라진 것이다.
+- **알려 둠**: 실제 기기에 설치하는 흐름(실기기 빌드·`flutter run`)은 이 환경에서 확인하지 못했다 (원본 테스트가 계획 생성·실행 순서를 지킨다). `RunSession` 추출은 7단계 Rust runner 와 함께 한다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

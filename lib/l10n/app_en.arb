@@ -2693,5 +2693,502 @@
         "type": "String"
       }
     }
+  },
+  "fdSecretsTooltip": "Release secrets",
+  "fdSecretsTitle": "Register release secrets",
+  "fdSecretsIntro": "Registers the GitHub Actions secrets that the macOS release workflow uses for signing and notarization, through gh. Values are not stored in this app.",
+  "fdSecretsRepoLabel": "Repository (owner/repo)",
+  "fdSecretsPickFolder": "Read from a project folder",
+  "fdSecretsRefresh": "Refresh registration status",
+  "fdSecretsRepoInvalid": "Use the owner/repo form",
+  "fdSecretsFolderNoRemote": "No GitHub remote (origin) found in that folder",
+  "fdSecretsGhMissing": "GitHub CLI (gh) isn't installed. Install it in a terminal with:",
+  "fdSecretsGhNotLoggedIn": "gh isn't signed in. Run this in a terminal:",
+  "fdSecretsListFailed": "Couldn't read the registration status. Check the repository name and your access",
+  "fdSecretStatusRegistered": "Registered · {date}",
+  "@fdSecretStatusRegistered": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretStatusMissing": "Not registered",
+  "fdSecretStatusUnknown": "Unknown",
+  "fdSecretSet": "Register",
+  "fdSecretOverwrite": "Overwrite",
+  "fdSecretPickFile": "Choose file…",
+  "fdSecretNoFile": "No file chosen",
+  "fdSecretFileLoaded": "{name} · {bytes} bytes",
+  "@fdSecretFileLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "fdSecretGenerate": "Generate",
+  "fdSecretGenerated": "A random value was generated (not shown)",
+  "fdSecretViaStdin": "The value is passed on standard input, not as a command argument, so it never appears in the command log.",
+  "fdSecretIssueEmpty": "Enter a value",
+  "fdSecretIssueEmail": "Not an email address",
+  "fdSecretIssueTeamId": "A Team ID is 10 uppercase letters or digits",
+  "fdSecretSaved": "Registered {name}",
+  "@fdSecretSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretFailed": "Couldn't register {name}",
+  "@fdSecretFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretOverwriteTitle": "Overwrite {name}?",
+  "@fdSecretOverwriteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretOverwriteBody": "This replaces the registered value with the new one. It can't be undone.",
+  "fdSecretHelpP12": "Choose the 'Developer ID Application' certificate exported as .p12 from Keychain Access. The app registers it as base64.",
+  "fdSecretHelpP12Password": "The password you set when exporting the .p12.",
+  "fdSecretHelpKeychain": "A temporary keychain password CI uses only during the build. Any value works, so it can be generated for you.",
+  "fdSecretHelpAppleId": "The Apple ID email used for notarization.",
+  "fdSecretHelpApplePassword": "An app-specific password, not your account password.",
+  "fdSecretHelpTeamId": "The 10-character Team ID from Membership details at developer.apple.com/account.",
+  "fdSecretOpenAppleId": "Open appleid.apple.com",
+  "fdSecretOpenDeveloper": "Open developer.apple.com/account",
+  "fdCommandBarEmpty": "No commands run yet",
+  "fdHomeProjectTitle": "Project",
+  "fdHomeProjectOpen": "Open project",
+  "fdHomeProjectReload": "Reload this project",
+  "fdHomeProjectDrop": "Drop a Flutter project folder here, or press Open project",
+  "fdHomeProjectNotFlutter": "Not a Flutter project: {path}",
+  "@fdHomeProjectNotFlutter": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "fdHomePlatformIos": "iOS",
+  "fdHomePlatformAndroid": "Android",
+  "fdHomeDevicesTitle": "Devices",
+  "fdHomeDevicesRefresh": "Refresh devices",
+  "fdHomeDevicesNone": "No device is connected over USB. Plug in your phone, unlock it, then refresh",
+  "fdHomeLinkUsb": "USB",
+  "fdHomeLinkWireless": "Wireless",
+  "fdHomeBuildTitle": "Build",
+  "fdHomeModeDebug": "Debug",
+  "fdHomeModeRelease": "Release",
+  "fdHomeTeamLabel": "Apple Team ID",
+  "fdHomeTeamHelp": "Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership",
+  "fdHomeStepsTitle": "Commands to run",
+  "fdHomeStepPrepare": "Prepare",
+  "fdHomeStepBuild": "Build",
+  "fdHomeStepInstall": "Install",
+  "fdHomeStepLaunch": "Launch",
+  "fdHomeStepRun": "Run (hot reload)",
+  "fdHomeActionInstall": "Build & install",
+  "fdHomeActionBuildRun": "Build & run",
+  "fdHomeActionInstallOnly": "Install only",
+  "fdHomeActionClean": "Clean & get packages",
+  "fdHomeCleanHelp": "flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.",
+  "fdOptTitle": "Build options",
+  "fdOptDefault": "Defaults",
+  "fdOptFlavor": "Flavor",
+  "fdOptFlavorHelp": "--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)",
+  "fdOptFlavorInvalid": "Start with a letter; letters, digits, _ and - only",
+  "fdOptHelp": "Help",
+  "fdOptHelpLink": "Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser",
+  "fdOptTarget": "Entry point",
+  "fdOptTargetHelp": "-t. Empty means lib/main.dart",
+  "fdOptDefineFile": "dart-define file",
+  "fdOptDefineFileHelp": "--dart-define-from-file. Only the path is stored; the file is never read or saved",
+  "fdOptFileMissing": "File not found",
+  "fdOptAppId": "App ID (optional)",
+  "fdOptAppIdHelp": "When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)",
+  "fdOptExtra": "Extra arguments",
+  "fdOptExtraHelp": "e.g. --obfuscate --split-debug-info=build/symbols",
+  "fdOptPick": "Choose file",
+  "fdOptClear": "Clear options",
+  "fdHomeCleanDone": "Cleaned and packages restored. Try building again.",
+  "fdHomeCleanFailed": "Clean failed. Check the output in the Log tab.",
+  "fdHomeActionRun": "Run debug",
+  "fdHomeActionCancel": "Cancel",
+  "fdHomeActionStop": "Stop",
+  "fdHomeHotReload": "Hot reload",
+  "fdHomeHotRestart": "Hot restart",
+  "fdHomeOutputTitle": "Output",
+  "fdHomeCopyCommand": "Copy command",
+  "fdBlockerNoProject": "Open a Flutter project first",
+  "fdBlockerNoDevice": "Connect and select a device",
+  "fdBlockerPlatformMissing": "This project has no folder (ios/ or android/) for the selected device's platform",
+  "fdBlockerIosNeedsMac": "Installing on an iPhone needs macOS and Xcode",
+  "fdBlockerWireless": "This device is connected wirelessly. Use a USB cable — installs drop over wireless",
+  "fdBlockerDeveloperModeOff": "Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart",
+  "fdBlockerAndroidUnauthorized": "Approve this computer in the 'Allow USB debugging' prompt on the phone",
+  "fdBlockerNeedsTeamId": "Enter the Apple Team ID to sign iOS builds with",
+  "fdHintUseUsb": "The connection dropped. Make sure the phone is on a USB cable, not wireless",
+  "fdHintUnlockDevice": "The iPhone is locked. Unlock it and try again",
+  "fdHintDeveloperMode": "Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode",
+  "fdHintSigning": "A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account",
+  "fdHintTrustComputer": "Tap 'Trust This Computer' on the iPhone",
+  "fdHintNoAdb": "adb wasn't found. Install the Android SDK platform-tools and add it to PATH",
+  "fdHintMissingCommand": "The {command} command wasn't found. Install it and make sure it is on PATH",
+  "@fdHintMissingCommand": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "fdTabInstall": "Run",
+  "fdTabDevices": "Devices",
+  "fdTabSigning": "Signing",
+  "fdTabDoctor": "Doctor",
+  "fdTabLog": "Log",
+  "fdBannerNextStep": "Next step",
+  "fdBannerShowSteps": "Show how to fix",
+  "fdDoctorRun": "Check again",
+  "fdDoctorRunning": "Checking…",
+  "fdDoctorNever": "Not checked yet",
+  "fdDoctorCollected": "Checked at {time}",
+  "@fdDoctorCollected": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "fdDoctorAllGood": "No problems found",
+  "fdSigningTeams": "Signing team",
+  "fdSigningTeamsHelp": "Teams of certificates whose private key is in your keychain. Tap one to sign with it",
+  "fdSigningNoTeams": "No usable development certificate",
+  "fdSigningCerts": "Development certificates",
+  "fdSigningProfiles": "Profiles for this project",
+  "fdSigningNoProfiles": "None yet — Xcode creates one on the first build",
+  "fdSigningShortLived": "7-day profile",
+  "fdSigningNoKey": "No private key",
+  "fdSigningDaysLeft": "{days} days left",
+  "@fdSigningDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSigningExpired": "Expired",
+  "fdSigningAndroid": "Android release signing",
+  "fdSigningMacOnly": "iOS signing checks run on macOS only",
+  "fdElevatedTitle": "Running as administrator",
+  "fdElevatedBody": "Builds with flutter (CMake) can fail when run as administrator. The app will close and reopen with normal permissions.",
+  "fdElevatedQuit": "Close and reopen",
+  "fdLogClear": "Clear log",
+  "fdOutputCopyAll": "Copy all output",
+  "fdOutputCopied": "Output copied",
+  "fdOutputViewer": "Open in viewer",
+  "fdViewerPause": "Pause updates (to select text)",
+  "fdViewerResume": "Resume live updates",
+  "fdViewerLines": "{count} lines",
+  "fdLogEmpty": "No commands run yet",
+  "fdLogRunning": "Running",
+  "fdLogExit": "Exit code {code}",
+  "@fdLogExit": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckFlutterOk": "Flutter {version}",
+  "@fdCheckFlutterOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckFlutterRunFail": "flutter ran but failed: {error}",
+  "@fdCheckFlutterRunFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckFlutterFail": "flutter wasn't found",
+  "fdCheckXcodeOk": "Xcode {version}",
+  "@fdCheckXcodeOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckXcodeFail": "Xcode wasn't found",
+  "fdCheckAdbOk": "adb {version}",
+  "@fdCheckAdbOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckAdbWarn": "adb wasn't found (needed to install on Android)",
+  "fdCheckConnectionOk": "{name}: connected over USB",
+  "@fdCheckConnectionOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckConnectionFail": "{name}: connected wirelessly, not over USB",
+  "@fdCheckConnectionFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckDeveloperModeOk": "Developer Mode is on",
+  "fdCheckDeveloperModeFail": "Developer Mode is off on the iPhone",
+  "fdCheckAndroidAuthOk": "USB debugging approved",
+  "fdCheckAndroidAuthFail": "USB debugging not approved",
+  "fdCheckCertificateOk": "{count} development certificate(s) with a private key",
+  "@fdCheckCertificateOk": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckCertificateFail": "No usable Apple Development certificate",
+  "fdCheckCertExpiryOk": "{name} · {days} days left",
+  "@fdCheckCertExpiryOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckCertExpiryWarn": "{name} · expires in {days} days",
+  "@fdCheckCertExpiryWarn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckCertExpiryFail": "{name} · expired",
+  "@fdCheckCertExpiryFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckTeamOk": "Signing team {team}",
+  "@fdCheckTeamOk": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckTeamFail": "No signing Team ID chosen",
+  "fdCheckTeamWarn": "No certificate for team {team} on this Mac",
+  "@fdCheckTeamWarn": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckProfileOk": "{bundle} profile · {days} days left",
+  "@fdCheckProfileOk": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckProfileWarn": "{bundle} profile expires soon ({days} days left)",
+  "@fdCheckProfileWarn": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckProfileFail": "{bundle} profile expired",
+  "@fdCheckProfileFail": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckProfileInfo": "No {bundle} profile yet — it is created automatically on the first build",
+  "@fdCheckProfileInfo": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      }
+    }
+  },
+  "fdCheckProfileShort": "A 7-day profile from a free account. When it expires, build and install again",
+  "fdCheckAndroidSigningDebugKey": "No keystore configured — signed with the debug key (fine for installing on your own device)",
+  "fdCheckAndroidSigningKeystore": "Signed with the release keystore",
+  "fdCheckAndroidSigningMissing": "The keystore file key.properties points to is missing",
+  "fdStepsWireless": "1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap 'Trust This Computer'\n3. Press Refresh devices and check the USB badge appears",
+  "fdStepsDeveloperMode": "1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap 'Turn On' in the confirmation prompt",
+  "fdStepsAndroidAuth": "1. Connect the phone over USB and unlock it\n2. Allow this computer in the 'Allow USB debugging' prompt\n3. If no prompt appears, enable USB debugging in Developer options",
+  "fdStepsTeamId": "1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab",
+  "fdStepsCertificate": "1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again",
+  "fdStepsFlutterMissing": "1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again",
+  "fdStepsFlutterMissingWindows": "1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again",
+  "fdStepsXcodeMissing": "1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license",
+  "fdStepsAdbMissing": "1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again",
+  "fdStepsAndroidKeystore": "1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build",
+  "fdStepsCertExpiry": "1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again",
+  "fdHomeOpenVsCode": "Open in VS Code",
+  "fdVscodeNotFound": "VS Code wasn't found",
+  "fdVscodeDownload": "Get it",
+  "fdVscodeOpenFailed": "Couldn't open VS Code",
+  "fdSecretFileTitle": "Register from a file",
+  "fdSecretFileHelp": "Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn't keep the values — it only shows the names; gh reads the file itself.",
+  "fdSecretFileEmpty": "No NAME=value entries found",
+  "fdSecretFileUnknown": "Entries that aren't release secrets are registered too: {names}",
+  "@fdSecretFileUnknown": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretFileMissing": "Release secrets not in the file: {names}",
+  "@fdSecretFileMissing": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "fdSecretFileRegister": "Register file",
+  "fdSecretFileConfirmTitle": "Register {count} secrets?",
+  "@fdSecretFileConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fdSecretFileSaved": "Registered {count} secrets",
+  "@fdSecretFileSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fdSecretFileFailed": "Couldn't register from the file",
+  "fdToolPathsOpen": "Set tool paths…",
+  "fdToolPathsTitle": "Tool paths",
+  "fdToolPathsHelp": "Point the app at tools it can't find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.",
+  "fdToolPathNotFound": "Not found",
+  "fdToolPathChoose": "Locate…",
+  "fdToolPathAuto": "Automatic",
+  "fdToolPathCustom": "Custom",
+  "fdToolPathFlutter": "flutter",
+  "fdToolPathAdb": "adb (Android SDK platform-tools)",
+  "fdHomeDevicesCauses": "Possible reasons no device shows up",
+  "fdStepsNoDevice": "1. Connect the phone with a USB cable (a charge-only cable won't work)\n2. Unlock it, then tap 'Trust This Computer' on an iPhone or 'Allow USB debugging' on Android\n3. Press refresh above",
+  "fdHomeThisMac": "This Mac",
+  "fdHomeThisPc": "This PC",
+  "fdHomeLinkLocal": "This computer",
+  "fdHomePlatformMacos": "macOS",
+  "fdHomePlatformWindows": "Windows",
+  "fdHintCocoapods": "CocoaPods is missing, so the macOS app couldn't be built",
+  "fdHintVisualStudio": "Visual Studio's 'Desktop development with C++' workload is missing, so the Windows app couldn't be built",
+  "fdHintRestartApp": "The build failed because the build environment wasn't ready (plugin links not found). Closing and reopening the app fixes it",
+  "fdHintStaleBuildCache": "The Windows build failed because a build cache from an older Visual Studio is left over (it happens after switching Visual Studio versions). Cleaning fixes it",
+  "fdStepsStaleBuildCache": "1. Press 'Clean and re-fetch packages' below (it deletes the build folder and fetches packages again)\n2. Build again",
+  "fdRestartAppButton": "Close and reopen",
+  "fdHomeActionBuildOnly": "Build only",
+  "fdHomeActionRunOnly": "Run only",
+  "fdHomeRunOnlyNeedsBuild": "No release build to run. Build first",
+  "fdGitTitle": "Git",
+  "fdTabGit": "Git",
+  "fdTitleMenuTooltip": "Recent projects, open a folder, dock the window",
+  "fdMenuRecent": "Recent projects",
+  "fdMenuRecentEmpty": "No project opened yet",
+  "fdMenuOpenFolder": "Open another folder…",
+  "fdMenuDockRight": "Dock to the right edge",
+  "fdMenuDockLeft": "Dock to the left edge",
+  "fdGitNotRepo": "This project folder is not a git repository",
+  "fdGitChipUpToDate": "✓ Up to date",
+  "fdGitChipBehind": "↓ {count} to pull",
+  "fdGitChipAhead": "↑ {count} ahead",
+  "fdGitChipNoUpstream": "No upstream",
+  "fdGitChipDirty": "● Changes",
+  "fdGitWorktree": "Worktree",
+  "fdGitWorktreeHelp": "Choosing another worktree opens the same project in that folder. No files are changed",
+  "fdGitDetached": "Detached HEAD",
+  "fdGitUpToDate": "Up to date with the remote",
+  "fdGitAhead": "{count} ahead of the remote",
+  "fdGitBehind": "{count} behind the remote",
+  "fdGitNoUpstream": "No upstream branch",
+  "fdGitDirty": "Uncommitted changes",
+  "fdGitNoRemote": "No remote",
+  "fdGitOpenRemote": "Open the remote repository in a browser",
+  "fdGitFetch": "Fetch",
+  "fdGitPull": "Pull",
+  "fdGitPullHelp": "git pull --ff-only — fast-forwards only, never merges",
+  "fdGitPullBlockedDirty": "Not pulling: there are uncommitted changes",
+  "fdGitPullBlockedDiverged": "Local and remote have diverged. Merge in a terminal",
+  "fdGitPullBlockedNoUpstream": "This branch has no upstream",
+  "fdGitPullBlockedUpToDate": "Nothing to pull (fetch first)",
+  "fdGitFetchDone": "Fetched",
+  "fdGitPullDone": "Pulled",
+  "fdGitFailed": "Failed. See the output in the Log tab. If credentials are needed, sign in once in a terminal",
+  "fdStepsCocoapods": "1. Run brew install cocoapods in a terminal\n2. Build again",
+  "fdCheckWindowsDevModeOk": "Windows Developer Mode is on (plugin links can be created)",
+  "fdCheckWindowsDevModeWarn": "Windows Developer Mode is off (builds can fail because plugin links can't be created)",
+  "fdCheckVisualStudioOk": "Visual Studio {version} (C++ tools found)",
+  "fdCheckVisualStudioFail": "Visual Studio's 'Desktop development with C++' is missing (needed to build the Windows app)",
+  "fdStepsWindowsDevMode": "1. Open Windows Settings and search for 'For developers'\n2. Turn on 'Developer Mode'\n3. Press Check again",
+  "fdStepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again",
+  "fdBranchChangedWhileRunning": "The branch changed to {branch} while a build is running. The build continues with the previous files.",
+  "@fdBranchChangedWhileRunning": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../core/tool_paths.dart';
 import '../docks/branch/repo/repo_prefs.dart';
+import '../docks/flutty/secrets/secrets_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../workspace/workspace_scope.dart';
 import 'app_settings.dart';
@@ -20,7 +21,8 @@ enum SettingsSection {
   appearance(Icons.palette_outlined),
   language(Icons.language_rounded),
   branch(Icons.call_split_rounded),
-  tools(Icons.build_outlined);
+  tools(Icons.build_outlined),
+  secrets(Icons.key_rounded);
 
   const SettingsSection(this.icon);
 
@@ -31,6 +33,7 @@ enum SettingsSection {
     language => l10n.settingsSectionLanguage,
     branch => l10n.dockBranchTitle,
     tools => l10n.settingsSectionTools,
+    secrets => l10n.fdSecretsTitle,
   };
 }
 
@@ -61,6 +64,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
   bool _available(SettingsSection s) => switch (s) {
     SettingsSection.branch => WorkspaceScope.maybeOf(context) != null,
     SettingsSection.tools => ToolPathsScope.maybeOf(context) != null,
+    // macOS 릴리스 서명 시크릿 — Windows 릴리스는 시크릿이 필요 없다 (Flutty 원본과 같은 규칙).
+    SettingsSection.secrets => SecretsPanel.available && WorkspaceScope.maybeOf(context) != null,
     _ => true,
   };
 
@@ -156,6 +161,7 @@ class _Content extends StatelessWidget {
       SettingsSection.language => const _LanguageSection(),
       SettingsSection.branch => const _BranchSection(),
       SettingsSection.tools => const _ToolsSection(),
+      SettingsSection.secrets => const SecretsPanel(),
     },
   );
 }

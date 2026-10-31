@@ -3,15 +3,16 @@
 
 import 'package:flutter/material.dart';
 
+import '../core/tool_paths.dart';
 import '../l10n/app_localizations.dart';
 import '../workspace/workspace.dart';
 import 'branch/branch_dock.dart';
 import 'dock_module.dart';
 import 'flutty/flutty_dock.dart';
 
-List<DockModule> createDocks() => [
+List<DockModule> createDocks({ToolPaths? tools}) => [
       BranchDock(),
-      FluttyDock(),
+      FluttyDock(tools: tools),
       // 단계 7·8: RustDock(), ElectronDock() …
     ];
 

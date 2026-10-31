@@ -1,0 +1,351 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:daylight_taskbench/core/command_log.dart';
+import 'package:daylight_taskbench/core/command_runner.dart';
+import 'package:daylight_taskbench/docks/flutty/devices/device_service.dart';
+import 'package:daylight_taskbench/docks/flutty/devices/mobile_device.dart';
+import 'package:daylight_taskbench/docks/flutty/flutter/flutter_project.dart';
+import 'package:daylight_taskbench/docks/flutty/install/build_options.dart';
+import 'package:daylight_taskbench/docks/flutty/install/flutty_controller.dart';
+import 'flutty_test_support.dart';
+import 'package:daylight_taskbench/docks/flutty/install/install_plan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const _project = FlutterProject(
+  path: '/p/app',
+  name: 'app',
+  hasIos: true,
+  hasAndroid: true,
+  hasMacos: true,
+  hasWindows: true,
+  iosBundleId: 'art.zoomon.app',
+  androidApplicationId: 'art.zoomon.app',
+  macosAppName: 'App',
+  windowsBinaryName: 'app',
+);
+
+const _galaxy = MobileDevice(id: 'R3CY', name: 'SM S931N', platform: DevicePlatform.android, link: DeviceLink.usb);
+const _iphone = MobileDevice(
+  id: 'UDID1',
+  name: 'My iPhone',
+  platform: DevicePlatform.ios,
+  link: DeviceLink.usb,
+  developerModeOn: true,
+);
+const _mac = MobileDevice(id: 'macos', name: 'This Mac', platform: DevicePlatform.macos, link: DeviceLink.usb);
+const _pc = MobileDevice(id: 'windows', name: 'This PC', platform: DevicePlatform.windows, link: DeviceLink.usb);
+
+const _dev = BuildOptions(
+  flavor: 'dev',
+  target: 'lib/main_dev.dart',
+  defineFile: 'env/dev.json',
+  appId: 'art.zoomon.app.dev',
+);
+
+InstallPlan _plan(MobileDevice d, BuildMode m, BuildOptions o, {bool mac = true}) =>
+    buildInstallPlan(project: _project, device: d, mode: m, teamId: 'TEAM123456', hostIsMac: mac, options: o);
+
+class _NoDevices implements DeviceService {
+  @override
+  Future<List<MobileDevice>> list() async => const [];
+}
+
+void main() {
+  group('splitArgs', () {
+    test('splits on whitespace and keeps quoted parts together', () {
+      expect(splitArgs('--obfuscate --split-debug-info=build/symbols'), ['--obfuscate', '--split-debug-info=build/symbols']);
+      expect(splitArgs('--a "x y" \'z w\' b'), ['--a', 'x y', 'z w', 'b']);
+      expect(splitArgs('   '), isEmpty);
+      expect(splitArgs(''), isEmpty);
+    });
+
+    test('keeps backslashes (Windows paths) and an unclosed quote runs to the end', () {
+      expect(splitArgs(r'--file C:\env\dev.json'), ['--file', r'C:\env\dev.json']);
+      expect(splitArgs('--x "a b'), ['--x', 'a b']);
+      expect(splitArgs('a"b c"d'), ['ab cd']);
+    });
+  });
+
+  group('BuildOptions', () {
+    test('flutterArgs order: flavor, target, define file, extra', () {
+      const o = BuildOptions(flavor: 'dev', target: 'lib/m.dart', defineFile: 'e.json', extraArgs: '--obfuscate');
+      expect(o.flutterArgs(flavorSupported: true), ['--flavor', 'dev', '-t', 'lib/m.dart', '--dart-define-from-file=e.json', '--obfuscate']);
+      expect(o.flutterArgs(flavorSupported: false), ['-t', 'lib/m.dart', '--dart-define-from-file=e.json', '--obfuscate']);
+      expect(const BuildOptions().flutterArgs(flavorSupported: true), isEmpty);
+    });
+
+    test('a flavor that is not a plain name is ignored and flagged', () {
+      const bad = BuildOptions(flavor: 'dev; rm -rf');
+      expect(bad.flavorInvalid, isTrue);
+      expect(bad.flutterArgs(flavorSupported: true), isEmpty);
+      expect(isValidFlavor('dev-2_x'), isTrue);
+      expect(isValidFlavor('2dev'), isFalse);
+    });
+
+    test('round-trips and survives garbage', () {
+      expect(BuildOptions.decode(_dev.encode()), _dev);
+      expect(BuildOptions.decode(null), const BuildOptions());
+      expect(BuildOptions.decode('not json'), const BuildOptions());
+      expect(BuildOptions.decode('[1,2]'), const BuildOptions());
+      expect(const BuildOptions().isEmpty, isTrue);
+      expect(_dev.isEmpty, isFalse);
+    });
+  });
+
+  group('plan with options', () {
+    test('default options change nothing', () {
+      expect(_plan(_galaxy, BuildMode.release, const BuildOptions()).steps.first.args, ['flutter', 'build', 'apk', '--release']);
+      expect(_plan(_galaxy, BuildMode.debug, const BuildOptions()).steps.first.args, ['flutter', 'run', '-d', 'R3CY', '--debug']);
+    });
+
+    test('android release: flags on the build, flavored apk path and the overridden app id', () {
+      final p = _plan(_galaxy, BuildMode.release, _dev);
+      expect(p.steps[0].args, [
+        'flutter', 'build', 'apk', '--release',
+        '--flavor', 'dev', '-t', 'lib/main_dev.dart', '--dart-define-from-file=env/dev.json',
+      ]);
+      const apk = '/p/app/build/app/outputs/flutter-apk/app-dev-release.apk';
+      expect(p.artifact, apk);
+      expect(p.steps[1].args.last, apk);
+      expect(p.steps[2].args, contains('art.zoomon.app.dev'));
+      expect(p.steps[2].args, isNot(contains('art.zoomon.app')));
+    });
+
+    test('android debug gets the flags too', () {
+      expect(_plan(_galaxy, BuildMode.debug, _dev).steps.single.args, [
+        'flutter', 'run', '-d', 'R3CY', '--debug',
+        '--flavor', 'dev', '-t', 'lib/main_dev.dart', '--dart-define-from-file=env/dev.json',
+      ]);
+    });
+
+    test('ios release: flags on the prepare step, scheme and Release-<flavor> configuration', () {
+      final p = _plan(_iphone, BuildMode.release, _dev);
+      expect(p.steps[0].args, containsAllInOrder(['--config-only', '--no-codesign', '--flavor', 'dev', '-t', 'lib/main_dev.dart']));
+      final xcode = p.steps[1].args;
+      expect(xcode[xcode.indexOf('-scheme') + 1], 'dev');
+      expect(xcode[xcode.indexOf('-configuration') + 1], 'Release-dev');
+      expect(p.artifact, '/p/app/build/ios_dd/Build/Products/Release-dev-iphoneos/Runner.app');
+      expect(p.steps[2].args.last, p.artifact);
+      expect(p.steps[3].args.last, 'art.zoomon.app.dev');
+    });
+
+    test('ios release without a flavor keeps Runner and Release', () {
+      final p = _plan(_iphone, BuildMode.release, const BuildOptions(target: 'lib/m.dart'));
+      final xcode = p.steps[1].args;
+      expect(xcode[xcode.indexOf('-scheme') + 1], 'Runner');
+      expect(xcode[xcode.indexOf('-configuration') + 1], 'Release');
+      expect(p.steps[0].args.last, 'lib/m.dart');
+      expect(p.steps[3].args.last, 'art.zoomon.app');
+    });
+
+    test('macos release: flavored products folder', () {
+      final p = _plan(_mac, BuildMode.release, const BuildOptions(flavor: 'dev'));
+      expect(p.steps[0].args, ['flutter', 'build', 'macos', '--release', '--flavor', 'dev']);
+      expect(p.artifact, '/p/app/build/macos/Build/Products/Release-dev/App.app');
+      expect(p.steps[1].args, ['open', '/p/app/build/macos/Build/Products/Release-dev/App.app']);
+    });
+
+    test('windows supports the flavor (Flutter 3.47+): flag and flavored output folder', () {
+      final p = _plan(_pc, BuildMode.release, _dev, mac: false);
+      expect(p.steps[0].args, [
+        'flutter', 'build', 'windows', '--release',
+        '--flavor', 'dev', '-t', 'lib/main_dev.dart', '--dart-define-from-file=env/dev.json',
+      ]);
+      const exe = r'/p/app\build\windows\x64\dev\runner\Release\app.exe';
+      expect(p.artifact, exe);
+      expect(p.steps[1].args, ['explorer.exe', exe]);
+      expect(_plan(_pc, BuildMode.debug, _dev, mac: false).steps.single.args, containsAllInOrder(['--debug', '--flavor', 'dev']));
+    });
+
+    test('windows without a flavor keeps the plain output folder', () {
+      final p = _plan(_pc, BuildMode.release, const BuildOptions(target: 'lib/m.dart'), mac: false);
+      expect(p.artifact, r'/p/app\build\windows\x64\runner\Release\app.exe');
+    });
+
+    test('options do not touch the commands that are not flutter run/build', () {
+      final p = _plan(_galaxy, BuildMode.release, _dev);
+      expect(p.steps[1].args.first, 'adb');
+      expect(p.steps[1].args, isNot(contains('--flavor')));
+    });
+  });
+
+  group('controller storage', () {
+    late Directory a;
+    late Directory b;
+
+    Directory flutterProject(String name) {
+      final d = Directory.systemTemp.createTempSync('flutty_opts_$name');
+      File('${d.path}/pubspec.yaml').writeAsStringSync('name: $name\ndependencies:\n  flutter:\n    sdk: flutter\n');
+      return d;
+    }
+
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+      a = flutterProject('a');
+      b = flutterProject('b');
+    });
+
+    tearDown(() {
+      a.deleteSync(recursive: true);
+      b.deleteSync(recursive: true);
+    });
+
+    FluttyController make() => FluttyController(
+      runner: CommandRunner(log: CommandLog(), path: '/usr/bin'),
+      deviceService: _NoDevices(),
+      hostIsMac: false,
+      hostIsWindows: false,
+    );
+
+    test('options are kept per project and come back when the project is opened again', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      c.setOptions(const BuildOptions(flavor: 'dev', target: 'lib/main_dev.dart'));
+      await c.openProject(b.path);
+      expect(c.options.isEmpty, isTrue, reason: 'b has its own options');
+      c.setOptions(const BuildOptions(flavor: 'prod'));
+      await c.openProject(a.path);
+      expect(c.options.flavor, 'dev');
+      expect(c.options.target, 'lib/main_dev.dart');
+      await c.openProject(b.path);
+      expect(c.options.flavor, 'prod');
+    });
+
+    test('a new controller (app restart) restores the last project options; clearing forgets them', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      c.setOptions(const BuildOptions(flavor: 'dev'));
+
+      final again = make();
+      await again.init();
+      await again.openProject(a.path); // 마지막 프로젝트는 이제 칸(FluttyDock)이 다시 열어 준다
+      expect(again.options.flavor, 'dev');
+
+      again.setOptions(const BuildOptions());
+      final third = make();
+      await third.init();
+      await third.openProject(a.path);
+      expect(third.options.isEmpty, isTrue);
+      expect((await SharedPreferences.getInstance()).getKeys().where((k) => k.startsWith('flutty.build_options:')), isEmpty);
+    });
+
+    test('options cannot change while a run is in progress', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      c.running = true;
+      c.setOptions(const BuildOptions(flavor: 'dev'));
+      expect(c.options.isEmpty, isTrue);
+    });
+
+    test('the controller plan uses the options', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      c.project = FlutterProject(path: a.path, name: 'a', hasIos: false, hasAndroid: true, androidApplicationId: 'x.y');
+      c.devices = const [_galaxy];
+      c.selectedId = _galaxy.id;
+      c.mode = BuildMode.release;
+      c.setOptions(const BuildOptions(flavor: 'dev'));
+      expect(c.plan.steps.first.args, containsAllInOrder(['--release', '--flavor', 'dev']));
+    });
+  });
+
+  group('per-project mode and device', () {
+    late Directory a;
+    late Directory b;
+    var attached = <MobileDevice>[_galaxy, _iphone];
+
+    Directory flutterProject(String name) {
+      final d = Directory.systemTemp.createTempSync('flutty_sel_$name');
+      File('${d.path}/pubspec.yaml').writeAsStringSync('name: $name\ndependencies:\n  flutter:\n    sdk: flutter\n');
+      File('${d.path}/android/app/build.gradle.kts').createSync(recursive: true);
+      File('${d.path}/ios/Runner.xcodeproj/project.pbxproj').createSync(recursive: true);
+      return d;
+    }
+
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+      attached = [_galaxy, _iphone];
+      a = flutterProject('a');
+      b = flutterProject('b');
+    });
+
+    tearDown(() {
+      a.deleteSync(recursive: true);
+      b.deleteSync(recursive: true);
+    });
+
+    FluttyController make() => FluttyController(
+      runner: CommandRunner(log: CommandLog(), path: '/usr/bin'),
+      deviceService: _FakeDevices(() => attached),
+      hostIsMac: false,
+      hostIsWindows: false,
+    );
+
+    test('each project remembers its own mode and device', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+      c.setMode(BuildMode.debug);
+
+      await c.openProject(b.path);
+      c.select(_galaxy);
+      c.setMode(BuildMode.release);
+
+      await c.openProject(a.path);
+      expect(c.selectedId, _iphone.id);
+      expect(c.mode, BuildMode.debug);
+      await c.openProject(b.path);
+      expect(c.selectedId, _galaxy.id);
+      expect(c.mode, BuildMode.release);
+    });
+
+    test('restored after an app restart, even when the device shows up late', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+
+      attached = [_galaxy];
+      final again = make();
+      await again.init();
+      await again.openProject(a.path);
+      expect(again.selectedId, _galaxy.id, reason: 'saved device is not attached: fall back to the default');
+      attached = [_galaxy, _iphone];
+      await again.refreshDevices();
+      expect(again.selectedId, _iphone.id);
+    });
+
+    test('a device picked by hand is not overridden by a refresh', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+
+      final again = make();
+      await again.init();
+      await again.openProject(a.path);
+      await again.refreshDevices();
+      again.select(_galaxy);
+      await again.refreshDevices();
+      expect(again.selectedId, _galaxy.id);
+    });
+  });
+}
+
+class _FakeDevices implements DeviceService {
+  _FakeDevices(this._now);
+
+  final List<MobileDevice> Function() _now;
+
+  @override
+  Future<List<MobileDevice>> list() async => _now();
+}
