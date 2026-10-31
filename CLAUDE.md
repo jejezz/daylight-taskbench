@@ -16,7 +16,7 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - 원본 앱 branch-dock-flutter, flutty-dock-flutter는 **수정하지 않는다.** 필요한 코드는 이 프로젝트로 복사해서
   쓴다 (daylight-workbench와 같은 방식). 달라진 곳은 코드에 `[Taskbench에서 달라진 곳]` 주석으로 표시한다.
 - **계획과 화면은 [PLAN.md](PLAN.md)가 기준이다.** 이어서 작업할 때 먼저 읽는다 (화면 §1, 합치기 §3, 확장 §4, 단계 §5, 결정 기록 §6).
-  현재 단계: 0 완료(골격), 1 완료(셸: 시작 화면·공유 영역·아코디언·설정 창·장식) → 2(공통 코어: command_runner 합치기).
+  현재 단계: 0 완료(골격), 1 완료(셸: 시작 화면·공유 영역·아코디언·설정 창·장식) 2 완료(공통 코어: command_runner 합집합·도구 경로·키 검사) → 3(Branch Dock 이식).
 - 플랫폼은 macOS + Windows (Linux 없음). 릴리스 워크플로에서도 build-linux 잡을 뺐다.
 - macOS 샌드박스는 꺼져 있다 (`app-sandbox=false`) — git/gh/flutter를 호출하고 임의 폴더를 연다.
 - 창은 도킹형 세로 창(440×960, 최소 380×560)이다. 크기·위치를 기억한다.
@@ -29,3 +29,4 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 
 - 설정 규약은 `settings.md`와 `settings-screen.md`가 어긋난다 — 충돌한 곳은 `settings.md`/`localization.md` 쪽을 따랐다 (PLAN.md "단계 1 결과").
 - 새 칸(runner)은 `lib/docks/registry.dart`에 한 줄 + `test/dock_contract_test.dart` 통과로 붙인다.
+- 위젯 테스트 함정: 실제 파일 I/O 는 `tester.runAsync` 안에서, 포커스된 TextField 가 있으면 `pumpAndSettle` 대신 `pump` (안 그러면 테스트가 멈춘다).

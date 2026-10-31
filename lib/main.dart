@@ -20,6 +20,7 @@ import 'l10n/app_localizations.dart';
 import 'settings/app_settings.dart';
 import 'core/command_log.dart';
 import 'core/command_runner.dart';
+import 'core/tool_paths.dart';
 import 'docks/dock_module.dart';
 import 'docks/registry.dart';
 import 'ui/shell/taskbench_shell.dart';
@@ -29,7 +30,8 @@ import 'update/update_scope.dart';
 import 'update/update_service.dart';
 import 'window/window_placement.dart';
 
-final bool _isDesktop = Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+final bool _isDesktop =
+    Platform.isMacOS || Platform.isWindows || Platform.isLinux;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,12 +48,27 @@ Future<void> main() async {
 
   final settings = await AppSettings.load();
   final prefs = await SharedPreferences.getInstance();
-  final workspace = Workspace(runner: CommandRunner(log: CommandLog(), path: await resolvePath()), prefs: prefs);
+  final workspace = Workspace(
+    runner: CommandRunner(log: CommandLog(), path: await resolvePath()),
+    prefs: prefs,
+  );
+  final tools = ToolPaths(runner: workspace.runner, prefs: prefs)
+    ..onChanged = workspace.checkEnvironment;
   unawaited(workspace.checkEnvironment());
   // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
   final updates = await UpdateService.create();
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
-  runApp(UpdateScope(service: updates, child: App(settings: settings, updates: updates, workspace: workspace)));
+  runApp(
+    UpdateScope(
+      service: updates,
+      child: App(
+        settings: settings,
+        updates: updates,
+        workspace: workspace,
+        tools: tools,
+      ),
+    ),
+  );
 
   if (showWindow != null) {
     final show = showWindow;
@@ -75,7 +92,10 @@ Future<Future<void> Function()> _prepareWindow() async {
   const size = Size(440, 960); // PLAN.md §1.5: 편집기 옆 세로 창
   WindowPlacement? placement;
   if (WindowPlacement.enabled) {
-    placement = WindowPlacement(await SharedPreferences.getInstance(), defaultSize: size);
+    placement = WindowPlacement(
+      await SharedPreferences.getInstance(),
+      defaultSize: size,
+    );
   }
   final options = WindowOptions(
     size: size,
@@ -100,10 +120,17 @@ Future<Future<void> Function()> _prepareWindow() async {
 }
 
 class App extends StatefulWidget {
-  const App({super.key, required this.settings, this.updates, required this.workspace});
+  const App({
+    super.key,
+    required this.settings,
+    this.updates,
+    required this.workspace,
+    required this.tools,
+  });
 
   final AppSettings settings;
   final Workspace workspace;
+  final ToolPaths tools;
   final UpdateService? updates;
 
   @override
@@ -139,7 +166,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     final brightness = switch (widget.settings.themeMode) {
       ThemeMode.light => Brightness.light,
       ThemeMode.dark => Brightness.dark,
-      ThemeMode.system => WidgetsBinding.instance.platformDispatcher.platformBrightness,
+      ThemeMode.system =>
+        WidgetsBinding.instance.platformDispatcher.platformBrightness,
     };
     windowManager.setBrightness(brightness);
   }
@@ -152,7 +180,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       context,
       tagline: l10n.aboutTagline,
       description: l10n.aboutDescription,
-      onCheckForUpdates: widget.updates == null ? null : () => widget.updates!.checkManually(context),
+      onCheckForUpdates: widget.updates == null
+          ? null
+          : () => widget.updates!.checkManually(context),
     );
   }
 
@@ -163,33 +193,51 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return AppSettingsScope(
-      settings: widget.settings,
-      child: ListenableBuilder(
-        listenable: widget.settings,
-        builder: (context, _) => MaterialApp(
-          navigatorKey: _navigatorKey,
-          title: AppIdentity.displayName,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light(dense: _isDesktop, palette: widget.settings.palette),
-          darkTheme: AppTheme.dark(dense: _isDesktop, palette: widget.settings.palette),
-          themeMode: widget.settings.themeMode,
-          locale: widget.settings.locale,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localeResolutionCallback: AppSettings.resolveLocale,
-          // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(MediaQuery.textScalerOf(context).scale(1) * widget.settings.textScale),
+    return ToolPathsScope(
+      tools: widget.tools,
+      child: AppSettingsScope(
+        settings: widget.settings,
+        child: ListenableBuilder(
+          listenable: widget.settings,
+          builder: (context, _) => MaterialApp(
+            navigatorKey: _navigatorKey,
+            title: AppIdentity.displayName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light(
+              dense: _isDesktop,
+              palette: widget.settings.palette,
             ),
-            child: AppMenuBar(
+            darkTheme: AppTheme.dark(
+              dense: _isDesktop,
+              palette: widget.settings.palette,
+            ),
+            themeMode: widget.settings.themeMode,
+            locale: widget.settings.locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localeResolutionCallback: AppSettings.resolveLocale,
+            // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  MediaQuery.textScalerOf(context).scale(1) *
+                      widget.settings.textScale,
+                ),
+              ),
+              child: AppMenuBar(
+                onAbout: _showAbout,
+                onCheckForUpdates: widget.updates == null
+                    ? null
+                    : _checkForUpdates,
+                child: child!,
+              ),
+            ),
+            home: TaskbenchShell(
+              workspace: widget.workspace,
+              docks: _docks,
               onAbout: _showAbout,
-              onCheckForUpdates: widget.updates == null ? null : _checkForUpdates,
-              child: child!,
             ),
           ),
-          home: TaskbenchShell(workspace: widget.workspace, docks: _docks, onAbout: _showAbout),
         ),
       ),
     );

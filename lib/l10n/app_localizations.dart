@@ -865,6 +865,54 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'Pull ↓{count} 필요'**
   String summaryPull(int count);
+
+  /// No description provided for @settingsSectionTools.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구'**
+  String get settingsSectionTools;
+
+  /// No description provided for @toolsIntro.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱이 실행하는 외부 도구의 위치입니다. 비워 두면 PATH에서 찾습니다. 직접 지정하면 그 파일을 씁니다.'**
+  String get toolsIntro;
+
+  /// No description provided for @toolsFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾음: {path}'**
+  String toolsFound(String path);
+
+  /// No description provided for @toolsNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾지 못했습니다'**
+  String get toolsNotFound;
+
+  /// No description provided for @toolsCustom.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 지정'**
+  String get toolsCustom;
+
+  /// No description provided for @toolsBrowse.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾아보기…'**
+  String get toolsBrowse;
+
+  /// No description provided for @toolsClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'지정 지우기'**
+  String get toolsClear;
+
+  /// No description provided for @toolsPathHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 파일 경로'**
+  String get toolsPathHint;
 }
 
 class _AppLocalizationsDelegate

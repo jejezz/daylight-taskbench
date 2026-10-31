@@ -341,5 +341,20 @@
         "type": "int"
       }
     }
-  }
+  },
+  "settingsSectionTools": "도구",
+  "toolsIntro": "앱이 실행하는 외부 도구의 위치입니다. 비워 두면 PATH에서 찾습니다. 직접 지정하면 그 파일을 씁니다.",
+  "toolsFound": "찾음: {path}",
+  "@toolsFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "toolsNotFound": "찾지 못했습니다",
+  "toolsCustom": "직접 지정",
+  "toolsBrowse": "찾아보기…",
+  "toolsClear": "지정 지우기",
+  "toolsPathHint": "실행 파일 경로"
 }

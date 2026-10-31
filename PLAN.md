@@ -485,6 +485,17 @@ abstract class ProjectDetector {
 - 접힌 Branch 칸 요약은 `↑2` 대신 다음 행동(`Push ↑2 가능`)으로 했다 — 공유 줄과 같은 정보를 두 번 보이지 않으려고.
 - 화면 확인용 스크린샷 도구: `SHOTS_DIR=… flutter test test/tool/screenshot_test.dart` (440/380, 라이트/다크).
 
+### 단계 2 결과 (2026-10-31)
+
+- **`command_runner` 합집합** (`lib/core/command_runner.dart`): 두 원본의 호출 코드가 이름만 바꾸면 그대로 돈다. Branch의 `gitPath`/`ghPath`·`cancel:`·git 환경(`LC_ALL=C`)·Git Bash 찾기, Flutty의 `toolPaths`·`RunHandle.send`·`keepStdinOpen`·`onOutput`·코드 페이지 해석·Windows `flutter` 실행을 모두 가진다. 달라진 점: `path`는 시작 때 한 번 만든 동기 문자열(Flutty의 지연 `Future` 대신), `CancelToken`은 `RunHandle`의 별칭, `NO_COLOR`는 모든 명령에 준다(Branch는 gh에만).
+- `resolvePath()`는 두 원본의 흔한 위치(Homebrew·linuxbrew·WinGet·GitHub CLI·Android platform-tools·flutter/fvm)를 모두 더했다.
+- **도구 경로 통합**: `lib/core/tool_paths.dart`(저장 키 `tool_path_<이름>`)와 설정 창의 "도구" 구역. 칸이 자기 도구를 `register`하면 줄이 생긴다 (지금 git·gh, 단계 4에서 flutter·adb). 경로가 바뀌면 환경 점검을 다시 한다.
+- **키 충돌 검사** (`test/keys_test.dart`): ARB ko/en 키 동일·중복 없음, 저장 키는 공통 목록이거나 칸 접두어(`branch.`·`flutty.`·`rust.`·`electron.`)로 시작해야 한다. 칸을 더할 때 이 검사가 규칙을 지킨다.
+- `command_log`·`vscode`는 두 원본이 서식만 달라 Branch 것을 그대로 썼다 (vscode 테스트 이식).
+- 테스트 130개 통과 (runner 28개 신규: 도구 지정, 환경 변수, 실행 중 입력, 취소, 출력 스트림, 127, PATH 만들기).
+- 아직 안 한 것: 두 원본의 `CommandRunner`를 쓰는 기능 테스트(Branch 10개·Flutty 14개)는 각 Dock 이식(단계 3·4)에서 함께 옮긴다.
+- 알려 둘 것: 위젯 테스트에서 실제 파일 I/O(`Directory.createTemp` 등)는 `tester.runAsync` 안에서 해야 한다 — 밖에서 하면 가짜 시계 때문에 영원히 멈춘다. 포커스된 `TextField`가 있으면 `pumpAndSettle`이 끝나지 않는다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

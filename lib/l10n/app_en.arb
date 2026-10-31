@@ -324,5 +324,20 @@
         "type": "int"
       }
     }
-  }
+  },
+  "settingsSectionTools": "Tools",
+  "toolsIntro": "Locations of the external tools this app runs. Leave empty to search PATH; set a path to use that file.",
+  "toolsFound": "Found: {path}",
+  "@toolsFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "toolsNotFound": "Not found",
+  "toolsCustom": "Custom",
+  "toolsBrowse": "Browse…",
+  "toolsClear": "Clear",
+  "toolsPathHint": "Path to the executable"
 }

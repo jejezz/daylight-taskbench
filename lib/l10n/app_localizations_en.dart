@@ -463,4 +463,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String summaryPull(int count) {
     return 'Pull ↓$count needed';
   }
+
+  @override
+  String get settingsSectionTools => 'Tools';
+
+  @override
+  String get toolsIntro =>
+      'Locations of the external tools this app runs. Leave empty to search PATH; set a path to use that file.';
+
+  @override
+  String toolsFound(String path) {
+    return 'Found: $path';
+  }
+
+  @override
+  String get toolsNotFound => 'Not found';
+
+  @override
+  String get toolsCustom => 'Custom';
+
+  @override
+  String get toolsBrowse => 'Browse…';
+
+  @override
+  String get toolsClear => 'Clear';
+
+  @override
+  String get toolsPathHint => 'Path to the executable';
 }

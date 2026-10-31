@@ -1,3 +1,14 @@
+// branch-dock-flutter 와 flutty-dock-flutter 의 command_runner 를 합친 것 (PLAN.md §3.2, 단계 2).
+//
+// [Taskbench에서 달라진 곳] 두 원본의 합집합이다 — 어느 쪽 호출 코드도 이름만 바꾸면 그대로 돈다:
+//   - Branch: 필수 `path`(동기 String), git/gh 실행 파일 지정(`gitPath`·`ghPath`), `cancel:`(CancelToken),
+//     git/gh 환경 변수(`LC_ALL=C` 등), 같은 설치의 Git for Windows `bash` 찾기.
+//   - Flutty: 이름별 실행 파일 지정(`toolPaths`), 실행 중 입력(`RunHandle.send`·`keepStdinOpen`), 출력 스트림
+//     (`onOutput`), 코드 페이지 대체 해석(`decodeProcessOutput`), Windows 의 `flutter` 를 Git Bash 로 실행.
+//   - `CancelToken` 은 `RunHandle` 의 다른 이름이다. 새 코드는 `handle:` 하나를 쓴다.
+//   - `path` 는 앱 시작에서 한 번 `resolvePath()` 로 만들어 넘긴다 (Flutty 의 지연 `Future` 대신).
+// 이 파일을 고치면 test/command_runner_test.dart 가 두 원본의 동작을 함께 지킨다.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -14,12 +25,11 @@ class CommandResult {
 
   bool get ok => exitCode == 0;
 
-  /// 오류 설명에 쓰는 합친 출력.
   String get combined => [stdout, stderr].where((s) => s.trim().isNotEmpty).join('\n');
 }
 
-/// 취소 가능한 실행 핸들.
-class CancelToken {
+/// 오래 걸리는 실행을 중간에 끊거나 입력을 보내는 핸들.
+class RunHandle {
   Process? _process;
   bool _cancelled = false;
 
@@ -29,46 +39,89 @@ class CancelToken {
     _cancelled = true;
     _process?.kill();
   }
+
+  /// 실행 중인 프로세스의 표준 입력으로 글자를 보낸다 (`flutter run`의 `r`, `R`, `q`).
+  /// [CommandRunner.run]의 `keepStdinOpen` 으로 실행했을 때만 닿는다.
+  void send(String text) => _process?.stdin.add(utf8.encode(text));
 }
+
+/// Branch Dock 쪽 이름 — [RunHandle] 과 같다.
+typedef CancelToken = RunHandle;
 
 const _utf8 = Utf8Codec(allowMalformed: true);
 
-/// `git`, `gh`를 셸 없이 인자 목록으로 실행한다 (PLAN.md §5).
+/// 자식 프로세스 출력 한 덩어리를 글자로 바꾼다. UTF-8이면 그대로 읽고, Windows에서 UTF-8이
+/// 아니면 시스템 코드 페이지(한국어 Windows는 CP949)로 읽는다 — PowerShell·cmd의 오류 메시지가
+/// 그 코드 페이지로 나온다.
+String decodeProcessOutput(List<int> bytes, {Encoding? fallback}) {
+  try {
+    return utf8.decode(bytes);
+  } on FormatException {
+    final enc = fallback ?? (Platform.isWindows ? systemEncoding : null);
+    return enc == null ? _utf8.decode(bytes) : enc.decode(bytes);
+  }
+}
+
+/// 명령을 셸 없이 인자 목록으로 실행하고 [CommandLog]에 남긴다.
 ///
-/// - macOS GUI 앱은 로그인 셸의 PATH를 받지 못하므로 [resolvePath]가 만든
-///   PATH를 모든 프로세스에 넘긴다. `gh`가 git 인증 도우미로 다시 불릴 때도
-///   같은 PATH가 필요하다.
+/// - macOS GUI 앱은 로그인 셸의 PATH를 받지 못하므로 [resolvePath]가 만든 PATH를 모든 프로세스에
+///   넘긴다. `gh`가 git 인증 도우미로 다시 불릴 때, `flutter`가 `adb`를 찾을 때도 같은 PATH가 필요하다.
 /// - 대화형 프롬프트를 막는다. 입력이 필요한 작업은 앱이 먼저 값을 받는다.
 class CommandRunner {
-  CommandRunner({required this.log, required this.path, this.gitPath, this.ghPath});
+  CommandRunner({required this.log, required this.path, String? gitPath, String? ghPath, Map<String, String>? toolPaths}) {
+    if (toolPaths != null) this.toolPaths = toolPaths;
+    if (gitPath != null) this.gitPath = gitPath;
+    if (ghPath != null) this.ghPath = ghPath;
+  }
 
   final CommandLog log;
 
   /// [resolvePath]가 만든 PATH.
   String path;
 
-  /// 설정에서 직접 지정한 실행 파일 (PLAN.md 3.14). null이면 PATH에서 찾는다.
-  String? gitPath;
-  String? ghPath;
+  /// 사용자가 직접 지정한 실행 파일 (`git`, `gh`, `flutter`, `adb` …). 있으면 이름 대신 이 파일을 실행한다.
+  /// 값이 빈 문자열이면 지정하지 않은 것으로 본다.
+  Map<String, String> toolPaths = {};
 
-  /// 명령 이름(`git`, `gh`)을 실제로 실행할 파일로 바꾼다.
-  String executableFor(String name) => switch (name) {
-        'git' => gitPath ?? name,
-        'gh' => ghPath ?? name,
-        'bash' when Platform.isWindows => gitBashPath() ??
-            (throw const ProcessException(
-              'bash',
-              [],
-              'Git for Windows의 bash를 찾을 수 없습니다. Git을 설치하거나 설정에서 git 경로를 지정하세요.',
-            )),
-        _ => name,
-      };
+  String? get gitPath => _custom('git');
+  set gitPath(String? v) => _set('git', v);
+  String? get ghPath => _custom('gh');
+  set ghPath(String? v) => _set('gh', v);
+
+  String? _custom(String name) {
+    final v = toolPaths[name];
+    return v == null || v.isEmpty ? null : v;
+  }
+
+  void _set(String name, String? v) {
+    toolPaths = {...toolPaths}..remove(name);
+    if (v != null && v.isNotEmpty) toolPaths[name] = v;
+  }
+
+  /// 명령 이름을 실제로 실행할 파일로 바꾼다. 지정한 것이 없으면 이름 그대로(PATH에서 찾는다).
+  String executableFor(String name) {
+    final custom = _custom(name);
+    if (custom != null) return custom;
+    if (name == 'bash' && Platform.isWindows) {
+      return gitBashPath() ??
+          (throw const ProcessException('bash', [], 'Git for Windows의 bash를 찾을 수 없습니다. Git을 설치하거나 설정에서 git 경로를 지정하세요.'));
+    }
+    return name;
+  }
+
+  /// [name]을 실제로 실행하게 될 파일의 전체 경로. 찾지 못하면 null.
+  String? locate(String name) {
+    final custom = _custom(name);
+    if (custom != null) return File(custom).existsSync() ? custom : null;
+    return findExecutable(name, effectivePath);
+  }
 
   /// Windows에서 PATH의 `bash`는 WSL의 `System32\bash.exe`가 먼저 잡히는 일이 많다.
   /// WSL의 git은 `core.autocrlf` 설정이 달라 CRLF 파일을 모두 수정됨으로 보므로
   /// (bump-version.sh의 깨끗한 트리 검사가 실패한다), git과 같은 설치의 bash만 쓴다.
   /// 찾지 못해도 PATH의 bash로 되돌아가지 않는다.
   String? gitBashPath() {
+    if (!Platform.isWindows) return null;
     final sep = Platform.pathSeparator;
     final git = gitPath ?? findExecutable('git', path);
     if (git != null) {
@@ -93,89 +146,122 @@ class CommandRunner {
     return null;
   }
 
-  /// 프로세스에 넘기는 PATH. 지정한 실행 파일의 폴더를 앞에 둔다 — `gh`가 git을
-  /// 부르거나 git이 인증 도우미로 `gh`를 부를 때도 같은 파일을 쓰게 한다.
+  /// 프로세스에 넘기는 PATH. 지정한 실행 파일의 폴더를 앞에 둔다 — `gh`가 git을 부르거나 git이 인증
+  /// 도우미로 `gh`를 부를 때, `flutter`가 `adb`를 찾을 때도 같은 파일을 쓰게 한다.
   String get effectivePath {
     final sep = Platform.isWindows ? ';' : ':';
     final dirs = [
-      for (final p in [gitPath, ghPath])
-        if (p != null) File(p).parent.path,
+      for (final p in toolPaths.values)
+        if (p.isNotEmpty) File(p).parent.path,
     ];
     return [...dirs.toSet(), path].join(sep);
   }
 
-  Map<String, String> _env(String executable) => {
+  Map<String, String> _env(String name) => {
         'PATH': effectivePath,
         'GIT_TERMINAL_PROMPT': '0',
         'GIT_EDITOR': 'true',
         'GH_PROMPT_DISABLED': '1',
         'GH_NO_UPDATE_NOTIFIER': '1',
+        'NO_COLOR': '1',
         // 오류 문구를 영어로 고정해야 오류 설명(error_hints.dart)이 맞는다.
         // 내용(커밋 메시지, 파일 이름)은 바이트 그대로라 영향이 없다.
-        if (executable == 'git') 'LC_ALL': 'C',
-        if (executable == 'gh') 'NO_COLOR': '1',
+        if (name == 'git') 'LC_ALL': 'C',
       };
 
-  /// 명령을 실행하고 로그에 남긴다. [quiet]면 로그에 남기지 않는다
-  /// (상태 새로 고침처럼 자주 도는 읽기 명령).
+  /// 명령을 실행하고 로그에 남긴다.
+  ///
+  /// - [quiet]면 로그에 남기지 않는다 (상태 새로 고침처럼 자주 도는 읽기 명령).
+  /// - [stdin]은 한 번 쓰고 닫는다. [keepStdinOpen]이면 [handle]로 나중에 입력을 보낼 수 있게 열어 둔다.
+  /// - [workingDirectory]를 안 주면 쓸 수 있는 임시 폴더에서 돈다 — 이 앱의 작업 디렉터리(설치 폴더 등)를
+  ///   물려받으면 flutter 가 거기에 hash.txt 를 쓰려다 권한 오류로 실패한다.
+  /// - [cancel]은 [handle]의 옛 이름(Branch 쪽)이다. 둘 다 주면 [handle]이 이긴다.
   Future<CommandResult> run(
     List<String> args, {
-    required String workingDirectory,
+    String? workingDirectory,
+    Map<String, String> environment = const {},
     bool quiet = false,
-    CancelToken? cancel,
     String? stdin,
+    RunHandle? handle,
+    RunHandle? cancel,
+    bool keepStdinOpen = false,
+    void Function(String chunk)? onOutput,
   }) async {
+    final h = handle ?? cancel;
     final entry = quiet ? null : log.start(args);
     final watch = Stopwatch()..start();
+    void finish(int code) {
+      entry
+        ?..exitCode = code
+        ..cancelled = h?.cancelled ?? false
+        ..duration = watch.elapsed;
+      if (entry != null) log.update();
+    }
+
     try {
+      var executable = executableFor(args.first);
+      var arguments = args.sublist(1);
+      var viaShell = Platform.isWindows;
+      final bash = args.first == 'flutter' ? gitBashPath() : null;
+      if (bash != null) {
+        // Windows의 cmd/PowerShell로 `flutter.bat`을 돌리면 오류가 많다 — Git Bash에서
+        // `flutter` 셸 스크립트를 직접 실행한다. 인자는 "$@"로 넘겨 따옴표 문제를 피한다.
+        final script = flutterShellScript(executable, effectivePath);
+        if (script != null) {
+          arguments = ['-c', r'exec "$@"', 'bash', script, ...arguments];
+          executable = bash;
+          viaShell = false;
+        }
+      }
       final process = await Process.start(
-        executableFor(args.first),
-        args.sublist(1),
-        workingDirectory: workingDirectory,
-        environment: _env(args.first),
-        runInShell: Platform.isWindows,
+        executable,
+        arguments,
+        workingDirectory: workingDirectory ?? Directory.systemTemp.path,
+        environment: {..._env(args.first), ...environment},
+        runInShell: viaShell,
       );
-      cancel?._process = process;
+      h?._process = process;
       if (stdin != null) {
         process.stdin.add(_utf8.encode(stdin));
+        await process.stdin.close();
+      } else if (!keepStdinOpen) {
+        await process.stdin.close();
       }
-      await process.stdin.close();
-
       final out = StringBuffer();
       final err = StringBuffer();
-      final outDone = process.stdout.transform(_utf8.decoder).listen((chunk) {
-        out.write(chunk);
-        if (entry != null) {
-          entry.append(chunk);
-          log.update();
-        }
-      }).asFuture<void>();
-      final errDone = process.stderr.transform(_utf8.decoder).listen((chunk) {
-        err.write(chunk);
-        if (entry != null) {
-          entry.append(chunk);
-          log.update();
-        }
-      }).asFuture<void>();
+      void tee(StringBuffer to, String chunk) {
+        to.write(chunk);
+        entry?.append(chunk);
+        onOutput?.call(chunk);
+        if (entry != null) log.update();
+      }
+
+      final outDone = process.stdout.map(decodeProcessOutput).listen((c) => tee(out, c)).asFuture<void>();
+      final errDone = process.stderr.map(decodeProcessOutput).listen((c) => tee(err, c)).asFuture<void>();
       final code = await process.exitCode;
       await Future.wait([outDone, errDone]);
-      if (entry != null) {
-        entry
-          ..exitCode = code
-          ..cancelled = cancel?.cancelled ?? false
-          ..duration = watch.elapsed;
-        log.update();
-      }
+      finish(code);
       return CommandResult(code, out.toString(), err.toString());
     } on ProcessException catch (e) {
-      entry
-        ?..append(e.message)
-        ..exitCode = 127
-        ..duration = watch.elapsed;
-      log.update();
+      entry?.append(e.message);
+      finish(127);
       return CommandResult(127, '', e.message);
     }
   }
+}
+
+/// `flutter` 명령에 해당하는 셸 스크립트(`bin/flutter`, 확장자 없음) 경로. 없으면 null.
+String? flutterShellScript(String executable, String path) {
+  var file = executable;
+  if (executable == 'flutter') {
+    file = findExecutable('flutter', path) ?? '';
+  }
+  if (file.isEmpty) return null;
+  final lower = file.toLowerCase();
+  if (lower.endsWith('.bat') || lower.endsWith('.cmd') || lower.endsWith('.exe')) {
+    file = file.substring(0, file.length - 4);
+  }
+  return File(file).existsSync() ? file.replaceAll('\\', '/') : null;
 }
 
 /// [path]의 폴더들에서 [name] 실행 파일을 찾아 전체 경로를 돌려준다. 없으면 null.
@@ -183,21 +269,20 @@ class CommandRunner {
 String? findExecutable(String name, String path) {
   final windows = Platform.isWindows;
   final names = windows ? ['$name.exe', '$name.cmd', '$name.bat'] : [name];
-  for (final ext in names) {
+  for (final file in names) {
     for (final dir in path.split(windows ? ';' : ':')) {
       if (dir.trim().isEmpty) continue;
-      final file = File('${dir.trim()}${Platform.pathSeparator}$ext');
-      if (file.existsSync()) return file.path;
+      final f = File('${dir.trim()}${Platform.pathSeparator}$file');
+      if (f.existsSync()) return f.path;
     }
   }
   return null;
 }
 
-/// `git`, `gh`를 찾을 PATH를 만든다.
+/// 실행 파일을 찾을 PATH: 이 프로세스의 PATH → 로그인 셸의 PATH → 흔한 설치 위치.
 ///
-/// 순서: 이 프로세스의 PATH → 로그인 셸의 PATH(macOS·Linux) → 흔한 설치 위치.
-/// Finder에서 띄운 macOS 앱의 PATH는 `/usr/bin:/bin:/usr/sbin:/sbin`뿐이라
-/// Homebrew로 설치한 `gh`를 찾지 못한다.
+/// Finder에서 띄운 macOS 앱의 PATH는 `/usr/bin:/bin:/usr/sbin:/sbin`뿐이라 Homebrew로 설치한 `gh`나
+/// 따로 설치한 `flutter`를 찾지 못한다. 두 원본의 흔한 위치를 모두 더했다.
 Future<String> resolvePath() async {
   final sep = Platform.isWindows ? ';' : ':';
   final parts = <String>[];
@@ -213,22 +298,51 @@ Future<String> resolvePath() async {
   if (!Platform.isWindows) {
     final shell = Platform.environment['SHELL'] ?? '/bin/zsh';
     try {
-      final r = await Process.run(shell, ['-lc', r'printf %s "$PATH"'])
-          .timeout(const Duration(seconds: 3));
+      final r = await Process.run(shell, ['-lc', r'printf %s "$PATH"']).timeout(const Duration(seconds: 3));
       if (r.exitCode == 0) addAll(r.stdout as String);
     } on Object {
       // 셸이 느리거나 없으면 흔한 위치로 충분하다.
     }
-    addAll(['/opt/homebrew/bin', '/usr/local/bin', '/usr/bin', '/bin', '/home/linuxbrew/.linuxbrew/bin']
-        .join(sep));
+    addAll('/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/home/linuxbrew/.linuxbrew/bin');
+    addAll(_existing(_commonToolDirs()).join(sep));
   } else {
-    final pf = Platform.environment['ProgramFiles'] ?? r'C:\Program Files';
-    final local = Platform.environment['LOCALAPPDATA'];
-    addAll([
-      '$pf\\Git\\cmd',
-      '$pf\\GitHub CLI',
-      if (local != null) '$local\\Microsoft\\WinGet\\Links',
-    ].join(sep));
+    final env = Platform.environment;
+    final pf = env['ProgramFiles'] ?? r'C:\Program Files';
+    final local = env['LOCALAPPDATA'];
+    addAll(
+      [
+        '$pf\\Git\\cmd',
+        '$pf\\GitHub CLI',
+        if (local != null) '$local\\Microsoft\\WinGet\\Links',
+        ..._existing([
+          if (local != null) '$local\\Android\\Sdk\\platform-tools',
+          if (env['ANDROID_HOME'] != null) '${env['ANDROID_HOME']}\\platform-tools',
+          if (env['ANDROID_SDK_ROOT'] != null) '${env['ANDROID_SDK_ROOT']}\\platform-tools',
+        ]),
+      ].join(sep),
+    );
   }
   return parts.join(sep);
 }
+
+/// 셸 설정(`.zshrc`)에만 PATH를 넣어 둔 도구를 위해 흔한 설치 위치를 더한다 — 실제로 있는 폴더만.
+List<String> _commonToolDirs() {
+  final env = Platform.environment;
+  final home = env['HOME'];
+  return [
+    if (env['ANDROID_HOME'] != null) '${env['ANDROID_HOME']}/platform-tools',
+    if (env['ANDROID_SDK_ROOT'] != null) '${env['ANDROID_SDK_ROOT']}/platform-tools',
+    if (home != null) ...[
+      '$home/Library/Android/sdk/platform-tools',
+      '$home/Android/Sdk/platform-tools',
+      '$home/development/flutter/bin',
+      '$home/flutter/bin',
+      '$home/fvm/default/bin',
+    ],
+  ];
+}
+
+List<String> _existing(List<String> dirs) => [
+      for (final d in dirs)
+        if (Directory(d).existsSync()) d,
+    ];

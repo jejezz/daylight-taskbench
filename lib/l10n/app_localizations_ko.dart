@@ -455,4 +455,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String summaryPull(int count) {
     return 'Pull ↓$count 필요';
   }
+
+  @override
+  String get settingsSectionTools => '도구';
+
+  @override
+  String get toolsIntro =>
+      '앱이 실행하는 외부 도구의 위치입니다. 비워 두면 PATH에서 찾습니다. 직접 지정하면 그 파일을 씁니다.';
+
+  @override
+  String toolsFound(String path) {
+    return '찾음: $path';
+  }
+
+  @override
+  String get toolsNotFound => '찾지 못했습니다';
+
+  @override
+  String get toolsCustom => '직접 지정';
+
+  @override
+  String get toolsBrowse => '찾아보기…';
+
+  @override
+  String get toolsClear => '지정 지우기';
+
+  @override
+  String get toolsPathHint => '실행 파일 경로';
 }
