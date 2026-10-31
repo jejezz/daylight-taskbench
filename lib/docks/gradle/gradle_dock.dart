@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../core/run_session.dart';
+import '../../core/tool_paths.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/taskbench_style.dart';
 import '../../workspace/git_state.dart';
@@ -22,9 +23,12 @@ import 'ui/gradle_dock_body.dart';
 
 class GradleDock extends DockModule {
   // ignore: prefer_initializing_formals
-  GradleDock({this.detector = const GradleDetector(), GradleController? controller}) : _controller = controller;
+  GradleDock({this.detector = const GradleDetector(), this.tools, GradleController? controller}) : _controller = controller;
 
   final ProjectDetector detector;
+
+  /// 설정 창 "도구" 구역에 java 줄을 더하려고 받는다 (없으면 더하지 않음 — 테스트).
+  final ToolPaths? tools;
 
   GradleController? _controller;
 
@@ -79,8 +83,20 @@ class GradleDock extends DockModule {
     _workspace = w;
     _controller ??= GradleController(runner: w.runner, prefs: w.prefs);
     _controller!.addListener(_onController);
+    _registerTools();
     w.addListener(_onWorkspace);
     _onWorkspace();
+  }
+
+  void _registerTools() {
+    final t = tools;
+    if (t == null) return;
+    t.register(const ToolSpec('java', 'java (JDK)'));
+    final previous = t.onChanged;
+    t.onChanged = () {
+      previous?.call();
+      _controller?.toolsChanged();
+    };
   }
 
   @override
@@ -156,8 +172,9 @@ class GradleDock extends DockModule {
       branchChangedWhileRunning = change.to.branch ?? change.to.sha ?? '';
       notifyListeners();
     }
-    // 모듈·변형·작업 목록은 브랜치마다 다를 수 있다.
+    // 모듈·변형·작업 목록은 브랜치마다 다를 수 있다. 점검 결과는 오래된 값이 된다.
     _controller?.invalidateCaches();
+    if (change.kind == HeadChangeKind.branch) _controller?.markDiagnosticsStale();
     _detect(w);
   }
 

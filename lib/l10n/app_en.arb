@@ -329,6 +329,111 @@
       "name": {"type": "String"}
     }
   },
+  "grTabDoctor": "Doctor",
+  "grDoctorRun": "Check again",
+  "grDoctorRunning": "Checking…",
+  "grDoctorNever": "Not checked yet",
+  "grDoctorCollected": "Checked at {time}",
+  "@grDoctorCollected": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "grDoctorStale": "The branch changed since this check. Check again.",
+  "grDoctorAllGood": "Everything looks good.",
+  "grToolPathsOpen": "Choose tool paths…",
+  "grDoctorOpen": "Open Doctor",
+  "grCheckProjectOk": "Build files read ({count} modules)",
+  "@grCheckProjectOk": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "grCheckProjectWarn": "No modules found in the build files",
+  "grCheckProjectFail": "Couldn't read the build files: {reason}",
+  "@grCheckProjectFail": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "grCheckWrapperOk": "Gradle wrapper found",
+  "grCheckWrapperWarn": "No Gradle wrapper. Using the gradle at {gradle}",
+  "@grCheckWrapperWarn": {
+    "placeholders": {
+      "gradle": {"type": "String"}
+    }
+  },
+  "grCheckWrapperFail": "No Gradle wrapper, and no gradle on PATH",
+  "grCheckJdkOk": "JDK {version} (from {source})",
+  "@grCheckJdkOk": {
+    "placeholders": {
+      "version": {"type": "String"},
+      "source": {"type": "String"}
+    }
+  },
+  "grCheckJdkOld": "JDK {version} is older than the JDK {required} that Android Gradle plugin {agp} needs (a rough hint)",
+  "@grCheckJdkOld": {
+    "placeholders": {
+      "version": {"type": "String"},
+      "required": {"type": "String"},
+      "agp": {"type": "String"}
+    }
+  },
+  "grCheckJdkFail": "No JDK found",
+  "grCheckSdkOk": "Android SDK: {dir} ({source})",
+  "@grCheckSdkOk": {
+    "placeholders": {
+      "dir": {"type": "String"},
+      "source": {"type": "String"}
+    }
+  },
+  "grCheckSdkFail": "Android SDK not found",
+  "grCheckPlatformOk": "SDK platform and build tools are installed",
+  "grCheckPlatformOkApi": "SDK platform android-{api} and build tools are installed",
+  "@grCheckPlatformOkApi": {
+    "placeholders": {
+      "api": {"type": "String"}
+    }
+  },
+  "grCheckPlatformFail": "SDK platform android-{api} is missing",
+  "@grCheckPlatformFail": {
+    "placeholders": {
+      "api": {"type": "String"}
+    }
+  },
+  "grCheckPlatformWarn": "No build tools are installed in the SDK",
+  "grCheckLicensesOk": "SDK licenses accepted",
+  "grCheckLicensesWarn": "SDK licenses may not be accepted yet",
+  "grCheckAdbOk": "adb {version}",
+  "@grCheckAdbOk": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "grCheckAdbWarn": "adb is in the SDK but not on PATH ({path})",
+  "@grCheckAdbWarn": {
+    "placeholders": {
+      "path": {"type": "String"}
+    }
+  },
+  "grCheckAdbFail": "adb not found",
+  "grCheckSigningOk": "Release signing is configured",
+  "grCheckSigningWarn": "No signing config found for the release build",
+  "grCheckSigningFail": "The signing keystore file was not found",
+  "grStepsJdkFail": "1. Install a JDK (17 or newer).\n2. Set JAVA_HOME, or choose java under Tool paths.\n3. Press Check again.",
+  "grStepsJdkOld": "Point JAVA_HOME, or org.gradle.java.home in gradle.properties, at a newer JDK. Then check again.",
+  "grStepsSdkFail": "1. Install the Android SDK (Android Studio does this for you).\n2. Set ANDROID_HOME, or add sdk.dir=<path> to local.properties.\n3. Press Check again.",
+  "grStepsPlatformFail": "sdkmanager \"platforms;android-{api}\"",
+  "@grStepsPlatformFail": {
+    "placeholders": {
+      "api": {"type": "String"}
+    }
+  },
+  "grStepsPlatformWarn": "sdkmanager \"build-tools;34.0.0\"",
+  "grStepsLicenses": "sdkmanager --licenses",
+  "grStepsAdb": "Install the Android SDK Platform-Tools and add them to PATH, or choose adb under Tool paths.",
+  "grStepsWrapper": "Run `gradle wrapper` in the project folder, or install Gradle.",
+  "grStepsSigning": "Add a signingConfigs block and use it in the release build type, or point storeFile at an existing keystore.",
   "dockNoProject": "No project to run",
   "dockNoProjectBody": "No Flutter or Gradle project was found in this folder or the folders directly below it. Pick another folder.",
   "dockProjects": "{count} projects",

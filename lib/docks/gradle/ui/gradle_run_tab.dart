@@ -57,10 +57,13 @@ String _failureText(AppLocalizations l10n, GradleFailure f, String? detail) => s
     };
 
 class GradleRunTab extends StatefulWidget {
-  const GradleRunTab({super.key, required this.controller, required this.log});
+  const GradleRunTab({super.key, required this.controller, required this.log, this.onOpenDoctor});
 
   final GradleController controller;
   final CommandLog log;
+
+  /// 실패 원인이 환경 문제일 때 Doctor 탭으로 가는 단추.
+  final VoidCallback? onOpenDoctor;
 
   @override
   State<GradleRunTab> createState() => _GradleRunTabState();
@@ -210,6 +213,11 @@ class _GradleRunTabState extends State<GradleRunTab> {
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.sm),
             child: Text(_failureText(l10n, c.hint!, c.hintDetail), style: TextStyle(color: theme.colorScheme.error)),
+          ),
+        if (c.hint != null && const {GradleFailure.sdkLocation, GradleFailure.licenses, GradleFailure.jdk}.contains(c.hint) && widget.onOpenDoctor != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(onPressed: widget.onOpenDoctor, child: Text(l10n.grDoctorOpen)),
           ),
         ..._outputFolder(l10n),
         const SizedBox(height: AppSpacing.lg),

@@ -1142,6 +1142,252 @@ abstract class AppLocalizations {
   /// **'“{name}”을(를) 찾지 못했습니다. 설치되어 있는지 확인하세요.'**
   String grHintMissingCommand(String name);
 
+  /// No description provided for @grTabDoctor.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검'**
+  String get grTabDoctor;
+
+  /// No description provided for @grDoctorRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 점검'**
+  String get grDoctorRun;
+
+  /// No description provided for @grDoctorRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중…'**
+  String get grDoctorRunning;
+
+  /// No description provided for @grDoctorNever.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 점검하지 않았습니다'**
+  String get grDoctorNever;
+
+  /// No description provided for @grDoctorCollected.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time}에 점검했습니다'**
+  String grDoctorCollected(String time);
+
+  /// No description provided for @grDoctorStale.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 점검 뒤에 브랜치가 바뀌었습니다. 다시 점검하세요.'**
+  String get grDoctorStale;
+
+  /// No description provided for @grDoctorAllGood.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 정상입니다.'**
+  String get grDoctorAllGood;
+
+  /// No description provided for @grToolPathsOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로 지정…'**
+  String get grToolPathsOpen;
+
+  /// No description provided for @grDoctorOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 열기'**
+  String get grDoctorOpen;
+
+  /// No description provided for @grCheckProjectOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 파일을 읽었습니다 (모듈 {count}개)'**
+  String grCheckProjectOk(String count);
+
+  /// No description provided for @grCheckProjectWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 파일에서 모듈을 찾지 못했습니다'**
+  String get grCheckProjectWarn;
+
+  /// No description provided for @grCheckProjectFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 파일을 읽지 못했습니다: {reason}'**
+  String grCheckProjectFail(String reason);
+
+  /// No description provided for @grCheckWrapperOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 래퍼가 있습니다'**
+  String get grCheckWrapperOk;
+
+  /// No description provided for @grCheckWrapperWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 래퍼가 없습니다. {gradle} 의 gradle 을 씁니다'**
+  String grCheckWrapperWarn(String gradle);
+
+  /// No description provided for @grCheckWrapperFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 래퍼도 없고 PATH 에 gradle 도 없습니다'**
+  String get grCheckWrapperFail;
+
+  /// No description provided for @grCheckJdkOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'JDK {version} ({source}에서 찾음)'**
+  String grCheckJdkOk(String version, String source);
+
+  /// No description provided for @grCheckJdkOld.
+  ///
+  /// In ko, this message translates to:
+  /// **'JDK {version} 이 Android Gradle 플러그인 {agp} 이 요구하는 JDK {required} 보다 낮습니다 (대략적인 힌트)'**
+  String grCheckJdkOld(String version, String required, String agp);
+
+  /// No description provided for @grCheckJdkFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'JDK 를 찾지 못했습니다'**
+  String get grCheckJdkFail;
+
+  /// No description provided for @grCheckSdkOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android SDK: {dir} ({source})'**
+  String grCheckSdkOk(String dir, String source);
+
+  /// No description provided for @grCheckSdkFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android SDK 를 찾지 못했습니다'**
+  String get grCheckSdkFail;
+
+  /// No description provided for @grCheckPlatformOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 플랫폼과 빌드 도구가 설치되어 있습니다'**
+  String get grCheckPlatformOk;
+
+  /// No description provided for @grCheckPlatformOkApi.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 플랫폼 android-{api} 와 빌드 도구가 설치되어 있습니다'**
+  String grCheckPlatformOkApi(String api);
+
+  /// No description provided for @grCheckPlatformFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 플랫폼 android-{api} 가 없습니다'**
+  String grCheckPlatformFail(String api);
+
+  /// No description provided for @grCheckPlatformWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 에 빌드 도구가 설치되어 있지 않습니다'**
+  String get grCheckPlatformWarn;
+
+  /// No description provided for @grCheckLicensesOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 라이선스에 동의했습니다'**
+  String get grCheckLicensesOk;
+
+  /// No description provided for @grCheckLicensesWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'SDK 라이선스에 아직 동의하지 않았을 수 있습니다'**
+  String get grCheckLicensesWarn;
+
+  /// No description provided for @grCheckAdbOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb {version}'**
+  String grCheckAdbOk(String version);
+
+  /// No description provided for @grCheckAdbWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb 는 SDK 에 있지만 PATH 에 없습니다 ({path})'**
+  String grCheckAdbWarn(String path);
+
+  /// No description provided for @grCheckAdbFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb 를 찾지 못했습니다'**
+  String get grCheckAdbFail;
+
+  /// No description provided for @grCheckSigningOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 서명이 설정되어 있습니다'**
+  String get grCheckSigningOk;
+
+  /// No description provided for @grCheckSigningWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 빌드의 서명 설정을 찾지 못했습니다'**
+  String get grCheckSigningWarn;
+
+  /// No description provided for @grCheckSigningFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 키스토어 파일을 찾지 못했습니다'**
+  String get grCheckSigningFail;
+
+  /// No description provided for @grStepsJdkFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. JDK(17 이상)를 설치하세요.\n2. JAVA_HOME 을 지정하거나 도구 경로에서 java 를 고르세요.\n3. 다시 점검을 누르세요.'**
+  String get grStepsJdkFail;
+
+  /// No description provided for @grStepsJdkOld.
+  ///
+  /// In ko, this message translates to:
+  /// **'JAVA_HOME 이나 gradle.properties 의 org.gradle.java.home 이 더 높은 버전의 JDK 를 가리키게 하세요. 그다음 다시 점검하세요.'**
+  String get grStepsJdkOld;
+
+  /// No description provided for @grStepsSdkFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Android SDK 를 설치하세요 (Android Studio 가 설치해 줍니다).\n2. ANDROID_HOME 을 지정하거나 local.properties 에 sdk.dir=<경로> 를 적으세요.\n3. 다시 점검을 누르세요.'**
+  String get grStepsSdkFail;
+
+  /// No description provided for @grStepsPlatformFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'sdkmanager \"platforms;android-{api}\"'**
+  String grStepsPlatformFail(String api);
+
+  /// No description provided for @grStepsPlatformWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'sdkmanager \"build-tools;34.0.0\"'**
+  String get grStepsPlatformWarn;
+
+  /// No description provided for @grStepsLicenses.
+  ///
+  /// In ko, this message translates to:
+  /// **'sdkmanager --licenses'**
+  String get grStepsLicenses;
+
+  /// No description provided for @grStepsAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android SDK Platform-Tools 를 설치해 PATH 에 넣거나, 도구 경로에서 adb 를 고르세요.'**
+  String get grStepsAdb;
+
+  /// No description provided for @grStepsWrapper.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 폴더에서 `gradle wrapper` 를 실행하거나 Gradle 을 설치하세요.'**
+  String get grStepsWrapper;
+
+  /// No description provided for @grStepsSigning.
+  ///
+  /// In ko, this message translates to:
+  /// **'signingConfigs 를 추가해 release 빌드 타입에서 쓰거나, storeFile 이 있는 키스토어를 가리키게 하세요.'**
+  String get grStepsSigning;
+
   /// No description provided for @dockNoProject.
   ///
   /// In ko, this message translates to:

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:daylight_taskbench/core/command_runner.dart';
 import 'package:daylight_taskbench/core/devices/adb_devices.dart';
 import 'package:daylight_taskbench/core/devices/mobile_device.dart';
+import 'package:daylight_taskbench/docks/gradle/detect/gradle_project.dart';
+import 'package:daylight_taskbench/docks/gradle/doctor/gradle_diagnostics.dart';
 import 'package:daylight_taskbench/docks/gradle/gradle_dock.dart';
 import 'package:daylight_taskbench/docks/gradle/run/gradle_controller.dart';
 import 'package:daylight_taskbench/docks/gradle/run/gradle_plan.dart';
@@ -17,6 +19,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../test_support.dart';
+
+class _FakeDiagnostics implements GradleDiagnosticsService {
+  @override
+  Future<GradleDiagnostics> collect(GradleProject? project, GradleModule? module, {String? variant}) async => GradleDiagnostics(
+        collectedAt: DateTime(2026, 1, 1, 9, 30),
+        jdk: const JdkInfo(version: '17.0.9', major: 17, source: 'PATH'),
+        wrapperPresent: true,
+      );
+}
 
 class _FakeAdb implements AdbDevices {
   @override
@@ -46,7 +57,7 @@ void main() {
     await tester.runAsync(() async {
       ws = await makeWorkspace();
       ws.attachForTest(FakeGitStateSource(GitState(root: dir.path, branch: 'main', sha: '1')), selectedDir: dir.path);
-      dock = GradleDock(controller: GradleController(runner: ws.runner, prefs: ws.prefs, adb: _FakeAdb(), hostIsWindows: false))..attach(ws);
+      dock = GradleDock(controller: GradleController(runner: ws.runner, prefs: ws.prefs, adb: _FakeAdb(), diagnosticsService: _FakeDiagnostics(), processEnvironment: const {}, hostIsWindows: false))..attach(ws);
       await Future<void>.delayed(const Duration(milliseconds: 200));
     });
     await tester.pumpWidget(MaterialApp(
@@ -117,5 +128,31 @@ void main() {
     await tester.pump();
     expect(find.text('Task name(s)'), findsOneWidget);
     expect(find.text('Load task list'), findsOneWidget);
+  });
+
+  testWidgets('Doctor 탭: 점검 결과가 한 줄씩 보이고, 해결 단계는 펼쳐 본다', (tester) async {
+    androidApp();
+    final (_, _) = await pump(tester);
+    await tester.tap(find.text('Doctor'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Gradle wrapper found'), findsOneWidget);
+    expect(find.textContaining('JDK 17.0.9 (from PATH)'), findsOneWidget);
+    expect(find.text('Android SDK not found'), findsOneWidget);
+    expect(find.text('Check again'), findsOneWidget);
+    await tester.tap(find.text('Android SDK not found'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('ANDROID_HOME'), findsWidgets);
+  });
+
+  testWidgets('JVM 프로젝트는 Run · Doctor · Log 세 탭이다', (tester) async {
+    write('settings.gradle.kts', 'rootProject.name = "tool"');
+    write('build.gradle.kts', 'plugins {\n  kotlin("jvm")\n  application\n}');
+    write('gradlew', '#!/bin/sh\n');
+    await pump(tester);
+    expect(find.text('Run'), findsWidgets);
+    expect(find.text('Doctor'), findsOneWidget);
+    expect(find.text('Log'), findsOneWidget);
+    expect(find.text('Devices'), findsNothing);
   });
 }

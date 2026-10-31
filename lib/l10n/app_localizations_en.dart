@@ -603,6 +603,161 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get grTabDoctor => 'Doctor';
+
+  @override
+  String get grDoctorRun => 'Check again';
+
+  @override
+  String get grDoctorRunning => 'Checking…';
+
+  @override
+  String get grDoctorNever => 'Not checked yet';
+
+  @override
+  String grDoctorCollected(String time) {
+    return 'Checked at $time';
+  }
+
+  @override
+  String get grDoctorStale =>
+      'The branch changed since this check. Check again.';
+
+  @override
+  String get grDoctorAllGood => 'Everything looks good.';
+
+  @override
+  String get grToolPathsOpen => 'Choose tool paths…';
+
+  @override
+  String get grDoctorOpen => 'Open Doctor';
+
+  @override
+  String grCheckProjectOk(String count) {
+    return 'Build files read ($count modules)';
+  }
+
+  @override
+  String get grCheckProjectWarn => 'No modules found in the build files';
+
+  @override
+  String grCheckProjectFail(String reason) {
+    return 'Couldn\'t read the build files: $reason';
+  }
+
+  @override
+  String get grCheckWrapperOk => 'Gradle wrapper found';
+
+  @override
+  String grCheckWrapperWarn(String gradle) {
+    return 'No Gradle wrapper. Using the gradle at $gradle';
+  }
+
+  @override
+  String get grCheckWrapperFail => 'No Gradle wrapper, and no gradle on PATH';
+
+  @override
+  String grCheckJdkOk(String version, String source) {
+    return 'JDK $version (from $source)';
+  }
+
+  @override
+  String grCheckJdkOld(String version, String required, String agp) {
+    return 'JDK $version is older than the JDK $required that Android Gradle plugin $agp needs (a rough hint)';
+  }
+
+  @override
+  String get grCheckJdkFail => 'No JDK found';
+
+  @override
+  String grCheckSdkOk(String dir, String source) {
+    return 'Android SDK: $dir ($source)';
+  }
+
+  @override
+  String get grCheckSdkFail => 'Android SDK not found';
+
+  @override
+  String get grCheckPlatformOk => 'SDK platform and build tools are installed';
+
+  @override
+  String grCheckPlatformOkApi(String api) {
+    return 'SDK platform android-$api and build tools are installed';
+  }
+
+  @override
+  String grCheckPlatformFail(String api) {
+    return 'SDK platform android-$api is missing';
+  }
+
+  @override
+  String get grCheckPlatformWarn => 'No build tools are installed in the SDK';
+
+  @override
+  String get grCheckLicensesOk => 'SDK licenses accepted';
+
+  @override
+  String get grCheckLicensesWarn => 'SDK licenses may not be accepted yet';
+
+  @override
+  String grCheckAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String grCheckAdbWarn(String path) {
+    return 'adb is in the SDK but not on PATH ($path)';
+  }
+
+  @override
+  String get grCheckAdbFail => 'adb not found';
+
+  @override
+  String get grCheckSigningOk => 'Release signing is configured';
+
+  @override
+  String get grCheckSigningWarn =>
+      'No signing config found for the release build';
+
+  @override
+  String get grCheckSigningFail => 'The signing keystore file was not found';
+
+  @override
+  String get grStepsJdkFail =>
+      '1. Install a JDK (17 or newer).\n2. Set JAVA_HOME, or choose java under Tool paths.\n3. Press Check again.';
+
+  @override
+  String get grStepsJdkOld =>
+      'Point JAVA_HOME, or org.gradle.java.home in gradle.properties, at a newer JDK. Then check again.';
+
+  @override
+  String get grStepsSdkFail =>
+      '1. Install the Android SDK (Android Studio does this for you).\n2. Set ANDROID_HOME, or add sdk.dir=<path> to local.properties.\n3. Press Check again.';
+
+  @override
+  String grStepsPlatformFail(String api) {
+    return 'sdkmanager \"platforms;android-$api\"';
+  }
+
+  @override
+  String get grStepsPlatformWarn => 'sdkmanager \"build-tools;34.0.0\"';
+
+  @override
+  String get grStepsLicenses => 'sdkmanager --licenses';
+
+  @override
+  String get grStepsAdb =>
+      'Install the Android SDK Platform-Tools and add them to PATH, or choose adb under Tool paths.';
+
+  @override
+  String get grStepsWrapper =>
+      'Run `gradle wrapper` in the project folder, or install Gradle.';
+
+  @override
+  String get grStepsSigning =>
+      'Add a signingConfigs block and use it in the release build type, or point storeFile at an existing keystore.';
+
+  @override
   String get dockNoProject => 'No project to run';
 
   @override

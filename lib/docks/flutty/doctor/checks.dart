@@ -1,8 +1,11 @@
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 import 'diagnostics.dart';
+import '../../../core/check_status.dart';
 
-enum CheckStatus { ok, warn, fail, info }
+// [Taskbench에서 달라진 곳] CheckStatus 는 core/check_status.dart 로 옮겼다 (Gradle 칸도 쓴다). 다시 내보낸다.
+export '../../../core/check_status.dart';
+
 
 enum CheckId {
   flutter,

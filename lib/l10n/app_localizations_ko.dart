@@ -591,6 +591,159 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get grTabDoctor => '점검';
+
+  @override
+  String get grDoctorRun => '다시 점검';
+
+  @override
+  String get grDoctorRunning => '점검 중…';
+
+  @override
+  String get grDoctorNever => '아직 점검하지 않았습니다';
+
+  @override
+  String grDoctorCollected(String time) {
+    return '$time에 점검했습니다';
+  }
+
+  @override
+  String get grDoctorStale => '마지막 점검 뒤에 브랜치가 바뀌었습니다. 다시 점검하세요.';
+
+  @override
+  String get grDoctorAllGood => '모두 정상입니다.';
+
+  @override
+  String get grToolPathsOpen => '도구 경로 지정…';
+
+  @override
+  String get grDoctorOpen => '점검 열기';
+
+  @override
+  String grCheckProjectOk(String count) {
+    return '빌드 파일을 읽었습니다 (모듈 $count개)';
+  }
+
+  @override
+  String get grCheckProjectWarn => '빌드 파일에서 모듈을 찾지 못했습니다';
+
+  @override
+  String grCheckProjectFail(String reason) {
+    return '빌드 파일을 읽지 못했습니다: $reason';
+  }
+
+  @override
+  String get grCheckWrapperOk => 'Gradle 래퍼가 있습니다';
+
+  @override
+  String grCheckWrapperWarn(String gradle) {
+    return 'Gradle 래퍼가 없습니다. $gradle 의 gradle 을 씁니다';
+  }
+
+  @override
+  String get grCheckWrapperFail => 'Gradle 래퍼도 없고 PATH 에 gradle 도 없습니다';
+
+  @override
+  String grCheckJdkOk(String version, String source) {
+    return 'JDK $version ($source에서 찾음)';
+  }
+
+  @override
+  String grCheckJdkOld(String version, String required, String agp) {
+    return 'JDK $version 이 Android Gradle 플러그인 $agp 이 요구하는 JDK $required 보다 낮습니다 (대략적인 힌트)';
+  }
+
+  @override
+  String get grCheckJdkFail => 'JDK 를 찾지 못했습니다';
+
+  @override
+  String grCheckSdkOk(String dir, String source) {
+    return 'Android SDK: $dir ($source)';
+  }
+
+  @override
+  String get grCheckSdkFail => 'Android SDK 를 찾지 못했습니다';
+
+  @override
+  String get grCheckPlatformOk => 'SDK 플랫폼과 빌드 도구가 설치되어 있습니다';
+
+  @override
+  String grCheckPlatformOkApi(String api) {
+    return 'SDK 플랫폼 android-$api 와 빌드 도구가 설치되어 있습니다';
+  }
+
+  @override
+  String grCheckPlatformFail(String api) {
+    return 'SDK 플랫폼 android-$api 가 없습니다';
+  }
+
+  @override
+  String get grCheckPlatformWarn => 'SDK 에 빌드 도구가 설치되어 있지 않습니다';
+
+  @override
+  String get grCheckLicensesOk => 'SDK 라이선스에 동의했습니다';
+
+  @override
+  String get grCheckLicensesWarn => 'SDK 라이선스에 아직 동의하지 않았을 수 있습니다';
+
+  @override
+  String grCheckAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String grCheckAdbWarn(String path) {
+    return 'adb 는 SDK 에 있지만 PATH 에 없습니다 ($path)';
+  }
+
+  @override
+  String get grCheckAdbFail => 'adb 를 찾지 못했습니다';
+
+  @override
+  String get grCheckSigningOk => '릴리스 서명이 설정되어 있습니다';
+
+  @override
+  String get grCheckSigningWarn => '릴리스 빌드의 서명 설정을 찾지 못했습니다';
+
+  @override
+  String get grCheckSigningFail => '서명 키스토어 파일을 찾지 못했습니다';
+
+  @override
+  String get grStepsJdkFail =>
+      '1. JDK(17 이상)를 설치하세요.\n2. JAVA_HOME 을 지정하거나 도구 경로에서 java 를 고르세요.\n3. 다시 점검을 누르세요.';
+
+  @override
+  String get grStepsJdkOld =>
+      'JAVA_HOME 이나 gradle.properties 의 org.gradle.java.home 이 더 높은 버전의 JDK 를 가리키게 하세요. 그다음 다시 점검하세요.';
+
+  @override
+  String get grStepsSdkFail =>
+      '1. Android SDK 를 설치하세요 (Android Studio 가 설치해 줍니다).\n2. ANDROID_HOME 을 지정하거나 local.properties 에 sdk.dir=<경로> 를 적으세요.\n3. 다시 점검을 누르세요.';
+
+  @override
+  String grStepsPlatformFail(String api) {
+    return 'sdkmanager \"platforms;android-$api\"';
+  }
+
+  @override
+  String get grStepsPlatformWarn => 'sdkmanager \"build-tools;34.0.0\"';
+
+  @override
+  String get grStepsLicenses => 'sdkmanager --licenses';
+
+  @override
+  String get grStepsAdb =>
+      'Android SDK Platform-Tools 를 설치해 PATH 에 넣거나, 도구 경로에서 adb 를 고르세요.';
+
+  @override
+  String get grStepsWrapper =>
+      '프로젝트 폴더에서 `gradle wrapper` 를 실행하거나 Gradle 을 설치하세요.';
+
+  @override
+  String get grStepsSigning =>
+      'signingConfigs 를 추가해 release 빌드 타입에서 쓰거나, storeFile 이 있는 키스토어를 가리키게 하세요.';
+
+  @override
   String get dockNoProject => '실행할 프로젝트 없음';
 
   @override

@@ -10,6 +10,7 @@ import 'package:daylight_taskbench/core/devices/mobile_device.dart';
 import 'package:daylight_taskbench/core/run_session.dart';
 import 'package:daylight_taskbench/docks/gradle/detect/gradle_parse.dart';
 import 'package:daylight_taskbench/docks/gradle/detect/gradle_project.dart';
+import 'package:daylight_taskbench/docks/gradle/doctor/gradle_diagnostics.dart';
 import 'package:daylight_taskbench/docks/gradle/run/gradle_controller.dart';
 import 'package:daylight_taskbench/docks/gradle/run/gradle_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,6 +31,24 @@ class _FakeAdb implements AdbDevices {
   Future<List<MobileDevice>> list() async {
     calls++;
     return devices;
+  }
+}
+
+class _FakeDiagnostics implements GradleDiagnosticsService {
+  final String jdkHome = '/opt/jdk17';
+  final String sdkDir = '/opt/sdk';
+  int calls = 0;
+
+  @override
+  Future<GradleDiagnostics> collect(GradleProject? project, GradleModule? module, {String? variant}) async {
+    calls++;
+    return GradleDiagnostics(
+      collectedAt: DateTime(2026),
+      jdk: JdkInfo(home: jdkHome, version: '17.0.9', major: 17, source: 'java_home'),
+      sdk: SdkInfo(dir: sdkDir, source: 'default location'),
+      wrapperPresent: true,
+      adbVersion: '1.0.41',
+    );
   }
 }
 
@@ -62,12 +81,23 @@ void main() {
         ],
       );
 
-  GradleController make({List<MobileDevice> devices = const [_pixel]}) =>
-      GradleController(runner: runner, prefs: prefs, adb: _FakeAdb(devices), hostIsWindows: false);
+  late _FakeDiagnostics diag;
+  Map<String, String> processEnv = {};
+
+  GradleController make({List<MobileDevice> devices = const [_pixel]}) => GradleController(
+        runner: runner,
+        prefs: prefs,
+        adb: _FakeAdb(devices),
+        diagnosticsService: diag,
+        processEnvironment: processEnv,
+        hostIsWindows: false,
+      );
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     prefs = await SharedPreferences.getInstance();
+    diag = _FakeDiagnostics();
+    processEnv = {};
     dir = await tempDir('gradlectl');
     runner = CommandRunner(log: CommandLog(), path: Platform.environment['PATH'] ?? '');
   });
@@ -238,9 +268,67 @@ void main() {
     expect(runner.log.last!.commandLine, './gradlew --console=plain tasks --all -q');
   }, skip: skip);
 
+  test('칸을 펼치면 환경을 점검하고, 환경에 없는 JAVA_HOME·ANDROID_HOME 만 명령에 넣는다', () async {
+    final c = make()..setProject(androidProject());
+    expect(diag.calls, 0, reason: '펼치기 전에는 점검하지 않는다');
+    expect(c.runEnvironment, isEmpty);
+    await c.init();
+    expect(diag.calls, 1);
+    expect(c.diagnostics, isNotNull);
+    expect(c.runEnvironment, {'JAVA_HOME': '/opt/jdk17', 'ANDROID_HOME': '/opt/sdk'});
+    expect(c.plan.steps.first.commandLine, startsWith('JAVA_HOME=/opt/jdk17 ANDROID_HOME=/opt/sdk ANDROID_SERIAL=R58M123 ./gradlew'));
+    processEnv = {'JAVA_HOME': '/mine'};
+    final d = GradleController(runner: runner, prefs: prefs, adb: _FakeAdb(const [_pixel]), diagnosticsService: diag, processEnvironment: processEnv, hostIsWindows: false)..setProject(androidProject());
+    await d.init();
+    expect(d.runEnvironment, {'ANDROID_HOME': '/opt/sdk'}, reason: '사용자가 이미 정한 JAVA_HOME 은 그대로');
+  });
+
+  test('시작할 때 아직 점검하지 않았다면 먼저 점검한다 (JAVA_HOME 을 알아야 하므로)', () async {
+    await exe('gradlew', 'echo "home=\$JAVA_HOME sdk=\$ANDROID_HOME"');
+    final c = make()..setProject(androidProject());
+    c.selectAction(GradleAction.assemble);
+    await c.start();
+    expect(diag.calls, 1);
+    expect(runner.log.last!.output, contains('home=/opt/jdk17 sdk=/opt/sdk'));
+  }, skip: skip);
+
+  test('브랜치가 바뀌면 점검 결과가 오래된 값이 되고, 다시 점검하면 새로 고친다', () async {
+    final c = make()..setProject(androidProject());
+    c.markDiagnosticsStale();
+    expect(c.diagnosticsStale, isFalse, reason: '칸을 펼치기 전에는 표시할 결과가 없다');
+    await c.init();
+    c.markDiagnosticsStale();
+    expect(c.diagnosticsStale, isTrue);
+    await c.runDiagnostics();
+    expect(c.diagnosticsStale, isFalse);
+    expect(diag.calls, 2);
+  });
+
+  test('모듈·릴리스 변형을 바꾸면 점검을 다시 한다', () async {
+    final c = make()..setProject(androidProject());
+    await c.init();
+    expect(diag.calls, 1);
+    c.selectVariant('release');
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(diag.calls, 2, reason: '릴리스가 되면 서명 점검이 더해진다');
+    c.selectVariant('debug');
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(diag.calls, 3);
+  });
+
+  test('도구 경로가 바뀌면 점검을 다시 한다', () async {
+    final c = make()..setProject(androidProject());
+    c.toolsChanged();
+    expect(diag.calls, 0, reason: '펼치기 전');
+    await c.init();
+    c.toolsChanged();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(diag.calls, 2);
+  });
+
   test('탭은 이름으로 저장한다', () {
     final c = make()..setProject(androidProject());
-    c.selectTab(2);
+    c.selectTab(3);
     expect(prefs.getString('gradle.last_tab_id'), 'log');
   });
 }

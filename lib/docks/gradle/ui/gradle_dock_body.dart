@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../workspace/workspace.dart';
 import '../gradle_dock.dart';
+import 'gradle_doctor_tab.dart';
 import 'gradle_run_tab.dart';
 
 class GradleDockBody extends StatefulWidget {
@@ -32,7 +33,7 @@ class _GradleDockBodyState extends State<GradleDockBody> with TickerProviderStat
     widget.dock.ensureStarted();
   }
 
-  /// 탭 개수는 프로젝트 모양에 따라 다르다 (Android 앱: Run·Devices·Log, JVM: Run·Log).
+  /// 탭 개수는 프로젝트 모양에 따라 다르다 (Android 앱: Run·Devices·Doctor·Log, JVM: Run·Doctor·Log).
   TabController _controllerFor(int length, int initial) {
     final t = _tabs;
     if (t != null && t.length == length) return t;
@@ -61,7 +62,7 @@ class _GradleDockBodyState extends State<GradleDockBody> with TickerProviderStat
         final project = dock.project;
         if (selected == null || c == null) return const SizedBox.shrink();
         final android = c.isAndroid;
-        final tabs = _controllerFor(android ? 3 : 2, 0);
+        final tabs = _controllerFor(android ? 4 : 3, 0);
         final theme = Theme.of(context);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -110,6 +111,7 @@ class _GradleDockBodyState extends State<GradleDockBody> with TickerProviderStat
               tabs: [
                 _tab(Icons.play_circle_outline_rounded, l10n.grTabRun),
                 if (android) _tab(Icons.smartphone_rounded, l10n.grTabDevices),
+                _tab(Icons.health_and_safety_outlined, l10n.grTabDoctor),
                 _tab(Icons.history_rounded, l10n.grTabLog),
               ],
             ),
@@ -117,7 +119,7 @@ class _GradleDockBodyState extends State<GradleDockBody> with TickerProviderStat
               child: TabBarView(
                 controller: tabs,
                 children: [
-                  GradleRunTab(controller: c, log: w.runner.log),
+                  GradleRunTab(controller: c, log: w.runner.log, onOpenDoctor: () => tabs.animateTo(android ? 2 : 1)),
                   if (android)
                     ListView(
                       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -131,6 +133,7 @@ class _GradleDockBodyState extends State<GradleDockBody> with TickerProviderStat
                         ),
                       ],
                     ),
+                  GradleDoctorTab(controller: c),
                   LogTab(log: w.runner.log),
                 ],
               ),

@@ -11,16 +11,29 @@ import '../../../core/devices/adb_devices.dart';
 import '../../../core/devices/mobile_device.dart';
 import '../../../core/run_session.dart';
 import '../detect/gradle_project.dart';
+import '../doctor/gradle_diagnostics.dart';
 import 'gradle_plan.dart';
 
 class GradleController extends ChangeNotifier {
-  GradleController({required this.runner, required this.prefs, AdbDevices? adb, bool? hostIsWindows})
-      : adb = adb ?? AdbDevices(runner),
+  GradleController({
+    required this.runner,
+    required this.prefs,
+    AdbDevices? adb,
+    GradleDiagnosticsService? diagnosticsService,
+    Map<String, String>? processEnvironment,
+    bool? hostIsWindows,
+  })  : adb = adb ?? AdbDevices(runner),
+        diagnosticsService = diagnosticsService ?? ProcessGradleDiagnostics(runner),
+        processEnvironment = processEnvironment ?? Platform.environment,
         hostIsWindows = hostIsWindows ?? Platform.isWindows;
 
   final CommandRunner runner;
   final SharedPreferences prefs;
   final AdbDevices adb;
+  final GradleDiagnosticsService diagnosticsService;
+
+  /// 이 앱이 받은 환경 변수. 여기에 없는 JAVA_HOME·ANDROID_HOME 만 찾아서 넣어 준다.
+  final Map<String, String> processEnvironment;
   final bool hostIsWindows;
 
   // 저장 키는 모두 `gradle.` 접두어. 폴더마다 따로 저장하는 값은 `<접두어>:<프로젝트 경로>`.
@@ -32,8 +45,8 @@ class GradleController extends ChangeNotifier {
   static const _deviceKeyPrefix = 'gradle.project_device:';
   static const _taskKeyPrefix = 'gradle.task:';
 
-  /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다. (Doctor 는 이어지는 단계에서 붙는다.)
-  static const tabIds = ['run', 'devices', 'log'];
+  /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다.
+  static const tabIds = ['run', 'devices', 'doctor', 'log'];
 
   GradleProject? project;
   GradleModule? module;
@@ -62,10 +75,20 @@ class GradleController extends ChangeNotifier {
   int tabIndex = 0;
   bool started = false;
 
+  /// 환경 점검 결과. 브랜치가 바뀐 뒤에는 오래된 값으로 표시한다 (§1.10).
+  GradleDiagnostics? diagnostics;
+  bool diagnosing = false;
+  bool diagnosticsStale = false;
+
   late final RunSession _session = RunSession(runner);
 
   bool get isAndroid => project?.shape == GradleShape.androidApp;
   bool get busy => running || loadingVariants || loadingTasks;
+
+  List<GradleCheck> get checks => buildGradleChecks(diagnostics: diagnostics, project: project, module: module);
+
+  /// 찾아 낸 JDK·SDK 위치 중 환경에 없는 것 — 실행할 때 넣어 주고 명령 미리보기에도 보인다.
+  Map<String, String> get runEnvironment => diagnostics?.runEnvironment(processEnvironment) ?? const {};
 
   List<GradleModule> get runnableModules => [for (final m in project?.modules ?? const <GradleModule>[]) if (m.isRunnable) m];
 
@@ -94,6 +117,7 @@ class GradleController extends ChangeNotifier {
         device: selectedDevice,
         customTask: customTask,
         isWindows: hostIsWindows,
+        extraEnvironment: runEnvironment,
       );
 
   /// 칸이 처음 펼쳐질 때 불린다 — 기기 목록을 읽는다 (프로세스를 띄우는 일은 여기서부터).
@@ -102,7 +126,7 @@ class GradleController extends ChangeNotifier {
     started = true;
     final i = tabIds.indexOf(prefs.getString(_tabIdKey) ?? '');
     if (i >= 0) tabIndex = i;
-    if (isAndroid) await refreshDevices();
+    await Future.wait([if (isAndroid) refreshDevices(), runDiagnostics()]);
   }
 
   void ensureStarted() {
@@ -162,13 +186,20 @@ class GradleController extends ChangeNotifier {
     final allowed = actions;
     if (!allowed.contains(action)) action = allowed.first;
     notifyListeners();
+    // 모듈마다 compileSdk 가 다르므로 점검을 다시 한다.
+    if (started) runDiagnostics();
   }
 
   void selectVariant(String v) {
+    final releaseChanged = _isRelease(variant) != _isRelease(v);
     variant = v;
     prefs.setString(_k(_variantKeyPrefix), v);
     notifyListeners();
+    // 릴리스 변형이면 서명 점검이 더해진다.
+    if (started && releaseChanged) runDiagnostics();
   }
+
+  bool _isRelease(String? v) => v != null && module?.android != null && splitVariantType(v, module!.android!.buildTypes) == 'release';
 
   void selectAction(GradleAction a) {
     action = a;
@@ -211,8 +242,33 @@ class GradleController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 환경(JDK·SDK·adb·래퍼·서명)을 점검한다. 느린 일이라 칸이 처음 펼쳐질 때와 사용자가 요청할 때만 한다.
+  Future<void> runDiagnostics() async {
+    if (diagnosing) return;
+    diagnosing = true;
+    notifyListeners();
+    diagnostics = await diagnosticsService.collect(project, module, variant: variant);
+    diagnosticsStale = false;
+    diagnosing = false;
+    notifyListeners();
+  }
+
+  /// 도구 경로를 바꾼 뒤 — 점검을 다시 한다.
+  void toolsChanged() {
+    if (started) runDiagnostics();
+  }
+
+  /// 브랜치가 바뀐 뒤 점검 결과를 오래된 것으로 표시한다 (§1.10).
+  void markDiagnosticsStale() {
+    if (!started || diagnostics == null || diagnosticsStale) return;
+    diagnosticsStale = true;
+    notifyListeners();
+  }
+
   /// 계획의 단계를 차례로 실행한다. 하나라도 실패하면 거기서 멈춘다.
   Future<void> start() async {
+    // 환경 점검 전에는 JAVA_HOME·ANDROID_HOME 을 알 수 없다 — 먼저 점검한다.
+    if (diagnostics == null && !running) await runDiagnostics();
     final p = plan;
     if (running || !p.runnable) return;
     running = true;
@@ -251,7 +307,7 @@ class GradleController extends ChangeNotifier {
     loadingVariants = true;
     notifyListeners();
     final prefix = m.path == ':' ? '' : '${m.path}:';
-    final r = await runner.run(await _gradleArgs(['${prefix}tasks', '--group=install', '-q']), workingDirectory: project!.path);
+    final r = await runner.run(await _gradleArgs(['${prefix}tasks', '--group=install', '-q']), workingDirectory: project!.path, environment: runEnvironment);
     final list = r.ok ? parseInstallVariants(r.stdout) : <String>[];
     if (list.isNotEmpty) {
       exactVariants = list;
@@ -266,7 +322,7 @@ class GradleController extends ChangeNotifier {
     if (project == null || loadingTasks) return;
     loadingTasks = true;
     notifyListeners();
-    final r = await runner.run(await _gradleArgs(['tasks', '--all', '-q']), workingDirectory: project!.path);
+    final r = await runner.run(await _gradleArgs(['tasks', '--all', '-q']), workingDirectory: project!.path, environment: runEnvironment);
     if (r.ok) tasks = parseTasks(r.stdout);
     loadingTasks = false;
     notifyListeners();
@@ -275,7 +331,7 @@ class GradleController extends ChangeNotifier {
   /// 백그라운드에 남은 Gradle 데몬을 모두 끈다.
   Future<void> stopDaemons() async {
     if (project == null) return;
-    await runner.run(await _gradleArgs(['--stop']), workingDirectory: project!.path);
+    await runner.run(await _gradleArgs(['--stop']), workingDirectory: project!.path, environment: runEnvironment);
   }
 
   /// 브랜치가 바뀌었다 — 모듈·변형·작업 목록은 브랜치마다 다를 수 있으므로 버린다.

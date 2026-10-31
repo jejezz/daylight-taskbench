@@ -238,6 +238,7 @@ GradlePlan buildGradlePlan({
   MobileDevice? device,
   String? customTask,
   bool isWindows = false,
+  Map<String, String> extraEnvironment = const {},
 }) {
   if (project == null) return const GradlePlan(blocker: GradleBlocker.noProject);
   // 모듈이 없어도 clean 과 사용자가 고른 작업은 프로젝트 루트에서 돌릴 수 있다.
@@ -273,8 +274,9 @@ GradlePlan buildGradlePlan({
       GradleStepKind.gradle,
       args,
       workingDirectory: project.path,
-      // Gradle 은 연결된 모든 기기에 설치하므로 고른 기기 하나로 좁힌다 (AGP 가 ANDROID_SERIAL 을 읽는다).
-      environment: _needsDevice(action) ? {'ANDROID_SERIAL': device!.id} : const {},
+      // extraEnvironment: 앱이 찾아 낸 JAVA_HOME·ANDROID_HOME (환경에 없을 때만). 화면의 명령에도 그대로 보인다.
+      // ANDROID_SERIAL: Gradle 은 연결된 모든 기기에 설치하므로 고른 기기 하나로 좁힌다 (AGP 가 읽는다).
+      environment: {...extraEnvironment, if (_needsDevice(action)) 'ANDROID_SERIAL': device!.id},
       interactive: interactive,
     ),
   ];

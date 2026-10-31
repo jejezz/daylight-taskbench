@@ -14,7 +14,7 @@ import 'gradle/gradle_dock.dart';
 List<DockModule> createDocks({ToolPaths? tools}) => [
       BranchDock(),
       FluttyDock(tools: tools),
-      GradleDock(),
+      GradleDock(tools: tools),
       // 나중에: RustDock(), ElectronDock() …
     ];
 

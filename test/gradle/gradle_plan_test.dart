@@ -91,6 +91,20 @@ void main() {
       expect(_plan(GradleAction.assemble, device: null).steps.single.environment, isEmpty);
     });
 
+    test('앱이 찾은 JAVA_HOME·ANDROID_HOME 은 명령 앞에 그대로 보이고, 기기 지정과 함께 간다', () {
+      final plan = buildGradlePlan(
+        project: _project([_app]),
+        module: _app,
+        variant: 'freeDebug',
+        action: GradleAction.install,
+        options: const GradleOptions(),
+        device: _device,
+        extraEnvironment: const {'JAVA_HOME': '/jdk', 'ANDROID_HOME': '/sdk'},
+      );
+      expect(plan.steps.single.commandLine, 'JAVA_HOME=/jdk ANDROID_HOME=/sdk ANDROID_SERIAL=R58M123 ./gradlew --console=plain :app:installFreeDebug');
+      expect(plan.steps.single.environment, {'JAVA_HOME': '/jdk', 'ANDROID_HOME': '/sdk', 'ANDROID_SERIAL': 'R58M123'});
+    });
+
     test('래퍼가 없으면 시스템 gradle, Windows 는 gradlew.bat', () {
       expect(_plan(GradleAction.assemble, wrapper: false).steps.single.args.first, 'gradle');
       expect(_plan(GradleAction.assemble, windows: true).steps.single.args.first, 'gradlew.bat');
