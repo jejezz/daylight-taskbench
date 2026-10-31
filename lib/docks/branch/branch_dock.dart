@@ -9,8 +9,26 @@ import '../../ui/style/status_pill.dart';
 import '../../workspace/git_state.dart';
 import '../../workspace/workspace.dart';
 import '../dock_module.dart';
+import 'ui/branch_dock_body.dart';
 
 class BranchDock extends DockModule {
+  /// 브랜치가 바뀔 때마다 늘어난다 — 본문이 "닫아 둔 안내"를 다시 보이게 하는 신호.
+  int epoch = 0;
+
+  int? _tabRequest;
+
+  /// 공유 영역 등 바깥에서 특정 탭으로 가 달라고 요청한다.
+  void showTab(int index) {
+    _tabRequest = index;
+    notifyListeners();
+  }
+
+  int? takeTabRequest() {
+    final t = _tabRequest;
+    _tabRequest = null;
+    return t;
+  }
+
   /// 받은 HeadChange 를 최근 순으로 적어 둔다 (자리표시자 확인용, 계약 테스트도 이것을 본다).
   final List<HeadChange> received = [];
 
@@ -27,8 +45,12 @@ class BranchDock extends DockModule {
   TaskbenchMood mood(Workspace w) => w.git?.operation == RepoOperation.none || w.git == null ? TaskbenchMood.idle : TaskbenchMood.failed;
 
   @override
+  bool busy(Workspace w) => w.repo?.busy ?? false;
+
+  @override
   void onHeadChange(Workspace w, HeadChange change) {
     received.insert(0, change);
+    if (change.kind == HeadChangeKind.branch) epoch++;
     if (received.length > 20) received.removeLast();
     notifyListeners();
   }
@@ -48,50 +70,5 @@ class BranchDock extends DockModule {
   }
 
   @override
-  Widget body(BuildContext context, Workspace w) => _PlaceholderBody(dock: this, workspace: w);
-}
-
-class _PlaceholderBody extends StatelessWidget {
-  const _PlaceholderBody({required this.dock, required this.workspace});
-
-  final BranchDock dock;
-  final Workspace workspace;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return ListenableBuilder(
-      listenable: Listenable.merge([dock, workspace]),
-      builder: (context, _) {
-        final g = workspace.git;
-        return ListView(
-          padding: const EdgeInsets.all(12),
-          children: [
-            Text(l10n.dockPlaceholderBranch, style: theme.textTheme.bodySmall),
-            const SizedBox(height: 12),
-            if (g != null)
-              SelectableText(
-                'root: ${g.root}\nbranch: ${g.branch ?? '(detached)'}  sha: ${(g.sha == null ? '-' : g.sha!.substring(0, g.sha!.length < 7 ? g.sha!.length : 7))}\n'
-                'upstream: ${g.upstream ?? '-'}  ↑${g.ahead} ↓${g.behind}  changes: ${g.changedCount}  op: ${g.operation.name}',
-                style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'Menlo'),
-              ),
-            const SizedBox(height: 12),
-            for (final c in dock.received.take(8))
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  l10n.dockLastChange(switch (c.kind) {
-                    HeadChangeKind.branch => l10n.dockChangeBranch(c.from.branch ?? l10n.branchDetached, c.to.branch ?? l10n.branchDetached),
-                    HeadChangeKind.commit => l10n.dockChangeCommit,
-                    HeadChangeKind.operation => l10n.dockChangeOperation,
-                  }),
-                  style: theme.textTheme.bodySmall,
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
+  Widget body(BuildContext context, Workspace w) => BranchDockBody(workspace: w, dock: this);
 }

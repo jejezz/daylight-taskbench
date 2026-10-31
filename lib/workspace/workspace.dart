@@ -12,11 +12,13 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/command_runner.dart';
+import '../core/vscode.dart';
 import '../docks/branch/git/commands.dart';
 import '../docks/branch/repo/environment.dart';
+import '../docks/branch/repo/repo_controller.dart';
 import 'git_state.dart';
 
-enum OpenFailure { notFound, notARepository }
+export '../docks/branch/repo/repo_controller.dart' show OpenFailure;
 
 /// [Workspace.open] / [Workspace.openDropped] 의 결과.
 enum OpenOutcome {
@@ -80,6 +82,20 @@ class Workspace extends ChangeNotifier {
   /// 칸이 디렉터리별 선택(예: 프로젝트 드롭다운)을 기억하는 데 쓴다 — 키는 `<칸 id>.…` 접두어.
   SharedPreferences get prefs => _prefs;
 
+  /// 편집기에서 열기에 쓸 명령(예: `code`). 비어 있으면 VS Code 를 찾는다. 공통 설정 키 `editor_command`.
+  String get editorCommand => _prefs.getString('editor_command') ?? '';
+  Future<void> setEditorCommand(String command) async {
+    await _prefs.setString('editor_command', command.trim());
+    notifyListeners();
+  }
+
+  /// [root] 폴더를 편집기로 여는 명령. 편집기를 못 찾으면 null.
+  Future<List<String>?> folderEditorCommand(String root) async {
+    final editor = editorCommand;
+    if (editor.isNotEmpty) return [...editor.split(RegExp(r'\s+')), root];
+    return vscodeOpenCommand(root, path: runner.effectivePath);
+  }
+
   List<String> get recent => _recent;
   EnvironmentStatus get environment => _env;
 
@@ -89,6 +105,9 @@ class Workspace extends ChangeNotifier {
   /// 열린 저장소(worktree) 루트. 닫혀 있으면 null.
   String? get root => _git?.root;
   GitState? get git => _git;
+
+  /// 열린 저장소의 전체 상태·동작 (Branch Dock 이 쓴다). 닫혀 있거나 테스트용 가짜 원본이면 null.
+  RepoController? get repo => (_source is RepoGitStateSource) ? (_source as RepoGitStateSource).repo : null;
   bool get isOpen => _git != null;
   bool get opening => _opening;
   OpenFailure? get failure => _failure;
@@ -97,13 +116,29 @@ class Workspace extends ChangeNotifier {
   /// 브랜치 전환·커밋 이동·병합 시작/끝. 같은 저장소 안에서만 나온다.
   Stream<HeadChange> get headChanges => _headChanges.stream;
 
+  /// 셸이 등록하는 저장소 열기·폴더 고르기 처리 (확인 창·안내 포함). 칸은 이것을 통해 저장소를 연다.
+  Future<void> Function(String path)? openHandler;
+  Future<void> Function()? pickFolderHandler;
+
+  Future<void> requestOpen(String path) async {
+    final h = openHandler;
+    if (h != null) {
+      await h(path);
+    } else {
+      await open(path);
+    }
+  }
+
+  Future<void> requestPickFolder() async => pickFolderHandler?.call();
+
   /// 칸이 "지금 중단하면 안 되는 일(빌드·실행·병합 중)"을 알려 주는 검사를 등록한다.
   void registerBusyCheck(bool Function() check) => _busy.add(check);
   void unregisterBusyCheck(bool Function() check) => _busy.remove(check);
   bool get hasRunningWork => _busy.any((c) => c());
 
   Future<void> checkEnvironment({String? cwd}) async {
-    _env = await EnvironmentStatus.check(runner, cwd ?? Directory.current.path);
+    _env = await EnvironmentStatus.check(runner, cwd ?? Directory.systemTemp.path);
+    repo?.ghReady = _env.ghReady;
     notifyListeners();
   }
 
@@ -136,11 +171,11 @@ class Workspace extends ChangeNotifier {
     _opening = true;
     notifyListeners();
     try {
-      final gd = await runner.run(GitCommands.gitDir, workingDirectory: newRoot, quiet: true);
-      final gitDir = gd.ok && gd.stdout.trim().isNotEmpty ? gd.stdout.trim() : '$newRoot/.git';
-      final source = ProcessGitStateSource(runner: runner, root: newRoot, gitDir: gitDir);
-      await source.start();
-      _attach(source, source.current ?? GitState(root: newRoot));
+      final (controller, failure) = await RepoController.open(runner, newRoot);
+      if (controller == null) return _fail(failure ?? OpenFailure.notARepository, dir);
+      controller.ghReady = _env.ghReady;
+      final source = RepoGitStateSource(controller);
+      _attach(source, source.current);
       _selectedDir = dir;
       _failure = null;
       _failedPath = null;

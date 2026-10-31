@@ -339,5 +339,2389 @@
   "toolsCustom": "Custom",
   "toolsBrowse": "Browse…",
   "toolsClear": "Clear",
-  "toolsPathHint": "Path to the executable"
+  "toolsPathHint": "Path to the executable",
+  "bdAboutTagline": "A desktop companion for Git and the GitHub CLI",
+  "bdAboutDescription": "Dock it beside your editor and handle branches, tags, merges, pull/push, remotes and releases with buttons that show the exact git and gh commands they run.",
+  "bdHomeEmptyTitle": "Choose a repository to get started",
+  "bdHomeEmptyAction": "Open repository",
+  "bdAppBarRefresh": "Refresh",
+  "bdAppBarPin": "Keep on top",
+  "bdAppBarUnpin": "Stop keeping on top",
+  "bdMenuOpenFolder": "Open another folder…",
+  "bdMenuEditor": "Editor for opening files…",
+  "bdMenuEnvironment": "Check git and gh",
+  "bdMenuCloseRepo": "Close repository",
+  "bdHostOther": "Other git server",
+  "bdCommonCopy": "Copy",
+  "bdCommonCopied": "Copied",
+  "bdCommonMore": "More",
+  "bdCommonSave": "Save",
+  "bdCommandPreviewLabel": "Command to run",
+  "bdStartDropHint": "You can also drop a git repository folder on this window.",
+  "bdStartRemoveRecent": "Remove from list",
+  "bdStartNotARepository": "This folder isn't a git repository: {path}",
+  "@bdStartNotARepository": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStartNotFound": "Folder not found: {path}",
+  "@bdStartNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvTitle": "git and GitHub CLI",
+  "bdEnvGitRequired": "Branch Dock runs the git installed on your computer. Install git first.",
+  "bdEnvGitOnlyNote": "Branches, pull and push work without gh. Publishing to GitHub, pull requests and releases need gh and a login.",
+  "bdEnvVersion": "Version {version}",
+  "@bdEnvVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvNotInstalled": "Not installed, or not found",
+  "bdEnvLogin": "GitHub login",
+  "bdEnvLoggedInAs": "Logged in as {login}",
+  "@bdEnvLoggedInAs": {
+    "placeholders": {
+      "login": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvNotLoggedIn": "Not logged in. Run this in a terminal.",
+  "bdEnvRecheck": "Check again",
+  "bdEnvGhMissing": "Needs the GitHub CLI (gh), which isn't installed. See Check git and gh in the menu.",
+  "bdEnvGhLoggedOut": "Log in to gh first: run gh auth login in a terminal.",
+  "bdHeaderOpenFolder": "Open this folder in the editor",
+  "bdVscodeMissingTitle": "VS Code not found",
+  "bdVscodeMissingMessage": "Install VS Code to open the folder where the current branch is checked out with this button. To use another editor, enter its command (cursor, zed, …) under ‘Editor for opening files…’ in the repository menu.",
+  "bdVscodeDownload": "Get VS Code",
+  "bdHeaderBranchTooltip": "Show branches",
+  "bdHeaderDetached": "Detached HEAD",
+  "bdHeaderNoUpstream": "Not on remote",
+  "bdHeaderNoUpstreamTooltip": "This branch isn't on the remote yet. Publish it to push it there.",
+  "bdHeaderAheadTooltip": "{count, plural, =1{1 commit} other{{count} commits}} not on the remote yet",
+  "@bdHeaderAheadTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderBehindTooltip": "{count, plural, =1{1 remote commit} other{{count} remote commits}} you don't have yet",
+  "@bdHeaderBehindTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderChanges": "{count} changed",
+  "@bdHeaderChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderUpToDate": "Up to date",
+  "bdHeaderNoCommits": "No commits yet",
+  "bdHeaderMerging": "Merging · {count} conflicts",
+  "@bdHeaderMerging": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderRebasing": "Rebasing · {count} conflicts",
+  "@bdHeaderRebasing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderFetch": "Fetch",
+  "bdHeaderPull": "Pull",
+  "bdHeaderPush": "Push",
+  "bdHeaderPublish": "Publish",
+  "bdPullModeTooltip": "Pull method",
+  "bdPullModeTitle": "How to pull",
+  "bdPullModeMerge": "Merge (default)",
+  "bdPullModeMergeWhen": "If both sides have new commits, joins them with a merge commit. The safest choice.",
+  "bdPullModeRebase": "Rebase",
+  "bdPullModeRebaseWhen": "Moves your commits on top of the new ones to keep history in one line.",
+  "bdPullModeFastForward": "Fast-forward only",
+  "bdPullModeFastForwardWhen": "Only pulls when you have no commits of your own; stops and tells you if history has split.",
+  "bdOperationAbort": "Abort",
+  "bdOperationContinue": "Continue",
+  "bdOperationContinueBlocked": "Resolve every conflict to continue",
+  "bdOperationAbortTitle": "Abort the operation in progress?",
+  "bdOperationAbortMergeMessage": "Goes back to before the merge started. Any conflict resolutions you've made are lost.",
+  "bdOperationAbortRebaseMessage": "Goes back to before the rebase started. Any conflict resolutions you've made are lost.",
+  "bdBannerConflicts": "{count, plural, =1{1 file has} other{{count} files have}} conflicts to resolve",
+  "@bdBannerConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerPull": "{count, plural, =1{1 new commit} other{{count} new commits}} on the remote",
+  "@bdBannerPull": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerPublish": "This branch isn't on the remote yet",
+  "bdBannerPush": "{count, plural, =1{1 commit isn't} other{{count} commits aren't}} on the remote yet",
+  "@bdBannerPush": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerNoRemote": "This repository isn't on GitHub yet",
+  "bdBannerShow": "Show",
+  "bdBannerNotGitHub": "This is a {host} repository. Branches, pull and push all work; pull requests, releases and Actions need a GitHub repository.",
+  "@bdBannerNotGitHub": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTabChanges": "Changes",
+  "bdTabBranches": "Branches",
+  "bdTabRemotes": "Remotes",
+  "bdChangesMessageHint": "Commit message",
+  "bdChangesPrefixTooltip": "Commit type prefix",
+  "bdChangesFirstLineLong": "The first line is {length} characters. Keep it under 72 so it isn't cut off in lists.",
+  "@bdChangesFirstLineLong": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
+  "bdChangesCommitStaged": "Commit ({count} staged)",
+  "@bdChangesCommitStaged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdChangesCommitAll": "Stage all and commit",
+  "bdChangesConflicts": "Conflicts",
+  "bdChangesStaged": "Staged",
+  "bdChangesUnstaged": "Changed",
+  "bdChangesUntracked": "Untracked",
+  "bdChangesStageAll": "Stage all",
+  "bdChangesUnstageAll": "Unstage all",
+  "bdChangesStage": "Stage",
+  "bdChangesUnstage": "Unstage",
+  "bdChangesOpenInEditor": "Open in editor",
+  "bdChangesMarkResolved": "Mark resolved",
+  "bdChangesCleanTitle": "Nothing to commit",
+  "bdChangesCleanMessage": "Save a file in your editor and it shows up here.",
+  "bdBranchesTitle": "Branches",
+  "bdBranchesNew": "New branch",
+  "bdBranchesCreate": "Create",
+  "bdBranchesSearchHint": "Find a branch",
+  "bdBranchesLocal": "Local",
+  "bdBranchesRemote": "Remote",
+  "bdBranchesSwitch": "Switch to",
+  "bdBranchesRename": "Rename",
+  "bdBranchesDelete": "Delete",
+  "bdBranchesDeleteRemote": "Delete from remote",
+  "bdBranchesUpstreamGone": "Gone on remote",
+  "bdBranchesUnbornTitle": "No commits yet",
+  "bdBranchesUnbornMessage": "Make the first commit, then you can create branches.",
+  "bdBranchesForceDeleteTitle": "This branch isn't merged",
+  "bdBranchesForceDeleteMessage": "{name} has commits that aren't merged into another branch. Deleting it makes them hard to find.",
+  "@bdBranchesForceDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesDeleteRemoteTitle": "Delete the remote branch?",
+  "bdBranchesDeleteRemoteMessage": "Deletes {branch} from {target}. Nobody else can fetch it after this.",
+  "@bdBranchesDeleteRemoteMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchNameLabel": "Branch name",
+  "bdBranchNameExists": "A branch with this name already exists",
+  "bdBranchNameEmpty": "Enter a name",
+  "bdBranchNameInvalidCharacter": "Spaces and ~ ^ : ? * [ \\ aren't allowed",
+  "bdBranchNameStartsWithDash": "Can't start with -",
+  "bdBranchNameInvalidSequence": "Can't contain .. or //, a part starting with ., or a part ending in .lock",
+  "bdBranchNameInvalidEdge": "Can't start with / or end with / or .",
+  "bdBranchBaseLabel": "Start from",
+  "bdBranchBaseCurrent": "Current branch ({name})",
+  "@bdBranchBaseCurrent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchSwitchAfter": "Switch to it after creating",
+  "bdBranchRenameUpstreamNote": "{upstream} on the remote keeps its old name. Publish again under the new name.",
+  "@bdBranchRenameUpstreamNote": {
+    "placeholders": {
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRemotesTitle": "Remotes",
+  "bdRemotesAdd": "Add remote",
+  "bdRemotesRename": "Rename",
+  "bdRemotesSetUrl": "Change URL",
+  "bdRemotesRemove": "Remove remote",
+  "bdRemotesRemoveTitle": "Remove this remote?",
+  "bdRemotesRemoveMessage": "Only removes the {name} link from this repository. The repository on the server stays.",
+  "@bdRemotesRemoveMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRemotesEmptyTitle": "This repository isn't on GitHub yet",
+  "bdRemotesEmptyMessage": "Creates a new repository on GitHub and pushes your current branch.",
+  "bdRemotesPublishToGitHub": "Publish to GitHub",
+  "bdRemotesPublishAlsoToGitHub": "Also publish to GitHub (adds a remote)",
+  "bdRemotesPublishConfirm": "Create and publish",
+  "bdRemotesNotGitHubNote": "Not a GitHub repository, so pull requests, releases and Actions aren't available (gh is GitHub-only).",
+  "bdRemotesNameLabel": "Remote name",
+  "bdRemotesNameTaken": "A remote with this name already exists",
+  "bdRemotesNameInvalid": "No spaces or special characters",
+  "bdRemotesUrlLabel": "URL",
+  "bdRemotesUseHttps": "Use the HTTPS address",
+  "bdRemotesUseSsh": "Use the SSH address",
+  "bdPublishNameLabel": "Repository name",
+  "bdPublishNameHelper": "Use org/name to create it in an organization",
+  "bdPublishNameInvalid": "Letters, numbers, - _ . only",
+  "bdPublishDescriptionLabel": "Description (optional)",
+  "bdPublishPrivate": "Private",
+  "bdPublishPublic": "Public",
+  "bdPublishNoCommitsNote": "There are no commits yet, so this only creates the repository. Push after your first commit.",
+  "bdEditorTitle": "Editor for opening files",
+  "bdEditorMessage": "Enter an editor command to open files and the repository folder with it. Leave it empty to open files with the system default app and the folder with VS Code.",
+  "bdEditorLabel": "Editor command",
+  "bdLogTitle": "Command log",
+  "bdLogClear": "Clear",
+  "bdLogEmpty": "No commands run yet",
+  "bdLogToggleTooltip": "Show or hide the command log",
+  "bdDoneFetch": "Fetched from the remote",
+  "bdDonePull": "Pulled",
+  "bdDonePush": "Pushed",
+  "bdDonePublish": "Published {branch}",
+  "@bdDonePublish": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCommit": "Committed",
+  "bdDoneSwitch": "Switched to {name}",
+  "@bdDoneSwitch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCreateBranch": "Created {name}",
+  "@bdDoneCreateBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRenameBranch": "Renamed to {name}",
+  "@bdDoneRenameBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneDeleteBranch": "Deleted {name}",
+  "@bdDoneDeleteBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAddRemote": "Added remote {name}",
+  "@bdDoneAddRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRenameRemote": "Renamed the remote to {name}",
+  "@bdDoneRenameRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneSetRemoteUrl": "Changed the URL of {name}",
+  "@bdDoneSetRemoteUrl": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRemoveRemote": "Removed remote {name}",
+  "@bdDoneRemoveRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDonePublishToGitHub": "Created {name} on GitHub",
+  "@bdDonePublishToGitHub": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAbort": "Aborted",
+  "bdDoneContinue": "Continued",
+  "bdErrorGeneric": "The command failed. See the output below.",
+  "bdErrorPushRejected": "Push was rejected because the remote has commits you don't have. Pull first.",
+  "bdErrorAuthFailed": "Authentication failed. Check that you're logged in with gh auth login, or that your SSH key is registered.",
+  "bdErrorConflict": "There are conflicts. Open the conflicted files from Changes, fix them, then mark them resolved.",
+  "bdErrorLocalChanges": "Stopped because uncommitted changes would be overwritten. Commit them first.",
+  "bdErrorNotFastForward": "History has split, so it can't fast-forward. Change the pull method to merge or rebase.",
+  "bdErrorProtectedBranch": "This branch is protected, so you can't push to it directly. Push a new branch and open a pull request.",
+  "bdErrorBranchNotMerged": "This branch has unmerged commits.",
+  "bdErrorNoUpstream": "No upstream branch. Publish it first.",
+  "bdErrorAlreadyExists": "That name already exists.",
+  "bdErrorRepositoryNotFound": "Remote repository not found. Check the URL and your access.",
+  "bdErrorNetwork": "Can't reach the server. Check your network.",
+  "bdErrorNotInstalled": "Program not found. See Check git and gh in the menu.",
+  "bdErrorBranchInOtherWorktree": "This branch is checked out in another worktree ({path}). Git lets only one worktree check out a branch at a time.",
+  "@bdErrorBranchInOtherWorktree": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdOpenWorktreeFolder": "Open that folder",
+  "bdTimeJustNow": "just now",
+  "bdTimeMinutesAgo": "{n, plural, =1{1 minute ago} other{{n} minutes ago}}",
+  "@bdTimeMinutesAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTimeHoursAgo": "{n, plural, =1{1 hour ago} other{{n} hours ago}}",
+  "@bdTimeHoursAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTimeDaysAgo": "{n, plural, =1{yesterday} other{{n} days ago}}",
+  "@bdTimeDaysAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHelpTooltip": "What's this?",
+  "bdHelpSectionWord": "The word",
+  "bdHelpSectionInGit": "In git",
+  "bdHelpSectionWhy": "Why and when",
+  "bdHelpSectionLinks": "Learn more",
+  "bdHelpCaptionBefore": "Before",
+  "bdHelpCaptionAfter": "After",
+  "bdHelpCaptionAfterFetch": "After fetch — your main hasn't moved",
+  "bdHelpCaptionAfterPull": "After pull — your main catches up",
+  "bdHelpCaptionAheadOne": "feature is one commit ahead of origin/feature (↑1)",
+  "bdHelpLinkBranchingBasics": "Pro Git — Basic Branching and Merging",
+  "bdHelpLinkRemoteBranches": "Pro Git — Remote Branches",
+  "bdHelpLinkRebasing": "Pro Git — Rebasing",
+  "bdHelpFetchVsPullTitle": "Fetch vs. pull",
+  "bdHelpFetchVsPullWord": "To fetch is to go and get something; to pull is to draw it toward you.",
+  "bdHelpFetchVsPullInGit": "Fetch downloads new commits from the remote (GitHub) and only moves the remote labels such as origin/main. Your branch and files stay as they are. Pull does a fetch and then joins those commits into your branch.",
+  "bdHelpFetchVsPullWhy": "Fetch when you want to see what changed first; it's always safe. Pull when you want to catch up right away. Pull can stop if you have uncommitted changes, so commit first.",
+  "bdHelpUpstreamTitle": "Upstream and origin",
+  "bdHelpUpstreamWord": "Upstream is the part of a river the water comes from. Origin is where something comes from.",
+  "bdHelpUpstreamInGit": "origin is the default name for the remote you cloned from, usually GitHub. The remote branch your branch is paired with (such as origin/feature) is its upstream. The ↑↓ numbers compare your branch with it.",
+  "bdHelpUpstreamWhy": "With an upstream, plain Push and Pull know where to go. A new branch has none, so the first push is a Publish (git push -u), which sets it.",
+  "bdHelpFastForwardTitle": "Fast-forward",
+  "bdHelpFastForwardWord": "Winding a tape or video quickly forward.",
+  "bdHelpFastForwardInGit": "When your branch is simply behind and hasn't split off, git makes no new commit; it just moves the branch label forward to the latest commit. It only winds forward along commits that already exist.",
+  "bdHelpFastForwardWhy": "History stays in one clean line and there's nothing to conflict. If both sides have different new commits (history has split) it can't wind forward, so fast-forward only stops and you need a merge or rebase. A push rejected as non-fast-forward fails for the same reason.",
+  "bdHelpMergeCommitTitle": "Merge commit",
+  "bdHelpMergeCommitWord": "To merge is to join; two roads becoming one.",
+  "bdHelpMergeCommitInGit": "Keeps both lines of history as they are and adds one new commit whose parents are both of them. The history shows exactly what was joined and when.",
+  "bdHelpMergeCommitWhy": "It never rewrites commits you've already shared, so it's the safest. Good for branches you share with others. The trade-off is extra merge commits in the history.",
+  "bdHelpRebaseTitle": "Rebase",
+  "bdHelpRebaseWord": "Base is what something stands on; to rebase is to set it on a new base.",
+  "bdHelpRebaseInGit": "Takes your commits off and replays them one by one on top of the commits you just got. The changes are the same, but they become new commits (C', D') and the history is a single line.",
+  "bdHelpRebaseWhy": "Keeps history clean with no merge commits. Use it only on commits you haven't pushed yet: rebasing pushed commits makes your history differ from everyone else's and needs a force push.",
+  "bdTabTags": "Tags",
+  "bdTabRelease": "Release",
+  "bdTabPr": "PRs",
+  "bdBranchesMergeInto": "Merge into {head}",
+  "@bdBranchesMergeInto": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeTitle": "Merge {source} into {into}",
+  "@bdMergeTitle": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeNothing": "{source} has nothing that {into} doesn't already have",
+  "@bdMergeNothing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeIncoming": "{count, plural, =1{1 incoming commit} other{{count} incoming commits}}",
+  "@bdMergeIncoming": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdMergeFastForward": "Fast-forward",
+  "bdMergeFastForwardWhen": "Just moves the label forward, no new commit. History stays in one line.",
+  "bdMergeFastForwardDisabled": "Not possible: the current branch has its own new commits (history has split).",
+  "bdMergeMergeCommit": "Merge commit",
+  "bdMergeMergeCommitWhen": "Keeps both histories and joins them with a merge commit. The safest choice.",
+  "bdMergeSquash": "Squash",
+  "bdMergeSquashWhen": "Squashes the branch's commits into one. One feature, one commit.",
+  "bdMergeSquashNote": "If you keep using {source} after a squash, the same changes can conflict again. Delete the branch after merging.",
+  "@bdMergeSquashNote": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeMessageLabel": "Commit message",
+  "bdMergeConfirm": "Merge",
+  "bdDoneMerge": "Merged {source} into {into}",
+  "@bdDoneMerge": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsTitle": "Tags",
+  "bdTagsNew": "New tag",
+  "bdTagsCreate": "Create",
+  "bdTagsCreateAndPush": "Create and push",
+  "bdTagsPushAll": "Push {count, plural, =1{1 tag} other{{count} tags}} not on the remote",
+  "@bdTagsPushAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushed": "On the remote",
+  "bdTagsLocalOnly": "Only on this computer",
+  "bdTagsLightweight": "Lightweight",
+  "bdTagsAnnotated": "Annotated",
+  "bdTagsPush": "Push",
+  "bdTagsDelete": "Delete",
+  "bdTagsDeleteRemote": "Delete from remote",
+  "bdTagsDeleteRemoteTitle": "Delete the remote tag?",
+  "bdTagsDeleteRemoteMessage": "Deletes {tag} from {target}. Others may already have it, so use the next number instead of reusing the name.",
+  "@bdTagsDeleteRemoteMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsEmptyTitle": "No tags yet",
+  "bdTagsEmptyMessage": "A tag is a name for a specific commit, usually a release version like v1.0.0.",
+  "bdTagsPushAfter": "Push to {remote} after creating",
+  "@bdTagsPushAfter": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagNameLabel": "Tag name",
+  "bdTagNameExists": "A tag with this name already exists",
+  "bdTagNameInvalid": "No spaces, .., or ~ ^ : ? * [ \\",
+  "bdTagNameNotSemVer": "Not a version (v1.2.3). Allowed, but releases should use versions.",
+  "bdTagNameMissingV": "Release tags usually start with v (v1.2.3).",
+  "bdTagMessageLabel": "Message",
+  "bdTagTargetLabel": "Tag which commit",
+  "bdTagTargetHead": "Current position ({name})",
+  "@bdTagTargetHead": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCreateTag": "Created tag {name}",
+  "@bdDoneCreateTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDonePushTags": "Pushed {count, plural, =1{1 tag} other{{count} tags}}",
+  "@bdDonePushTags": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdDoneDeleteTag": "Deleted tag {name}",
+  "@bdDoneDeleteTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneDeleteRemoteTag": "Deleted tag {name} from the remote",
+  "@bdDoneDeleteRemoteTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrTitle": "Pull request",
+  "bdPrCreate": "Create pull request",
+  "bdPrPublishAndCreate": "Publish and create",
+  "bdPrTitleLabel": "Title",
+  "bdPrBodyLabel": "Description",
+  "bdPrBodyChanges": "Changes",
+  "bdPrDraft": "Create as draft",
+  "bdPrNotGitHubTitle": "Not a GitHub repository",
+  "bdPrNotGitHubMessage": "Pull requests need a GitHub repository — gh only works with GitHub.",
+  "bdPrGhRequiredTitle": "Needs gh",
+  "bdPrDetached": "Not on a branch",
+  "bdPrOnDefaultTitle": "You're on the default branch",
+  "bdPrOnDefaultMessage": "Pull requests come from a work branch. Create one in Branches.",
+  "bdPrNoneTitle": "{head} has no pull request yet",
+  "@bdPrNoneTitle": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrNoneMessage": "Open a pull request into {base} to review, check and merge it on GitHub.",
+  "@bdPrNoneMessage": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrOpenOnGitHub": "Open on GitHub",
+  "bdPrStateOpen": "Open",
+  "bdPrStateDraft": "Draft",
+  "bdPrStateMerged": "Merged",
+  "bdPrStateClosed": "Closed",
+  "bdPrNoChecks": "No checks",
+  "bdPrChecksPassed": "{n} passed",
+  "@bdPrChecksPassed": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrChecksFailed": "{n} failed",
+  "@bdPrChecksFailed": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrChecksPending": "{n} running",
+  "@bdPrChecksPending": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrApproved": "Approved",
+  "bdPrReviewRequired": "Review required",
+  "bdPrBlockedDraft": "Draft pull requests can't be merged. Mark it ready for review on GitHub.",
+  "bdPrBlockedConflict": "It conflicts with the base branch. Merge the base branch in and resolve the conflicts.",
+  "bdPrBlockedChecks": "Some checks failed: {names}",
+  "@bdPrBlockedChecks": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrBlockedPending": "{count, plural, =1{1 check is} other{{count} checks are}} still running.",
+  "@bdPrBlockedPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrBlockedReview": "A review may be required. If merging is refused, check on GitHub.",
+  "bdPrMethodMerge": "Merge commit",
+  "bdPrMethodSquash": "Squash and merge",
+  "bdPrMethodRebase": "Rebase and merge",
+  "bdPrDeleteBranch": "Delete the branch after merging",
+  "bdPrMerge": "Merge",
+  "bdPrMerging": "Merging…",
+  "bdDonePrCreated": "Pull request created",
+  "bdDonePrMerged": "Merged pull request #{number}",
+  "@bdDonePrMerged": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdReleaseTitle": "Release",
+  "bdReleaseLatest": "Latest release {tag}",
+  "@bdReleaseLatest": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseNoTags": "No releases yet",
+  "bdReleaseIntro": "Walks you through version bump → PR → merge → tag → CI.",
+  "bdReleaseNeedsGitHub": "The release wizard needs a GitHub repository. You can still create tags in Tags.",
+  "bdReleaseStart": "New release",
+  "bdReleaseNew": "New release",
+  "bdReleaseNewVersion": "New release {tag}",
+  "@bdReleaseNewVersion": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseCancel": "Stop",
+  "bdReleaseCancelTitle": "Stop this release?",
+  "bdReleaseCancelMessage": "The {branch} branch and pull request made so far stay. Delete them yourself if you don't need them.",
+  "@bdReleaseCancelMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseCancelAfterTag": "The tag is already pushed. This only closes the wizard; check CI and the release on GitHub.",
+  "bdReleaseDone": "{tag} is released",
+  "@bdReleaseDone": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleasePrerelease": "Pre-release",
+  "bdReleasePushAndPr": "Push and create PR",
+  "bdStepCheck": "Check",
+  "bdStepVersion": "Version",
+  "bdStepPr": "Pull request",
+  "bdStepMerge": "Merge",
+  "bdStepTag": "Tag",
+  "bdStepNotes": "Release notes",
+  "bdStepNotesCi": "Notes (after CI release)",
+  "bdStepNotesCiSummary": "CI creates the release",
+  "bdStepCi": "CI",
+  "bdStepNext": "Next",
+  "bdStepCheckDone": "All passed",
+  "bdStepMergeDone": "PR #{number} merged",
+  "@bdStepMergeDone": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdCheckCleanTree": "No uncommitted changes",
+  "bdCheckShowChanges": "Show changes",
+  "bdCheckOnDefault": "On the default branch ({branch})",
+  "@bdCheckOnDefault": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckSynced": "Nothing to pull or push",
+  "bdCheckGitHub": "GitHub remote and gh login",
+  "bdCheckGitBash": "Git for Windows bash (for the version bump script)",
+  "bdCheckChangesSince": "{count, plural, =1{1 commit} other{{count} commits}} since {tag}",
+  "@bdCheckChangesSince": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckFirstRelease": "This is the first release",
+  "bdCheckNoWorkflow": "No workflow runs on tags, so the app creates the GitHub release.",
+  "bdCheckWorkflowCi": "{file} creates the release when a tag is pushed. The app tags and then watches CI.",
+  "@bdCheckWorkflowCi": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckWorkflowOther": "{file} runs when a tag is pushed.",
+  "@bdCheckWorkflowOther": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdManualBuildTitle": "Build check before tagging (recommended)",
+  "bdManualBuildWhy": "Files that affect the build changed since the last release. Check that every platform builds before tagging. A manual run never publishes.",
+  "bdManualBuildStart": "Run build check",
+  "bdManualBuildShort": "build check {state}",
+  "@bdManualBuildShort": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneManualBuildStarted": "Build check started",
+  "bdVersionCurrent": "Current {version} ({source})",
+  "@bdVersionCurrent": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFromTag": "last tag",
+  "bdVersionRecommended": "Suggested",
+  "bdVersionReason": "{feats} features · {fixes} fixes · {breaking} breaking",
+  "@bdVersionReason": {
+    "placeholders": {
+      "feats": {
+        "type": "int"
+      },
+      "fixes": {
+        "type": "int"
+      },
+      "breaking": {
+        "type": "int"
+      }
+    }
+  },
+  "bdVersionCustom": "Custom version",
+  "bdVersionFiles": "Files to change",
+  "bdVersionNoFiles": "No version file, so only the tag is created.",
+  "bdVersionCommit": "Create release branch and commit",
+  "bdBumpFinal": "Final",
+  "bdBumpPrerelease": "Pre-release",
+  "bdDoneReleaseCommit": "Committed the {tag} version bump",
+  "@bdDoneReleaseCommit": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeWaiting": "Waiting for PR #{number} to merge — merging on GitHub works too",
+  "@bdMergeWaiting": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagCheckPrMerged": "PR #{number} is merged",
+  "@bdTagCheckPrMerged": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagCheckSynced": "On {branch} with nothing to pull or push",
+  "@bdTagCheckSynced": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckVersion": "Version files match {tag}",
+  "@bdTagCheckVersion": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckVersionWrong": "The version is {version}. The version bump PR may not be merged yet.",
+  "@bdTagCheckVersionWrong": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckFree": "{tag} doesn't exist yet",
+  "@bdTagCheckFree": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmTitle": "Push tag {tag}?",
+  "@bdTagConfirmTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmMessage": "Tags the merge commit on {branch} as {tag}. Pushing publishes the release, and tags aren't moved or deleted afterwards.",
+  "@bdTagConfirmMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmPush": "Tag and push",
+  "bdDoneTagPushed": "Pushed {tag}",
+  "@bdDoneTagPushed": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotesLabel": "Release notes (Markdown)",
+  "bdNotesFeatures": "New features",
+  "bdNotesFixes": "Bug fixes",
+  "bdNotesOther": "Other changes",
+  "bdNotesCreateRelease": "Create GitHub release",
+  "bdNotesEdit": "Edit notes",
+  "bdDoneReleaseCreated": "GitHub release created",
+  "bdDoneNotesSaved": "Release notes saved",
+  "bdCiWaitingForRun": "Looking for the workflow run for {tag}",
+  "@bdCiWaitingForRun": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiOpenInBrowser": "Open in browser",
+  "bdCiRerunFailed": "Re-run failed jobs",
+  "bdDoneRerun": "Re-running failed jobs",
+  "bdRunQueued": "queued",
+  "bdRunRunning": "running",
+  "bdRunSuccess": "succeeded",
+  "bdRunFailure": "failed",
+  "bdRunCancelled": "cancelled",
+  "bdRunSkipped": "skipped",
+  "bdHelpCaptionAfterSquash": "After a squash merge — one new commit S on main",
+  "bdHelpCaptionTag": "v1.0.0 and v1.1.0 stay put; main keeps moving forward",
+  "bdHelpLinkGitHubMergeMethods": "GitHub — About merge methods",
+  "bdHelpLinkTagging": "Pro Git — Tagging",
+  "bdHelpSquashTitle": "Squash",
+  "bdHelpSquashWord": "To press something flat.",
+  "bdHelpSquashInGit": "Presses the branch's commits into a single commit on the target branch. The changes are the same; only the number of commits becomes one.",
+  "bdHelpSquashWhy": "Keeps work-in-progress commits like 'fix typo' out of the main history: one feature, one commit. Common when merging pull requests. The original commits don't reach the default branch, so delete the merged branch instead of reusing it.",
+  "bdHelpTagTitle": "Tags (annotated and lightweight)",
+  "bdHelpTagWord": "A tag is a label you attach to something.",
+  "bdHelpTagInGit": "A name attached to one commit. A branch label moves forward with new commits; a tag stays on its commit. An annotated tag also stores who made it, when, and a message; a lightweight tag stores only the name.",
+  "bdHelpTagWhy": "Use annotated tags for release versions (v1.2.0): the release is recorded, and GitHub releases and CI run from the tag. Don't move or delete a pushed tag; if it's wrong, tag the next number.",
+  "bdHeaderMergedAndGone": "Merged · deleted on remote",
+  "bdHeaderMergedAndGoneTooltip": "This branch is already merged into the default branch and was deleted on the remote. Publishing it again would bring the deleted branch back.",
+  "bdBannerMergedAndGone": "This branch was merged and deleted on the remote. Go back to {branch}",
+  "@bdBannerMergedAndGone": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerSwitchTo": "Switch to {branch}",
+  "@bdBannerSwitchTo": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerCreatePr": "{branch} is pushed but has no pull request yet",
+  "@bdBannerCreatePr": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrBaseLabel": "Base branch",
+  "bdPrBaseNotDefault": "Merges into a branch other than the default ({base}) — for a PR stacked on another feature branch.",
+  "@bdPrBaseNotDefault": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTabCi": "CI",
+  "bdCiTitle": "Workflow runs",
+  "bdCiNotGitHubMessage": "Actions need a GitHub repository — gh only works with GitHub.",
+  "bdCiEmptyTitle": "No runs on {branch} yet",
+  "@bdCiEmptyTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiEmptyMessage": "Runs triggered by pushes, pull requests or tags show up here.",
+  "bdCiRerun": "Re-run",
+  "bdCiCancel": "Cancel run",
+  "bdCiDispatch": "Run workflow",
+  "bdCiDispatchNeedsPush": "Manual runs need a branch that's on the remote. Publish it first.",
+  "bdCiDispatchTitle": "Run {file}",
+  "@bdCiDispatchTitle": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiDispatchMessage": "Runs the workflow on {branch}. For workflows that need inputs, run them in the browser.",
+  "@bdCiDispatchMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiDispatchConfirm": "Run",
+  "bdDoneDispatched": "Started {file}",
+  "@bdDoneDispatched": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRunCancelled": "Run cancelled",
+  "bdNotifyRunTitle": "{name} {state}",
+  "@bdNotifyRunTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotifyReleaseRun": "{tag} release CI {state}",
+  "@bdNotifyReleaseRun": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotifyManualBuild": "Build check {state}",
+  "@bdNotifyManualBuild": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrFilterMine": "Mine",
+  "bdPrFilterReview": "To review",
+  "bdPrFilterOpen": "All open",
+  "bdPrListEmpty": "No open pull requests",
+  "bdPrCurrentBranch": "Current branch",
+  "bdPrCheckout": "Check out this PR",
+  "bdPrCheckoutWhy": "Fetches the PR's branch and switches to it — to try it out or fix something.",
+  "bdDonePrCheckout": "Switched to {branch} from PR #{number}",
+  "@bdDonePrCheckout": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleasesTitle": "Releases",
+  "bdReleasesEmpty": "No GitHub releases",
+  "bdReleasesLoadFailed": "Couldn't load releases",
+  "bdReleaseLatestPill": "Latest",
+  "bdReleaseDraft": "Draft",
+  "bdReleaseMakeFinal": "Mark as full release",
+  "bdReleaseMakePrerelease": "Mark as pre-release",
+  "bdReleasePublishDraft": "Publish draft",
+  "bdReleaseDelete": "Delete release",
+  "bdReleaseDeleteTitle": "Delete the {tag} release?",
+  "@bdReleaseDeleteTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseDeleteMessage": "The GitHub release and its files are removed. People may have downloaded them already.",
+  "bdReleaseDeleteTagToo": "Also delete the {tag} tag on GitHub (the local tag stays)",
+  "@bdReleaseDeleteTagToo": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseDeleted": "Deleted the {tag} release",
+  "@bdDoneReleaseDeleted": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseMadeFinal": "{tag} is now a full release",
+  "@bdDoneReleaseMadeFinal": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseMadePrerelease": "{tag} is now a pre-release",
+  "@bdDoneReleaseMadePrerelease": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleasePublished": "Published the {tag} draft",
+  "@bdDoneReleasePublished": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotesEditTab": "Edit",
+  "bdNotesPreviewTab": "Preview",
+  "bdNotesEmpty": "Nothing to preview",
+  "bdTagVersionMismatch": "{file} says {version}, but the tag is {tag}.",
+  "@bdTagVersionMismatch": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      },
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagVersionMismatchWhy": "A release tag goes on the commit that bumps the version — the release wizard does the bump PR through the tag in order.",
+  "bdTagVersionMismatchCi": "In this repository pushing a tag makes CI build the release, and CI stops when the versions differ.",
+  "bdTagVersionMismatchBlocked": "So pushing is blocked. Turn off push to create it only locally.",
+  "bdTagOpenReleaseWizard": "Open the release wizard",
+  "bdTabHistory": "History",
+  "bdMenuAutoFetch": "Auto fetch (every 5 min and on return)",
+  "bdChangesAmendToggle": "Amend the last commit",
+  "bdChangesAmend": "Amend",
+  "bdChangesAmendPushedWarning": "This commit is already on the remote. Amending splits the history and needs a force push (force-with-lease).",
+  "bdDoneAmend": "Amended the last commit",
+  "bdChangesDiscard": "Discard changes",
+  "bdChangesDiscardMessage": "Throws away the uncommitted changes in {path} and goes back to the last staged (or committed) version. This can't be undone.",
+  "@bdChangesDiscardMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdChangesDeleteUntracked": "Delete file",
+  "bdChangesDeleteUntrackedMessage": "Deletes {path}, which git doesn't track. It doesn't go to the trash.",
+  "@bdChangesDeleteUntrackedMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictUseMine": "Use mine",
+  "bdConflictUseIncoming": "Use incoming",
+  "bdConflictByBlock": "Resolve block by block",
+  "bdConflictSheetTitle": "Resolve conflicts in {name}",
+  "@bdConflictSheetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictBlockTitle": "Conflict {index} of {total}",
+  "@bdConflictBlockTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictSideMine": "Mine",
+  "bdConflictSideIncoming": "Incoming",
+  "bdConflictKeepBoth": "Keep both (top, then bottom)",
+  "bdConflictEmptySide": "(empty)",
+  "bdConflictPickHint": "Pick a side for each block. {left} left.",
+  "@bdConflictPickHint": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictApply": "Apply and mark resolved",
+  "bdConflictApplyNote": "Rewrites the file as you chose and runs git add. To edit by hand, open it in your editor.",
+  "bdConflictBroken": "The conflict markers are damaged, so the app can't read them. Fix the file in your editor.",
+  "bdConflictNone": "This file has no conflict markers. If you already fixed it, just press Mark resolved.",
+  "bdConflictUnreadable": "Can't read the file (it may be binary or deleted). Use \"Use mine\" or \"Use incoming\" instead.",
+  "bdDoneConflictResolved": "{name}: conflict resolved",
+  "@bdDoneConflictResolved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdChangesOperationTitle": "The operation isn't finished yet",
+  "bdChangesOperationMessage": "All conflicts are resolved. Press Continue above to finish, or Abort to go back to before it started.",
+  "bdConflictReopen": "Back to conflicted",
+  "bdConflictReopenMessage": "Puts {path} back the way it was right after the conflict. What you resolved so far is lost and the conflict markers come back.",
+  "@bdConflictReopenMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictReopenConfirm": "Reopen conflict",
+  "bdConflictMarkersLeftTitle": "Conflict markers are still in the file",
+  "bdConflictMarkersLeftMessage": "{path} still has {count} `<<<<<<<` marker(s). If you mark it resolved now, the markers get committed as they are. Clean it up first with \"Resolve block by block\" or in your editor.",
+  "@bdConflictMarkersLeftMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictMarkersLeftConfirm": "Mark resolved anyway",
+  "bdDoneFileAction": "{name}: done",
+  "@bdDoneFileAction": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashTitle": "Stashes",
+  "bdStashSave": "Stash changes",
+  "bdStashSaveFile": "Stash this file only",
+  "bdStashFileToStage": "Move to staged",
+  "bdStashFileOverwriteMessage": "{path} already has changes. They will be overwritten with the stashed version.",
+  "@bdStashFileOverwriteMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashEmpty": "Couldn't load the file list.",
+  "bdStashWhy": "Puts your {count} changes aside without committing, including untracked files. Bring them back later with Apply.",
+  "@bdStashWhy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdStashMessageLabel": "Note (optional)",
+  "bdStashPop": "Apply and remove (pop)",
+  "bdStashApply": "Apply and keep (apply)",
+  "bdStashDrop": "Delete",
+  "bdStashDropTitle": "Delete this stash?",
+  "bdStashDropMessage": "The changes saved in '{text}' will be lost.",
+  "@bdStashDropMessage": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashAndRetry": "Stash and retry",
+  "bdStashAutoMessage": "Branch Dock: auto stash",
+  "bdDoneStashSaved": "Stashed",
+  "bdDoneStashApplied": "Stash applied",
+  "bdDoneStashDropped": "Stash deleted",
+  "bdDoneStashAndRetry": "Stashed your changes and ran it again. Restore them from Stashes in Changes.",
+  "bdPushOptionsTooltip": "Push options",
+  "bdPushOptionsTitle": "Push options",
+  "bdPushFollowTags": "Push tags too (--follow-tags)",
+  "bdPushFollowTagsWhy": "Also pushes annotated tags on the commits you push. Applies to this repository only.",
+  "bdPushForceTitle": "Force push (force-with-lease)",
+  "bdPushForceWhy": "Only after amending or rebasing commits you already pushed. git refuses if the remote has commits you haven't seen, so nobody else's work is overwritten.",
+  "bdPushForceBlockedDefault": "Force push is blocked on the default branch ({branch}) — it could overwrite other people's history.",
+  "@bdPushForceBlockedDefault": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPushForce": "Force push",
+  "bdPushForceConfirmTitle": "Force push {branch}?",
+  "@bdPushForceConfirmTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPushForceConfirmMessage": "Replaces {upstream} with your {branch}. If someone pushed since your last fetch, git refuses.",
+  "@bdPushForceConfirmMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdOperationSkip": "Skip",
+  "bdOperationSkipTooltip": "Drops the conflicting commit and continues the rebase",
+  "bdDoneSkip": "Skipped the commit",
+  "bdBranchesSetUpstream": "Set upstream",
+  "bdBranchesSetUpstreamWhy": "Chooses the remote branch {branch} pushes to and pulls from.",
+  "@bdBranchesSetUpstreamWhy": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesUpstreamLabel": "Remote branch",
+  "bdDoneSetUpstream": "{branch} now tracks {upstream}",
+  "@bdDoneSetUpstream": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesCleanup": "Clean up merged branches",
+  "bdCleanupWhy": "Local branches already merged into {base}, or deleted on the remote. Remote branches aren't touched.",
+  "@bdCleanupWhy": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCleanupMerged": "Merged",
+  "bdCleanupGoneNotMerged": "Gone on remote · not merged — its commits get hard to find",
+  "bdCleanupConfirm": "Delete {count}",
+  "@bdCleanupConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdCleanupNothing": "Nothing to clean up (no branches merged into {base})",
+  "@bdCleanupNothing": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCleanup": "Cleaned up {count, plural, =1{1 branch} other{{count} branches}}",
+  "@bdDoneCleanup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsCommitsSince": "Commits since previous tag",
+  "bdTagsCommitsBetween": "{from} → {to}",
+  "@bdTagsCommitsBetween": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCommitsUpTo": "Up to {tag}",
+  "@bdTagsCommitsUpTo": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCommitsCount": "{count, plural, =1{1 commit} other{{count} commits}}",
+  "@bdTagsCommitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsCheckout": "Check out this tag",
+  "bdTagsCheckoutTitle": "Check out {tag}?",
+  "@bdTagsCheckoutTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCheckoutMessage": "You'll see the files exactly as they were at the tag. You won't be on any branch ('detached HEAD'), so create a branch before committing here.",
+  "bdDoneCheckoutTag": "Checked out {tag}",
+  "@bdDoneCheckoutTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerDetached": "You're not on a branch. Create one before committing here",
+  "bdHistoryTitle": "History",
+  "bdHistoryUnpushed": "↑ {count} not pushed",
+  "@bdHistoryUnpushed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHistoryNotPushed": "not pushed",
+  "bdHistoryCopyHash": "Copy hash",
+  "bdHistoryBranchHere": "Create branch here",
+  "bdHistoryTagHere": "Tag this commit",
+  "bdHelpLinkStashing": "Pro Git — Stashing and Cleaning",
+  "bdHelpCaptionStash": "Uncommitted changes W put aside at the top of the stash list — main is unchanged",
+  "bdHelpStashTitle": "Stash",
+  "bdHelpStashWord": "To stash is to put something away for later, like into a drawer.",
+  "bdHelpStashInGit": "Saves your uncommitted changes outside the branch history and resets the working tree to clean. Stashes pile up in a list (newest on top) and can be applied later on any branch.",
+  "bdHelpStashWhy": "Use it when it's too early to commit but you need to switch branches or pull. 'pop' applies and removes it; 'apply' keeps it in the list. Add a note — old stashes are easy to forget.",
+  "bdHelpCaptionDetached": "HEAD points straight at the v1.0.0 commit, not at a branch",
+  "bdHelpDetachedTitle": "Detached HEAD",
+  "bdHelpDetachedWord": "Detached means separated. HEAD means 'where you are now'.",
+  "bdHelpDetachedInGit": "Normally HEAD points at a branch label, and committing moves that label forward. Checking out a tag or commit makes HEAD point straight at the commit, detached from any branch.",
+  "bdHelpDetachedWhy": "Safe for trying out or comparing an old version. Commits made here belong to no branch and are hard to find once you move away — create a branch first if you want to commit.",
+  "bdHelpForceTitle": "Force push (force-with-lease)",
+  "bdHelpForceWord": "Force means by force; a lease is an agreement — here, 'only if it's still how I last saw it'.",
+  "bdHelpForceInGit": "After amending or rebasing commits you already pushed, your history has split from the remote and a normal push is rejected. A force push replaces the remote branch with yours. --force-with-lease only does so if the remote is exactly as you last fetched it, and refuses if someone pushed in between.",
+  "bdHelpForceWhy": "Only on a work branch you use alone, after tidying its history. Never on shared branches, especially main. This app doesn't offer plain --force, and blocks force push on the default branch.",
+  "bdMenuBrowse": "Open repository in browser",
+  "bdMenuSnapRight": "Snap to right edge",
+  "bdMenuSnapLeft": "Snap to left edge",
+  "bdStartInitRepository": "Make this folder a git repository",
+  "bdCloneTitle": "Clone from GitHub",
+  "bdCloneSearch": "Find one of your repositories",
+  "bdCloneEmpty": "No repositories",
+  "bdCloneNoFolder": "Choose where to clone",
+  "bdCloneChooseFolder": "Choose folder",
+  "bdCloneExists": "That folder already exists: {path}",
+  "@bdCloneExists": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCloneConfirm": "Clone and open",
+  "bdCloneRunning": "Cloning…",
+  "bdLoginTitle": "Log in to GitHub",
+  "bdLoginSsh": "SSH",
+  "bdLoginHttps": "HTTPS",
+  "bdLoginSshRecommended": "SSH recommended",
+  "bdLoginSshWhy": "With an SSH remote or an SSH session, logging in over HTTPS can leave git push authenticating separately.",
+  "bdLoginStepKey": "Check for an SSH key",
+  "bdLoginStepKeyFound": "This key will be added to GitHub",
+  "bdLoginStepKeyMissing": "No key found. Create one in a terminal with the command below (a passphrase is recommended). The app never handles keys or passphrases.",
+  "bdLoginStepLogin": "Log in",
+  "bdLoginStepLoginWhy": "Log in to GitHub in the browser and enter a one-time code.",
+  "bdLoginLoggedIn": "You're logged in",
+  "bdLoginStart": "Log in with browser",
+  "bdLoginDeviceHowTo": "If no browser opens, or you're on a remote server, open this address on any device and enter the code.",
+  "bdLoginStepUpload": "Add the public key",
+  "bdLoginStepUploadWhy": "Registers the chosen public key with your GitHub account. Skipped if it's already there.",
+  "bdLoginUploadKey": "Add key",
+  "bdLoginNeedsKeyScope": "Missing permission to add keys. Add it with the command below in a terminal, then try again.",
+  "bdLoginStepTest": "Test the connection",
+  "bdLoginStepTestWhy": "Connects to GitHub over SSH. The first time, github.com's host key is added to known_hosts.",
+  "bdLoginSshFailed": "Couldn't connect. Check that the key is added to GitHub and loaded in ssh-agent.",
+  "bdLoginTest": "Test",
+  "bdLoginChecking": "Checking…",
+  "bdLoginStepProtocol": "Use SSH for git",
+  "bdLoginStepProtocolWhy": "gh will use SSH addresses from now on. Switch existing HTTPS remotes in Remotes → Change URL.",
+  "bdLoginUseSshProtocol": "Use SSH",
+  "bdLoginAgentTip": "To avoid typing the passphrase every time, use ssh-add --apple-use-keychain on macOS, or ssh-agent elsewhere.",
+  "bdDoneProtocolSsh": "gh now uses SSH for git",
+  "bdForkTitle": "Fork of {parent}",
+  "@bdForkTitle": {
+    "placeholders": {
+      "parent": {
+        "type": "String"
+      }
+    }
+  },
+  "bdForkAddWhy": "Add the original repository as the upstream remote to bring in its new commits.",
+  "bdForkSyncWhy": "Fetches new commits from the original (upstream) and merges them into your current branch.",
+  "bdForkAddUpstream": "Add upstream",
+  "bdForkSync": "Sync from upstream",
+  "bdRemotesGhDefault": "Repository gh uses (PRs, releases, CI)",
+  "bdRemotesGhDefaultNone": "Not set",
+  "bdDoneGhDefault": "gh now uses {repo}",
+  "@bdDoneGhDefault": {
+    "placeholders": {
+      "repo": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseNeedsRemote": "No remote to release to. Publish it from Remotes first.",
+  "bdReleaseNeedsFiles": "Can't release: files the release workflow uses are missing: {files}. CI could not build the packages after tagging.",
+  "@bdReleaseNeedsFiles": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseDirectOnlyNotGitHub": "Not a GitHub repository, so this uses direct commit (check → version → tag). Do PRs, release notes and CI on your host's website.",
+  "bdReleaseDirectOnly": "Without gh, only direct commit is available.",
+  "bdReleaseDirectMode": "Direct commit",
+  "bdReleaseDirectModeWhy": "Commits the version bump straight to {branch} and pushes it with the tag, no PR. Only for repositories you work on alone — protected branches reject the push.",
+  "@bdReleaseDirectModeWhy": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckSyncedDirect": "On {branch} with no remote commits you're missing",
+  "@bdTagCheckSyncedDirect": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionUsesScript": "Uses the repository's scripts/bump-version.sh (lock files included, same result as the conventions).",
+  "bdVersionLockFiles": "Lock files updated too: {files}",
+  "@bdVersionLockFiles": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileChoose": "Change version file",
+  "bdVersionFileCustom": "Version file: {path} (custom)",
+  "@bdVersionFileCustom": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileTitle": "Version file",
+  "bdVersionFileWhy": "For when the version file isn't found or is the wrong one. The first group in the pattern is the version. Applies to this repository only.",
+  "bdVersionFilePath": "File (path in the repository)",
+  "bdVersionFilePattern": "Version line pattern",
+  "bdVersionFileFound": "Found: {version}",
+  "@bdVersionFileFound": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileNotFound": "File missing, or no version matches the pattern",
+  "bdVersionFileAuto": "Back to auto-detect",
+  "bdRollbackTitle": "Roll back release",
+  "bdRollbackConfirmTitle": "Roll back {tag}?",
+  "@bdRollbackConfirmTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRollbackMessage": "Deletes the GitHub release, the remote tag and the local tag. People may already have it, so don't reuse the number — release the next one ({next}) instead.",
+  "@bdRollbackMessage": {
+    "placeholders": {
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRollback": "Rolled back {tag}",
+  "@bdDoneRollback": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDiffBinary": "Binary file — no text diff",
+  "bdDiffEmpty": "No differences",
+  "bdDiffTruncated": "Showing the first {count} lines only. Open it in your editor for the rest.",
+  "@bdDiffTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderCherryPicking": "Cherry-picking · {count} conflicts",
+  "@bdHeaderCherryPicking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderReverting": "Reverting · {count} conflicts",
+  "@bdHeaderReverting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdOperationAbortPickMessage": "Goes back to before it started. Any conflict resolutions you've made are lost.",
+  "bdHistoryBranchLabel": "Branch",
+  "bdHistoryOtherBranchHint": "Another branch's history. Use 'Bring into' in a commit's menu to copy it onto {head}.",
+  "@bdHistoryOtherBranchHint": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryViewChanges": "View changes",
+  "bdHistoryFilesChanged": "{count, plural, =1{1 file changed} other{{count} files changed}}",
+  "@bdHistoryFilesChanged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHistoryMergeNote": "merge commit — changes it brought in",
+  "bdHistoryRevert": "Revert this commit",
+  "bdHistoryRevertTitle": "Revert {hash}?",
+  "@bdHistoryRevertTitle": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryRevertMessage": "Makes a new commit that undoes this one. History isn't rewritten, so it's safe even for commits you've pushed.",
+  "bdHistoryRevertUnpushed": "Makes a new commit that undoes this one. Since it isn't pushed yet, you could also amend or fix it in a new commit.",
+  "bdHistoryCherryPick": "Bring in",
+  "bdHistoryCherryPickMenu": "Bring into {head} (cherry-pick)",
+  "@bdHistoryCherryPickMenu": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryCherryPickTitle": "Bring {hash} into {head}?",
+  "@bdHistoryCherryPickTitle": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      },
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryCherryPickMessage": "Copies the same change onto your current branch as a new commit — for taking just one commit without merging the whole branch.",
+  "bdDoneRevert": "Reverted {hash}",
+  "@bdDoneRevert": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCherryPick": "Brought in {hash}",
+  "@bdDoneCherryPick": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMenuPalette": "Command palette",
+  "bdPaletteHint": "What do you want to do? (e.g. push, branch, tag)",
+  "bdPaletteEmpty": "No matching commands",
+  "bdPaletteGroupActions": "Action",
+  "bdPaletteGroupTabs": "Tab",
+  "bdPaletteGroupBranches": "Branch",
+  "bdPaletteGroupRepos": "Repository",
+  "bdPaletteGoToTab": "Go to {name}",
+  "@bdPaletteGoToTab": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPaletteSwitchTo": "Switch to {branch}",
+  "@bdPaletteSwitchTo": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHelpCaptionAfterRevert": "C stays; a new commit C⁻ undoes it",
+  "bdHelpCaptionAfterCherryPick": "The change from feature's D is copied onto main as a new commit D'",
+  "bdHelpRevertTitle": "Revert",
+  "bdHelpRevertWord": "To revert is to go back to how something was.",
+  "bdHelpRevertInGit": "Doesn't delete the commit — it adds a new commit that applies the opposite change. Both the original and the revert stay in history.",
+  "bdHelpRevertWhy": "Use it when a commit you've already pushed causes trouble. History isn't rewritten, so nobody else is affected and no force push is needed. For commits not yet pushed, amending is cleaner.",
+  "bdHelpCaptionBeforeReset": "Before: main points at D",
+  "bdHelpCaptionAfterReset": "After: main moved to B. C and D look gone but are still in the reflog",
+  "bdHelpCaptionReflog": "The places HEAD has been are listed in order, so you can go back to D",
+  "bdHelpResetTitle": "Reset",
+  "bdHelpResetWord": "To reset is to put something back where it was.",
+  "bdHelpResetInGit": "Moves the branch back to an earlier commit. The commits look deleted but stay in the reflog for a while. --soft keeps the changes staged, --keep protects your uncommitted work, and --hard throws that work away too.",
+  "bdHelpResetWhy": "Use it to undo commits you haven't pushed yet. Don't use it on pushed commits: it disagrees with everyone else's history, so use revert. This app only uses the safe --soft and --keep.",
+  "bdHelpReflogTitle": "Reflog",
+  "bdHelpReflogWord": "Reflog is short for 'reference log': a record of where a name pointed.",
+  "bdHelpReflogInGit": "A record, kept only on this computer, of where HEAD and your branches pointed. Even after you undo a commit or delete a branch, you can usually find that point again for about 90 days.",
+  "bdHelpReflogWhy": "When you think 'I made a mistake', look at the reflog first. It exists only on this computer, not on the remote or another machine, and git cleans up old entries.",
+  "bdHistoryGraph": "Graph",
+  "bdHistoryAllBranches": "All branches",
+  "bdHelpCaptionGraphMerged": "main and feature split apart and meet again at M (the hollow dot is a merge commit)",
+  "bdHelpCommitGraphTitle": "Reading the commit graph",
+  "bdHelpCommitGraphWord": "A graph is a picture made of dots and lines.",
+  "bdHelpCommitGraphInGit": "Dots are commits and lines connect each commit to its parent. Newest is at the top. A line that splits is where a branch began; two lines that join are a merge. A hollow dot is a merge commit, and a dot with a ring is where you are now (HEAD).",
+  "bdHelpCommitGraphWhy": "See at a glance where your branch left main and where merges happened. In a narrow window only six lines are drawn; any more overlap on the right-most one.",
+  "bdRecoveryTitle": "Undo a mistake",
+  "bdRecoveryIntro": "Most mistakes can be undone. Pick what fits.",
+  "bdRecoveryUndoCommit": "Undo the last commit",
+  "bdRecoveryUndoCommitWhy": "Undoes only \"{subject}\". Its changes stay staged.",
+  "@bdRecoveryUndoCommitWhy": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryUndoCommitMessage": "Undoes the commit \"{subject}\". Its changes aren't deleted — they stay staged so you can fix them and commit again.",
+  "@bdRecoveryUndoCommitMessage": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryUndoCommitPushed": "This commit is already on the remote. Undoing it here leaves it there, so pushing again needs a force push and your history no longer matches everyone else's. For a pushed commit, Revert in the History tab is safer.",
+  "bdRecoveryUndoCommitConfirm": "Undo commit",
+  "bdRecoveryNoParent": "The first commit can't be undone.",
+  "bdRecoveryStash": "Set my changes aside for now",
+  "bdRecoveryStashWhy": "Keeps them in a stash so you can bring them back later.",
+  "bdRecoveryHistory": "Go back to an earlier state",
+  "bdRecoveryHistoryHint": "Where HEAD has been. Even after undoing commits or deleting a branch, it usually stays for 90 days.",
+  "bdRecoveryNow": "Now",
+  "bdRecoveryEmpty": "Nothing recorded yet.",
+  "bdRecoveryKindCommit": "Commit",
+  "bdRecoveryKindAmend": "Amend",
+  "bdRecoveryKindCheckout": "Switch",
+  "bdRecoveryKindReset": "Reset",
+  "bdRecoveryKindMerge": "Merge",
+  "bdRecoveryKindPull": "Pull",
+  "bdRecoveryKindRebase": "Rebase",
+  "bdRecoveryKindCherryPick": "Cherry-pick",
+  "bdRecoveryKindRevert": "Revert",
+  "bdRecoveryKindOther": "Other",
+  "bdRecoveryGoBack": "Go back here",
+  "bdRecoveryGoBackMessage": "Moves {branch} back to {target}. The commits after it leave the branch but stay in the reflog. Your uncommitted work is kept, and if a file overlaps, nothing changes and git stops.",
+  "@bdRecoveryGoBackMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryGoBackConfirm": "Go back",
+  "bdRecoveryRescue": "Create a branch here",
+  "bdDoneUndoCommit": "Undid the last commit (its changes stay staged)",
+  "bdDoneGoBack": "Went back to {target}",
+  "@bdDoneGoBack": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRescue": "Created branch {name}",
+  "@bdDoneRescue": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHelpCherryPickTitle": "Cherry-pick",
+  "bdHelpCherryPickWord": "To cherry-pick is to pick only the best cherries — take just what you want.",
+  "bdHelpCherryPickInGit": "Copies the change from one commit on another branch onto your current branch as a new commit. Same change, but a new commit (D') with a different hash.",
+  "bdHelpCherryPickWhy": "Handy for pulling one urgent fix from another branch. If you merge that branch later the same change arrives twice and can conflict — merging is still the default.",
+  "bdConfirmTypeToContinue": "This can't be undone. Type {text} to continue.",
+  "@bdConfirmTypeToContinue": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsDeleteRemoteReleaseDraft": "⚠️ {tag} has a GitHub release. Deleting the tag makes GitHub turn that release into a draft (hidden) — the files stay but nobody can see them. To clean up the release too, use 'Roll back release' in the tag menu.",
+  "@bdTagsDeleteRemoteReleaseDraft": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsPushCiTitle": "Pushing {count, plural, =1{this tag} other{these {count} tags}} creates releases",
+  "@bdTagsPushCiTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushCiMessage": "In this repository, pushing a tag makes {workflow} build it and create a GitHub release: {tags}. Old releases you deleted on purpose would come back. To remove them locally instead, use 'Delete' in the tag menu.",
+  "@bdTagsPushCiMessage": {
+    "placeholders": {
+      "workflow": {
+        "type": "String"
+      },
+      "tags": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsPushAnyway": "Push anyway",
+  "bdTagsPushMismatchTitle": "{count, plural, =1{This tag's version differs} other{These {count} tags' versions differ}} from the version file",
+  "@bdTagsPushMismatchTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushMismatchMessage": "The {file} on the commit the tag points to has a different version (tag → file version): {tags}. The tag may be on a commit from before the version bump. Pushing it makes the tag-triggered release CI stop at its version check. Bump the version first with the release wizard.",
+  "@bdTagsPushMismatchMessage": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "tags": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiVersionMismatchMessage": "CI stopped because tag {tag} does not match the version file. The tag is on a commit before the version bump. Re-running gives the same result: make sure the version bump is on the default branch, then delete the tag and tag again.",
+  "@bdCiVersionMismatchMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiRetag": "Delete the tag and tag again",
+  "bdCommonDelete": "Delete",
+  "bdPrReviewTitle": "Reviews and comments",
+  "bdPrReviewShowAll": "Show all ({count})",
+  "@bdPrReviewShowAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrReviewShowLess": "Show less",
+  "bdPrReviewApprove": "Approve",
+  "bdPrReviewRequestChanges": "Request changes",
+  "bdPrReviewComment": "Comment",
+  "bdPrReviewOwnPr": "You can't approve or request changes on your own PR, but you can comment.",
+  "bdPrReviewSend": "Send",
+  "bdPrReviewBody": "Message (Markdown)",
+  "bdPrReviewBodyOptional": "Message (optional, Markdown)",
+  "bdDonePrReview": "Review posted on #{number}",
+  "@bdDonePrReview": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetTitle": "{count, plural, =1{1 asset} other{{count} assets}}",
+  "@bdAssetTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetEmpty": "No assets. Build outputs uploaded by CI appear here.",
+  "bdAssetMeta": "{size} · {count, plural, =1{1 download} other{{count} downloads}}",
+  "@bdAssetMeta": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetUpload": "Upload files",
+  "bdAssetDownload": "Download",
+  "bdAssetReplace": "Replace",
+  "bdAssetReplaceTitle": "Replace files with the same name?",
+  "bdAssetReplaceMessage": "{names} — anyone who already downloaded them will have a different file. Prefer releasing a new version.",
+  "@bdAssetReplaceMessage": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "bdAssetDeleteTitle": "Delete {name}?",
+  "@bdAssetDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdAssetDeleteMessage": "Removes this file from the release page. This can't be undone, and download links to it will break.",
+  "bdDoneAssetDownloaded": "Downloaded {name}",
+  "@bdDoneAssetDownloaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAssetUploaded": "{count, plural, =1{Uploaded 1 file} other{Uploaded {count} files}}",
+  "@bdDoneAssetUploaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdDoneAssetDeleted": "Deleted {name}",
+  "@bdDoneAssetDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncUpstreamCounts": "{upstream}  ↑{ahead} ↓{behind}",
+  "@bdSyncUpstreamCounts": {
+    "placeholders": {
+      "upstream": {
+        "type": "String"
+      },
+      "ahead": {
+        "type": "int"
+      },
+      "behind": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncNoUpstream": "{branch} has no remote branch to track",
+  "@bdSyncNoUpstream": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncOnOtherBranch": "You're on {branch}",
+  "@bdSyncOnOtherBranch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncBehind": "{count, plural, =1{1 commit on the remote isn't pulled yet} other{{count} commits on the remote aren't pulled yet}}. Pull first.",
+  "@bdSyncBehind": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncAhead": "{count, plural, =1{1 commit isn't pushed yet} other{{count} commits aren't pushed yet}}.",
+  "@bdSyncAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncAheadPr": "{count, plural, =1{1 commit isn't pushed yet} other{{count} commits aren't pushed yet}}. Pushing here puts them on {branch} without a PR.",
+  "@bdSyncAheadPr": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncDiverged": "Diverged from the remote: {behind} to pull, {ahead} to push.",
+  "@bdSyncDiverged": {
+    "placeholders": {
+      "behind": {
+        "type": "int"
+      },
+      "ahead": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncSameContent": "Files match the remote, but the commits don't ({count} local). This happens when a PR is merged with squash or rebase and the old commits stay on your branch.",
+  "@bdSyncSameContent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncMatchRemote": "Match remote",
+  "bdSyncMatchRemoteTitle": "Match {branch} to the remote?",
+  "@bdSyncMatchRemoteTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncMatchRemoteMessage": "Drops {count, plural, =1{1 local commit} other{{count} local commits}} and moves {branch} to {upstream}. Files stay the same and uncommitted changes are kept. The dropped commits can be recovered with git reflog.",
+  "@bdSyncMatchRemoteMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneMatchRemote": "Matched {branch} to the remote",
+  "@bdDoneMatchRemote": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncPushNoPrTitle": "Push to {branch} without a PR?",
+  "@bdSyncPushNoPrTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncPushNoPrMessage": "{count, plural, =1{1 unpushed commit goes} other{{count} unpushed commits go}} straight to {branch} without a PR. A protected branch will reject it. Moving the work to a branch and opening a PR is safer.",
+  "@bdSyncPushNoPrMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreesTitle": "Worktrees",
+  "bdWorktreePill": "worktree",
+  "bdWorktreeHeldTooltip": "Checked out in {path}",
+  "@bdWorktreeHeldTooltip": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachedHead": "Detached HEAD",
+  "bdWorktreeMainPill": "Main",
+  "bdWorktreeOpenPill": "Open here",
+  "bdWorktreeChangesPill": "{count} changed",
+  "@bdWorktreeChangesPill": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreeMissingPill": "Missing",
+  "bdWorktreeLockedPill": "Locked",
+  "bdWorktreeOpen": "Open",
+  "bdWorktreeDetach": "Release branch",
+  "bdWorktreeRemove": "Remove",
+  "bdWorktreeClaudeWarning": "A Claude Code session may be using this folder. Make sure the session has finished first.",
+  "bdWorktreeHeldTitle": "{branch} is checked out in another worktree",
+  "@bdWorktreeHeldTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeHeldMessage": "Git lets only one worktree check out a branch at a time. {path} is using this branch, so you can't switch to it here. Open that folder, or release the branch there (detached HEAD) and switch here.",
+  "@bdWorktreeHeldMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachAndSwitch": "Release and switch here",
+  "bdWorktreeDetachTitle": "Release the branch in {name}?",
+  "@bdWorktreeDetachTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachMessage": "{path} moves from {branch} to a detached HEAD. Files and commits stay as they are, and {branch} can then be checked out or deleted elsewhere.",
+  "@bdWorktreeDetachMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveTitle": "Remove the {name} worktree?",
+  "@bdWorktreeRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveMessage": "Deletes the folder {path}. Branches and commits stay in the repository.",
+  "@bdWorktreeRemoveMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveForceTitle": "Delete uncommitted changes too?",
+  "bdWorktreeRemoveForceMessage": "{path} has {count, plural, =1{1 uncommitted change} other{{count} uncommitted changes}}. They can't be recovered once removed.",
+  "@bdWorktreeRemoveForceMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreeLockedMessage": "{path} is locked and can't be removed. Unlock it first with git worktree unlock.",
+  "@bdWorktreeLockedMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDeleteBranchTitle": "Remove the worktree and delete the branch?",
+  "bdWorktreeDeleteBranchMessage": "{branch} is checked out in {path}, so it can't be deleted as is. The worktree folder is removed first, then the branch.",
+  "@bdWorktreeDeleteBranchMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDeleteBranchDirty": "{branch} is checked out in {path}, which has {count, plural, =1{1 uncommitted change} other{{count} uncommitted changes}}. Open that folder, tidy it up, then delete again.",
+  "@bdWorktreeDeleteBranchDirty": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreePrune": "Clean up missing folders",
+  "bdDoneWorktreeRemoved": "Removed the {name} worktree",
+  "@bdDoneWorktreeRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneWorktreeDetached": "Released the branch in {name}",
+  "@bdDoneWorktreeDetached": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneWorktreePruned": "Cleaned up worktree records",
+  "bdCleanupWorktree": "Also removes the {name} worktree",
+  "@bdCleanupWorktree": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCleanupWorktreeBlocked": "Can't remove: the {name} worktree has uncommitted changes or is locked",
+  "@bdCleanupWorktreeBlocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvCustomPath": "Custom",
+  "bdEnvSetPath": "Set path",
+  "bdEnvGitTooOld": "git {min} or later is needed. Some commands may fail or be read wrongly.",
+  "@bdEnvGitTooOld": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvGhTooOld": "gh {min} or later is needed. Older versions can't report login (gh auth status --json), so you show as logged out even when you aren't.",
+  "@bdEnvGhTooOld": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvCopyDiagnostics": "Copy diagnostics",
+  "bdEnvDiagnosticsCopied": "Diagnostics copied. Paste them into your report.",
+  "bdEnvSearchPath": "PATH used by the app",
+  "bdToolPathTitle": "{tool} path",
+  "@bdToolPathTitle": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathWhy": "Choose an executable to use instead of the {tool} found on PATH. Leave it empty to search PATH.",
+  "@bdToolPathWhy": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathLabel": "Executable",
+  "bdToolPathBrowse": "Choose file",
+  "bdToolPathVerify": "Check",
+  "bdToolPathUsePath": "Search PATH",
+  "bdToolPathOk": "{tool} {version} found",
+  "@bdToolPathOk": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathBad": "Can't run it, or it isn't {tool}",
+  "@bdToolPathBad": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathNeedsCheck": "Press Check before saving",
+  "bdDoneToolPath": "Saved the {tool} path",
+  "@bdDoneToolPath": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneToolPathReset": "Searching PATH for {tool}",
+  "@bdDoneToolPathReset": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  }
 }

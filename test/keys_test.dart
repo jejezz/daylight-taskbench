@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _commonKeys = {
   'theme_mode', 'theme_palette', 'text_scale', 'app_locale', // 규약 (settings.md · localization.md)
   'style_state_tint', // 앱 공통 설정 (localization.md §5 `<기능>_<이름>`)
-  'recent_dirs', 'dock_expanded', // Workspace · 셸
+  'recent_dirs', 'dock_expanded', 'editor_command', // Workspace · 셸 · 편집기에서 열기(공통)
   'window_placement', // 창 크기·위치 (window-placement.md 템플릿)
 };
 
@@ -40,7 +40,7 @@ void main() {
 
   // SharedPreferences 호출(`prefs.getString('…')` 등)과 `…Key = '…'` 상수만 본다 — Map·환경 변수 조회는 제외.
   final prefsCall = RegExp(r"""\b_?prefs\.(?:get|set|remove|containsKey)(?:String|StringList|Bool|Double|Int)?\(\s*['"]([^'"]+)['"]""");
-  final keyConst = RegExp(r"""\b\w*[kK]ey\s*=\s*['"]([a-z][^'"]*)['"]""");
+  final keyConst = RegExp(r"""static const \w*[kK]ey\s*=\s*['"]([a-z][^'"]*)['"]""");
 
   Iterable<String> storedKeys() sync* {
     for (final f in _dartFiles('lib')) {

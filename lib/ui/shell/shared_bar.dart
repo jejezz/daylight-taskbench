@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/vscode.dart';
+import '../../core/vscode.dart' show vscodeDownloadUrl;
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../workspace/git_state.dart';
@@ -202,7 +202,7 @@ class _EditorOpenButtonState extends State<EditorOpenButton> {
     if (root == null) return const SizedBox.shrink();
     if (_forRoot != root) {
       _forRoot = root;
-      _command = vscodeOpenCommand(root, path: widget.workspace.runner.path);
+      _command = widget.workspace.folderEditorCommand(root);
     }
     final l10n = AppLocalizations.of(context);
     return FutureBuilder<List<String>?>(

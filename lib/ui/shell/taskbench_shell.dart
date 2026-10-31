@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../app_identity.dart';
+import '../../docks/branch/branch_dock.dart';
 import '../../docks/dock_module.dart';
 import '../../docks/registry.dart';
 import '../../l10n/app_localizations.dart';
@@ -19,13 +21,20 @@ import '../../theme/taskbench_style.dart';
 import '../../window/focus_tint.dart';
 import '../../workspace/git_state.dart';
 import '../../workspace/workspace.dart';
+import '../../docks/branch/ui/branch_dock_body.dart' show branchTabBranches;
 import '../start_screen.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
 import 'shared_bar.dart';
 
 class TaskbenchShell extends StatefulWidget {
-  const TaskbenchShell({super.key, required this.workspace, required this.docks, required this.onAbout, this.pickFolder});
+  const TaskbenchShell({
+    super.key,
+    required this.workspace,
+    required this.docks,
+    required this.onAbout,
+    this.pickFolder,
+  });
 
   final Workspace workspace;
   final List<DockModule> docks;
@@ -38,7 +47,8 @@ class TaskbenchShell extends StatefulWidget {
   State<TaskbenchShell> createState() => _TaskbenchShellState();
 }
 
-class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObserver {
+class _TaskbenchShellState extends State<TaskbenchShell>
+    with WidgetsBindingObserver {
   static const _expandedKey = 'dock_expanded';
 
   final _empty = RunEmptyDock();
@@ -48,7 +58,8 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
   bool _pinned = false;
 
   Workspace get ws => widget.workspace;
-  bool get _desktop => Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  bool get _desktop =>
+      Platform.isMacOS || Platform.isWindows || Platform.isLinux;
 
   @override
   void initState() {
@@ -65,12 +76,38 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
       }
     });
     ws.registerBusyCheck(_anyBusy);
+    ws.openHandler = _openPath;
+    ws.pickFolderHandler = _pickAndOpen;
+    ws.addListener(_syncTitle);
+    _syncTitle();
+  }
+
+  String? _title;
+
+  /// 창 제목에 저장소와 브랜치를 보인다 (PLAN.md §1.10).
+  void _syncTitle() {
+    if (!_desktop) return;
+    final root = ws.root;
+    final name = root
+        ?.split(RegExp(r'[\\/]'))
+        .where((e) => e.isNotEmpty)
+        .lastOrNull;
+    final branch = ws.git?.branch;
+    final title = name == null
+        ? AppIdentity.displayName
+        : '${AppIdentity.displayName} — $name${branch == null ? '' : ' ($branch)'}';
+    if (title == _title) return;
+    _title = title;
+    windowManager.setTitle(title).catchError((Object _) {});
   }
 
   bool _anyBusy() => widget.docks.any((d) => d.busy(ws));
 
   @override
   void dispose() {
+    ws.removeListener(_syncTitle);
+    if (ws.openHandler == _openPath) ws.openHandler = null;
+    if (ws.pickFolderHandler == _pickAndOpen) ws.pickFolderHandler = null;
     ws.unregisterBusyCheck(_anyBusy);
     _heads?.cancel();
     for (final d in widget.docks) {
@@ -92,11 +129,16 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
     if (dir != null) await _openPath(dir);
   }
 
-  Future<void> _openPath(String path) => _handle(() => ws.openDropped([path]), path: path);
+  Future<void> _openPath(String path) =>
+      _handle(() => ws.openDropped([path]), path: path);
 
-  Future<void> _onDrop(List<String> paths) => _handle(() => ws.openDropped(paths));
+  Future<void> _onDrop(List<String> paths) =>
+      _handle(() => ws.openDropped(paths));
 
-  Future<void> _handle(Future<DropResult> Function() run, {String? path}) async {
+  Future<void> _handle(
+    Future<DropResult> Function() run, {
+    String? path,
+  }) async {
     var r = await run();
     if (!mounted) return;
     final l10n = AppLocalizations.of(context);
@@ -107,8 +149,14 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
           title: Text(l10n.dropBusyTitle),
           content: Text(l10n.dropBusyBody),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(c, false), child: Text(l10n.commonCancel)),
-            FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(l10n.dropStopAndOpen)),
+            TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: Text(l10n.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: Text(l10n.dropStopAndOpen),
+            ),
           ],
         ),
       );
@@ -121,11 +169,20 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
       case OpenOutcome.ignoredFiles:
         messenger.showSnackBar(SnackBar(content: Text(l10n.dropFilesOnly)));
       case OpenOutcome.selectedDirChanged:
-        final name = (ws.selectedDir ?? '').split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull ?? '';
-        messenger.showSnackBar(SnackBar(content: Text(l10n.dropSelectedDir(name))));
+        final name =
+            (ws.selectedDir ?? '')
+                .split(RegExp(r'[\\/]'))
+                .where((s) => s.isNotEmpty)
+                .lastOrNull ??
+            '';
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.dropSelectedDir(name))),
+        );
       case OpenOutcome.failed:
         // 저장소가 이미 열려 있으면 시작 화면의 안내가 안 보이므로 여기서 묻는다 — 열린 저장소는 닫지 않는다.
-        if (ws.isOpen && ws.failure == OpenFailure.notARepository && ws.failedPath != null) {
+        if (ws.isOpen &&
+            ws.failure == OpenFailure.notARepository &&
+            ws.failedPath != null) {
           final target = ws.failedPath!;
           final init = await showDialog<bool>(
             context: context,
@@ -133,8 +190,14 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
               title: Text(l10n.dropNotRepoTitle),
               content: Text(l10n.dropNotRepoBody(target)),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(c, false), child: Text(l10n.commonCancel)),
-                FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('git init')),
+                TextButton(
+                  onPressed: () => Navigator.pop(c, false),
+                  child: Text(l10n.commonCancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(c, true),
+                  child: const Text('git init'),
+                ),
               ],
             ),
           );
@@ -163,8 +226,12 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
   }
 
   TaskbenchMood _mood(List<DockModule> shown) {
-    if (shown.any((d) => d.mood(ws) == TaskbenchMood.failed)) return TaskbenchMood.failed;
-    if (shown.any((d) => d.busy(ws) || d.mood(ws) == TaskbenchMood.working)) return TaskbenchMood.working;
+    if (shown.any((d) => d.mood(ws) == TaskbenchMood.failed)) {
+      return TaskbenchMood.failed;
+    }
+    if (shown.any((d) => d.busy(ws) || d.mood(ws) == TaskbenchMood.working)) {
+      return TaskbenchMood.working;
+    }
     return TaskbenchMood.idle;
   }
 
@@ -174,11 +241,19 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
     final settings = AppSettingsScope.of(context);
     final mac = Platform.isMacOS;
     final shortcuts = <ShortcutActivator, VoidCallback>{
-      SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac): _pickAndOpen,
-      SingleActivator(LogicalKeyboardKey.comma, control: !mac, meta: mac): () => showSettingsDialog(context),
-      SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac): ws.refresh,
+      SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac):
+          _pickAndOpen,
+      SingleActivator(LogicalKeyboardKey.comma, control: !mac, meta: mac): () =>
+          showSettingsDialog(context),
+      SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac):
+          ws.refresh,
       for (var i = 0; i < 4; i++)
-        SingleActivator(LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i), control: !mac, meta: mac, alt: true): () {
+        SingleActivator(
+          LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i),
+          control: !mac,
+          meta: mac,
+          alt: true,
+        ): () {
           final shown = visibleDocks(widget.docks, _empty, ws);
           if (i < shown.length) _select(shown[i].id);
         },
@@ -198,43 +273,73 @@ class _TaskbenchShellState extends State<TaskbenchShell> with WidgetsBindingObse
             listenable: Listenable.merge([ws, ...widget.docks, settings]),
             builder: (context, _) {
               final open = ws.isOpen;
-              final shown = open ? visibleDocks(widget.docks, _empty, ws) : const <DockModule>[];
-              final expanded = shown.any((d) => d.id == _expandedId) ? _expandedId : shown.firstOrNull?.id;
+              final shown = open
+                  ? visibleDocks(widget.docks, _empty, ws)
+                  : const <DockModule>[];
+              final expanded = shown.any((d) => d.id == _expandedId)
+                  ? _expandedId
+                  : shown.firstOrNull?.id;
               return AuroraBackground(
                 mood: _mood(shown),
                 moodEnabled: settings.stateTint,
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
                   body: SafeArea(
-                    child: Stack(children: [
-                      Column(children: [
-                        Stack(children: [
-                          const Positioned.fill(child: FocusTint()),
-                          WorkspaceBar(
-                            workspace: ws,
-                            onOpenFolder: _pickAndOpen,
-                            onOpenRecent: _openPath,
-                            onSettings: () => showSettingsDialog(context),
-                            onAbout: widget.onAbout,
-                            alwaysOnTop: _pinned,
-                            onToggleAlwaysOnTop: _desktop ? _togglePin : null,
-                          ),
-                        ]),
-                        if (open) ...[
-                          BranchBar(
-                            workspace: ws,
-                            onBranchTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.dockPlaceholderBranch))),
-                          ),
-                          Expanded(
-                            child: DockAccordion(docks: shown, workspace: ws, expandedId: expanded, onSelect: _select),
-                          ),
-                        ] else
-                          Expanded(
-                            child: StartScreen(workspace: ws, onOpenFolder: _pickAndOpen, onOpenPath: _openPath, dragging: _dragging),
-                          ),
-                      ]),
-                      if (_dragging && open) _DropOverlay(title: l10n.dropOverlayTitle),
-                    ]),
+                    child: Stack(
+                      children: [
+                        Column(
+                          children: [
+                            Stack(
+                              children: [
+                                const Positioned.fill(child: FocusTint()),
+                                WorkspaceBar(
+                                  workspace: ws,
+                                  onOpenFolder: _pickAndOpen,
+                                  onOpenRecent: _openPath,
+                                  onSettings: () => showSettingsDialog(context),
+                                  onAbout: widget.onAbout,
+                                  alwaysOnTop: _pinned,
+                                  onToggleAlwaysOnTop: _desktop
+                                      ? _togglePin
+                                      : null,
+                                ),
+                              ],
+                            ),
+                            if (open) ...[
+                              BranchBar(
+                                workspace: ws,
+                                onBranchTap: () {
+                                  final branch = widget.docks
+                                      .whereType<BranchDock>()
+                                      .firstOrNull;
+                                  if (branch == null) return;
+                                  _select(branch.id);
+                                  branch.showTab(branchTabBranches);
+                                },
+                              ),
+                              Expanded(
+                                child: DockAccordion(
+                                  docks: shown,
+                                  workspace: ws,
+                                  expandedId: expanded,
+                                  onSelect: _select,
+                                ),
+                              ),
+                            ] else
+                              Expanded(
+                                child: StartScreen(
+                                  workspace: ws,
+                                  onOpenFolder: _pickAndOpen,
+                                  onOpenPath: _openPath,
+                                  dragging: _dragging,
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (_dragging && open)
+                          _DropOverlay(title: l10n.dropOverlayTitle),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -257,20 +362,28 @@ class _DropOverlay extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Positioned.fill(
       child: IgnorePointer(
-        child: Column(children: [
-          Container(
-            height: sharedBarHeight + branchBarHeight,
-            margin: const EdgeInsets.all(4),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: scheme.primary, width: 2),
+        child: Column(
+          children: [
+            Container(
+              height: sharedBarHeight + branchBarHeight,
+              margin: const EdgeInsets.all(4),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: scheme.primary, width: 2),
+              ),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(color: scheme.primary),
+              ),
             ),
-            child: Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: scheme.primary)),
-          ),
-          Expanded(child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12))),
-        ]),
+            Expanded(
+              child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12)),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,0 +1,518 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+
+import 'package:daylight_taskbench/core/command_runner.dart';
+import '../git/commands.dart';
+import '../git/conflicts.dart';
+import '../git/history.dart';
+import '../git/refs.dart';
+import '../git/remotes.dart';
+import '../git/status.dart';
+import '../git/tags.dart';
+import '../git/worktrees.dart';
+import '../github/models.dart';
+
+/// 병합·rebase가 끝나지 않은 상태.
+enum RepoOperation { none, merging, rebasing, cherryPicking, reverting }
+
+/// 저장소를 열지 못한 이유.
+enum OpenFailure { notFound, notARepository }
+
+/// 열린 저장소 하나의 상태와 동작. 동작은 모두 명령 하나(또는 몇 개)를
+/// 실행하고 상태를 다시 읽는다.
+class RepoController extends ChangeNotifier {
+  RepoController._(this.runner, this.root, this.gitDir);
+
+  final CommandRunner runner;
+
+  /// 저장소 루트 (작업 트리 최상위).
+  final String root;
+  final String gitDir;
+
+  RepoStatus status = const RepoStatus();
+  List<Branch> branches = const [];
+  List<Remote> remotes = const [];
+  List<Tag> tags = const [];
+  List<Stash> stashes = const [];
+
+  /// 이 저장소의 worktree 전부 (지금 연 폴더 포함). 첫 항목이 main worktree.
+  List<Worktree> worktrees = const [];
+
+  /// worktree 폴더별 커밋하지 않은 변경 수. [loadWorktreeChanges]로만 읽는다.
+  Map<String, int> worktreeChanges = const {};
+
+  /// 마지막으로 원격을 확인한 때 (Fetch 버튼이든 자동 fetch든).
+  DateTime? lastFetch;
+
+  /// 기본 원격에 있는 태그 이름. 네트워크를 쓰므로 [loadRemoteTags]로만 읽는다.
+  Set<String>? remoteTagNames;
+
+  /// 원격의 기본 브랜치 (`main`). 모르면 main → master → 현재 브랜치.
+  String? defaultBranch;
+
+  /// 현재 브랜치의 원격 브랜치가 사라졌고, 그 커밋이 이미 원격 기본 브랜치에
+  /// 들어 있다 — PR이 병합되고 브랜치가 지워진 경우. 이때 게시하면 지운
+  /// 브랜치가 다시 생기므로 게시 대신 기본 브랜치로 전환을 권한다.
+  bool headMergedAndGone = false;
+
+  /// gh 설치·로그인 여부. 앱이 환경 점검 결과로 넣는다.
+  bool ghReady = false;
+
+  /// 현재 브랜치의 PR. [headPrKnown]이 false면 아직 모른다(또는 알 수 없다).
+  /// 추천 배너의 "PR 만들기"에 쓴다 (UI_UX.md §3 C 6번).
+  PullRequest? headPr;
+  bool headPrKnown = false;
+  String? _headPrFor;
+  DateTime? _headPrAt;
+  bool _loadingHeadPr = false;
+  RepoOperation operation = RepoOperation.none;
+
+  /// 병합·rebase 중에 이미 해결한 충돌 파일 (다시 충돌 상태로 되돌릴 수 있는 것). 진행 중이 아니면 비어 있다.
+  Set<String> resolvedPaths = const {};
+  bool loaded = false;
+
+  /// 지금 실행 중인 명령 (진행 표시줄·취소용).
+  CancelToken? _running;
+  // 명령이 끝난 뒤 상태를 다시 읽는 동안, 그리고 여러 명령을 이어 실행하는 동안에도 바쁘다 —
+  // 느린 PC(Windows)에서 결과가 나오기 전에 같은 버튼이 한 번 더 눌리지 않게 한다.
+  bool _settling = false;
+  bool _holding = false;
+  bool get busy => _running != null || _settling || _holding;
+
+  StreamSubscription<FileSystemEvent>? _watch;
+  Timer? _debounce;
+  Timer? _poll;
+  Future<void>? _refreshing;
+  bool _refreshAgain = false;
+  bool _disposed = false;
+
+  String get name => root.split(Platform.pathSeparator).where((s) => s.isNotEmpty).last;
+
+  List<Branch> get localBranches => branches.where((b) => !b.remote).toList();
+  List<Branch> get remoteBranches => branches.where((b) => b.remote).toList();
+
+  Remote? get githubRemote {
+    for (final r in remotes) {
+      if (r.name == 'origin' && r.isGitHub) return r;
+    }
+    for (final r in remotes) {
+      if (r.isGitHub) return r;
+    }
+    return null;
+  }
+
+  /// 호스팅 표시용: origin(없으면 첫 원격)의 호스팅.
+  RemoteHost? get primaryHost {
+    if (remotes.isEmpty) return null;
+    final origin = remotes.where((r) => r.name == 'origin');
+    return (origin.isEmpty ? remotes.first : origin.first).host;
+  }
+
+  /// 게시(Publish)할 때 쓸 원격: origin, 없으면 첫 원격.
+  String? get defaultRemote {
+    if (remotes.isEmpty) return null;
+    return remotes.any((r) => r.name == 'origin') ? 'origin' : remotes.first.name;
+  }
+
+  /// [path] 또는 그 상위의 저장소를 연다.
+  static Future<(RepoController?, OpenFailure?)> open(CommandRunner runner, String path) async {
+    if (!Directory(path).existsSync()) return (null, OpenFailure.notFound);
+    final top = await runner.run(GitCommands.topLevel, workingDirectory: path, quiet: true);
+    if (!top.ok) return (null, OpenFailure.notARepository);
+    final root = _nativePath(top.stdout.trim());
+    final dir = await runner.run(GitCommands.gitDir, workingDirectory: root, quiet: true);
+    final controller = RepoController._(runner, root, _nativePath(dir.stdout.trim()));
+    await controller.refresh();
+    controller._startWatching();
+    return (controller, null);
+  }
+
+  /// Windows의 git은 `C:/a/b`로 돌려준다.
+  static String _nativePath(String p) => Platform.isWindows ? p.replaceAll('/', r'\') : p;
+
+  /// 상태를 다시 읽는다. 이미 읽는 중이면 그 작업이 한 번 더 돌도록 표시하고
+  /// 끝날 때까지 기다린다 — 호출한 쪽은 항상 최신 상태를 본다.
+  Future<void> refresh() {
+    if (_disposed) return Future.value();
+    final running = _refreshing;
+    if (running != null) {
+      _refreshAgain = true;
+      return running;
+    }
+    return _refreshing = _refreshLoop().whenComplete(() => _refreshing = null);
+  }
+
+  Future<void> _refreshLoop() async {
+    do {
+      _refreshAgain = false;
+      final results = await Future.wait([
+        runner.run(GitCommands.status, workingDirectory: root, quiet: true),
+        runner.run(GitCommands.branches, workingDirectory: root, quiet: true),
+        runner.run(GitCommands.remotes, workingDirectory: root, quiet: true),
+        runner.run(GitCommands.tags, workingDirectory: root, quiet: true),
+        runner.run(GitCommands.stashList, workingDirectory: root, quiet: true),
+        runner.run(GitCommands.worktreeList, workingDirectory: root, quiet: true),
+      ]);
+      if (_disposed) return;
+      if (results[3].ok) tags = _withPushed(Tag.parse(results[3].stdout));
+      if (results[4].ok) stashes = Stash.parse(results[4].stdout);
+      if (results[0].ok) status = RepoStatus.parse(results[0].stdout);
+      if (results[1].ok) branches = Branch.parse(results[1].stdout);
+      if (results[2].ok) remotes = Remote.parse(results[2].stdout);
+      if (results[5].ok) worktrees = Worktree.parse(results[5].stdout);
+      operation = _readOperation();
+      resolvedPaths = operation == RepoOperation.none ? const {} : await _readResolvedPaths();
+      defaultBranch = await _readDefaultBranch();
+      headMergedAndGone = await _readHeadMergedAndGone();
+      loaded = true;
+      notifyListeners();
+    } while (_refreshAgain && !_disposed);
+    unawaited(loadHeadPr());
+  }
+
+  List<Tag> _withPushed(List<Tag> list) {
+    final remote = remoteTagNames;
+    return remote == null ? list : [for (final t in list) t.withPushed(remote.contains(t.name))];
+  }
+
+  /// `git ls-remote --tags` — 태그 탭을 열 때, 태그를 push·삭제한 뒤에 부른다.
+  Future<void> loadRemoteTags() async {
+    final remote = defaultRemote;
+    if (remote == null) {
+      remoteTagNames = {};
+    } else {
+      final r = await runner.run(GitCommands.remoteTags(remote), workingDirectory: root, quiet: true);
+      if (!r.ok) return;
+      remoteTagNames = Tag.parseRemote(r.stdout);
+    }
+    tags = _withPushed(tags);
+    if (!_disposed) notifyListeners();
+  }
+
+  Future<String?> _readDefaultBranch() async {
+    final remote = defaultRemote;
+    if (remote != null) {
+      final r = await runner.run(GitCommands.remoteHead(remote), workingDirectory: root, quiet: true);
+      final v = r.stdout.trim();
+      if (r.ok && v.startsWith('$remote/') && v != '$remote/HEAD') return v.substring(remote.length + 1);
+    }
+    final names = localBranches.map((b) => b.name).toSet();
+    if (names.contains('main')) return 'main';
+    if (names.contains('master')) return 'master';
+    return status.head;
+  }
+
+  Future<bool> _readHeadMergedAndGone() async {
+    final head = status.head;
+    final remote = defaultRemote;
+    final base = defaultBranch;
+    if (!status.upstreamGone || head == null || remote == null || base == null || head == base) return false;
+    final r = await runner.run(GitCommands.isAncestor('HEAD', '$remote/$base'), workingDirectory: root, quiet: true);
+    return r.ok;
+  }
+
+  /// 현재 브랜치의 PR을 읽는다. 네트워크를 쓰므로 같은 브랜치는 1분에 한 번만
+  /// 읽고, 브랜치가 바뀌거나 [force]면 다시 읽는다.
+  Future<void> loadHeadPr({bool force = false}) async {
+    final head = status.head;
+    if (!ghReady || githubRemote == null || head == null || head == defaultBranch || !status.hasUpstream) {
+      if (headPrKnown || headPr != null) {
+        headPrKnown = false;
+        headPr = null;
+        if (!_disposed) notifyListeners();
+      }
+      return;
+    }
+    final fresh = _headPrFor == head && _headPrAt != null && DateTime.now().difference(_headPrAt!).inSeconds < 60;
+    if ((!force && fresh) || _loadingHeadPr) return;
+    _loadingHeadPr = true;
+    try {
+      final r = await runner.run(GhCommands.prView(head, PullRequest.jsonFields), workingDirectory: root, quiet: true);
+      if (_disposed || status.head != head) return;
+      if (r.ok) {
+        headPr = PullRequest.parse(r.stdout);
+      } else if (r.combined.toLowerCase().contains('no pull requests found')) {
+        headPr = null;
+      } else {
+        return; // 네트워크·인증 오류: 모르는 상태로 둔다.
+      }
+      headPrKnown = true;
+      _headPrFor = head;
+      _headPrAt = DateTime.now();
+      notifyListeners();
+    } finally {
+      _loadingHeadPr = false;
+    }
+  }
+
+  /// 푸시까지 끝났는데 PR이 없는 작업 브랜치 — "PR 만들기"를 권한다.
+  bool get shouldSuggestPr =>
+      headPrKnown &&
+      headPr == null &&
+      !headMergedAndGone &&
+      status.hasUpstream &&
+      status.ahead == 0 &&
+      status.head != null &&
+      status.head != defaultBranch;
+
+  /// 기본 브랜치로 전환한다. 로컬에 없으면 원격 브랜치를 추적해 만든다.
+  Future<CommandResult> switchToDefault() {
+    final base = defaultBranch ?? 'main';
+    final local = localBranches.where((b) => b.name == base);
+    if (local.isNotEmpty) return switchTo(local.first);
+    return execute(GitCommands.switchTrack('${defaultRemote ?? 'origin'}/$base'));
+  }
+
+  Future<Set<String>> _readResolvedPaths() async {
+    final r = await runner.run(GitCommands.resolveUndo, workingDirectory: root, quiet: true);
+    return r.ok ? parseResolveUndo(r.stdout) : const {};
+  }
+
+  RepoOperation _readOperation() {
+    bool exists(String name) => FileSystemEntity.typeSync('$gitDir/$name') != FileSystemEntityType.notFound;
+    if (exists('rebase-merge') || exists('rebase-apply')) return RepoOperation.rebasing;
+    if (exists('MERGE_HEAD')) return RepoOperation.merging;
+    if (exists('CHERRY_PICK_HEAD')) return RepoOperation.cherryPicking;
+    if (exists('REVERT_HEAD')) return RepoOperation.reverting;
+    return RepoOperation.none;
+  }
+
+  /// 명령을 실행하고 상태를 다시 읽는다. 한 번에 하나만 실행한다.
+  Future<CommandResult> execute(List<String> args, {String? stdin}) async {
+    if (_running != null || _settling) return const CommandResult(1, '', 'busy');
+    final token = CancelToken();
+    _running = token;
+    notifyListeners();
+    try {
+      return await runner.run(args, workingDirectory: root, cancel: token, stdin: stdin);
+    } finally {
+      _running = null;
+      _settling = true;
+      try {
+        await refresh();
+      } finally {
+        _settling = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  /// 여러 단계로 이뤄진 작업을 처음부터 끝까지 바쁜 상태로 묶는다. 이미 바쁘면 실행하지 않는다.
+  Future<CommandResult> hold(Future<CommandResult> Function() body) async {
+    if (busy) return const CommandResult(1, '', 'busy');
+    _holding = true;
+    notifyListeners();
+    try {
+      return await body();
+    } finally {
+      _holding = false;
+      notifyListeners();
+    }
+  }
+
+  /// 여러 명령을 차례로 실행한다. 하나라도 실패하면 멈춘다.
+  Future<CommandResult> executeAll(List<List<String>> commands) async {
+    var last = const CommandResult(0, '', '');
+    for (final c in commands) {
+      last = await execute(c);
+      if (!last.ok) break;
+    }
+    return last;
+  }
+
+  void cancel() => _running?.cancel();
+
+  // --- 동작 ---------------------------------------------------------------
+
+  Future<CommandResult> stage(FileChange f) => execute(GitCommands.stage(f.path));
+  Future<CommandResult> unstage(FileChange f) => execute(GitCommands.unstage(f.path, unborn: status.unborn));
+  Future<CommandResult> stageAll() => execute(GitCommands.stageAll);
+  Future<CommandResult> unstageAll() => execute(GitCommands.unstageAll(unborn: status.unborn));
+
+  Future<CommandResult> commit(String message, {bool stageAllFirst = false}) => executeAll([
+        if (stageAllFirst) GitCommands.stageAll,
+        GitCommands.commit(message),
+      ]);
+
+  Future<CommandResult> fetch({String? remote}) async {
+    final r = await execute(GitCommands.fetch(remote: remote));
+    if (r.ok) lastFetch = DateTime.now();
+    if (r.ok && remoteTagNames != null) await loadRemoteTags();
+    return r;
+  }
+
+  /// 자동 fetch (PLAN.md 3.3 P1): 기록에 남기지 않고 조용히 원격을 확인한다.
+  /// 다른 명령이 도는 중이거나 [minInterval] 안에 확인했으면 건너뛴다.
+  /// 네트워크·인증 오류는 무시한다 — 사용자가 누른 Fetch만 오류를 알린다.
+  Future<void> backgroundFetch({Duration minInterval = const Duration(minutes: 1)}) async {
+    if (busy || remotes.isEmpty || _disposed) return;
+    final last = lastFetch;
+    if (last != null && DateTime.now().difference(last) < minInterval) return;
+    lastFetch = DateTime.now();
+    final r = await runner.run(GitCommands.fetch(), workingDirectory: root, quiet: true);
+    if (r.ok && !_disposed) {
+      await refresh();
+      if (remoteTagNames != null) await loadRemoteTags();
+    }
+  }
+
+  /// [w]가 지금 연 폴더인가.
+  bool isOpenWorktree(Worktree w) => _samePath(w.path, root);
+
+  /// [branch]를 체크아웃하고 있는 다른 worktree. git은 한 브랜치를 한
+  /// worktree에서만 체크아웃하게 하므로, 있으면 여기서 전환도 삭제도 안 된다.
+  Worktree? worktreeHolding(String branch) =>
+      worktrees.where((w) => w.branch == branch && !isOpenWorktree(w)).firstOrNull;
+
+  /// 다른 worktree들의 커밋하지 않은 변경 수를 읽는다. 폴더마다 `git status`를
+  /// 돌리므로 자동 새로 고침에는 넣지 않고, 목록을 보여 줄 때와 지우기 전에 부른다.
+  /// 읽지 못한 폴더(사라짐)는 빠진다.
+  Future<void> loadWorktreeChanges() async {
+    final result = <String, int>{};
+    for (final w in worktrees) {
+      if (w.bare || w.prunable || isOpenWorktree(w)) continue;
+      final r = await read(GitCommands.worktreeChanges(w.path));
+      if (r.ok) result[w.path] = r.stdout.split('\n').where((l) => l.trim().isNotEmpty).length;
+    }
+    if (_disposed) return;
+    worktreeChanges = result;
+    notifyListeners();
+  }
+
+  /// 경로 비교용 정규형. 브랜치 행마다 부르므로 폴더별로 한 번만 계산한다.
+  static final _normalized = <String, String>{};
+
+  static bool _samePath(String a, String b) {
+    String norm(String path) => _normalized[path] ??= _normalize(path);
+    return norm(a) == norm(b);
+  }
+
+  static String _normalize(String p) {
+    try {
+      p = Directory(p).resolveSymbolicLinksSync();
+    } on FileSystemException {
+      // 사라진 폴더는 그대로 비교한다.
+    }
+    p = p.replaceAll(r'\', '/');
+    while (p.length > 1 && p.endsWith('/')) {
+      p = p.substring(0, p.length - 1);
+    }
+    return Platform.isWindows || Platform.isMacOS ? p.toLowerCase() : p;
+  }
+
+  /// 지워도 되는 로컬 브랜치 (PLAN.md 3.4 P1): 원격 기본 브랜치에 병합됐거나
+  /// 원격에서 사라진 브랜치. 현재 브랜치와 기본 브랜치는 뺀다.
+  Future<List<({Branch branch, bool merged})>> cleanupCandidates() async {
+    final base = defaultBranch;
+    final remote = defaultRemote;
+    final merged = <String>{};
+    if (base != null) {
+      final r = await read(GitCommands.mergedInto(remote == null ? base : '$remote/$base'));
+      if (r.ok) merged.addAll(r.stdout.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty));
+    }
+    return [
+      for (final b in localBranches)
+        if (!b.current && b.name != base && (merged.contains(b.name) || b.upstreamGone))
+          (branch: b, merged: merged.contains(b.name)),
+    ];
+  }
+
+  /// 읽기 전용 명령 (로그에 남기지 않음, 바쁨 표시 없음).
+  Future<CommandResult> read(List<String> args) => runner.run(args, workingDirectory: root, quiet: true);
+  Future<CommandResult> pull(PullMode mode) => execute(GitCommands.pull(mode));
+
+  /// 추적 브랜치가 없으면 게시한다. [followTags]면 태그도 함께 (PLAN.md 3.3 P1).
+  Future<CommandResult> push({bool followTags = false}) => execute(pushCommandWith(followTags: followTags));
+
+  List<String> get pushCommand => pushCommandWith();
+
+  List<String> pushCommandWith({bool followTags = false}) {
+    final head = status.head;
+    if (head != null && !status.hasUpstream && defaultRemote != null) {
+      return [...GitCommands.publish(defaultRemote!, head), if (followTags) '--follow-tags'];
+    }
+    return GitCommands.pushWith(followTags: followTags);
+  }
+
+  bool get needsPublish => !status.detached && !status.hasUpstream && remotes.isNotEmpty && !headMergedAndGone;
+
+  /// [switchTo]가 실행할 명령 (툴팁·미리 보기).
+  List<String> switchCommand(Branch b) {
+    if (!b.remote) return GitCommands.switchTo(b.name);
+    final local = localBranches.where((l) => l.name == b.shortName);
+    return local.isNotEmpty ? GitCommands.switchTo(local.first.name) : GitCommands.switchTrack(b.name);
+  }
+
+  Future<CommandResult> switchTo(Branch b) {
+    if (!b.remote) return execute(GitCommands.switchTo(b.name));
+    // 같은 이름의 로컬 브랜치가 있으면 그쪽으로 전환한다.
+    final local = localBranches.where((l) => l.name == b.shortName);
+    if (local.isNotEmpty) return execute(GitCommands.switchTo(local.first.name));
+    return execute(GitCommands.switchTrack(b.name));
+  }
+
+  List<String> get continueCommand => switch (operation) {
+        RepoOperation.rebasing => GitCommands.rebaseContinue,
+        RepoOperation.cherryPicking => GitCommands.cherryPickContinue,
+        RepoOperation.reverting => GitCommands.revertContinue,
+        _ => GitCommands.mergeContinue,
+      };
+
+  List<String> get abortCommand => switch (operation) {
+        RepoOperation.rebasing => GitCommands.rebaseAbort,
+        RepoOperation.cherryPicking => GitCommands.cherryPickAbort,
+        RepoOperation.reverting => GitCommands.revertAbort,
+        _ => GitCommands.mergeAbort,
+      };
+
+  /// 병합에는 건너뛰기가 없다.
+  List<String>? get skipCommand => switch (operation) {
+        RepoOperation.rebasing => GitCommands.rebaseSkip,
+        RepoOperation.cherryPicking => GitCommands.cherryPickSkip,
+        RepoOperation.reverting => GitCommands.revertSkip,
+        _ => null,
+      };
+
+  Future<CommandResult> continueOperation() => execute(continueCommand);
+  Future<CommandResult> abortOperation() => execute(abortCommand);
+
+  // --- 새로 고침 감시 -----------------------------------------------------
+
+  /// 편집기에서 저장하거나 터미널에서 커밋해도 바로 반영한다 (PLAN.md §5).
+  /// macOS·Windows는 저장소 전체를 재귀로 감시하고, 재귀 감시가 없는
+  /// Linux는 .git만 감시하면서 몇 초마다 확인한다.
+  void _startWatching() {
+    final recursive = !Platform.isLinux;
+    try {
+      final dir = Directory(recursive ? root : gitDir);
+      _watch = dir.watch(recursive: recursive).listen(_onFsEvent, onError: (_) {});
+    } on Object {
+      // 감시가 안 되는 파일 시스템(네트워크 드라이브 등)은 주기 확인만 한다.
+    }
+    if (!recursive || _watch == null) {
+      _poll = Timer.periodic(const Duration(seconds: 5), (_) => refresh());
+    }
+  }
+
+  void _onFsEvent(FileSystemEvent e) {
+    final p = e.path.replaceAll(r'\', '/');
+    // git 내부의 잦은 쓰기와 잠금 파일은 무시한다.
+    if (p.contains('/.git/objects/') || p.contains('/.git/logs/') || p.endsWith('.lock')) return;
+    if (p.contains('/.dart_tool/') || p.contains('/node_modules/') || p.contains('/build/')) return;
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      if (!busy) refresh();
+    });
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _watch?.cancel();
+    _debounce?.cancel();
+    _poll?.cancel();
+    super.dispose();
+  }
+}

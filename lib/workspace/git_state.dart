@@ -9,11 +9,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import '../core/command_runner.dart';
-import '../docks/branch/git/commands.dart';
-import '../docks/branch/git/status.dart';
+import '../docks/branch/repo/repo_controller.dart';
 
-enum RepoOperation { none, merging, rebasing, cherryPicking, reverting }
+export '../docks/branch/repo/repo_controller.dart' show RepoOperation;
 
 /// 불변 값. 같으면 알리지 않는다.
 @immutable
@@ -91,92 +89,61 @@ abstract class GitStateSource {
   void dispose();
 }
 
-/// `git status` 로 읽고 `.git` 변화를 감시한다. 감시가 안 되면 5초마다 읽는다.
-class ProcessGitStateSource implements GitStateSource {
-  ProcessGitStateSource({required this.runner, required this.root, required this.gitDir, this.debounce = const Duration(milliseconds: 400)});
+/// Branch 의 [RepoController]를 [GitStateSource]로 보이게 한다 (PLAN.md §1.10, 단계 3).
+///
+/// RepoController 가 `.git` 감시·새로 읽기를 맡고, 여기서는 그 결과를 [GitState] 값으로 줄여 "바뀐 것만" 알린다.
+/// 칸(Dock)은 RepoController 를 직접 쓰고, 그 밖의 앱(공유 영역·다른 칸)은 이 값만 본다.
+class RepoGitStateSource implements GitStateSource {
+  RepoGitStateSource(this.repo) {
+    _current = _map();
+    repo.addListener(_onRepo);
+  }
 
-  final CommandRunner runner;
-  final String root;
-  final String gitDir;
-  final Duration debounce;
-
+  final RepoController repo;
   final _controller = StreamController<GitState>.broadcast();
-  GitState? _current;
-  StreamSubscription<FileSystemEvent>? _watch;
-  Timer? _debounce;
-  Timer? _poll;
+  late GitState _current;
   bool _disposed = false;
-  bool _reading = false;
 
   @override
-  GitState? get current => _current;
+  GitState get current => _current;
 
   @override
   Stream<GitState> get states => _controller.stream;
 
-  Future<void> start() async {
-    await refresh();
-    try {
-      _watch = Directory(gitDir).watch(recursive: Platform.isMacOS || Platform.isWindows).listen(_onEvent, onError: (_) {});
-    } on Object {
-      _watch = null;
-    }
-    if (_watch == null) _poll = Timer.periodic(const Duration(seconds: 5), (_) => refresh());
+  GitState _map() {
+    final s = repo.status;
+    return GitState(
+      root: repo.root,
+      branch: s.head,
+      sha: s.oid,
+      upstream: s.hasUpstream ? s.upstream : null,
+      operation: repo.operation,
+      changedCount: s.changedCount,
+      conflictCount: s.conflicts.length,
+      ahead: s.ahead,
+      behind: s.behind,
+    );
   }
 
-  void _onEvent(FileSystemEvent _) {
-    _debounce?.cancel();
-    _debounce = Timer(debounce, refresh);
+  void _onRepo() {
+    if (_disposed) return;
+    // checkout·commit 이 진행 중이면(index.lock) 반쯤 바뀐 상태를 알리지 않는다 — 끝나면 감시가 다시 읽는다.
+    if (File('${repo.gitDir}/index.lock').existsSync()) return;
+    final next = _map();
+    if (next != _current) {
+      _current = next;
+      if (!_controller.isClosed) _controller.add(next);
+    }
   }
 
   @override
-  Future<void> refresh() async {
-    if (_disposed || _reading) return;
-    _reading = true;
-    try {
-      // index.lock 이 있는 동안(checkout·commit 진행 중)은 알리지 않고 가라앉기를 기다린다.
-      for (var i = 0; i < 40 && File('$gitDir/index.lock').existsSync(); i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 250));
-        if (_disposed) return;
-      }
-      final r = await runner.run(GitCommands.status, workingDirectory: root, quiet: true);
-      if (!r.ok || _disposed) return;
-      final s = RepoStatus.parse(r.stdout);
-      final next = GitState(
-        root: root,
-        branch: s.head,
-        sha: s.oid,
-        upstream: s.hasUpstream ? s.upstream : null,
-        operation: _operation(),
-        changedCount: s.changedCount,
-        conflictCount: s.conflicts.length,
-        ahead: s.ahead,
-        behind: s.behind,
-      );
-      if (next != _current) {
-        _current = next;
-        if (!_controller.isClosed) _controller.add(next);
-      }
-    } finally {
-      _reading = false;
-    }
-  }
-
-  RepoOperation _operation() {
-    bool exists(String n) => FileSystemEntity.typeSync('$gitDir/$n') != FileSystemEntityType.notFound;
-    if (exists('MERGE_HEAD')) return RepoOperation.merging;
-    if (exists('rebase-merge') || exists('rebase-apply')) return RepoOperation.rebasing;
-    if (exists('CHERRY_PICK_HEAD')) return RepoOperation.cherryPicking;
-    if (exists('REVERT_HEAD')) return RepoOperation.reverting;
-    return RepoOperation.none;
-  }
+  Future<void> refresh() => repo.refresh();
 
   @override
   void dispose() {
     _disposed = true;
-    _debounce?.cancel();
-    _poll?.cancel();
-    _watch?.cancel();
+    repo.removeListener(_onRepo);
+    repo.dispose();
     _controller.close();
   }
 }

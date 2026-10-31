@@ -1,0 +1,614 @@
+import 'package:flutter/material.dart';
+
+import 'package:daylight_taskbench/core/command_runner.dart';
+import '../../git/commands.dart';
+import '../../git/commits.dart';
+import '../../git/tags.dart';
+import 'package:daylight_taskbench/l10n/app_localizations.dart';
+import '../../release/repo_release_info.dart';
+import '../../release/version_files.dart';
+import '../../repo/repo_controller.dart';
+import 'package:daylight_taskbench/theme/app_theme.dart';
+import '../action_sheet.dart';
+import '../help/concepts.dart';
+import '../repo_actions.dart';
+import '../repo_scope.dart';
+import '../shortcut_label.dart';
+import '../widgets.dart';
+import 'release_list.dart';
+
+/// 태그 탭 (UI_UX.md §4.3, PLAN.md 3.7).
+class TagsTab extends StatefulWidget {
+  const TagsTab({super.key, this.onOpenReleaseWizard});
+
+  final VoidCallback? onOpenReleaseWizard;
+
+  @override
+  State<TagsTab> createState() => _TagsTabState();
+}
+
+class _TagsTabState extends State<TagsTab> {
+  bool _loadedRemote = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 원격 태그는 네트워크를 쓰므로 탭을 처음 볼 때 한 번 읽는다.
+    if (!_loadedRemote) {
+      _loadedRemote = true;
+      RepoScope.of(context).loadRemoteTags();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = RepoScope.of(context);
+    final l10n = AppLocalizations.of(context);
+    final localOnly = repo.remoteTagNames == null ? const <Tag>[] : repo.tags.where((t) => !t.pushed).toList();
+    final remote = repo.defaultRemote;
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      children: [
+        SectionHeader(
+          title: l10n.bdTagsTitle,
+          help: Concept.annotatedTag,
+          trailing: FilledButton.tonalIcon(
+            onPressed: repo.busy || repo.status.unborn ? null : () => showCreateTagSheet(context, repo, onOpenReleaseWizard: widget.onOpenReleaseWizard),
+            icon: const Icon(Icons.add_rounded, size: 16),
+            label: Text('${l10n.bdTagsNew}  ${shortcutLabel('T')}', overflow: TextOverflow.ellipsis),
+          ),
+        ),
+        if (localOnly.isNotEmpty && remote != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),
+            child: Tooltip(
+              message: GitCommands.pushTags(remote, localOnly.map((t) => t.name).toList()).join(' '),
+              child: OutlinedButton.icon(
+                onPressed: repo.busy
+                    ? null
+                    : () async {
+                        final names = localOnly.map((t) => t.name).toList();
+                        if (!await confirmTagPush(context, repo, names) || !context.mounted) return;
+                        await RepoActions.report(
+                          context,
+                          _pushTags(repo, remote, names),
+                          done: l10n.bdDonePushTags(localOnly.length),
+                        );
+                      },
+                icon: const Icon(Icons.cloud_upload_outlined, size: 16),
+                label: Text(l10n.bdTagsPushAll(localOnly.length)),
+              ),
+            ),
+          ),
+        if (repo.tags.isEmpty)
+          EmptyState(icon: Icons.sell_outlined, title: l10n.bdTagsEmptyTitle, message: l10n.bdTagsEmptyMessage)
+        else
+          for (final t in repo.tags) _TagRow(tag: t, repo: repo, remoteKnown: repo.remoteTagNames != null),
+      ],
+    );
+  }
+}
+
+/// 태그 push (v0.6.1): 태그 push로 CI가 릴리스를 만드는 저장소에서 버전 태그를
+/// 올리면 태그마다 릴리스가 새로 만들어진다. 지운 옛 릴리스가 되살아날 수 있어
+/// 먼저 알린다. 확인했으면(또는 경고가 필요 없으면) true.
+Future<bool> confirmTagPush(BuildContext context, RepoController repo, List<String> names) async {
+  final versions = names.where((n) => SemVer.tryParse(n) != null).toList();
+  if (versions.isEmpty) return true;
+
+  // 태그가 가리키는 커밋의 버전 파일 버전이 태그와 다르면 먼저 알린다. 버전 올림
+  // 커밋보다 앞선 커밋에 단 태그를 올리면 CI의 버전 검사에서 멈춘다.
+  final files = detectVersionFiles(repo.root);
+  final mismatched = <String>[];
+  for (final n in versions) {
+    final committed = await loadCommittedVersion(repo, n);
+    if (committed != null && committed.name != SemVer.tryParse(n)!.name) mismatched.add('$n → ${committed.name}');
+  }
+  if (!context.mounted) return false;
+  final l10n = AppLocalizations.of(context);
+  if (mismatched.isNotEmpty) {
+    return confirmDanger(
+      context,
+      title: l10n.bdTagsPushMismatchTitle(mismatched.length),
+      message: l10n.bdTagsPushMismatchMessage(files.first.path, mismatched.join(', ')),
+      confirm: l10n.bdTagsPushAnyway,
+      commands: [GitCommands.pushTags(repo.defaultRemote ?? 'origin', names)],
+    );
+  }
+
+  final workflow = detectReleaseWorkflows(repo.root).where((w) => w.onTags).firstOrNull;
+  if (workflow == null) return true;
+  return confirmDanger(
+    context,
+    title: l10n.bdTagsPushCiTitle(versions.length),
+    message: l10n.bdTagsPushCiMessage(workflow.file, versions.join(', ')),
+    confirm: l10n.bdTagsPushAnyway,
+    commands: [GitCommands.pushTags(repo.defaultRemote ?? 'origin', names)],
+  );
+}
+
+Future<CommandResult> _pushTags(RepoController repo, String remote, List<String> names) async {
+  final r = await repo.execute(GitCommands.pushTags(remote, names));
+  await repo.loadRemoteTags();
+  return r;
+}
+
+enum _TagMenu { commits, checkout, push, rollback, delete, deleteRemote }
+
+class _TagRow extends StatelessWidget {
+  const _TagRow({required this.tag, required this.repo, required this.remoteKnown});
+
+  final Tag tag;
+  final RepoController repo;
+  final bool remoteKnown;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final t = tag;
+    final remote = repo.defaultRemote;
+    return SizedBox(
+      height: 44,
+      child: Padding(
+        padding: const EdgeInsets.only(left: AppSpacing.lg, right: 4),
+        child: Row(children: [
+          Tooltip(
+            message: !remoteKnown ? '' : (t.pushed ? l10n.bdTagsPushed : l10n.bdTagsLocalOnly),
+            child: Icon(
+              !remoteKnown ? Icons.cloud_outlined : (t.pushed ? Icons.cloud_done_rounded : Icons.cloud_off_rounded),
+              size: 16,
+              color: t.pushed ? toneColor(context, Tone.success) : theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(t.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppFonts.mono.copyWith(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: t.prerelease ? theme.colorScheme.onSurfaceVariant : theme.colorScheme.onSurface,
+                  )),
+              Text(
+                [t.commit.substring(0, t.commit.length < 7 ? t.commit.length : 7), if (t.subject.isNotEmpty) t.subject]
+                    .join(' · '),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.merge(AppFonts.userContent),
+              ),
+            ]),
+          ),
+          if (!t.annotated) ...[StatusPill(label: l10n.bdTagsLightweight), const SizedBox(width: 4)],
+          Text(relativeTime(l10n, t.date), style: theme.textTheme.labelSmall),
+          PopupMenuButton<_TagMenu>(
+            tooltip: l10n.bdCommonMore,
+            icon: const Icon(Icons.more_horiz_rounded, size: 18),
+            enabled: !repo.busy,
+            onSelected: (m) => _onMenu(context, m),
+            itemBuilder: (context) => [
+              if (remote != null && !t.pushed) PopupMenuItem(value: _TagMenu.push, child: Text(l10n.bdTagsPush)),
+              PopupMenuItem(value: _TagMenu.commits, child: Text(l10n.bdTagsCommitsSince)),
+              PopupMenuItem(value: _TagMenu.checkout, child: Text(l10n.bdTagsCheckout)),
+              if (t.version != null && t.pushed)
+                PopupMenuItem(
+                  value: _TagMenu.rollback,
+                  child: Text(l10n.bdRollbackTitle, style: TextStyle(color: theme.colorScheme.error)),
+                ),
+              PopupMenuItem(value: _TagMenu.delete, child: Text(l10n.bdTagsDelete)),
+              if (remote != null && t.pushed)
+                PopupMenuItem(
+                  value: _TagMenu.deleteRemote,
+                  child: Text(l10n.bdTagsDeleteRemote, style: TextStyle(color: theme.colorScheme.error)),
+                ),
+            ],
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Future<void> _onMenu(BuildContext context, _TagMenu m) async {
+    final l10n = AppLocalizations.of(context);
+    final remote = repo.defaultRemote;
+    switch (m) {
+      case _TagMenu.commits:
+        await showTagCommitsSheet(context, repo, tag);
+      case _TagMenu.checkout:
+        // 태그 위치로 이동 = 분리된 HEAD. 무엇을 뜻하는지 먼저 알린다 (PLAN.md 3.7 P1).
+        final command = GitCommands.switchDetach(tag.name);
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.bdTagsCheckoutTitle(tag.name)),
+            content: SizedBox(
+              width: 360,
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(child: Text(l10n.bdTagsCheckoutMessage)),
+                  const HelpButton(concept: Concept.detachedHead),
+                ]),
+                const SizedBox(height: AppSpacing.md),
+                CommandPreview(commands: [command]),
+              ]),
+            ),
+            actions: [
+              TextButton(autofocus: true, onPressed: () => Navigator.pop(context, false), child: Text(l10n.commonCancel)),
+              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.bdTagsCheckout)),
+            ],
+          ),
+        );
+        if (ok == true && context.mounted) {
+          await RepoActions.withStashRetry(context, repo, () => repo.execute(command), done: l10n.bdDoneCheckoutTag(tag.name));
+        }
+      case _TagMenu.rollback:
+        await showRollbackDialog(context, repo, tag.name);
+      case _TagMenu.push:
+        if (!await confirmTagPush(context, repo, [tag.name]) || !context.mounted) return;
+        await RepoActions.report(context, _pushTags(repo, remote!, [tag.name]), done: l10n.bdDonePushTags(1));
+      case _TagMenu.delete:
+        await RepoActions.report(context, repo.execute(GitCommands.deleteTag(tag.name)),
+            done: l10n.bdDoneDeleteTag(tag.name));
+      case _TagMenu.deleteRemote:
+        await deleteRemoteTag(context, repo, tag.name);
+    }
+  }
+}
+
+/// 원격 태그 삭제 (v0.6.1). GitHub는 릴리스가 달린 태그를 지우면 그 릴리스를
+/// **초안으로 바꾼다** — 전에는 "릴리스는 그대로 남습니다"라고 잘못 안내했다.
+/// 릴리스가 있으면 그 사실을 알리고 '릴리스 되돌리기'를 권한다.
+Future<void> deleteRemoteTag(BuildContext context, RepoController repo, String tag, {bool? hasRelease}) async {
+  var release = hasRelease ?? false;
+  if (hasRelease == null && repo.githubRemote != null) {
+    release = (await repo.read(GhCommands.releaseView(tag))).ok;
+    if (!context.mounted) return;
+  }
+  await showDeleteRemoteTagDialog(context, repo, tag, hasRelease: release);
+}
+
+Future<void> showDeleteRemoteTagDialog(BuildContext context, RepoController repo, String tag, {required bool hasRelease}) async {
+  final l10n = AppLocalizations.of(context);
+  final remote = repo.defaultRemote!;
+  final command = GitCommands.deleteRemoteTag(remote, tag);
+  final target = repo.remotes.where((r) => r.name == remote).firstOrNull?.location?.webUrl ?? remote;
+  final ok = await confirmDanger(
+    context,
+    title: l10n.bdTagsDeleteRemoteTitle,
+    message: [
+      l10n.bdTagsDeleteRemoteMessage(tag, target),
+      if (hasRelease) l10n.bdTagsDeleteRemoteReleaseDraft(tag),
+    ].join('\n\n'),
+    confirm: l10n.bdTagsDeleteRemote,
+    commands: [command],
+  );
+  if (ok && context.mounted) {
+    await RepoActions.report(
+      context,
+      () async {
+        final r = await repo.execute(command);
+        await repo.loadRemoteTags();
+        return r;
+      }(),
+      done: l10n.bdDoneDeleteRemoteTag(tag),
+    );
+  }
+}
+
+/// 새 태그 (PLAN.md 3.7): 주석 태그(기본)/가벼운 태그, 대상, 메시지, 이름 검사.
+/// [onOpenReleaseWizard]: 버전 파일과 맞지 않는 릴리스 태그를 막을 때 보여 줄
+/// "릴리스 마법사 열기" 버튼의 동작.
+/// [headVersion]을 주면 HEAD의 버전을 다시 읽지 않는다 (테스트에서 미리 읽을 때).
+Future<void> showCreateTagSheet(
+  BuildContext context,
+  RepoController repo, {
+  VoidCallback? onOpenReleaseWizard,
+  SemVer? headVersion,
+  String? target,
+}) =>
+    showActionSheet<void>(
+      context,
+      (context) => _CreateTagSheet(
+        repo: repo,
+        onOpenReleaseWizard: onOpenReleaseWizard,
+        headVersion: headVersion,
+        target: target,
+      ),
+    );
+
+/// [ref] 커밋에 커밋된 버전 파일의 버전. 버전 파일이 없으면 null.
+Future<SemVer?> loadCommittedVersion(RepoController repo, String ref) async {
+  final files = detectVersionFiles(repo.root);
+  if (files.isEmpty) return null;
+  final f = files.first;
+  final r = await repo.read(['git', 'show', '$ref:${f.path}']);
+  return r.ok ? readVersion(f.kind, r.stdout) : null;
+}
+
+class _CreateTagSheet extends StatefulWidget {
+  const _CreateTagSheet({required this.repo, this.onOpenReleaseWizard, this.headVersion, this.target});
+
+  final RepoController repo;
+  final VoidCallback? onOpenReleaseWizard;
+  final SemVer? headVersion;
+
+  /// 태그를 달 커밋을 정해서 열 때 (기록 탭의 "여기에 태그 달기").
+  final String? target;
+
+  @override
+  State<_CreateTagSheet> createState() => _CreateTagSheetState();
+}
+
+class _CreateTagSheetState extends State<_CreateTagSheet> {
+  late final _name = TextEditingController(text: _suggestion());
+  late final _message = TextEditingController();
+  bool _annotated = true;
+  bool _push = true;
+  late String? _target = widget.target;
+
+  /// 메시지를 직접 고치기 전까지는 태그 이름을 따라간다 (`<표시 이름> <버전>`).
+  bool _messageEdited = false;
+  String _autoMessage = '';
+
+  /// 태그를 달 커밋의 버전 파일 버전 (태그 전 점검, PLAN.md 3.8.3 5단계와 같은 규칙).
+  /// v0.3.0을 태그 탭에서 버전 올림 없이 달아 CI가 멈춘 일에서 나왔다.
+  VersionFile? _versionFile;
+  SemVer? _targetVersion;
+  late final bool _ciReleases = detectReleaseWorkflows(widget.repo.root).any((w) => w.onTags);
+
+  String _suggestion() {
+    final latest = widget.repo.tags.map((t) => t.version).whereType<SemVer>().firstOrNull;
+    if (latest == null) return 'v0.1.0';
+    return latest.pre != null ? 'v${latest.major}.${latest.minor}.${latest.patch}' : 'v${latest.major}.${latest.minor}.${latest.patch + 1}';
+  }
+
+  String _messageFor(String tag) => '${displayNameFor(widget.repo.root, widget.repo.name)} ${tag.replaceFirst('v', '')}';
+
+  @override
+  void initState() {
+    super.initState();
+    _message.text = _autoMessage = _messageFor(_name.text);
+    _name.addListener(() {
+      if (!_messageEdited) _message.text = _autoMessage = _messageFor(_name.text.trim());
+      setState(() {});
+    });
+    _message.addListener(() {
+      if (_message.text != _autoMessage) _messageEdited = true;
+      setState(() {});
+    });
+    final files = detectVersionFiles(widget.repo.root);
+    _versionFile = files.isEmpty ? null : files.first;
+    _loadTargetVersion();
+  }
+
+  /// 대상 커밋에 커밋된 버전 (작업 트리가 아니라 태그가 가리킬 커밋 기준).
+  Future<void> _loadTargetVersion() async {
+    if (_versionFile == null) return;
+    if (_target == null && widget.headVersion != null) {
+      _targetVersion = widget.headVersion;
+      return;
+    }
+    final v = await loadCommittedVersion(widget.repo, _target ?? 'HEAD');
+    if (mounted) setState(() => _targetVersion = v);
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _message.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final repo = widget.repo;
+    final name = _name.text.trim();
+    final problem = validateTagName(name);
+    final exists = repo.tags.any((t) => t.name == name);
+    final blocking = exists || problem == TagNameProblem.empty || problem == TagNameProblem.invalid;
+    final warning = switch (problem) {
+      TagNameProblem.notSemVer => l10n.bdTagNameNotSemVer,
+      TagNameProblem.missingV => l10n.bdTagNameMissingV,
+      TagNameProblem.invalid => l10n.bdTagNameInvalid,
+      _ => null,
+    };
+    final remote = repo.defaultRemote;
+    final tagVersion = SemVer.tryParse(name);
+    final mismatch = tagVersion != null && _targetVersion != null && tagVersion.name != _targetVersion!.name;
+    // 버전이 맞지 않는 릴리스 태그는 push하지 않는다. 로컬에만 만드는 것은 허용.
+    final pushBlocked = mismatch && _push && remote != null;
+    final commands = [
+      GitCommands.createTag(name.isEmpty ? '<tag>' : name,
+          message: _annotated ? _message.text.trim() : null, target: _target),
+      if (_push && remote != null) GitCommands.pushTags(remote, [name.isEmpty ? '<tag>' : name]),
+    ];
+
+    Future<void> submit() async {
+      if (blocking || name.isEmpty) return;
+      Navigator.pop(context);
+      await RepoActions.report(
+        context,
+        () async {
+          final r = await repo.executeAll(commands);
+          if (_push) await repo.loadRemoteTags();
+          return r;
+        }(),
+        done: l10n.bdDoneCreateTag(name),
+      );
+    }
+
+    return ActionSheetBody(
+      title: l10n.bdTagsNew,
+      help: Concept.annotatedTag,
+      commands: commands,
+      confirmLabel: _push ? l10n.bdTagsCreateAndPush : l10n.bdTagsCreate,
+      onConfirm: blocking || name.isEmpty || pushBlocked ? null : submit,
+      children: [
+        if (mismatch) ...[
+          _VersionMismatch(
+            file: _versionFile!.path,
+            fileVersion: _targetVersion!.name,
+            tag: name,
+            ciReleases: _ciReleases,
+            pushBlocked: pushBlocked,
+            onOpenReleaseWizard: widget.onOpenReleaseWizard == null
+                ? null
+                : () {
+                    Navigator.pop(context);
+                    widget.onOpenReleaseWizard!();
+                  },
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        TextField(
+          controller: _name,
+          autofocus: true,
+          style: AppFonts.mono.copyWith(fontSize: 13),
+          decoration: InputDecoration(
+            labelText: l10n.bdTagNameLabel,
+            errorText: exists ? l10n.bdTagNameExists : (problem == TagNameProblem.invalid ? warning : null),
+            helperText: exists || problem == TagNameProblem.invalid ? null : warning,
+            helperStyle: TextStyle(color: toneColor(context, Tone.warning)),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        SegmentedButton<bool>(
+          segments: [
+            ButtonSegment(value: true, label: Text(l10n.bdTagsAnnotated)),
+            ButtonSegment(value: false, label: Text(l10n.bdTagsLightweight)),
+          ],
+          selected: {_annotated},
+          onSelectionChanged: (s) => setState(() => _annotated = s.first),
+        ),
+        if (_annotated) ...[
+          const SizedBox(height: AppSpacing.md),
+          TextField(controller: _message, decoration: InputDecoration(labelText: l10n.bdTagMessageLabel)),
+        ],
+        const SizedBox(height: AppSpacing.md),
+        DropdownButtonFormField<String?>(
+          initialValue: _target,
+          isExpanded: true,
+          decoration: InputDecoration(labelText: l10n.bdTagTargetLabel),
+          items: [
+            DropdownMenuItem(value: null, child: Text(l10n.bdTagTargetHead(repo.status.head ?? 'HEAD'))),
+            if (widget.target != null && !repo.localBranches.any((b) => b.name == widget.target))
+              DropdownMenuItem(value: widget.target, child: Text(widget.target!, style: AppFonts.mono.copyWith(fontSize: 12))),
+            for (final b in repo.localBranches.where((b) => !b.current))
+              DropdownMenuItem(value: b.name, child: Text(b.name, style: AppFonts.userContent)),
+          ],
+          onChanged: (v) {
+            setState(() => _target = v);
+            _loadTargetVersion();
+          },
+        ),
+        if (remote != null)
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _push,
+            onChanged: (v) => setState(() => _push = v ?? true),
+            title: Text(l10n.bdTagsPushAfter(remote)),
+          ),
+      ],
+    );
+  }
+}
+
+/// 태그 버전과 버전 파일이 다를 때의 안내 (태그 전 점검).
+class _VersionMismatch extends StatelessWidget {
+  const _VersionMismatch({
+    required this.file,
+    required this.fileVersion,
+    required this.tag,
+    required this.ciReleases,
+    required this.pushBlocked,
+    this.onOpenReleaseWizard,
+  });
+
+  final String file;
+  final String fileVersion;
+  final String tag;
+  final bool ciReleases;
+  final bool pushBlocked;
+  final VoidCallback? onOpenReleaseWizard;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final color = toneColor(context, Tone.warning);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(AppRadius.button),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(Icons.warning_amber_rounded, size: 18, color: color),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(child: Text(l10n.bdTagVersionMismatch(file, fileVersion, tag), style: theme.textTheme.bodyMedium)),
+        ]),
+        const SizedBox(height: 4),
+        Text(
+          [
+            l10n.bdTagVersionMismatchWhy,
+            if (ciReleases) l10n.bdTagVersionMismatchCi,
+            if (pushBlocked) l10n.bdTagVersionMismatchBlocked,
+          ].join(' '),
+          style: theme.textTheme.bodySmall,
+        ),
+        if (onOpenReleaseWizard != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          FilledButton.tonalIcon(
+            onPressed: onOpenReleaseWizard,
+            icon: const Icon(Icons.rocket_launch_rounded, size: 16),
+            label: Text(l10n.bdTagOpenReleaseWizard),
+          ),
+        ],
+      ]),
+    );
+  }
+}
+
+
+/// 이전 버전 태그부터 이 태그까지의 커밋 (PLAN.md 3.7 P1).
+Future<void> showTagCommitsSheet(BuildContext context, RepoController repo, Tag tag) async {
+  final versions = repo.tags.where((t) => t.version != null).toList();
+  final i = versions.indexWhere((t) => t.name == tag.name);
+  final previous = i >= 0 && i + 1 < versions.length ? versions[i + 1].name : null;
+  final r = await repo.read(GitCommands.log(since: previous, until: tag.name));
+  if (!context.mounted) return;
+  final commits = r.ok ? Commit.parse(r.stdout) : const <Commit>[];
+  await showActionSheet<void>(context, (context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.lg),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(previous == null ? l10n.bdTagsCommitsUpTo(tag.name) : l10n.bdTagsCommitsBetween(previous, tag.name),
+              style: theme.textTheme.titleLarge),
+          Text(l10n.bdTagsCommitsCount(commits.length), style: theme.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.md),
+          for (final c in commits)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text.rich(
+                TextSpan(children: [
+                  TextSpan(text: '${c.shortHash}  ', style: AppFonts.mono.copyWith(fontSize: 11.5)),
+                  TextSpan(text: c.subject),
+                ]),
+                style: theme.textTheme.bodySmall?.merge(AppFonts.userContent),
+              ),
+            ),
+        ]),
+      ),
+    );
+  });
+}

@@ -1,0 +1,1154 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:daylight_taskbench/core/command_runner.dart';
+import '../../git/commands.dart';
+import '../../git/tags.dart';
+import '../../github/models.dart';
+import 'package:daylight_taskbench/l10n/app_localizations.dart';
+import '../../release/release_flow.dart';
+import '../../release/repo_release_info.dart';
+import '../../release/version_files.dart';
+import 'package:daylight_taskbench/theme/app_theme.dart';
+import '../repo_actions.dart';
+import '../repo_scope.dart';
+import '../shortcut_label.dart';
+import '../widgets.dart';
+import '../action_sheet.dart';
+import '../services.dart';
+import '../markdown_editor.dart';
+import 'pr_tab.dart';
+import 'release_list.dart';
+import 'remotes_tab.dart';
+import 'tags_tab.dart' show deleteRemoteTag;
+
+/// 릴리스 탭과 마법사 (UI_UX.md §4.5, PLAN.md 3.8). PR 경유가 기본.
+class ReleaseTab extends StatefulWidget {
+  const ReleaseTab({super.key, required this.flow, required this.onShowChanges});
+
+  final ReleaseFlow flow;
+  final VoidCallback onShowChanges;
+
+  @override
+  State<ReleaseTab> createState() => _ReleaseTabState();
+}
+
+class _ReleaseTabState extends State<ReleaseTab> {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final flow = widget.flow;
+    flow.draftNotesBuilder = () => draftReleaseNotes(
+          flow.commits,
+          featuresTitle: l10n.bdNotesFeatures,
+          fixesTitle: l10n.bdNotesFixes,
+          otherTitle: l10n.bdNotesOther,
+        );
+    return ListenableBuilder(
+      listenable: flow,
+      builder: (context, _) => flow.step == ReleaseStep.check && flow.checks.isEmpty && !flow.loading
+          ? _Overview(flow: flow)
+          : _Wizard(flow: flow, onShowChanges: widget.onShowChanges),
+    );
+  }
+}
+
+/// 새 릴리스를 시작하기 전: 마지막 태그와 시작 버튼.
+class _Overview extends StatelessWidget {
+  const _Overview({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = RepoScope.of(context);
+    final env = RepoScope.environmentOf(context);
+    final l10n = AppLocalizations.of(context);
+    final latest = repo.tags.where((t) => t.version != null).firstOrNull;
+    final github = repo.githubRemote != null && env.ghReady;
+    // GitHub가 아니거나 gh가 없으면 바로 커밋 방식(점검·버전·태그)만 쓴다 (PLAN.md 3.8.3 P1).
+    final note = repo.githubRemote == null
+        ? l10n.bdReleaseDirectOnlyNotGitHub
+        : (!env.ghReady ? '${ghUnavailableText(l10n, env)} ${l10n.bdReleaseDirectOnly}' : null);
+    final missing = missingReleaseFiles(repo.root);
+    final reason = repo.remotes.isEmpty
+        ? l10n.bdReleaseNeedsRemote
+        : (missing.isNotEmpty ? l10n.bdReleaseNeedsFiles(missing.join(', ')) : null);
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      children: [
+        SectionHeader(title: l10n.bdReleaseTitle),
+        EmptyState(
+          icon: Icons.rocket_launch_outlined,
+          title: latest == null ? l10n.bdReleaseNoTags : l10n.bdReleaseLatest(latest.name),
+          message: reason ?? note ?? l10n.bdReleaseIntro,
+          action: FilledButton.icon(
+            onPressed: reason != null || repo.busy
+                ? null
+                : () {
+                    flow.ghReady = env.ghReady;
+                    if (!github) flow.direct = true;
+                    flow.runChecks();
+                  },
+            icon: const Icon(Icons.rocket_launch_rounded, size: 16),
+            label: Text('${l10n.bdReleaseStart}  ${shortcutLabel('R', shift: true)}'),
+          ),
+        ),
+        // 릴리스 관리 (PLAN.md 3.8.6)
+        if (github) ReleaseList(repo: repo),
+      ],
+    );
+  }
+}
+
+class _Wizard extends StatelessWidget {
+  const _Wizard({required this.flow, required this.onShowChanges});
+
+  final ReleaseFlow flow;
+  final VoidCallback onShowChanges;
+
+  static const _steps = [
+    ReleaseStep.check,
+    ReleaseStep.version,
+    ReleaseStep.pr,
+    ReleaseStep.merge,
+    ReleaseStep.tag,
+    ReleaseStep.notes,
+    ReleaseStep.ci,
+  ];
+
+  String _title(AppLocalizations l10n, ReleaseStep s) => switch (s) {
+        ReleaseStep.check => l10n.bdStepCheck,
+        ReleaseStep.version => l10n.bdStepVersion,
+        ReleaseStep.pr => l10n.bdStepPr,
+        ReleaseStep.merge => l10n.bdStepMerge,
+        ReleaseStep.tag => l10n.bdStepTag,
+        ReleaseStep.notes => flow.ciMode ? l10n.bdStepNotesCi : l10n.bdStepNotes,
+        ReleaseStep.ci => l10n.bdStepCi,
+        ReleaseStep.done => '',
+      };
+
+  String _summary(AppLocalizations l10n, ReleaseStep s) => switch (s) {
+        ReleaseStep.check => flow.buildRun == null
+            ? l10n.bdStepCheckDone
+            : '${l10n.bdStepCheckDone} · ${l10n.bdManualBuildShort(runStateLabel(l10n, flow.buildRun!.state))}',
+        ReleaseStep.version => '${flow.current} → ${flow.next} · ${flow.releaseBranch}',
+        ReleaseStep.pr => flow.pr == null ? '' : '#${flow.pr!.number} ${flow.pr!.title}',
+        ReleaseStep.merge => l10n.bdStepMergeDone(flow.pr?.number ?? 0),
+        ReleaseStep.tag => flow.tag ?? '',
+        ReleaseStep.notes => flow.ciMode ? l10n.bdStepNotesCiSummary : (flow.release?.url ?? ''),
+        ReleaseStep.ci => flow.run == null ? '' : runStateLabel(l10n, flow.run!.state),
+        ReleaseStep.done => '',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final current = flow.step;
+    final index = current == ReleaseStep.done ? _steps.length : _steps.indexOf(current);
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.sm, AppSpacing.sm),
+          child: Row(children: [
+            Expanded(
+              child: Text(flow.next == null ? l10n.bdReleaseNew : l10n.bdReleaseNewVersion(flow.next!.tag),
+                  style: theme.textTheme.titleLarge),
+            ),
+            IconButton(
+              tooltip: l10n.bdReleaseCancel,
+              icon: const Icon(Icons.close_rounded, size: 18),
+              onPressed: () async {
+                if (index >= 1 && current != ReleaseStep.done) {
+                  final ok = await confirmDanger(
+                    context,
+                    title: l10n.bdReleaseCancelTitle,
+                    message: index >= 5 ? l10n.bdReleaseCancelAfterTag : l10n.bdReleaseCancelMessage(flow.releaseBranch),
+                    confirm: l10n.bdReleaseCancel,
+                  );
+                  if (!ok) return;
+                }
+                flow.checks.clear();
+                await flow.cancel();
+              },
+            ),
+          ]),
+        ),
+        for (var i = 0; i < _steps.length; i++)
+          _StepTile(
+            number: i + 1,
+            title: _title(l10n, _steps[i]),
+            state: i < index ? _StepState.done : (i == index ? _StepState.active : _StepState.pending),
+            summary: i < index ? _summary(l10n, _steps[i]) : null,
+            // CI가 릴리스를 만드는 저장소는 노트 단계를 CI 뒤로 미룬다.
+            skipped: i < index &&
+                ((_steps[i] == ReleaseStep.notes && flow.ciMode) ||
+                    // 바로 커밋 방식은 PR·병합이 없고, GitHub가 아니면 노트·CI도 없다.
+                    (flow.direct && (_steps[i] == ReleaseStep.pr || _steps[i] == ReleaseStep.merge)) ||
+                    (!flow.github && (_steps[i] == ReleaseStep.notes || _steps[i] == ReleaseStep.ci))),
+            child: i == index ? _content(context, _steps[i]) : null,
+          ),
+        if (current == ReleaseStep.done) _Done(flow: flow),
+      ],
+    );
+  }
+
+  Widget _content(BuildContext context, ReleaseStep s) => switch (s) {
+        ReleaseStep.check => _CheckStep(flow: flow, onShowChanges: onShowChanges),
+        ReleaseStep.version => _VersionStep(flow: flow),
+        ReleaseStep.pr => _PrStep(flow: flow),
+        ReleaseStep.merge => _MergeStep(flow: flow),
+        ReleaseStep.tag => _TagStep(flow: flow),
+        ReleaseStep.notes => _NotesStep(flow: flow),
+        ReleaseStep.ci => _CiStep(flow: flow),
+        ReleaseStep.done => const SizedBox.shrink(),
+      };
+}
+
+enum _StepState { done, active, pending }
+
+class _StepTile extends StatelessWidget {
+  const _StepTile({
+    required this.number,
+    required this.title,
+    required this.state,
+    this.summary,
+    this.child,
+    this.skipped = false,
+  });
+
+  final int number;
+  final String title;
+  final _StepState state;
+  final String? summary;
+  final Widget? child;
+  final bool skipped;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = switch (state) {
+      _StepState.done => toneColor(context, Tone.success),
+      _StepState.active => theme.colorScheme.primary,
+      _StepState.pending => theme.colorScheme.onSurfaceVariant,
+    };
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 4, AppSpacing.md, 4),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 22,
+          height: 22,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: state == _StepState.pending ? null : color.withValues(alpha: 0.16),
+            border: Border.all(color: color),
+          ),
+          child: state == _StepState.done
+              ? Icon(skipped ? Icons.redo_rounded : Icons.check_rounded, size: 13, color: color)
+              : Text('$number', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color)),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            SizedBox(
+              height: 22,
+              child: Row(children: [
+                Text(title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                        color: state == _StepState.pending ? theme.colorScheme.onSurfaceVariant : null)),
+                if (summary != null && summary!.isNotEmpty) ...[
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(summary!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.merge(AppFonts.userContent)),
+                  ),
+                ],
+              ]),
+            ),
+            if (child != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md), child: child),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+/// ✓/✕ 한 줄과 (있으면) 해결 버튼.
+class _CheckRow extends StatelessWidget {
+  const _CheckRow({required this.ok, required this.label, this.detail, this.action});
+
+  final bool? ok;
+  final String label;
+  final String? detail;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 1),
+          child: ok == null
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : Icon(ok! ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  size: 16, color: toneColor(context, ok! ? Tone.success : Tone.danger)),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: theme.textTheme.bodyMedium),
+            if (detail != null && detail!.isNotEmpty) Text(detail!, style: theme.textTheme.bodySmall),
+          ]),
+        ),
+        if (action != null && ok == false) action!,
+      ]),
+    );
+  }
+}
+
+/// "원격과 같다" 한 줄 (① 점검과 ⑤ 태그 전 점검). ✕면 ↑↓ 숫자 대신 이유를 적고
+/// 그 이유에 맞는 해결 버튼을 둔다. 기본 브랜치가 아니면 버튼을 두지 않는다 —
+/// 다른 브랜치를 맞춰 봐야 릴리스와 상관이 없다.
+class _SyncRow extends StatelessWidget {
+  const _SyncRow({
+    required this.flow,
+    required this.ok,
+    required this.label,
+    required this.onRecheck,
+    this.allowAhead = false,
+    this.showBranch = false,
+  });
+
+  final ReleaseFlow flow;
+  final bool? ok;
+  final String label;
+  final Future<void> Function() onRecheck;
+  final bool allowAhead;
+
+  /// 기본 브랜치에 있지 않다는 것도 이 줄에 적는다 (⑤에는 따로 줄이 없다).
+  final bool showBranch;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final repo = flow.repo;
+    final s = repo.status;
+    final branch = flow.defaultBranch;
+    final onDefault = s.head == branch;
+    final problem = ok == false ? flow.syncIssue(allowAhead: allowAhead) : null;
+
+    final detail = switch (problem) {
+      null when ok == false && showBranch && !onDefault => l10n.bdSyncOnOtherBranch(s.head ?? 'HEAD'),
+      null => s.hasUpstream ? l10n.bdSyncUpstreamCounts(s.upstream!, s.ahead, s.behind) : null,
+      SyncProblem.noUpstream => l10n.bdSyncNoUpstream(s.head ?? 'HEAD'),
+      SyncProblem.behind => l10n.bdSyncBehind(s.behind),
+      SyncProblem.ahead => flow.direct ? l10n.bdSyncAhead(s.ahead) : l10n.bdSyncAheadPr(s.ahead, branch),
+      SyncProblem.diverged => l10n.bdSyncDiverged(s.behind, s.ahead),
+      SyncProblem.sameContent => l10n.bdSyncSameContent(s.ahead),
+    };
+
+    Future<void> Function()? fix;
+    String? fixLabel;
+    if (onDefault) {
+      switch (problem) {
+        case SyncProblem.behind || SyncProblem.diverged:
+          fixLabel = l10n.bdHeaderPull;
+          fix = () => RepoActions.pull(context, repo);
+        case SyncProblem.noUpstream when repo.remotes.isNotEmpty:
+          fixLabel = l10n.bdHeaderPush;
+          fix = () => RepoActions.push(context, repo);
+        case SyncProblem.ahead:
+          fixLabel = l10n.bdHeaderPush;
+          fix = () async {
+            // PR 방식에서 기본 브랜치에 바로 올리는 것은 흔한 실수다. 한 번 묻는다.
+            if (!flow.direct &&
+                !await confirmDanger(
+                  context,
+                  title: l10n.bdSyncPushNoPrTitle(branch),
+                  message: l10n.bdSyncPushNoPrMessage(s.ahead, branch),
+                  confirm: l10n.bdHeaderPush,
+                  commands: [repo.pushCommand],
+                )) {
+              return;
+            }
+            if (context.mounted) await RepoActions.push(context, repo);
+          };
+        case SyncProblem.sameContent:
+          fixLabel = l10n.bdSyncMatchRemote;
+          fix = () async {
+            final ok = await confirmDanger(
+              context,
+              title: l10n.bdSyncMatchRemoteTitle(branch),
+              message: l10n.bdSyncMatchRemoteMessage(s.ahead, branch, s.upstream ?? ''),
+              confirm: l10n.bdSyncMatchRemote,
+              commands: const [GitCommands.resetToUpstream],
+            );
+            if (ok && context.mounted) {
+              await RepoActions.report(context, repo.execute(GitCommands.resetToUpstream), done: l10n.bdDoneMatchRemote(branch));
+            }
+          };
+        default:
+      }
+    }
+
+    return _CheckRow(
+      ok: ok,
+      label: label,
+      detail: detail,
+      action: fix == null
+          ? null
+          : TextButton(
+              onPressed: repo.busy
+                  ? null
+                  : () async {
+                      await fix!();
+                      await onRecheck();
+                    },
+              child: Text(fixLabel!),
+            ),
+    );
+  }
+}
+
+// --- ① 점검 ---------------------------------------------------------------
+
+class _CheckStep extends StatelessWidget {
+  const _CheckStep({required this.flow, required this.onShowChanges});
+
+  final ReleaseFlow flow;
+  final VoidCallback onShowChanges;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final repo = flow.repo;
+    if (flow.loading) {
+      return const Padding(padding: EdgeInsets.all(AppSpacing.lg), child: Center(child: CircularProgressIndicator()));
+    }
+    bool? c(ReleaseCheck k) => flow.checks[k];
+    final wf = flow.workflow;
+    final risks = flow.buildRisks;
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      _CheckRow(
+        ok: c(ReleaseCheck.cleanTree),
+        label: l10n.bdCheckCleanTree,
+        action: TextButton(onPressed: onShowChanges, child: Text(l10n.bdCheckShowChanges)),
+      ),
+      _CheckRow(
+        ok: c(ReleaseCheck.onDefaultBranch),
+        label: l10n.bdCheckOnDefault(flow.defaultBranch),
+        action: TextButton(
+          onPressed: repo.busy
+              ? null
+              : () async {
+                  final b = repo.localBranches.where((b) => b.name == flow.defaultBranch).firstOrNull;
+                  if (b != null) await RepoActions.report(context, repo.switchTo(b), done: l10n.bdDoneSwitch(b.name));
+                  await flow.runChecks();
+                },
+          child: Text(l10n.bdBranchesSwitch),
+        ),
+      ),
+      _SyncRow(flow: flow, ok: c(ReleaseCheck.synced), label: l10n.bdCheckSynced, onRecheck: flow.runChecks),
+      if (!flow.direct) _CheckRow(ok: c(ReleaseCheck.github), label: l10n.bdCheckGitHub),
+      if (flow.needsGitBash) _CheckRow(ok: c(ReleaseCheck.bash), label: l10n.bdCheckGitBash),
+      // 바로 커밋 방식 (PLAN.md 3.8.3 P1): 혼자 쓰는 저장소, 또는 GitHub가 아닌 저장소.
+      SwitchListTile(
+        dense: true,
+        contentPadding: EdgeInsets.zero,
+        value: flow.direct,
+        onChanged: flow.github
+            ? flow.setDirect
+            : null,
+        title: Text(l10n.bdReleaseDirectMode),
+        subtitle: Text(flow.github ? l10n.bdReleaseDirectModeWhy(flow.defaultBranch) : l10n.bdReleaseDirectOnly),
+      ),
+      _CheckRow(
+        ok: c(ReleaseCheck.hasChanges),
+        label: flow.lastTag == null ? l10n.bdCheckFirstRelease : l10n.bdCheckChangesSince(flow.releaseCommits.length, flow.lastTag!),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+      Text(
+        wf == null ? l10n.bdCheckNoWorkflow : (wf.onTags ? l10n.bdCheckWorkflowCi(wf.file) : l10n.bdCheckWorkflowOther(wf.file)),
+        style: theme.textTheme.bodySmall,
+      ),
+      if (wf != null && wf.dispatch && risks.isNotEmpty) ...[
+        const SizedBox(height: AppSpacing.md),
+        _Card(children: [
+          Text(l10n.bdManualBuildTitle, style: theme.textTheme.titleSmall),
+          const SizedBox(height: 4),
+          Text(l10n.bdManualBuildWhy, style: theme.textTheme.bodySmall),
+          const SizedBox(height: 4),
+          for (final f in risks.take(5))
+            Text('· $f', style: AppFonts.mono.copyWith(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
+          if (risks.length > 5) Text('· …', style: theme.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.sm),
+          if (flow.buildRun != null) RunView(run: flow.buildRun!) else if (flow.checks.isNotEmpty)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: repo.busy ? null : () => _report(context, flow.startManualBuild(), l10n.bdDoneManualBuildStarted),
+                icon: const Icon(Icons.build_circle_outlined, size: 16),
+                label: Text(l10n.bdManualBuildStart),
+              ),
+            ),
+        ]),
+      ],
+      const SizedBox(height: AppSpacing.md),
+      Row(children: [
+        TextButton.icon(
+          onPressed: repo.busy ? null : flow.runChecks,
+          icon: const Icon(Icons.refresh_rounded, size: 16),
+          label: Text(l10n.bdEnvRecheck),
+        ),
+        const Spacer(),
+        FilledButton(onPressed: flow.checksPassed ? flow.proceedToVersion : null, child: Text(l10n.bdStepNext)),
+      ]),
+    ]);
+  }
+}
+
+Future<void> _report(BuildContext context, Future<CommandResult> run, String done) =>
+    RepoActions.report(context, run, done: done);
+
+class _Card extends StatelessWidget {
+  const _Card({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.tile),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+    );
+  }
+}
+
+// --- ② 버전 ---------------------------------------------------------------
+
+class _VersionStep extends StatefulWidget {
+  const _VersionStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  State<_VersionStep> createState() => _VersionStepState();
+}
+
+class _VersionStepState extends State<_VersionStep> {
+  final _custom = TextEditingController();
+
+  @override
+  void dispose() {
+    _custom.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final flow = widget.flow;
+    final current = flow.current;
+    final suggestion = suggestBump(current, flow.commits);
+    final options = <(BumpKind, String)>[
+      (BumpKind.patch, current.pre != null ? l10n.bdBumpFinal : 'patch'),
+      (BumpKind.minor, 'minor'),
+      (BumpKind.major, 'major'),
+      (BumpKind.prerelease, l10n.bdBumpPrerelease),
+    ];
+    final taken = flow.repo.tags.map((t) => t.name).toSet();
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text(l10n.bdVersionCurrent(current.toString(), flow.files.isEmpty ? l10n.bdVersionFromTag : flow.files.first.path),
+          style: theme.textTheme.bodySmall),
+      const SizedBox(height: AppSpacing.sm),
+      Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: [
+        for (final (kind, label) in options)
+          () {
+            final v = bump(current, kind);
+            final selected = flow.next == v;
+            final recommended = kind == suggestion.kind;
+            return ChoiceChip(
+              selected: selected,
+              onSelected: taken.contains(v.tag) ? null : (_) => flow.chooseVersion(v),
+              label: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text(label, style: theme.textTheme.labelMedium),
+                  if (recommended) ...[
+                    const SizedBox(width: 4),
+                    StatusPill(label: l10n.bdVersionRecommended, tone: Tone.primary),
+                  ],
+                ]),
+                Text(v.tag, style: AppFonts.mono.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700)),
+              ]),
+            );
+          }(),
+      ]),
+      const SizedBox(height: 4),
+      Text(l10n.bdVersionReason(suggestion.feats, suggestion.fixes, suggestion.breaking), style: theme.textTheme.bodySmall),
+      const SizedBox(height: AppSpacing.sm),
+      TextField(
+        controller: _custom,
+        style: AppFonts.mono.copyWith(fontSize: 12.5),
+        decoration: InputDecoration(isDense: true, labelText: l10n.bdVersionCustom, hintText: '1.2.3 / 1.2.3-rc.1'),
+        onChanged: (s) {
+          final v = SemVer.tryParse(s);
+          if (v != null) flow.chooseVersion(withNextBuild(current, v));
+        },
+      ),
+      const SizedBox(height: AppSpacing.md),
+      if (flow.usesBumpScript)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: Text(l10n.bdVersionUsesScript, style: theme.textTheme.bodySmall),
+        ),
+      if (flow.lockFiles.isNotEmpty && !flow.usesBumpScript)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: Text(l10n.bdVersionLockFiles(flow.lockFiles.join(', ')), style: theme.textTheme.bodySmall),
+        ),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          onPressed: () => showVersionFileSheet(context, flow),
+          icon: const Icon(Icons.tune_rounded, size: 16),
+          label: Text(flow.customVersionFile == null ? l10n.bdVersionFileChoose : l10n.bdVersionFileCustom(flow.customVersionFile!.path)),
+        ),
+      ),
+      if (flow.fileChanges.isNotEmpty) ...[
+        Text(l10n.bdVersionFiles, style: theme.textTheme.labelMedium),
+        for (final (path, from, to) in flow.fileChanges)
+          Text('$path   $from → $to', style: AppFonts.mono.copyWith(fontSize: 11.5)),
+        const SizedBox(height: AppSpacing.sm),
+      ] else
+        Text(l10n.bdVersionNoFiles, style: theme.textTheme.bodySmall),
+      if (flow.next != null && taken.contains(flow.next!.tag))
+        Text(l10n.bdTagNameExists, style: TextStyle(color: theme.colorScheme.error)),
+      CommandPreview(commands: flow.versionCommands),
+      const SizedBox(height: AppSpacing.sm),
+      Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton(
+          onPressed: flow.next == null || flow.repo.busy || taken.contains(flow.next!.tag)
+              ? null
+              : () => _report(context, flow.createReleaseCommit(), l10n.bdDoneReleaseCommit(flow.next!.tag)),
+          child: Text(l10n.bdVersionCommit),
+        ),
+      ),
+    ]);
+  }
+}
+
+// --- ③ PR -----------------------------------------------------------------
+
+class _PrStep extends StatefulWidget {
+  const _PrStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  State<_PrStep> createState() => _PrStepState();
+}
+
+class _PrStepState extends State<_PrStep> {
+  TextEditingController? _body;
+
+  @override
+  void dispose() {
+    _body?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final flow = widget.flow;
+    _body ??= TextEditingController(text: flow.prBody(l10n.bdPrBodyChanges));
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text(flow.prTitle, style: Theme.of(context).textTheme.titleSmall),
+      Text('${flow.releaseBranch} → ${flow.defaultBranch}', style: AppFonts.mono.copyWith(fontSize: 11.5)),
+      const SizedBox(height: AppSpacing.sm),
+      TextField(
+        controller: _body,
+        minLines: 3,
+        maxLines: 8,
+        style: AppFonts.userContent.copyWith(fontSize: 12.5),
+        decoration: InputDecoration(labelText: l10n.bdPrBodyLabel),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      CommandPreview(commands: flow.prCommands),
+      const SizedBox(height: AppSpacing.sm),
+      Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton(
+          onPressed: flow.repo.busy ? null : () => _report(context, flow.createPr(_body!.text), l10n.bdDonePrCreated),
+          child: Text(l10n.bdReleasePushAndPr),
+        ),
+      ),
+    ]);
+  }
+}
+
+// --- ④ 병합 ---------------------------------------------------------------
+
+class _MergeStep extends StatelessWidget {
+  const _MergeStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final pr = flow.pr;
+    if (pr == null) {
+      return TextButton(onPressed: () => flow.refreshPr(), child: Text(l10n.bdAppBarRefresh));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(child: Text(l10n.bdMergeWaiting(pr.number), style: Theme.of(context).textTheme.bodySmall)),
+        IconButton(
+          tooltip: l10n.bdAppBarRefresh,
+          iconSize: 16,
+          icon: const Icon(Icons.refresh_rounded),
+          onPressed: () => flow.refreshPr(),
+        ),
+      ]),
+      const SizedBox(height: AppSpacing.sm),
+      PrCard(pr: pr, repo: flow.repo, onChanged: () => flow.refreshPr(), showMerge: false),
+      const SizedBox(height: AppSpacing.md),
+      CommandPreview(commands: flow.mergeCommands),
+      const SizedBox(height: AppSpacing.sm),
+      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        TextButton(onPressed: () => launchUrl(Uri.parse(pr.url)), child: Text(l10n.bdPrOpenOnGitHub)),
+        const SizedBox(width: AppSpacing.sm),
+        PrMergeButton(
+          enabled: !flow.repo.busy && pr.open && !pr.conflicting && !pr.draft,
+          onMerge: () => _report(context, flow.mergePr(), l10n.bdDonePrMerged(pr.number)),
+        ),
+      ]),
+    ]);
+  }
+}
+
+// --- ⑤ 태그 ---------------------------------------------------------------
+
+class _TagStep extends StatelessWidget {
+  const _TagStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    bool? c(TagCheck k) => flow.tagChecks[k];
+    final tag = flow.tag ?? '';
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (!flow.direct) _CheckRow(ok: c(TagCheck.prMerged), label: l10n.bdTagCheckPrMerged(flow.pr?.number ?? 0)),
+      _SyncRow(
+        flow: flow,
+        ok: c(TagCheck.synced),
+        label: flow.direct ? l10n.bdTagCheckSyncedDirect(flow.defaultBranch) : l10n.bdTagCheckSynced(flow.defaultBranch),
+        allowAhead: flow.direct,
+        showBranch: true,
+        onRecheck: flow.runTagChecks,
+      ),
+      _CheckRow(
+        ok: c(TagCheck.versionMatches),
+        label: l10n.bdTagCheckVersion(tag),
+        detail: c(TagCheck.versionMatches) == false ? l10n.bdTagCheckVersionWrong(flow.defaultBranchVersion) : null,
+      ),
+      _CheckRow(ok: c(TagCheck.tagFree), label: l10n.bdTagCheckFree(tag)),
+      const SizedBox(height: AppSpacing.md),
+      CommandPreview(commands: flow.tagCommands),
+      const SizedBox(height: AppSpacing.sm),
+      Row(children: [
+        TextButton.icon(
+          onPressed: flow.repo.busy ? null : flow.runTagChecks,
+          icon: const Icon(Icons.refresh_rounded, size: 16),
+          label: Text(l10n.bdEnvRecheck),
+        ),
+        const Spacer(),
+        FilledButton(
+          onPressed: !flow.tagChecksPassed || flow.repo.busy
+              ? null
+              : () async {
+                  // 되돌릴 수 없지만 위험한 일은 아니므로 primary 확인 (UI_UX.md §4.5 ⑤).
+                  final ok = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.bdTagConfirmTitle(tag)),
+                      content: SizedBox(
+                        width: 360,
+                        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(l10n.bdTagConfirmMessage(tag, flow.defaultBranch)),
+                          const SizedBox(height: AppSpacing.md),
+                          CommandPreview(commands: flow.tagCommands),
+                        ]),
+                      ),
+                      actions: [
+                        TextButton(autofocus: true, onPressed: () => Navigator.pop(context, false), child: Text(l10n.commonCancel)),
+                        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.bdTagConfirmPush)),
+                      ],
+                    ),
+                  );
+                  if (ok == true && context.mounted) await _report(context, flow.pushTag(), l10n.bdDoneTagPushed(tag));
+                },
+          child: Text(l10n.bdTagConfirmPush),
+        ),
+      ]),
+    ]);
+  }
+}
+
+// --- ⑥ 노트 ---------------------------------------------------------------
+
+class _NotesStep extends StatefulWidget {
+  const _NotesStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  State<_NotesStep> createState() => _NotesStepState();
+}
+
+class _NotesStepState extends State<_NotesStep> {
+  late final _notes = TextEditingController(text: widget.flow.notes);
+
+  @override
+  void dispose() {
+    _notes.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final flow = widget.flow;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      MarkdownEditor(controller: _notes, label: l10n.bdNotesLabel),
+      const SizedBox(height: AppSpacing.md),
+      CommandPreview(commands: [flow.releaseCreateCommand]),
+      const SizedBox(height: AppSpacing.sm),
+      Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton(
+          onPressed: flow.repo.busy ? null : () => _report(context, flow.createRelease(_notes.text), l10n.bdDoneReleaseCreated),
+          child: Text(l10n.bdNotesCreateRelease),
+        ),
+      ),
+    ]);
+  }
+}
+
+// --- ⑦ CI -----------------------------------------------------------------
+
+class _CiStep extends StatelessWidget {
+  const _CiStep({required this.flow});
+
+  final ReleaseFlow flow;
+
+  /// 버전이 다른 태그를 원격과 로컬에서 지우고 태그 단계로 돌아간다.
+  /// 원격 태그는 확인을 받고 지운다 — 지워지지 않았으면 여기서 멈춘다.
+  Future<void> _deleteWrongTag(BuildContext context) async {
+    final tag = flow.tag;
+    final repo = flow.repo;
+    if (tag == null) return;
+    await deleteRemoteTag(context, repo, tag);
+    if (!context.mounted) return;
+    await repo.loadRemoteTags();
+    final remoteNames = repo.remoteTagNames;
+    if (remoteNames == null || remoteNames.contains(tag)) return;
+    if (repo.tags.any((t) => t.name == tag)) await repo.execute(GitCommands.deleteTag(tag));
+    await flow.backToTagStep();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final run = flow.run;
+    if (run == null) {
+      return Row(children: [
+        const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(child: Text(l10n.bdCiWaitingForRun(flow.tag ?? ''), style: theme.textTheme.bodySmall)),
+      ]);
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      RunView(run: run),
+      if (run.done && run.state != RunState.success) ...[
+        const SizedBox(height: AppSpacing.sm),
+        if (flow.failedLog.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(AppRadius.button),
+              border: Border.all(color: theme.colorScheme.error.withValues(alpha: 0.5)),
+            ),
+            child: SelectableText(flow.failedLog, style: AppFonts.mono.copyWith(fontSize: 10.5)),
+          ),
+        const SizedBox(height: AppSpacing.sm),
+        if (flow.failedForVersionMismatch) ...[
+          Text(l10n.bdCiVersionMismatchMessage(flow.tag ?? ''), style: theme.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.icon(
+              onPressed: flow.repo.busy ? null : () => _deleteWrongTag(context),
+              icon: const Icon(Icons.restart_alt_rounded, size: 16),
+              label: Text(l10n.bdCiRetag),
+            ),
+          ),
+        ] else
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.icon(
+              onPressed: flow.repo.busy ? null : () => _report(context, flow.rerunFailed(), l10n.bdDoneRerun),
+              icon: const Icon(Icons.replay_rounded, size: 16),
+              label: Text(l10n.bdCiRerunFailed),
+            ),
+          ),
+      ],
+    ]);
+  }
+}
+
+String runStateLabel(AppLocalizations l10n, RunState s) => switch (s) {
+      RunState.queued => l10n.bdRunQueued,
+      RunState.running => l10n.bdRunRunning,
+      RunState.success => l10n.bdRunSuccess,
+      RunState.failure => l10n.bdRunFailure,
+      RunState.cancelled => l10n.bdRunCancelled,
+      RunState.skipped => l10n.bdRunSkipped,
+    };
+
+/// 워크플로 실행: 잡마다 한 줄 (UI_UX.md §4.5 ⑦).
+class RunView extends StatelessWidget {
+  const RunView({super.key, required this.run});
+
+  final WorkflowRun run;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    Widget icon(RunState s) => switch (s) {
+          RunState.success => Icon(Icons.check_circle_rounded, size: 15, color: toneColor(context, Tone.success)),
+          RunState.failure => Icon(Icons.cancel_rounded, size: 15, color: toneColor(context, Tone.danger)),
+          RunState.running || RunState.queued =>
+            const SizedBox(width: 13, height: 13, child: CircularProgressIndicator(strokeWidth: 2)),
+          _ => Icon(Icons.remove_circle_outline_rounded, size: 15, color: theme.colorScheme.onSurfaceVariant),
+        };
+    String dur(Duration d) => d.inMinutes > 0 ? '${d.inMinutes}m${d.inSeconds % 60}s' : '${d.inSeconds}s';
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        icon(run.state),
+        const SizedBox(width: 6),
+        Expanded(child: Text('${run.name} · ${runStateLabel(l10n, run.state)}', style: theme.textTheme.titleSmall)),
+        TextButton.icon(
+          onPressed: () => launchUrl(Uri.parse(run.url)),
+          icon: const Icon(Icons.open_in_new_rounded, size: 14),
+          label: Text(l10n.bdCiOpenInBrowser),
+        ),
+      ]),
+      for (final j in run.jobs)
+        Padding(
+          padding: const EdgeInsets.only(left: 4, top: 2),
+          child: Row(children: [
+            icon(j.state),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                j.failedStep == null ? j.name : '${j.name} — ${j.failedStep}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppFonts.mono.copyWith(fontSize: 11.5, color: theme.colorScheme.onSurface),
+              ),
+            ),
+            if (j.duration != null && j.state != RunState.skipped)
+              Text(dur(j.duration!), style: theme.textTheme.labelSmall),
+          ]),
+        ),
+    ]);
+  }
+}
+
+class _Done extends StatefulWidget {
+  const _Done({required this.flow});
+
+  final ReleaseFlow flow;
+
+  @override
+  State<_Done> createState() => _DoneState();
+}
+
+class _DoneState extends State<_Done> {
+  TextEditingController? _notes;
+
+  @override
+  void dispose() {
+    _notes?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final flow = widget.flow;
+    final r = flow.release;
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: _Card(children: [
+        Row(children: [
+          Icon(Icons.celebration_rounded, color: toneColor(context, Tone.success)),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(child: Text(l10n.bdReleaseDone(flow.tag ?? ''), style: theme.textTheme.titleMedium)),
+        ]),
+        if (r != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          TextButton.icon(
+            style: TextButton.styleFrom(alignment: Alignment.centerLeft, padding: EdgeInsets.zero),
+            onPressed: () => launchUrl(Uri.parse(r.url)),
+            icon: const Icon(Icons.open_in_new_rounded, size: 14),
+            label: Text(r.name.isEmpty ? r.tag : r.name),
+          ),
+          if (r.prerelease) StatusPill(label: l10n.bdReleasePrerelease, tone: Tone.warning),
+          for (final a in r.assets)
+            Text('${a.name}  ${(a.size / 1024 / 1024).toStringAsFixed(1)} MB',
+                style: AppFonts.mono.copyWith(fontSize: 11.5)),
+          // CI가 만든 릴리스의 노트 고치기 (PLAN.md 3.8.4).
+          if (flow.ciMode) ...[
+            const SizedBox(height: AppSpacing.md),
+            if (_notes == null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton(
+                  onPressed: () => setState(() => _notes = TextEditingController(text: r.body)),
+                  child: Text(l10n.bdNotesEdit),
+                ),
+              )
+            else ...[
+              MarkdownEditor(controller: _notes!, label: l10n.bdNotesLabel),
+              const SizedBox(height: AppSpacing.sm),
+              CommandPreview(commands: [GhCommands.releaseEditNotes(flow.tag ?? '')]),
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  onPressed: flow.repo.busy
+                      ? null
+                      : () async {
+                          await _report(context, flow.editReleaseNotes(_notes!.text), l10n.bdDoneNotesSaved);
+                          if (mounted) setState(() => _notes = null);
+                        },
+                  child: Text(l10n.bdCommonSave),
+                ),
+              ),
+            ],
+          ],
+        ],
+        const SizedBox(height: AppSpacing.md),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () {
+              flow.checks.clear();
+              flow.cancel();
+            },
+            child: Text(l10n.commonClose),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+
+
+/// 버전 파일 지정 (PLAN.md 3.8.2a): 감지가 안 되거나 틀릴 때 저장소별로 파일과
+/// 버전 줄 정규식(캡처 그룹 하나)을 정한다. 앱 설정에 저장된다.
+Future<void> showVersionFileSheet(BuildContext context, ReleaseFlow flow) {
+  final prefs = ServicesScope.of(context).prefs;
+  final path = TextEditingController(text: flow.customVersionFile?.path ?? '');
+  final pattern = TextEditingController(text: flow.customVersionFile?.pattern ?? r'version\s*=\s*"([^"]+)"');
+  return showActionSheet<void>(context, (context) {
+    return StatefulBuilder(builder: (context, setState) {
+      final l10n = AppLocalizations.of(context);
+      final theme = Theme.of(context);
+      final custom = CustomVersionFile(path.text.trim(), pattern.text);
+      final found = path.text.trim().isEmpty ? const <VersionFile>[] : detectVersionFiles(flow.repo.root, custom: custom);
+      return ActionSheetBody(
+        title: l10n.bdVersionFileTitle,
+        commands: const [],
+        confirmLabel: l10n.bdCommonSave,
+        onConfirm: found.isEmpty
+            ? null
+            : () async {
+                await prefs.setCustomVersionFile(flow.repo.root, custom);
+                flow.setCustomVersionFile(custom);
+                if (context.mounted) Navigator.pop(context);
+              },
+        children: [
+          Text(l10n.bdVersionFileWhy, style: theme.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: path,
+            style: AppFonts.mono.copyWith(fontSize: 12),
+            decoration: InputDecoration(labelText: l10n.bdVersionFilePath, hintText: 'Makefile'),
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: pattern,
+            style: AppFonts.mono.copyWith(fontSize: 12),
+            decoration: InputDecoration(labelText: l10n.bdVersionFilePattern),
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            path.text.trim().isEmpty
+                ? ''
+                : found.isEmpty
+                    ? l10n.bdVersionFileNotFound
+                    : l10n.bdVersionFileFound(found.first.version.toString()),
+            style: TextStyle(color: found.isEmpty ? theme.colorScheme.error : toneColor(context, Tone.success)),
+          ),
+          if (flow.customVersionFile != null)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () async {
+                  await prefs.setCustomVersionFile(flow.repo.root, null);
+                  flow.setCustomVersionFile(null);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: Text(l10n.bdVersionFileAuto),
+              ),
+            ),
+        ],
+      );
+    });
+  });
+}

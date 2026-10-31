@@ -356,5 +356,2389 @@
   "toolsCustom": "직접 지정",
   "toolsBrowse": "찾아보기…",
   "toolsClear": "지정 지우기",
-  "toolsPathHint": "실행 파일 경로"
+  "toolsPathHint": "실행 파일 경로",
+  "bdAboutTagline": "Git과 GitHub CLI를 위한 데스크톱 도우미",
+  "bdAboutDescription": "편집기 옆에 세워 두고 브랜치, 태그, 병합, Pull/Push, 원격, 릴리스를 버튼으로 다룹니다. 버튼마다 실제로 실행되는 git·gh 명령을 보여 줍니다.",
+  "bdHomeEmptyTitle": "시작하려면 저장소를 선택하세요",
+  "bdHomeEmptyAction": "저장소 열기",
+  "bdAppBarRefresh": "새로 고침",
+  "bdAppBarPin": "항상 위에 표시",
+  "bdAppBarUnpin": "항상 위에 표시 끄기",
+  "bdMenuOpenFolder": "다른 폴더 열기…",
+  "bdMenuEditor": "파일을 열 편집기…",
+  "bdMenuEnvironment": "환경 점검",
+  "bdMenuCloseRepo": "저장소 닫기",
+  "bdHostOther": "기타 git 서버",
+  "bdCommonCopy": "복사",
+  "bdCommonCopied": "복사했습니다",
+  "bdCommonMore": "더 보기",
+  "bdCommonSave": "저장",
+  "bdCommandPreviewLabel": "실행될 명령",
+  "bdStartDropHint": "git 저장소 폴더를 창에 끌어다 놓아도 됩니다.",
+  "bdStartRemoveRecent": "목록에서 빼기",
+  "bdStartNotARepository": "이 폴더는 git 저장소가 아닙니다: {path}",
+  "@bdStartNotARepository": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStartNotFound": "폴더를 찾을 수 없습니다: {path}",
+  "@bdStartNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvTitle": "환경 점검",
+  "bdEnvGitRequired": "Branch Dock은 설치된 git을 실행합니다. git을 먼저 설치하세요.",
+  "bdEnvGitOnlyNote": "gh가 없거나 로그인하지 않아도 브랜치·태그·Pull·Push는 쓸 수 있습니다. GitHub에 올리기, PR, 릴리스에는 gh 로그인이 필요합니다.",
+  "bdEnvVersion": "버전 {version}",
+  "@bdEnvVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvNotInstalled": "설치되지 않았거나 찾을 수 없습니다",
+  "bdEnvLogin": "GitHub 로그인",
+  "bdEnvLoggedInAs": "{login} 계정으로 로그인됨",
+  "@bdEnvLoggedInAs": {
+    "placeholders": {
+      "login": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvNotLoggedIn": "로그인하지 않았습니다. 터미널에서 아래 명령을 실행하세요.",
+  "bdEnvRecheck": "다시 확인",
+  "bdEnvGhMissing": "GitHub CLI(gh)가 설치되지 않아 쓸 수 없습니다. 메뉴의 환경 점검을 확인하세요.",
+  "bdEnvGhLoggedOut": "gh에 로그인해야 쓸 수 있습니다. 터미널에서 gh auth login을 실행하세요.",
+  "bdHeaderOpenFolder": "편집기에서 이 폴더 열기",
+  "bdVscodeMissingTitle": "VS Code를 찾지 못했습니다",
+  "bdVscodeMissingMessage": "VS Code를 설치하면 이 버튼으로 현재 브랜치가 체크아웃된 폴더를 바로 열 수 있습니다. 다른 편집기를 쓰려면 저장소 메뉴의 ‘파일을 열 편집기…’에 명령(cursor, zed 등)을 적으세요.",
+  "bdVscodeDownload": "VS Code 받기",
+  "bdHeaderBranchTooltip": "브랜치 목록 보기",
+  "bdHeaderDetached": "분리된 HEAD",
+  "bdHeaderNoUpstream": "원격에 없음",
+  "bdHeaderNoUpstreamTooltip": "이 브랜치는 아직 원격에 올라가지 않았습니다. 게시(Publish)하면 올라갑니다.",
+  "bdHeaderAheadTooltip": "원격에 아직 없는 내 커밋 {count}개",
+  "@bdHeaderAheadTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderBehindTooltip": "내 컴퓨터에 아직 없는 원격 커밋 {count}개",
+  "@bdHeaderBehindTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderChanges": "변경 {count}",
+  "@bdHeaderChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderUpToDate": "최신",
+  "bdHeaderNoCommits": "아직 커밋 없음",
+  "bdHeaderMerging": "병합 중 · 충돌 {count}",
+  "@bdHeaderMerging": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderRebasing": "rebase 중 · 충돌 {count}",
+  "@bdHeaderRebasing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderFetch": "Fetch",
+  "bdHeaderPull": "Pull",
+  "bdHeaderPush": "Push",
+  "bdHeaderPublish": "게시",
+  "bdPullModeTooltip": "Pull 방식",
+  "bdPullModeTitle": "Pull 방식",
+  "bdPullModeMerge": "병합 (기본)",
+  "bdPullModeMergeWhen": "양쪽에 새 커밋이 있으면 병합 커밋으로 합칩니다. 가장 안전합니다.",
+  "bdPullModeRebase": "Rebase",
+  "bdPullModeRebaseWhen": "내 커밋을 받아온 커밋 뒤로 옮겨 기록을 한 줄로 유지합니다.",
+  "bdPullModeFastForward": "Fast-forward만",
+  "bdPullModeFastForwardWhen": "내 커밋이 없을 때만 받아옵니다. 갈라졌으면 멈추고 알려 줍니다.",
+  "bdOperationAbort": "중단",
+  "bdOperationContinue": "계속",
+  "bdOperationContinueBlocked": "충돌을 모두 해결해야 계속할 수 있습니다",
+  "bdOperationAbortTitle": "진행 중인 작업을 중단할까요?",
+  "bdOperationAbortMergeMessage": "병합을 시작하기 전 상태로 되돌립니다. 충돌을 해결하던 내용은 사라집니다.",
+  "bdOperationAbortRebaseMessage": "rebase를 시작하기 전 상태로 되돌립니다. 충돌을 해결하던 내용은 사라집니다.",
+  "bdBannerConflicts": "충돌 파일 {count}개를 해결해야 합니다",
+  "@bdBannerConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerPull": "원격에 새 커밋 {count}개가 있습니다",
+  "@bdBannerPull": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerPublish": "이 브랜치는 아직 원격에 없습니다",
+  "bdBannerPush": "커밋 {count}개가 아직 원격에 없습니다",
+  "@bdBannerPush": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdBannerNoRemote": "이 저장소는 아직 GitHub에 없습니다",
+  "bdBannerShow": "보기",
+  "bdBannerNotGitHub": "{host} 저장소입니다. 브랜치·Pull·Push는 모두 쓸 수 있고, PR·릴리스·Actions는 GitHub 저장소에서만 쓸 수 있습니다.",
+  "@bdBannerNotGitHub": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTabChanges": "변경",
+  "bdTabBranches": "브랜치",
+  "bdTabRemotes": "원격",
+  "bdChangesMessageHint": "커밋 메시지",
+  "bdChangesPrefixTooltip": "커밋 종류 접두어",
+  "bdChangesFirstLineLong": "첫 줄이 {length}자입니다. 72자 안으로 줄이면 목록에서 잘리지 않습니다.",
+  "@bdChangesFirstLineLong": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
+  "bdChangesCommitStaged": "커밋 (스테이징 {count})",
+  "@bdChangesCommitStaged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdChangesCommitAll": "모두 스테이징하고 커밋",
+  "bdChangesConflicts": "충돌",
+  "bdChangesStaged": "스테이징됨",
+  "bdChangesUnstaged": "변경됨",
+  "bdChangesUntracked": "추적 안 됨",
+  "bdChangesStageAll": "모두 스테이징",
+  "bdChangesUnstageAll": "모두 해제",
+  "bdChangesStage": "스테이징",
+  "bdChangesUnstage": "스테이징 해제",
+  "bdChangesOpenInEditor": "편집기로 열기",
+  "bdChangesMarkResolved": "해결됨 표시",
+  "bdChangesCleanTitle": "커밋할 변경이 없습니다",
+  "bdChangesCleanMessage": "편집기에서 파일을 저장하면 여기에 바로 나타납니다.",
+  "bdBranchesTitle": "브랜치",
+  "bdBranchesNew": "새 브랜치",
+  "bdBranchesCreate": "만들기",
+  "bdBranchesSearchHint": "브랜치 찾기",
+  "bdBranchesLocal": "로컬",
+  "bdBranchesRemote": "원격",
+  "bdBranchesSwitch": "전환",
+  "bdBranchesRename": "이름 바꾸기",
+  "bdBranchesDelete": "삭제",
+  "bdBranchesDeleteRemote": "원격에서 삭제",
+  "bdBranchesUpstreamGone": "원격 삭제됨",
+  "bdBranchesUnbornTitle": "아직 커밋이 없습니다",
+  "bdBranchesUnbornMessage": "첫 커밋을 만들면 브랜치를 만들 수 있습니다.",
+  "bdBranchesForceDeleteTitle": "병합되지 않은 브랜치입니다",
+  "bdBranchesForceDeleteMessage": "{name}에는 다른 브랜치에 병합되지 않은 커밋이 있습니다. 삭제하면 그 커밋을 찾기 어려워집니다.",
+  "@bdBranchesForceDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesDeleteRemoteTitle": "원격 브랜치를 삭제할까요?",
+  "bdBranchesDeleteRemoteMessage": "{target}에서 {branch} 브랜치를 삭제합니다. 다른 사람도 더 이상 이 브랜치를 받을 수 없습니다.",
+  "@bdBranchesDeleteRemoteMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchNameLabel": "브랜치 이름",
+  "bdBranchNameExists": "같은 이름의 브랜치가 이미 있습니다",
+  "bdBranchNameEmpty": "이름을 입력하세요",
+  "bdBranchNameInvalidCharacter": "공백과 ~ ^ : ? * [ \\ 는 쓸 수 없습니다",
+  "bdBranchNameStartsWithDash": "-로 시작할 수 없습니다",
+  "bdBranchNameInvalidSequence": ".. 이나 //, .으로 시작하는 부분, .lock으로 끝나는 부분은 쓸 수 없습니다",
+  "bdBranchNameInvalidEdge": "/ 로 시작하거나 / 또는 . 으로 끝날 수 없습니다",
+  "bdBranchBaseLabel": "어디서 시작할까요",
+  "bdBranchBaseCurrent": "현재 브랜치 ({name})",
+  "@bdBranchBaseCurrent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchSwitchAfter": "만든 뒤 바로 전환",
+  "bdBranchRenameUpstreamNote": "원격의 {upstream}은 그대로 남습니다. 새 이름으로 다시 게시하세요.",
+  "@bdBranchRenameUpstreamNote": {
+    "placeholders": {
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRemotesTitle": "원격",
+  "bdRemotesAdd": "원격 추가",
+  "bdRemotesRename": "이름 바꾸기",
+  "bdRemotesSetUrl": "URL 바꾸기",
+  "bdRemotesRemove": "원격 삭제",
+  "bdRemotesRemoveTitle": "원격을 삭제할까요?",
+  "bdRemotesRemoveMessage": "이 저장소에서 {name} 연결만 지웁니다. 서버의 저장소는 그대로 남습니다.",
+  "@bdRemotesRemoveMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRemotesEmptyTitle": "이 저장소는 아직 GitHub에 없습니다",
+  "bdRemotesEmptyMessage": "GitHub에 새 저장소를 만들고 지금 브랜치를 올립니다.",
+  "bdRemotesPublishToGitHub": "GitHub에 올리기",
+  "bdRemotesPublishAlsoToGitHub": "GitHub에도 올리기 (원격 추가)",
+  "bdRemotesPublishConfirm": "만들고 올리기",
+  "bdRemotesNotGitHubNote": "GitHub 저장소가 아니라서 PR·릴리스·Actions는 쓸 수 없습니다 (gh는 GitHub 전용).",
+  "bdRemotesNameLabel": "원격 이름",
+  "bdRemotesNameTaken": "같은 이름의 원격이 이미 있습니다",
+  "bdRemotesNameInvalid": "공백과 특수 문자는 쓸 수 없습니다",
+  "bdRemotesUrlLabel": "URL",
+  "bdRemotesUseHttps": "HTTPS 주소로 바꾸기",
+  "bdRemotesUseSsh": "SSH 주소로 바꾸기",
+  "bdPublishNameLabel": "저장소 이름",
+  "bdPublishNameHelper": "조직에 만들려면 조직/이름",
+  "bdPublishNameInvalid": "영문, 숫자, - _ . 만 쓸 수 있습니다",
+  "bdPublishDescriptionLabel": "설명 (선택)",
+  "bdPublishPrivate": "비공개",
+  "bdPublishPublic": "공개",
+  "bdPublishNoCommitsNote": "아직 커밋이 없어서 저장소만 만듭니다. 첫 커밋 뒤에 Push하세요.",
+  "bdEditorTitle": "파일을 열 편집기",
+  "bdEditorMessage": "편집기 명령을 적으면 파일과 저장소 폴더를 그 편집기로 엽니다. 비워 두면 파일은 OS 기본 앱으로, 폴더는 VS Code로 엽니다.",
+  "bdEditorLabel": "편집기 명령",
+  "bdLogTitle": "명령 기록",
+  "bdLogClear": "지우기",
+  "bdLogEmpty": "아직 실행한 명령이 없습니다",
+  "bdLogToggleTooltip": "명령 기록 펼치기/접기",
+  "bdDoneFetch": "원격 정보를 가져왔습니다",
+  "bdDonePull": "Pull을 마쳤습니다",
+  "bdDonePush": "Push를 마쳤습니다",
+  "bdDonePublish": "{branch} 브랜치를 게시했습니다",
+  "@bdDonePublish": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCommit": "커밋했습니다",
+  "bdDoneSwitch": "{name}(으)로 전환했습니다",
+  "@bdDoneSwitch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCreateBranch": "{name} 브랜치를 만들었습니다",
+  "@bdDoneCreateBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRenameBranch": "이름을 {name}(으)로 바꿨습니다",
+  "@bdDoneRenameBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneDeleteBranch": "{name} 브랜치를 삭제했습니다",
+  "@bdDoneDeleteBranch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAddRemote": "{name} 원격을 추가했습니다",
+  "@bdDoneAddRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRenameRemote": "원격 이름을 {name}(으)로 바꿨습니다",
+  "@bdDoneRenameRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneSetRemoteUrl": "{name}의 URL을 바꿨습니다",
+  "@bdDoneSetRemoteUrl": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRemoveRemote": "{name} 원격을 삭제했습니다",
+  "@bdDoneRemoveRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDonePublishToGitHub": "GitHub에 {name} 저장소를 만들었습니다",
+  "@bdDonePublishToGitHub": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAbort": "중단했습니다",
+  "bdDoneContinue": "계속 진행했습니다",
+  "bdErrorGeneric": "명령이 실패했습니다. 아래 원문을 확인하세요.",
+  "bdErrorPushRejected": "Push가 거부됐습니다. 원격에 내게 없는 커밋이 있어서입니다. 먼저 Pull 하세요.",
+  "bdErrorAuthFailed": "인증에 실패했습니다. gh auth login으로 로그인했는지, SSH 키가 등록됐는지 확인하세요.",
+  "bdErrorConflict": "충돌이 났습니다. 변경 탭에서 충돌 파일을 편집기로 열어 고친 뒤 해결됨을 누르세요.",
+  "bdErrorLocalChanges": "커밋하지 않은 변경이 덮어써질 수 있어서 멈췄습니다. 먼저 커밋하세요.",
+  "bdErrorNotFastForward": "기록이 갈라져서 fast-forward로 받을 수 없습니다. Pull 방식을 병합이나 rebase로 바꾸세요.",
+  "bdErrorProtectedBranch": "보호된 브랜치라서 직접 Push할 수 없습니다. 새 브랜치로 올리고 PR을 만드세요.",
+  "bdErrorBranchNotMerged": "병합되지 않은 커밋이 있는 브랜치입니다.",
+  "bdErrorNoUpstream": "추적 브랜치가 없습니다. 먼저 게시(Publish)하세요.",
+  "bdErrorAlreadyExists": "같은 이름이 이미 있습니다.",
+  "bdErrorRepositoryNotFound": "원격 저장소를 찾을 수 없습니다. URL과 접근 권한을 확인하세요.",
+  "bdErrorNetwork": "서버에 연결할 수 없습니다. 네트워크를 확인하세요.",
+  "bdErrorNotInstalled": "프로그램을 찾을 수 없습니다. 메뉴의 환경 점검을 확인하세요.",
+  "bdErrorBranchInOtherWorktree": "이 브랜치는 다른 worktree({path})에 체크아웃되어 있습니다. git은 한 브랜치를 한 번에 한 worktree에서만 체크아웃할 수 있습니다.",
+  "@bdErrorBranchInOtherWorktree": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdOpenWorktreeFolder": "그 폴더 열기",
+  "bdTimeJustNow": "방금",
+  "bdTimeMinutesAgo": "{n}분 전",
+  "@bdTimeMinutesAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTimeHoursAgo": "{n}시간 전",
+  "@bdTimeHoursAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTimeDaysAgo": "{n}일 전",
+  "@bdTimeDaysAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHelpTooltip": "이게 뭔가요?",
+  "bdHelpSectionWord": "낱말 뜻",
+  "bdHelpSectionInGit": "git에서는",
+  "bdHelpSectionWhy": "왜 · 언제 쓰나",
+  "bdHelpSectionLinks": "더 알아보기",
+  "bdHelpCaptionBefore": "전",
+  "bdHelpCaptionAfter": "후",
+  "bdHelpCaptionAfterFetch": "Fetch 후 — 내 main은 그대로",
+  "bdHelpCaptionAfterPull": "Pull 후 — 내 main도 따라감",
+  "bdHelpCaptionAheadOne": "feature가 origin/feature보다 커밋 하나 앞섬 (↑1)",
+  "bdHelpLinkBranchingBasics": "Pro Git — 브랜치와 Merge의 기초",
+  "bdHelpLinkRemoteBranches": "Pro Git — 리모트 브랜치",
+  "bdHelpLinkRebasing": "Pro Git — Rebase 하기",
+  "bdHelpFetchVsPullTitle": "Fetch와 Pull",
+  "bdHelpFetchVsPullWord": "fetch는 '가서 가져오다', pull은 '끌어당기다'.",
+  "bdHelpFetchVsPullInGit": "Fetch는 원격(GitHub)에 새로 생긴 커밋을 내 컴퓨터로 가져와 origin/main 같은 '원격 이름표'만 옮깁니다. 내 브랜치와 파일은 건드리지 않습니다. Pull은 Fetch를 한 뒤, 가져온 커밋을 내 브랜치에 합칩니다.",
+  "bdHelpFetchVsPullWhy": "무엇이 바뀌었는지 먼저 보고 싶으면 Fetch — 안전하고 언제 해도 됩니다. 바로 최신으로 맞추려면 Pull. 커밋하지 않은 변경이 있으면 Pull이 멈출 수 있으니 먼저 커밋하세요.",
+  "bdHelpUpstreamTitle": "추적 브랜치 (upstream)와 origin",
+  "bdHelpUpstreamWord": "upstream은 '상류'. 물이 흘러오는 쪽입니다. origin은 '출처, 기원'.",
+  "bdHelpUpstreamInGit": "origin은 저장소를 받아 온 원격(대개 GitHub)에 붙는 기본 이름입니다. 내 브랜치가 짝지어 둔 원격 브랜치(예: origin/feature)를 추적 브랜치, 곧 upstream이라고 합니다. ↑↓ 숫자는 이 짝과 비교한 것입니다.",
+  "bdHelpUpstreamWhy": "짝이 있어야 그냥 Push, Pull만 눌러도 어디로 보내고 어디서 받을지 압니다. 새 브랜치에는 짝이 없어서 처음 한 번은 '게시'(git push -u)로 짝을 지어 줍니다.",
+  "bdHelpFastForwardTitle": "Fast-forward (빨리 감기)",
+  "bdHelpFastForwardWord": "테이프나 영상을 앞으로 빨리 감는 것.",
+  "bdHelpFastForwardInGit": "내 브랜치가 갈라진 적 없이 뒤처져 있기만 할 때, 새 커밋을 만들지 않고 브랜치 이름표를 최신 커밋 위치로 앞으로 옮기기만 합니다. 이미 있는 커밋을 따라 '앞으로 감기'만 하므로 이렇게 부릅니다.",
+  "bdHelpFastForwardWhy": "기록이 한 줄로 깔끔하고 합칠 것이 없으니 충돌도 없습니다. 양쪽에 서로 다른 새 커밋이 있으면(갈라졌으면) 빨리 감을 수 없어서, 'Fast-forward만'은 멈추고 병합이나 rebase가 필요합니다. Push가 non-fast-forward로 거부되는 것도 같은 이유입니다.",
+  "bdHelpMergeCommitTitle": "병합 커밋 (merge commit)",
+  "bdHelpMergeCommitWord": "merge는 '합치다', 두 길이 하나로 합류하는 것.",
+  "bdHelpMergeCommitInGit": "갈라진 두 기록을 그대로 두고, 둘을 부모로 가진 새 커밋(병합 커밋)을 하나 만들어 합칩니다. 누가 언제 무엇을 합쳤는지 기록에 그대로 남습니다.",
+  "bdHelpMergeCommitWhy": "이미 올린 커밋을 바꾸지 않아 가장 안전합니다. 다른 사람과 같이 쓰는 브랜치에 알맞습니다. 대신 기록에 병합 커밋이 늘어 조금 복잡해 보입니다.",
+  "bdHelpRebaseTitle": "Rebase",
+  "bdHelpRebaseWord": "base는 '밑받침', rebase는 '밑받침을 다시 놓다'.",
+  "bdHelpRebaseInGit": "내 커밋들을 떼어 내서, 새로 받아온 커밋 뒤에 차례로 다시 붙입니다. 내용은 같지만 새 커밋(C', D')으로 다시 만들어지고, 기록은 한 줄이 됩니다.",
+  "bdHelpRebaseWhy": "병합 커밋 없이 기록이 깔끔합니다. 아직 Push하지 않은 내 커밋에만 쓰세요. 이미 올린 커밋을 rebase하면 다른 사람의 기록과 어긋나서 강제 Push가 필요해집니다.",
+  "bdTabTags": "태그",
+  "bdTabRelease": "릴리스",
+  "bdTabPr": "PR",
+  "bdBranchesMergeInto": "{head}(으)로 병합해 오기",
+  "@bdBranchesMergeInto": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeTitle": "{source} → {into} 병합",
+  "@bdMergeTitle": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeNothing": "{source}에는 {into}에 없는 커밋이 없습니다",
+  "@bdMergeNothing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeIncoming": "들어올 커밋 {count}개",
+  "@bdMergeIncoming": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdMergeFastForward": "Fast-forward",
+  "bdMergeFastForwardWhen": "새 커밋 없이 이름표만 앞으로 옮깁니다. 기록이 한 줄로 남습니다.",
+  "bdMergeFastForwardDisabled": "현재 브랜치에도 새 커밋이 있어서(갈라져서) 쓸 수 없습니다.",
+  "bdMergeMergeCommit": "병합 커밋",
+  "bdMergeMergeCommitWhen": "두 기록을 그대로 두고 병합 커밋으로 합칩니다. 가장 안전합니다.",
+  "bdMergeSquash": "Squash",
+  "bdMergeSquashWhen": "브랜치의 커밋을 하나로 눌러 합칩니다. 기능 하나 = 커밋 하나.",
+  "bdMergeSquashNote": "squash 뒤 {source}를 계속 쓰면 같은 변경이 다시 충돌할 수 있습니다. 병합 후 브랜치를 지우는 것을 권합니다.",
+  "@bdMergeSquashNote": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeMessageLabel": "커밋 메시지",
+  "bdMergeConfirm": "병합",
+  "bdDoneMerge": "{source}을(를) {into}(으)로 병합했습니다",
+  "@bdDoneMerge": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "into": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsTitle": "태그",
+  "bdTagsNew": "새 태그",
+  "bdTagsCreate": "만들기",
+  "bdTagsCreateAndPush": "만들고 push",
+  "bdTagsPushAll": "원격에 없는 태그 {count}개 push",
+  "@bdTagsPushAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushed": "원격에 있음",
+  "bdTagsLocalOnly": "내 컴퓨터에만 있음",
+  "bdTagsLightweight": "가벼운 태그",
+  "bdTagsAnnotated": "주석 태그",
+  "bdTagsPush": "Push",
+  "bdTagsDelete": "삭제",
+  "bdTagsDeleteRemote": "원격에서 삭제",
+  "bdTagsDeleteRemoteTitle": "원격 태그를 삭제할까요?",
+  "bdTagsDeleteRemoteMessage": "{target}에서 {tag} 태그를 삭제합니다. 이미 받아 간 사람이 있을 수 있으니, 같은 이름을 다시 쓰기보다 다음 번호를 쓰세요.",
+  "@bdTagsDeleteRemoteMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsEmptyTitle": "아직 태그가 없습니다",
+  "bdTagsEmptyMessage": "태그는 특정 커밋에 붙이는 이름표입니다. 보통 v1.0.0처럼 릴리스 버전에 씁니다.",
+  "bdTagsPushAfter": "만든 뒤 {remote}에 push",
+  "@bdTagsPushAfter": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagNameLabel": "태그 이름",
+  "bdTagNameExists": "같은 이름의 태그가 이미 있습니다",
+  "bdTagNameInvalid": "공백, .., ~ ^ : ? * [ \\ 는 쓸 수 없습니다",
+  "bdTagNameNotSemVer": "버전 형식(v1.2.3)이 아닙니다. 만들 수는 있지만 릴리스에는 버전 형식을 권합니다.",
+  "bdTagNameMissingV": "릴리스 태그는 v를 붙이는 것이 관례입니다 (v1.2.3).",
+  "bdTagMessageLabel": "메시지",
+  "bdTagTargetLabel": "어느 커밋에 달까요",
+  "bdTagTargetHead": "현재 위치 ({name})",
+  "@bdTagTargetHead": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCreateTag": "{name} 태그를 만들었습니다",
+  "@bdDoneCreateTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDonePushTags": "태그 {count}개를 push했습니다",
+  "@bdDonePushTags": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdDoneDeleteTag": "{name} 태그를 삭제했습니다",
+  "@bdDoneDeleteTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneDeleteRemoteTag": "원격에서 {name} 태그를 삭제했습니다",
+  "@bdDoneDeleteRemoteTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrTitle": "Pull Request",
+  "bdPrCreate": "PR 만들기",
+  "bdPrPublishAndCreate": "게시하고 PR 만들기",
+  "bdPrTitleLabel": "제목",
+  "bdPrBodyLabel": "본문",
+  "bdPrBodyChanges": "변경 내용",
+  "bdPrDraft": "초안으로 만들기",
+  "bdPrNotGitHubTitle": "GitHub 저장소가 아닙니다",
+  "bdPrNotGitHubMessage": "Pull Request는 GitHub 저장소에서만 쓸 수 있습니다 — gh는 GitHub 전용 도구입니다.",
+  "bdPrGhRequiredTitle": "gh가 필요합니다",
+  "bdPrDetached": "브랜치에 있지 않습니다",
+  "bdPrOnDefaultTitle": "기본 브랜치에 있습니다",
+  "bdPrOnDefaultMessage": "PR은 작업 브랜치에서 만듭니다. 브랜치 탭에서 새 브랜치를 만드세요.",
+  "bdPrNoneTitle": "{head}에는 아직 PR이 없습니다",
+  "@bdPrNoneTitle": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrNoneMessage": "{base}(으)로 합칠 PR을 만들면 GitHub에서 검토와 검사를 거쳐 병합합니다.",
+  "@bdPrNoneMessage": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrOpenOnGitHub": "GitHub에서 보기",
+  "bdPrStateOpen": "열림",
+  "bdPrStateDraft": "초안",
+  "bdPrStateMerged": "병합됨",
+  "bdPrStateClosed": "닫힘",
+  "bdPrNoChecks": "검사 없음",
+  "bdPrChecksPassed": "통과 {n}",
+  "@bdPrChecksPassed": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrChecksFailed": "실패 {n}",
+  "@bdPrChecksFailed": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrChecksPending": "진행 중 {n}",
+  "@bdPrChecksPending": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrApproved": "승인됨",
+  "bdPrReviewRequired": "리뷰 필요",
+  "bdPrBlockedDraft": "초안 PR은 병합할 수 없습니다. GitHub에서 '검토 준비 완료'로 바꾸세요.",
+  "bdPrBlockedConflict": "기준 브랜치와 충돌이 있습니다. 기준 브랜치를 병합해 와서 충돌을 해결하세요.",
+  "bdPrBlockedChecks": "실패한 검사가 있습니다: {names}",
+  "@bdPrBlockedChecks": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrBlockedPending": "검사 {count}개가 아직 진행 중입니다.",
+  "@bdPrBlockedPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrBlockedReview": "리뷰 승인이 필요할 수 있습니다. 병합이 거부되면 GitHub에서 확인하세요.",
+  "bdPrMethodMerge": "병합 커밋 (merge)",
+  "bdPrMethodSquash": "Squash 후 병합",
+  "bdPrMethodRebase": "Rebase 후 병합",
+  "bdPrDeleteBranch": "병합 후 브랜치 삭제",
+  "bdPrMerge": "병합하기",
+  "bdPrMerging": "병합하는 중…",
+  "bdDonePrCreated": "PR을 만들었습니다",
+  "bdDonePrMerged": "PR #{number}을(를) 병합했습니다",
+  "@bdDonePrMerged": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdReleaseTitle": "릴리스",
+  "bdReleaseLatest": "마지막 릴리스 {tag}",
+  "@bdReleaseLatest": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseNoTags": "아직 릴리스가 없습니다",
+  "bdReleaseIntro": "버전 올리기 → PR → 병합 → 태그 → CI 확인을 차례로 안내합니다.",
+  "bdReleaseNeedsGitHub": "릴리스 마법사는 GitHub 저장소에서 쓸 수 있습니다. 태그는 태그 탭에서 만들 수 있습니다.",
+  "bdReleaseStart": "새 릴리스",
+  "bdReleaseNew": "새 릴리스",
+  "bdReleaseNewVersion": "새 릴리스 {tag}",
+  "@bdReleaseNewVersion": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseCancel": "그만두기",
+  "bdReleaseCancelTitle": "릴리스를 그만둘까요?",
+  "bdReleaseCancelMessage": "지금까지 만든 {branch} 브랜치와 PR은 그대로 남습니다. 필요 없으면 직접 지우세요.",
+  "@bdReleaseCancelMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseCancelAfterTag": "태그는 이미 push되었습니다. 마법사만 닫고, CI와 릴리스는 GitHub에서 확인하세요.",
+  "bdReleaseDone": "{tag} 릴리스를 마쳤습니다",
+  "@bdReleaseDone": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleasePrerelease": "프리릴리스",
+  "bdReleasePushAndPr": "push하고 PR 만들기",
+  "bdStepCheck": "점검",
+  "bdStepVersion": "버전",
+  "bdStepPr": "PR",
+  "bdStepMerge": "병합",
+  "bdStepTag": "태그",
+  "bdStepNotes": "릴리스 노트",
+  "bdStepNotesCi": "노트 (CI 릴리스 후)",
+  "bdStepNotesCiSummary": "CI가 릴리스를 만듭니다",
+  "bdStepCi": "CI 확인",
+  "bdStepNext": "다음",
+  "bdStepCheckDone": "모두 통과",
+  "bdStepMergeDone": "PR #{number} 병합됨",
+  "@bdStepMergeDone": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdCheckCleanTree": "커밋하지 않은 변경이 없다",
+  "bdCheckShowChanges": "변경 보기",
+  "bdCheckOnDefault": "기본 브랜치({branch})에 있다",
+  "@bdCheckOnDefault": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckSynced": "받을 커밋도 보낼 커밋도 없다",
+  "bdCheckGitHub": "GitHub 원격과 gh 로그인",
+  "bdCheckGitBash": "Git for Windows의 bash (버전 올림 스크립트용)",
+  "bdCheckChangesSince": "{tag} 이후 커밋 {count}개",
+  "@bdCheckChangesSince": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckFirstRelease": "첫 릴리스입니다",
+  "bdCheckNoWorkflow": "태그로 도는 워크플로가 없습니다. 앱이 GitHub 릴리스를 만듭니다.",
+  "bdCheckWorkflowCi": "{file}이(가) 태그 push로 릴리스를 만듭니다. 앱은 태그까지 달고 CI를 지켜봅니다.",
+  "@bdCheckWorkflowCi": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCheckWorkflowOther": "{file}이(가) 태그 push로 돕니다.",
+  "@bdCheckWorkflowOther": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdManualBuildTitle": "태그 전 수동 빌드 (권장)",
+  "bdManualBuildWhy": "지난 릴리스 이후 빌드에 영향을 주는 파일이 바뀌었습니다. 태그 전에 모든 플랫폼이 빌드되는지 확인하세요. 수동 실행은 릴리스를 만들지 않습니다.",
+  "bdManualBuildStart": "빌드만 확인",
+  "bdManualBuildShort": "수동 빌드 {state}",
+  "@bdManualBuildShort": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneManualBuildStarted": "수동 빌드를 시작했습니다",
+  "bdVersionCurrent": "현재 {version} ({source})",
+  "@bdVersionCurrent": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFromTag": "마지막 태그",
+  "bdVersionRecommended": "추천",
+  "bdVersionReason": "새 기능 {feats} · 버그 수정 {fixes} · 호환 깨짐 {breaking}",
+  "@bdVersionReason": {
+    "placeholders": {
+      "feats": {
+        "type": "int"
+      },
+      "fixes": {
+        "type": "int"
+      },
+      "breaking": {
+        "type": "int"
+      }
+    }
+  },
+  "bdVersionCustom": "직접 입력",
+  "bdVersionFiles": "바뀌는 파일",
+  "bdVersionNoFiles": "버전 파일이 없어서 태그만 만듭니다.",
+  "bdVersionCommit": "릴리스 브랜치 만들고 커밋",
+  "bdBumpFinal": "정식",
+  "bdBumpPrerelease": "프리릴리스",
+  "bdDoneReleaseCommit": "{tag} 버전 올림을 커밋했습니다",
+  "@bdDoneReleaseCommit": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMergeWaiting": "PR #{number} 병합을 기다리는 중 — GitHub에서 병합해도 알아챕니다",
+  "@bdMergeWaiting": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagCheckPrMerged": "PR #{number}이(가) 병합됐다",
+  "@bdTagCheckPrMerged": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagCheckSynced": "{branch}에 있고 받을 커밋도 보낼 커밋도 없다",
+  "@bdTagCheckSynced": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckVersion": "버전 파일이 {tag}와 같다",
+  "@bdTagCheckVersion": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckVersionWrong": "지금 버전은 {version}입니다. 버전 올림 PR이 아직 병합되지 않았을 수 있습니다.",
+  "@bdTagCheckVersionWrong": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckFree": "{tag} 태그가 아직 없다",
+  "@bdTagCheckFree": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmTitle": "{tag} 태그를 push할까요?",
+  "@bdTagConfirmTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmMessage": "{branch}의 병합 커밋에 {tag}를 답니다. push하면 릴리스가 공개되고, 태그는 옮기거나 지우지 않는 것이 규칙입니다.",
+  "@bdTagConfirmMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagConfirmPush": "태그 달고 push",
+  "bdDoneTagPushed": "{tag} 태그를 push했습니다",
+  "@bdDoneTagPushed": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotesLabel": "릴리스 노트 (마크다운)",
+  "bdNotesFeatures": "새 기능",
+  "bdNotesFixes": "버그 수정",
+  "bdNotesOther": "기타",
+  "bdNotesCreateRelease": "GitHub 릴리스 만들기",
+  "bdNotesEdit": "노트 고치기",
+  "bdDoneReleaseCreated": "GitHub 릴리스를 만들었습니다",
+  "bdDoneNotesSaved": "릴리스 노트를 저장했습니다",
+  "bdCiWaitingForRun": "{tag}(으)로 시작된 워크플로를 찾는 중",
+  "@bdCiWaitingForRun": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiOpenInBrowser": "브라우저에서 보기",
+  "bdCiRerunFailed": "실패한 잡 다시 실행",
+  "bdDoneRerun": "실패한 잡을 다시 실행했습니다",
+  "bdRunQueued": "대기 중",
+  "bdRunRunning": "진행 중",
+  "bdRunSuccess": "성공",
+  "bdRunFailure": "실패",
+  "bdRunCancelled": "취소됨",
+  "bdRunSkipped": "건너뜀",
+  "bdHelpCaptionAfterSquash": "squash 병합 후 — main에 새 커밋 S 하나",
+  "bdHelpCaptionTag": "v1.0.0과 v1.1.0은 옮겨지지 않는 이름표, main은 앞으로 나아가는 이름표",
+  "bdHelpLinkGitHubMergeMethods": "GitHub — 병합 방법 정보",
+  "bdHelpLinkTagging": "Pro Git — 태그",
+  "bdHelpSquashTitle": "Squash (눌러 합치기)",
+  "bdHelpSquashWord": "눌러서 납작하게 만들다, 찌그러뜨리다.",
+  "bdHelpSquashInGit": "브랜치의 여러 커밋을 눌러 커밋 하나로 합친 뒤 대상 브랜치에 올립니다. 변경 내용은 그대로이고 커밋 개수만 하나가 됩니다.",
+  "bdHelpSquashWhy": "'오타 수정', '다시 시도' 같은 작업 중 커밋을 기본 브랜치 기록에 남기지 않고, 기능 하나 = 커밋 하나로 정리합니다. PR을 병합할 때 많이 씁니다. 원래 커밋들은 기본 브랜치에 남지 않으니, 병합한 브랜치를 계속 쓰지 말고 지우세요.",
+  "bdHelpTagTitle": "태그 (주석 태그와 가벼운 태그)",
+  "bdHelpTagWord": "tag는 '꼬리표, 이름표'.",
+  "bdHelpTagInGit": "특정 커밋에 붙이는 이름표입니다. 브랜치 이름표는 새 커밋을 따라 앞으로 가지만, 태그는 한 번 붙이면 그 커밋에 머뭅니다. 주석 태그는 만든 사람·날짜·메시지를 함께 저장하고, 가벼운 태그는 이름만 저장합니다.",
+  "bdHelpTagWhy": "릴리스 버전(v1.2.0)에는 주석 태그를 씁니다 — 릴리스 기록이 남고, GitHub 릴리스와 CI가 태그를 기준으로 돕니다. 이미 push한 태그는 옮기거나 지우지 말고, 잘못됐으면 다음 번호로 새로 다세요.",
+  "bdHeaderMergedAndGone": "병합됨 · 원격 삭제됨",
+  "bdHeaderMergedAndGoneTooltip": "이 브랜치는 이미 기본 브랜치에 병합되었고 원격에서 삭제되었습니다. 다시 게시하면 지운 브랜치가 되살아납니다.",
+  "bdBannerMergedAndGone": "이 브랜치는 병합되어 원격에서 삭제되었습니다. {branch}(으)로 돌아가세요",
+  "@bdBannerMergedAndGone": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerSwitchTo": "{branch}(으)로 전환",
+  "@bdBannerSwitchTo": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerCreatePr": "{branch}을(를) 올렸지만 아직 PR이 없습니다",
+  "@bdBannerCreatePr": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrBaseLabel": "기준 브랜치",
+  "bdPrBaseNotDefault": "기본 브랜치({base})가 아닌 곳으로 합칩니다. 다른 기능 브랜치 위에 쌓는 PR일 때 씁니다.",
+  "@bdPrBaseNotDefault": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTabCi": "CI",
+  "bdCiTitle": "CI 실행",
+  "bdCiNotGitHubMessage": "Actions는 GitHub 저장소에서만 쓸 수 있습니다 — gh는 GitHub 전용 도구입니다.",
+  "bdCiEmptyTitle": "{branch}에는 아직 실행이 없습니다",
+  "@bdCiEmptyTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiEmptyMessage": "push나 PR, 태그로 워크플로가 돌면 여기에 나옵니다.",
+  "bdCiRerun": "다시 실행",
+  "bdCiCancel": "취소",
+  "bdCiDispatch": "수동 실행",
+  "bdCiDispatchNeedsPush": "수동 실행은 원격에 있는 브랜치에서만 할 수 있습니다. 먼저 게시하세요.",
+  "bdCiDispatchTitle": "{file} 수동 실행",
+  "@bdCiDispatchTitle": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiDispatchMessage": "{branch} 브랜치로 워크플로를 실행합니다. 입력이 필요한 워크플로는 브라우저에서 실행하세요.",
+  "@bdCiDispatchMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiDispatchConfirm": "실행",
+  "bdDoneDispatched": "{file}을(를) 실행했습니다",
+  "@bdDoneDispatched": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRunCancelled": "실행을 취소했습니다",
+  "bdNotifyRunTitle": "{name} {state}",
+  "@bdNotifyRunTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotifyReleaseRun": "{tag} 릴리스 CI {state}",
+  "@bdNotifyReleaseRun": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotifyManualBuild": "태그 전 수동 빌드 {state}",
+  "@bdNotifyManualBuild": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPrFilterMine": "내 PR",
+  "bdPrFilterReview": "리뷰 요청",
+  "bdPrFilterOpen": "전체",
+  "bdPrListEmpty": "열린 PR이 없습니다",
+  "bdPrCurrentBranch": "현재 브랜치",
+  "bdPrCheckout": "이 PR 브랜치로 체크아웃",
+  "bdPrCheckoutWhy": "PR 브랜치를 내 컴퓨터로 가져와 전환합니다. 직접 실행해 보거나 고칠 때 씁니다.",
+  "bdDonePrCheckout": "PR #{number}의 {branch}(으)로 전환했습니다",
+  "@bdDonePrCheckout": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleasesTitle": "릴리스",
+  "bdReleasesEmpty": "GitHub 릴리스가 없습니다",
+  "bdReleasesLoadFailed": "릴리스 목록을 불러오지 못했습니다",
+  "bdReleaseLatestPill": "최신",
+  "bdReleaseDraft": "초안",
+  "bdReleaseMakeFinal": "정식 릴리스로 바꾸기",
+  "bdReleaseMakePrerelease": "프리릴리스로 바꾸기",
+  "bdReleasePublishDraft": "초안 게시",
+  "bdReleaseDelete": "릴리스 삭제",
+  "bdReleaseDeleteTitle": "{tag} 릴리스를 삭제할까요?",
+  "@bdReleaseDeleteTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseDeleteMessage": "GitHub 릴리스와 올라간 파일이 사라집니다. 이미 받아 간 사람이 있을 수 있습니다.",
+  "bdReleaseDeleteTagToo": "GitHub의 {tag} 태그도 삭제 (로컬 태그는 남음)",
+  "@bdReleaseDeleteTagToo": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseDeleted": "{tag} 릴리스를 삭제했습니다",
+  "@bdDoneReleaseDeleted": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseMadeFinal": "{tag}을(를) 정식 릴리스로 바꿨습니다",
+  "@bdDoneReleaseMadeFinal": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleaseMadePrerelease": "{tag}을(를) 프리릴리스로 바꿨습니다",
+  "@bdDoneReleaseMadePrerelease": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneReleasePublished": "{tag} 초안을 게시했습니다",
+  "@bdDoneReleasePublished": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdNotesEditTab": "편집",
+  "bdNotesPreviewTab": "미리 보기",
+  "bdNotesEmpty": "내용이 없습니다",
+  "bdTagVersionMismatch": "{file}의 버전은 {version}인데 태그는 {tag}입니다.",
+  "@bdTagVersionMismatch": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      },
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagVersionMismatchWhy": "릴리스 태그는 버전을 먼저 올린 커밋에 달아야 합니다 — 릴리스 마법사가 버전 올림 PR부터 태그까지 차례로 합니다.",
+  "bdTagVersionMismatchCi": "이 저장소는 태그를 push하면 CI가 릴리스를 만드는데, 버전이 다르면 CI가 멈춥니다.",
+  "bdTagVersionMismatchBlocked": "그래서 push는 막았습니다. 로컬에만 만들려면 push를 끄세요.",
+  "bdTagOpenReleaseWizard": "릴리스 마법사 열기",
+  "bdTabHistory": "기록",
+  "bdMenuAutoFetch": "자동 fetch (5분마다·돌아올 때)",
+  "bdChangesAmendToggle": "직전 커밋 고치기",
+  "bdChangesAmend": "직전 커밋 고치기",
+  "bdChangesAmendPushedWarning": "이미 원격에 올린 커밋입니다. 고치면 기록이 갈라져 강제 push(force-with-lease)가 필요합니다.",
+  "bdDoneAmend": "직전 커밋을 고쳤습니다",
+  "bdChangesDiscard": "변경 취소",
+  "bdChangesDiscardMessage": "{path}의 커밋하지 않은 변경을 버리고 마지막으로 스테이징(또는 커밋)한 상태로 되돌립니다. 되돌릴 수 없습니다.",
+  "@bdChangesDiscardMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdChangesDeleteUntracked": "파일 삭제",
+  "bdChangesDeleteUntrackedMessage": "git이 추적하지 않는 {path}을(를) 지웁니다. 휴지통으로 가지 않습니다.",
+  "@bdChangesDeleteUntrackedMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictUseMine": "내 것 사용",
+  "bdConflictUseIncoming": "들어오는 것 사용",
+  "bdConflictByBlock": "구간별로 해결",
+  "bdConflictSheetTitle": "{name} 충돌 해결",
+  "@bdConflictSheetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictBlockTitle": "충돌 {index}/{total}",
+  "@bdConflictBlockTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictSideMine": "내 것",
+  "bdConflictSideIncoming": "들어오는 것",
+  "bdConflictKeepBoth": "둘 다 유지 (위, 아래 순서)",
+  "bdConflictEmptySide": "(비어 있음)",
+  "bdConflictPickHint": "구간마다 어느 쪽을 쓸지 골라 주세요. {left}개 남았습니다.",
+  "@bdConflictPickHint": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictApply": "적용하고 해결됨 표시",
+  "bdConflictApplyNote": "고른 대로 파일을 다시 쓰고 git add 합니다. 직접 고쳐 쓰려면 편집기로 여세요.",
+  "bdConflictBroken": "충돌 표시가 온전하지 않아 앱에서 읽을 수 없습니다. 편집기에서 직접 고쳐 주세요.",
+  "bdConflictNone": "이 파일에는 충돌 표시가 없습니다. 이미 고쳤다면 '해결됨 표시'만 누르면 됩니다.",
+  "bdConflictUnreadable": "파일을 읽을 수 없습니다 (이진 파일이거나 삭제된 파일일 수 있습니다). '내 것 사용' 또는 '들어오는 것 사용'으로 해결하세요.",
+  "bdDoneConflictResolved": "{name}: 충돌 해결됨",
+  "@bdDoneConflictResolved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdChangesOperationTitle": "아직 작업이 끝나지 않았습니다",
+  "bdChangesOperationMessage": "충돌은 모두 해결됐습니다. 위의 '계속'으로 마무리하거나 '중단'으로 시작하기 전 상태로 되돌리세요.",
+  "bdConflictReopen": "다시 충돌 상태로",
+  "bdConflictReopenMessage": "{path}을(를) 충돌이 난 직후의 모습으로 되돌립니다. 지금까지 해결한 내용은 사라지고, 충돌 표시가 다시 들어갑니다.",
+  "@bdConflictReopenMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdConflictReopenConfirm": "다시 충돌",
+  "bdConflictMarkersLeftTitle": "충돌 표시가 남아 있습니다",
+  "bdConflictMarkersLeftMessage": "{path}에 아직 `<<<<<<<` 표시가 {count}군데 남아 있습니다. 이대로 해결됨으로 표시하면 표시가 그대로 커밋됩니다. 먼저 '구간별로 해결'이나 편집기로 정리하세요.",
+  "@bdConflictMarkersLeftMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdConflictMarkersLeftConfirm": "그래도 해결됨 표시",
+  "bdDoneFileAction": "{name}: 완료",
+  "@bdDoneFileAction": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashTitle": "임시 저장 (stash)",
+  "bdStashSave": "임시 저장",
+  "bdStashSaveFile": "이 파일만 임시 저장",
+  "bdStashFileToStage": "스테이징으로 꺼내기",
+  "bdStashFileOverwriteMessage": "{path}에 이미 변경이 있습니다. 임시 저장한 내용으로 덮어씁니다.",
+  "@bdStashFileOverwriteMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashEmpty": "파일 목록을 불러오지 못했습니다.",
+  "bdStashWhy": "변경 {count}개를 커밋하지 않고 따로 치워 둡니다. 추적하지 않는 파일도 함께 저장합니다. 나중에 '다시 적용'으로 되살립니다.",
+  "@bdStashWhy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdStashMessageLabel": "메모 (선택)",
+  "bdStashPop": "적용하고 지우기 (pop)",
+  "bdStashApply": "적용만 하기 (apply)",
+  "bdStashDrop": "삭제",
+  "bdStashDropTitle": "임시 저장을 삭제할까요?",
+  "bdStashDropMessage": "'{text}'에 저장한 변경이 사라집니다.",
+  "@bdStashDropMessage": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "bdStashAndRetry": "임시 저장하고 다시",
+  "bdStashAutoMessage": "Branch Dock: 자동 임시 저장",
+  "bdDoneStashSaved": "임시 저장했습니다",
+  "bdDoneStashApplied": "임시 저장을 적용했습니다",
+  "bdDoneStashDropped": "임시 저장을 삭제했습니다",
+  "bdDoneStashAndRetry": "변경을 임시 저장하고 다시 실행했습니다. 변경 탭의 임시 저장에서 되살릴 수 있습니다.",
+  "bdPushOptionsTooltip": "Push 옵션",
+  "bdPushOptionsTitle": "Push 옵션",
+  "bdPushFollowTags": "태그도 함께 push (--follow-tags)",
+  "bdPushFollowTagsWhy": "올리는 커밋에 달린 주석 태그를 함께 올립니다. 이 저장소에만 적용됩니다.",
+  "bdPushForceTitle": "강제 push (force-with-lease)",
+  "bdPushForceWhy": "amend나 rebase로 이미 올린 커밋을 고쳤을 때만 씁니다. 내가 모르는 원격 커밋이 있으면 git이 거부해서 다른 사람의 작업을 덮어쓰지 않습니다.",
+  "bdPushForceBlockedDefault": "기본 브랜치({branch})에서는 강제 push를 막았습니다 — 다른 사람의 기록을 덮어쓸 수 있습니다.",
+  "@bdPushForceBlockedDefault": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPushForce": "강제 push",
+  "bdPushForceConfirmTitle": "{branch}을(를) 강제 push할까요?",
+  "@bdPushForceConfirmTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPushForceConfirmMessage": "{upstream}의 기록을 내 {branch}로 바꿉니다. 내가 fetch한 뒤 누가 push했다면 git이 거부합니다.",
+  "@bdPushForceConfirmMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdOperationSkip": "건너뛰기",
+  "bdOperationSkipTooltip": "충돌 난 이 커밋을 빼고 rebase를 계속합니다",
+  "bdDoneSkip": "커밋을 건너뛰었습니다",
+  "bdBranchesSetUpstream": "추적 브랜치 설정",
+  "bdBranchesSetUpstreamWhy": "{branch}이(가) Push·Pull할 원격 브랜치를 정합니다.",
+  "@bdBranchesSetUpstreamWhy": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesUpstreamLabel": "원격 브랜치",
+  "bdDoneSetUpstream": "{branch}의 추적 브랜치를 {upstream}(으)로 정했습니다",
+  "@bdDoneSetUpstream": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBranchesCleanup": "병합된 브랜치 정리",
+  "bdCleanupWhy": "{base}에 이미 병합됐거나 원격에서 지워진 로컬 브랜치입니다. 원격 브랜치는 건드리지 않습니다.",
+  "@bdCleanupWhy": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCleanupMerged": "병합됨",
+  "bdCleanupGoneNotMerged": "원격에서 삭제됨 · 병합 안 됨 — 지우면 커밋을 찾기 어려워집니다",
+  "bdCleanupConfirm": "{count}개 삭제",
+  "@bdCleanupConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdCleanupNothing": "정리할 브랜치가 없습니다 ({base}에 병합된 브랜치 없음)",
+  "@bdCleanupNothing": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCleanup": "브랜치 {count}개를 정리했습니다",
+  "@bdDoneCleanup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsCommitsSince": "이전 태그 이후 커밋",
+  "bdTagsCommitsBetween": "{from} → {to}",
+  "@bdTagsCommitsBetween": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCommitsUpTo": "{tag}까지",
+  "@bdTagsCommitsUpTo": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCommitsCount": "커밋 {count}개",
+  "@bdTagsCommitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsCheckout": "이 태그로 이동",
+  "bdTagsCheckoutTitle": "{tag}(으)로 이동할까요?",
+  "@bdTagsCheckoutTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsCheckoutMessage": "태그 위치의 파일을 그대로 볼 수 있습니다. 이때는 어느 브랜치에도 있지 않은 '분리된 HEAD' 상태라, 여기서 커밋하려면 먼저 브랜치를 만드세요.",
+  "bdDoneCheckoutTag": "{tag}(으)로 이동했습니다",
+  "@bdDoneCheckoutTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdBannerDetached": "어느 브랜치에도 있지 않습니다. 여기서 커밋하려면 브랜치를 만드세요",
+  "bdHistoryTitle": "기록",
+  "bdHistoryUnpushed": "↑ 올리지 않은 커밋 {count}",
+  "@bdHistoryUnpushed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHistoryNotPushed": "아직 올리지 않음",
+  "bdHistoryCopyHash": "해시 복사",
+  "bdHistoryBranchHere": "여기서 브랜치 만들기",
+  "bdHistoryTagHere": "여기에 태그 달기",
+  "bdHelpLinkStashing": "Pro Git — Stashing과 Cleaning",
+  "bdHelpCaptionStash": "커밋하지 않은 변경 W를 stash 목록 맨 위에 치워 둠 — main은 그대로",
+  "bdHelpStashTitle": "Stash (임시 저장)",
+  "bdHelpStashWord": "stash는 '넣어 두다, 숨겨 두다'. 잠깐 서랍에 치워 두는 것.",
+  "bdHelpStashInGit": "커밋하지 않은 변경을 브랜치 기록에 남기지 않고 따로 저장한 뒤, 작업 트리를 깨끗하게 되돌립니다. 저장한 변경은 목록에 쌓이고(가장 최근 것이 맨 위), 나중에 어느 브랜치에서든 다시 적용할 수 있습니다.",
+  "bdHelpStashWhy": "하던 일을 커밋하기엔 이른데 브랜치를 바꾸거나 Pull해야 할 때 씁니다. 'pop'은 적용하고 목록에서 지우고, 'apply'는 목록에 남겨 둡니다. 오래 두면 무엇이었는지 잊기 쉬우니 메모를 남기세요.",
+  "bdHelpCaptionDetached": "HEAD가 브랜치가 아니라 v1.0.0 커밋을 직접 가리킴",
+  "bdHelpDetachedTitle": "분리된 HEAD (detached HEAD)",
+  "bdHelpDetachedWord": "detached는 '떨어진, 분리된'. HEAD는 '지금 보고 있는 곳'.",
+  "bdHelpDetachedInGit": "보통 HEAD는 브랜치 이름표를 가리키고, 커밋하면 그 이름표가 앞으로 갑니다. 태그나 커밋으로 직접 이동하면 HEAD가 브랜치에서 떨어져 커밋을 직접 가리킵니다.",
+  "bdHelpDetachedWhy": "옛 버전을 실행해 보거나 비교할 때 안전하게 쓸 수 있습니다. 여기서 커밋하면 어느 브랜치에도 속하지 않아 다른 곳으로 옮기면 찾기 어려워지니, 커밋하려면 먼저 '여기서 브랜치 만들기'를 하세요.",
+  "bdHelpForceTitle": "강제 push (force-with-lease)",
+  "bdHelpForceWord": "force는 '억지로', lease는 '임대 계약' — 내가 본 상태 그대로일 때만 바꾼다는 조건.",
+  "bdHelpForceInGit": "amend나 rebase로 이미 올린 커밋을 고치면 원격 기록과 갈라져 보통 push가 거부됩니다. 강제 push는 원격 브랜치를 내 기록으로 바꿉니다. --force-with-lease는 원격이 내가 마지막으로 fetch한 상태 그대로일 때만 바꾸고, 그 사이 누가 push했으면 거부합니다.",
+  "bdHelpForceWhy": "혼자 쓰는 작업 브랜치에서 기록을 정리했을 때만 씁니다. 여러 사람이 쓰는 브랜치, 특히 main에서는 쓰지 않습니다. 이 앱은 --force(무조건)는 제공하지 않고, 기본 브랜치에서는 막습니다.",
+  "bdMenuBrowse": "브라우저에서 저장소 열기",
+  "bdMenuSnapRight": "화면 오른쪽에 붙이기",
+  "bdMenuSnapLeft": "화면 왼쪽에 붙이기",
+  "bdStartInitRepository": "이 폴더를 git 저장소로 만들기",
+  "bdCloneTitle": "GitHub에서 복제",
+  "bdCloneSearch": "내 저장소 찾기",
+  "bdCloneEmpty": "저장소가 없습니다",
+  "bdCloneNoFolder": "복제할 위치를 고르세요",
+  "bdCloneChooseFolder": "위치 고르기",
+  "bdCloneExists": "이미 있는 폴더입니다: {path}",
+  "@bdCloneExists": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCloneConfirm": "복제하고 열기",
+  "bdCloneRunning": "복제하는 중…",
+  "bdLoginTitle": "GitHub 로그인",
+  "bdLoginSsh": "SSH",
+  "bdLoginHttps": "HTTPS",
+  "bdLoginSshRecommended": "SSH 권장",
+  "bdLoginSshWhy": "SSH 주소의 원격이나 SSH로 접속한 환경에서는 HTTPS로 로그인하면 push 때 인증이 따로 놀 수 있습니다.",
+  "bdLoginStepKey": "SSH 키 확인",
+  "bdLoginStepKeyFound": "이 키를 GitHub에 올립니다",
+  "bdLoginStepKeyMissing": "키가 없습니다. 터미널에서 아래 명령으로 만드세요 (암호 문구 권장). 앱은 키와 암호 문구를 받지 않습니다.",
+  "bdLoginStepLogin": "로그인",
+  "bdLoginStepLoginWhy": "브라우저에서 GitHub에 로그인하고 일회용 코드를 넣습니다.",
+  "bdLoginLoggedIn": "로그인되어 있습니다",
+  "bdLoginStart": "브라우저로 로그인",
+  "bdLoginDeviceHowTo": "브라우저가 열리지 않거나 원격 서버라면, 다른 기기의 브라우저에서 아래 주소를 열고 이 코드를 넣으세요.",
+  "bdLoginStepUpload": "공개 키 올리기",
+  "bdLoginStepUploadWhy": "골라 둔 공개 키를 내 GitHub 계정에 등록합니다. 이미 등록돼 있으면 건너뜁니다.",
+  "bdLoginUploadKey": "공개 키 올리기",
+  "bdLoginNeedsKeyScope": "키를 올릴 권한이 없습니다. 터미널에서 아래 명령으로 권한을 더한 뒤 다시 시도하세요.",
+  "bdLoginStepTest": "연결 확인",
+  "bdLoginStepTestWhy": "GitHub에 SSH로 접속해 봅니다. 처음이면 github.com 호스트 키를 known_hosts에 더합니다.",
+  "bdLoginSshFailed": "연결하지 못했습니다. 키가 등록됐는지, ssh-agent에 키가 올라가 있는지 확인하세요.",
+  "bdLoginTest": "연결 확인",
+  "bdLoginChecking": "확인하는 중…",
+  "bdLoginStepProtocol": "git 프로토콜을 SSH로",
+  "bdLoginStepProtocolWhy": "gh가 앞으로 만드는 원격 주소를 SSH로 씁니다. 이미 있는 HTTPS 원격은 원격 탭의 URL 바꾸기에서 SSH로 바꿀 수 있습니다.",
+  "bdLoginUseSshProtocol": "SSH로 설정",
+  "bdLoginAgentTip": "암호 문구를 매번 묻지 않게 하려면 macOS는 ssh-add --apple-use-keychain, 그 밖에는 ssh-agent를 쓰세요.",
+  "bdDoneProtocolSsh": "gh의 git 프로토콜을 SSH로 바꿨습니다",
+  "bdForkTitle": "{parent}의 fork입니다",
+  "@bdForkTitle": {
+    "placeholders": {
+      "parent": {
+        "type": "String"
+      }
+    }
+  },
+  "bdForkAddWhy": "원본 저장소를 upstream 원격으로 추가하면 원본의 새 커밋을 가져올 수 있습니다.",
+  "bdForkSyncWhy": "원본(upstream)의 새 커밋을 가져와 현재 브랜치로 병합합니다.",
+  "bdForkAddUpstream": "upstream 추가",
+  "bdForkSync": "upstream에서 가져오기",
+  "bdRemotesGhDefault": "gh가 쓰는 저장소 (PR·릴리스·CI)",
+  "bdRemotesGhDefaultNone": "정해지지 않음",
+  "bdDoneGhDefault": "gh가 {repo}을(를) 쓰도록 정했습니다",
+  "@bdDoneGhDefault": {
+    "placeholders": {
+      "repo": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseNeedsRemote": "원격이 없어 릴리스할 수 없습니다. 원격 탭에서 먼저 올리세요.",
+  "bdReleaseNeedsFiles": "릴리스 워크플로가 쓰는 파일이 없어 릴리스할 수 없습니다: {files}. 태그를 달아도 CI가 패키지를 만들지 못합니다.",
+  "@bdReleaseNeedsFiles": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "bdReleaseDirectOnlyNotGitHub": "GitHub 저장소가 아니라서 바로 커밋 방식(점검 → 버전 → 태그)으로 진행합니다. PR·릴리스 노트·CI는 호스팅 웹에서 하세요.",
+  "bdReleaseDirectOnly": "gh를 쓸 수 없어 바로 커밋 방식만 됩니다.",
+  "bdReleaseDirectMode": "바로 커밋 방식",
+  "bdReleaseDirectModeWhy": "PR 없이 {branch}에 버전 올림을 커밋하고 커밋과 태그를 함께 push합니다. 혼자 쓰는 저장소에서만 쓰세요 — 보호된 브랜치면 push가 거부됩니다.",
+  "@bdReleaseDirectModeWhy": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagCheckSyncedDirect": "{branch}에 있고 원격에 내게 없는 커밋이 없다",
+  "@bdTagCheckSyncedDirect": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionUsesScript": "저장소의 scripts/bump-version.sh로 버전을 올립니다 (lock 파일 포함, 규약과 같은 결과).",
+  "bdVersionLockFiles": "함께 맞출 lock 파일: {files}",
+  "@bdVersionLockFiles": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileChoose": "버전 파일 바꾸기",
+  "bdVersionFileCustom": "버전 파일: {path} (직접 지정)",
+  "@bdVersionFileCustom": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileTitle": "버전 파일 지정",
+  "bdVersionFileWhy": "자동으로 찾지 못하거나 다른 파일을 쓸 때 정합니다. 정규식의 첫 번째 괄호가 버전입니다. 이 저장소에만 적용됩니다.",
+  "bdVersionFilePath": "파일 (저장소 기준 경로)",
+  "bdVersionFilePattern": "버전 줄 정규식",
+  "bdVersionFileFound": "찾았습니다: {version}",
+  "@bdVersionFileFound": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdVersionFileNotFound": "파일이 없거나 패턴에 맞는 버전이 없습니다",
+  "bdVersionFileAuto": "자동 감지로 되돌리기",
+  "bdRollbackTitle": "릴리스 되돌리기",
+  "bdRollbackConfirmTitle": "{tag} 릴리스를 되돌릴까요?",
+  "@bdRollbackConfirmTitle": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRollbackMessage": "GitHub 릴리스, 원격 태그, 로컬 태그를 지웁니다. 이미 받아 간 사람이 있을 수 있으니 같은 번호를 다시 쓰지 말고 다음 번호({next})로 새로 릴리스하세요.",
+  "@bdRollbackMessage": {
+    "placeholders": {
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRollback": "{tag}을(를) 되돌렸습니다",
+  "@bdDoneRollback": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDiffBinary": "바이너리 파일이라 내용을 비교할 수 없습니다",
+  "bdDiffEmpty": "차이가 없습니다",
+  "bdDiffTruncated": "너무 길어 처음 {count}줄만 보여 줍니다. 전체는 편집기에서 보세요.",
+  "@bdDiffTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderCherryPicking": "cherry-pick 중 · 충돌 {count}",
+  "@bdHeaderCherryPicking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHeaderReverting": "되돌리는 중 · 충돌 {count}",
+  "@bdHeaderReverting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdOperationAbortPickMessage": "시작하기 전 상태로 되돌립니다. 충돌을 해결하던 내용은 사라집니다.",
+  "bdHistoryBranchLabel": "볼 브랜치",
+  "bdHistoryOtherBranchHint": "다른 브랜치의 기록입니다. 커밋 메뉴의 '가져오기'로 {head}에 복사할 수 있습니다.",
+  "@bdHistoryOtherBranchHint": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryViewChanges": "변경 내용 보기",
+  "bdHistoryFilesChanged": "바뀐 파일 {count}개",
+  "@bdHistoryFilesChanged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdHistoryMergeNote": "병합 커밋 — 병합으로 들어온 변경",
+  "bdHistoryRevert": "이 커밋 되돌리기 (revert)",
+  "bdHistoryRevertTitle": "{hash}을(를) 되돌릴까요?",
+  "@bdHistoryRevertTitle": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryRevertMessage": "이 커밋의 변경을 거꾸로 적용한 새 커밋을 만듭니다. 기록을 지우지 않으므로 이미 올린 커밋에도 안전합니다.",
+  "bdHistoryRevertUnpushed": "이 커밋의 변경을 거꾸로 적용한 새 커밋을 만듭니다. 아직 올리지 않은 커밋이라면 '직전 커밋 고치기'나 새 커밋으로 고쳐도 됩니다.",
+  "bdHistoryCherryPick": "가져오기",
+  "bdHistoryCherryPickMenu": "{head}(으)로 가져오기 (cherry-pick)",
+  "@bdHistoryCherryPickMenu": {
+    "placeholders": {
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryCherryPickTitle": "{hash}을(를) {head}(으)로 가져올까요?",
+  "@bdHistoryCherryPickTitle": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      },
+      "head": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHistoryCherryPickMessage": "이 커밋과 같은 변경을 현재 브랜치에 새 커밋으로 복사합니다. 브랜치 전체를 병합하지 않고 필요한 커밋 하나만 가져올 때 씁니다.",
+  "bdDoneRevert": "{hash}을(를) 되돌리는 커밋을 만들었습니다",
+  "@bdDoneRevert": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneCherryPick": "{hash}을(를) 가져왔습니다",
+  "@bdDoneCherryPick": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "bdMenuPalette": "명령 팔레트",
+  "bdPaletteHint": "무엇을 할까요? (예: push, 브랜치, 태그)",
+  "bdPaletteEmpty": "맞는 명령이 없습니다",
+  "bdPaletteGroupActions": "동작",
+  "bdPaletteGroupTabs": "탭",
+  "bdPaletteGroupBranches": "브랜치",
+  "bdPaletteGroupRepos": "저장소",
+  "bdPaletteGoToTab": "{name} 탭으로",
+  "@bdPaletteGoToTab": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdPaletteSwitchTo": "{branch}(으)로 전환",
+  "@bdPaletteSwitchTo": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHelpCaptionAfterRevert": "C를 지우지 않고, C를 거꾸로 적용한 새 커밋 C⁻를 더함",
+  "bdHelpCaptionAfterCherryPick": "feature의 D와 같은 변경이 main에 새 커밋 D'로 복사됨",
+  "bdHelpRevertTitle": "Revert (되돌리기)",
+  "bdHelpRevertWord": "revert는 '원래 상태로 되돌리다'.",
+  "bdHelpRevertInGit": "커밋을 지우지 않고, 그 커밋의 변경을 거꾸로 적용한 새 커밋을 만듭니다. 기록에는 원래 커밋과 되돌린 커밋이 모두 남습니다.",
+  "bdHelpRevertWhy": "이미 올린 커밋이 문제를 일으켰을 때 씁니다. 기록을 고치지 않아 다른 사람과 어긋나지 않고 강제 push도 필요 없습니다. 아직 올리지 않은 커밋은 amend로 고치는 편이 깔끔합니다.",
+  "bdHelpCaptionBeforeReset": "전: main이 D를 가리킴",
+  "bdHelpCaptionAfterReset": "후: main이 B로 옮겨짐. C·D는 사라진 것 같지만 reflog에 남아 있음",
+  "bdHelpCaptionReflog": "HEAD가 지나온 자리가 순서대로 적혀 있어, D로 다시 돌아갈 수 있음",
+  "bdHelpResetTitle": "Reset (브랜치 옮기기)",
+  "bdHelpResetWord": "reset은 '처음 자리로 되돌려 놓다'.",
+  "bdHelpResetInGit": "브랜치가 가리키는 커밋을 뒤로 옮깁니다. 커밋이 지워진 것처럼 보이지만 reflog에 남아 있어 한동안 되살릴 수 있습니다. --soft는 변경을 스테이징한 채 남기고, --keep은 작업 중인 변경을 지키며, --hard는 작업 중인 변경까지 버립니다.",
+  "bdHelpResetWhy": "아직 올리지 않은 커밋을 취소할 때 씁니다. 이미 올린 커밋에는 쓰지 마세요. 다른 사람의 기록과 어긋나니 revert를 쓰세요. 이 앱은 안전한 --soft와 --keep만 씁니다.",
+  "bdHelpReflogTitle": "Reflog (실수 복구 기록)",
+  "bdHelpReflogWord": "reflog는 'reference log', 가리키던 자리의 기록.",
+  "bdHelpReflogInGit": "HEAD와 브랜치가 어디를 가리켰는지 이 컴퓨터에만 적어 둔 기록입니다. 커밋을 취소하거나 브랜치를 지워도 보통 90일 동안은 그 시점을 찾아 되돌아갈 수 있습니다.",
+  "bdHelpReflogWhy": "'실수했다' 싶으면 먼저 reflog를 보세요. 이 컴퓨터에만 있는 기록이라 다른 컴퓨터나 원격에서는 볼 수 없고, 오래된 항목은 git이 정리합니다.",
+  "bdHistoryGraph": "그래프",
+  "bdHistoryAllBranches": "모든 브랜치",
+  "bdHelpCaptionGraphMerged": "main과 feature가 갈라졌다가 M에서 합쳐진 기록 (속이 빈 점이 병합 커밋)",
+  "bdHelpCommitGraphTitle": "커밋 그래프 읽는 법",
+  "bdHelpCommitGraphWord": "graph는 '점과 선으로 그린 그림'.",
+  "bdHelpCommitGraphInGit": "점은 커밋, 선은 부모와의 이음입니다. 위가 최신입니다. 선이 둘로 갈라지면 브랜치가 갈라진 곳, 두 선이 하나로 합쳐지면 병합입니다. 속이 빈 점은 병합 커밋, 고리가 둘러진 점은 지금 있는 자리(HEAD)입니다.",
+  "bdHelpCommitGraphWhy": "'내 브랜치가 main과 어디서 갈라졌는지', '병합이 어디서 일어났는지'를 한눈에 봅니다. 좁은 창에서는 선을 6줄까지만 그립니다. 그보다 많으면 맨 오른쪽 줄에 겹쳐 보입니다.",
+  "bdRecoveryTitle": "실수 복구",
+  "bdRecoveryIntro": "실수했어도 대부분 되돌릴 수 있습니다. 상황에 맞는 것을 고르세요.",
+  "bdRecoveryUndoCommit": "마지막 커밋 취소",
+  "bdRecoveryUndoCommitWhy": "'{subject}' 커밋만 취소합니다. 바꾼 내용은 스테이징된 채 남습니다.",
+  "@bdRecoveryUndoCommitWhy": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryUndoCommitMessage": "'{subject}' 커밋을 취소합니다. 그 커밋에서 바꾼 내용은 지워지지 않고 스테이징된 채 남아, 고쳐서 다시 커밋할 수 있습니다.",
+  "@bdRecoveryUndoCommitMessage": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryUndoCommitPushed": "이 커밋은 이미 원격에 올라가 있습니다. 취소해도 원격에는 남아 있어 다시 올리려면 강제 push가 필요하고, 다른 사람의 기록과 어긋납니다. 올린 커밋은 기록 탭의 '되돌리기(revert)'가 더 안전합니다.",
+  "bdRecoveryUndoCommitConfirm": "커밋 취소",
+  "bdRecoveryNoParent": "첫 커밋은 취소할 수 없습니다.",
+  "bdRecoveryStash": "작업 중인 변경을 잠시 치우기",
+  "bdRecoveryStashWhy": "임시 저장(stash)에 보관했다가 나중에 다시 꺼냅니다.",
+  "bdRecoveryHistory": "이전 상태로 돌아가기",
+  "bdRecoveryHistoryHint": "HEAD가 지나온 자리입니다. 커밋을 취소하거나 브랜치를 지운 뒤에도 보통 90일 동안 남아 있습니다.",
+  "bdRecoveryNow": "지금",
+  "bdRecoveryEmpty": "아직 기록이 없습니다.",
+  "bdRecoveryKindCommit": "커밋",
+  "bdRecoveryKindAmend": "커밋 고침",
+  "bdRecoveryKindCheckout": "전환",
+  "bdRecoveryKindReset": "되돌림",
+  "bdRecoveryKindMerge": "병합",
+  "bdRecoveryKindPull": "pull",
+  "bdRecoveryKindRebase": "rebase",
+  "bdRecoveryKindCherryPick": "cherry-pick",
+  "bdRecoveryKindRevert": "revert",
+  "bdRecoveryKindOther": "기타",
+  "bdRecoveryGoBack": "여기로 되돌리기",
+  "bdRecoveryGoBackMessage": "{branch}를 {target} 시점으로 되돌립니다. 그 뒤의 커밋은 브랜치에서 빠지지만 reflog에 남아 있습니다. 작업 중인 변경은 그대로 두며, 겹치는 파일이 있으면 아무것도 바꾸지 않고 멈춥니다.",
+  "@bdRecoveryGoBackMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdRecoveryGoBackConfirm": "되돌리기",
+  "bdRecoveryRescue": "여기서 새 브랜치 만들기",
+  "bdDoneUndoCommit": "마지막 커밋을 취소했습니다 (변경은 스테이징된 채 남음)",
+  "bdDoneGoBack": "{target} 시점으로 되돌렸습니다",
+  "@bdDoneGoBack": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneRescue": "브랜치 {name}을 만들었습니다",
+  "@bdDoneRescue": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdHelpCherryPickTitle": "Cherry-pick (골라 가져오기)",
+  "bdHelpCherryPickWord": "cherry-pick은 '체리를 하나씩 골라 따다' — 좋은 것만 골라 가져오기.",
+  "bdHelpCherryPickInGit": "다른 브랜치의 커밋 하나와 같은 변경을 현재 브랜치에 새 커밋으로 복사합니다. 내용은 같지만 새 커밋(D')이라 해시가 다릅니다.",
+  "bdHelpCherryPickWhy": "다른 브랜치의 버그 수정 하나만 급히 가져올 때 씁니다. 브랜치를 나중에 병합하면 같은 변경이 두 번 들어와 충돌할 수 있으니, 자주 쓰기보다 병합이 기본입니다.",
+  "bdConfirmTypeToContinue": "되돌릴 수 없습니다. 계속하려면 {text}을(를) 그대로 입력하세요.",
+  "@bdConfirmTypeToContinue": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsDeleteRemoteReleaseDraft": "⚠️ {tag}에는 GitHub 릴리스가 있습니다. 태그를 지우면 GitHub가 그 릴리스를 초안(비공개)으로 바꿉니다 — 파일은 남지만 사람들이 볼 수 없게 됩니다. 릴리스까지 정리하려면 태그 메뉴의 '릴리스 되돌리기'를 쓰세요.",
+  "@bdTagsDeleteRemoteReleaseDraft": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsPushCiTitle": "태그 {count}개를 push하면 릴리스가 새로 만들어집니다",
+  "@bdTagsPushCiTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushCiMessage": "이 저장소는 태그를 push하면 {workflow}이(가) 태그마다 빌드하고 GitHub 릴리스를 만듭니다: {tags}. 일부러 지운 옛 릴리스라면 다시 생깁니다. 로컬에서만 지우려면 태그 메뉴의 '삭제'를 쓰세요.",
+  "@bdTagsPushCiMessage": {
+    "placeholders": {
+      "workflow": {
+        "type": "String"
+      },
+      "tags": {
+        "type": "String"
+      }
+    }
+  },
+  "bdTagsPushAnyway": "그래도 push",
+  "bdTagsPushMismatchTitle": "태그 {count}개의 버전이 버전 파일과 다릅니다",
+  "@bdTagsPushMismatchTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdTagsPushMismatchMessage": "태그가 가리키는 커밋의 {file} 버전이 태그와 다릅니다 (태그 → 파일의 버전): {tags}. 버전을 올리기 전의 커밋에 단 태그일 수 있습니다. 이대로 올리면 태그로 릴리스를 만드는 CI가 버전 검사에서 멈춥니다. 릴리스 마법사로 버전 올림부터 하세요.",
+  "@bdTagsPushMismatchMessage": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "tags": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiVersionMismatchMessage": "CI가 {tag} 태그와 버전 파일의 버전이 다르다며 멈췄습니다. 태그가 버전 올림 커밋보다 앞선 커밋에 달린 것입니다. 다시 실행해도 같은 결과이니, 버전 올림 커밋이 기본 브랜치에 들어갔는지 확인한 뒤 태그를 지우고 다시 다세요.",
+  "@bdCiVersionMismatchMessage": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCiRetag": "태그 지우고 다시 달기",
+  "bdCommonDelete": "삭제",
+  "bdPrReviewTitle": "리뷰와 코멘트",
+  "bdPrReviewShowAll": "모두 보기 ({count})",
+  "@bdPrReviewShowAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdPrReviewShowLess": "접기",
+  "bdPrReviewApprove": "승인",
+  "bdPrReviewRequestChanges": "변경 요청",
+  "bdPrReviewComment": "코멘트",
+  "bdPrReviewOwnPr": "내가 만든 PR은 스스로 승인하거나 변경을 요청할 수 없습니다. 코멘트는 남길 수 있습니다.",
+  "bdPrReviewSend": "보내기",
+  "bdPrReviewBody": "내용 (Markdown)",
+  "bdPrReviewBodyOptional": "내용 (선택, Markdown)",
+  "bdDonePrReview": "#{number}에 리뷰를 남겼습니다",
+  "@bdDonePrReview": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetTitle": "첨부 파일 {count}개",
+  "@bdAssetTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetEmpty": "첨부 파일이 없습니다. CI가 올린 빌드 결과물이 여기에 보입니다.",
+  "bdAssetMeta": "{size} · 받은 횟수 {count}",
+  "@bdAssetMeta": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdAssetUpload": "파일 올리기",
+  "bdAssetDownload": "받기",
+  "bdAssetReplace": "덮어쓰기",
+  "bdAssetReplaceTitle": "같은 이름의 파일을 덮어쓸까요?",
+  "bdAssetReplaceMessage": "{names} — 이미 받아 간 사람이 있다면 내용이 서로 달라집니다. 가능하면 새 버전으로 릴리스하세요.",
+  "@bdAssetReplaceMessage": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "bdAssetDeleteTitle": "{name}을(를) 삭제할까요?",
+  "@bdAssetDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdAssetDeleteMessage": "릴리스 페이지에서 이 파일을 지웁니다. 되돌릴 수 없고, 이 파일로 연결된 다운로드 주소도 끊깁니다.",
+  "bdDoneAssetDownloaded": "{name}을(를) 받았습니다",
+  "@bdDoneAssetDownloaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneAssetUploaded": "파일 {count}개를 올렸습니다",
+  "@bdDoneAssetUploaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdDoneAssetDeleted": "{name}을(를) 삭제했습니다",
+  "@bdDoneAssetDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncUpstreamCounts": "{upstream}  ↑{ahead} ↓{behind}",
+  "@bdSyncUpstreamCounts": {
+    "placeholders": {
+      "upstream": {
+        "type": "String"
+      },
+      "ahead": {
+        "type": "int"
+      },
+      "behind": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncNoUpstream": "{branch}에 연결된 원격 브랜치가 없습니다",
+  "@bdSyncNoUpstream": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncOnOtherBranch": "지금은 {branch}에 있습니다",
+  "@bdSyncOnOtherBranch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncBehind": "원격에 아직 받지 않은 커밋이 {count}개 있습니다. Pull 하세요.",
+  "@bdSyncBehind": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncAhead": "push하지 않은 커밋이 {count}개 있습니다.",
+  "@bdSyncAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncAheadPr": "push하지 않은 커밋이 {count}개 있습니다. 여기서 Push하면 PR 없이 {branch}에 바로 올라갑니다.",
+  "@bdSyncAheadPr": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncDiverged": "원격과 갈라졌습니다. 받을 커밋 {behind}개, 보낼 커밋 {ahead}개.",
+  "@bdSyncDiverged": {
+    "placeholders": {
+      "behind": {
+        "type": "int"
+      },
+      "ahead": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncSameContent": "파일 내용은 원격과 같고 커밋만 다릅니다 (로컬 커밋 {count}개). PR을 squash나 rebase로 병합하면 로컬에 옛 커밋이 남아 이렇게 됩니다.",
+  "@bdSyncSameContent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdSyncMatchRemote": "원격에 맞추기",
+  "bdSyncMatchRemoteTitle": "{branch}를 원격에 맞출까요?",
+  "@bdSyncMatchRemoteTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncMatchRemoteMessage": "로컬 커밋 {count}개를 버리고 {branch}를 {upstream}으로 옮깁니다. 파일 내용은 그대로이고 커밋하지 않은 변경도 지킵니다. 버린 커밋은 git reflog로 되찾을 수 있습니다.",
+  "@bdSyncMatchRemoteMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      },
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneMatchRemote": "{branch}를 원격에 맞췄습니다",
+  "@bdDoneMatchRemote": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncPushNoPrTitle": "PR 없이 {branch}에 push할까요?",
+  "@bdSyncPushNoPrTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdSyncPushNoPrMessage": "push하지 않은 커밋 {count}개가 PR을 거치지 않고 {branch}에 바로 올라갑니다. 보호된 브랜치면 거부됩니다. 작업 브랜치로 옮겨 PR을 올리는 편이 안전합니다.",
+  "@bdSyncPushNoPrMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreesTitle": "Worktree",
+  "bdWorktreePill": "worktree",
+  "bdWorktreeHeldTooltip": "{path}에 체크아웃되어 있습니다",
+  "@bdWorktreeHeldTooltip": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachedHead": "분리된 HEAD",
+  "bdWorktreeMainPill": "기본 폴더",
+  "bdWorktreeOpenPill": "지금 연 폴더",
+  "bdWorktreeChangesPill": "변경 {count}",
+  "@bdWorktreeChangesPill": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreeMissingPill": "폴더 없음",
+  "bdWorktreeLockedPill": "잠김",
+  "bdWorktreeOpen": "열기",
+  "bdWorktreeDetach": "브랜치 풀기",
+  "bdWorktreeRemove": "지우기",
+  "bdWorktreeClaudeWarning": "Claude Code 세션이 쓰는 폴더일 수 있습니다. 세션이 끝났는지 먼저 확인하세요.",
+  "bdWorktreeHeldTitle": "{branch}는 다른 worktree에 있습니다",
+  "@bdWorktreeHeldTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeHeldMessage": "git은 한 브랜치를 한 worktree에서만 체크아웃하게 합니다. {path}에서 이 브랜치를 쓰고 있어 여기서는 전환할 수 없습니다. 그 폴더를 열어 작업하거나, 그 폴더의 브랜치를 풀고(분리된 HEAD) 여기로 전환하세요.",
+  "@bdWorktreeHeldMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachAndSwitch": "풀고 여기로 전환",
+  "bdWorktreeDetachTitle": "{name}의 브랜치를 풀까요?",
+  "@bdWorktreeDetachTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDetachMessage": "{path}를 {branch}에서 분리된 HEAD로 바꿉니다. 파일과 커밋은 그대로이고, {branch}를 다른 곳에서 체크아웃하거나 지울 수 있게 됩니다.",
+  "@bdWorktreeDetachMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveTitle": "{name} worktree를 지울까요?",
+  "@bdWorktreeRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveMessage": "폴더 {path}를 지웁니다. 브랜치와 커밋은 저장소에 남습니다.",
+  "@bdWorktreeRemoveMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeRemoveForceTitle": "커밋하지 않은 변경까지 지울까요?",
+  "bdWorktreeRemoveForceMessage": "{path}에 커밋하지 않은 변경이 {count}개 있습니다. 지우면 되찾을 수 없습니다.",
+  "@bdWorktreeRemoveForceMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreeLockedMessage": "{path}는 잠겨 있어 지울 수 없습니다. 먼저 git worktree unlock으로 잠금을 푸세요.",
+  "@bdWorktreeLockedMessage": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDeleteBranchTitle": "worktree도 지우고 브랜치를 삭제할까요?",
+  "bdWorktreeDeleteBranchMessage": "{branch}는 {path}에 체크아웃되어 있어 그대로는 지울 수 없습니다. 그 worktree 폴더를 먼저 지우고 브랜치를 삭제합니다.",
+  "@bdWorktreeDeleteBranchMessage": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "bdWorktreeDeleteBranchDirty": "{branch}는 {path}에 체크아웃되어 있고, 그 폴더에 커밋하지 않은 변경이 {count}개 있습니다. 그 폴더를 열어 정리한 뒤 다시 지우세요.",
+  "@bdWorktreeDeleteBranchDirty": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bdWorktreePrune": "사라진 폴더 기록 정리",
+  "bdDoneWorktreeRemoved": "{name} worktree를 지웠습니다",
+  "@bdDoneWorktreeRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneWorktreeDetached": "{name}의 브랜치를 풀었습니다",
+  "@bdDoneWorktreeDetached": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneWorktreePruned": "worktree 기록을 정리했습니다",
+  "bdCleanupWorktree": "worktree {name}도 함께 지웁니다",
+  "@bdCleanupWorktree": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdCleanupWorktreeBlocked": "worktree {name}에 커밋하지 않은 변경이 있거나 잠겨 있어 지울 수 없습니다",
+  "@bdCleanupWorktreeBlocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvCustomPath": "직접 지정",
+  "bdEnvSetPath": "경로 지정",
+  "bdEnvGitTooOld": "git {min} 이상이 필요합니다. 일부 명령이 실패하거나 결과를 잘못 읽을 수 있습니다.",
+  "@bdEnvGitTooOld": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvGhTooOld": "gh {min} 이상이 필요합니다. 더 낮으면 로그인 확인(gh auth status --json)이 안 돼 로그인했어도 \"로그인 안 됨\"으로 보입니다.",
+  "@bdEnvGhTooOld": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "bdEnvCopyDiagnostics": "진단 정보 복사",
+  "bdEnvDiagnosticsCopied": "진단 정보를 복사했습니다. 문제를 알릴 때 붙여 넣으세요.",
+  "bdEnvSearchPath": "앱이 쓰는 PATH",
+  "bdToolPathTitle": "{tool} 경로",
+  "@bdToolPathTitle": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathWhy": "PATH에서 찾은 {tool} 대신 쓸 실행 파일을 고릅니다. 비워 두면 PATH에서 찾습니다.",
+  "@bdToolPathWhy": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathLabel": "실행 파일",
+  "bdToolPathBrowse": "파일 고르기",
+  "bdToolPathVerify": "확인",
+  "bdToolPathUsePath": "PATH에서 찾기",
+  "bdToolPathOk": "{tool} {version} 확인됨",
+  "@bdToolPathOk": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathBad": "실행할 수 없거나 {tool}이(가) 아닙니다",
+  "@bdToolPathBad": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdToolPathNeedsCheck": "저장하기 전에 확인을 누르세요",
+  "bdDoneToolPath": "{tool} 경로를 저장했습니다",
+  "@bdDoneToolPath": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "bdDoneToolPathReset": "{tool}을(를) PATH에서 찾습니다",
+  "@bdDoneToolPathReset": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  }
 }

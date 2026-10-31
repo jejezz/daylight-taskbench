@@ -55,6 +55,9 @@ Future<void> main() async {
   final tools = ToolPaths(runner: workspace.runner, prefs: prefs)
     ..onChanged = workspace.checkEnvironment;
   unawaited(workspace.checkEnvironment());
+  // 개발 편의: 실행할 때 저장소를 바로 연다 (스크린샷·수동 확인용). 사용자 설정은 건드리지 않는다.
+  final autoOpen = Platform.environment['TASKBENCH_OPEN'];
+  if (autoOpen != null && autoOpen.isNotEmpty) unawaited(workspace.open(autoOpen));
   // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
   final updates = await UpdateService.create();
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
