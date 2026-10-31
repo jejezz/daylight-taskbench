@@ -542,6 +542,7 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - 코드의 한국어 리터럴(Git Bash 못 찾음 메시지)을 영어 진단 메시지로 바꿨다.
 - GitHub 시크릿은 macOS 서명 6개·모바일용이 이미 등록되어 있다.
 - 알려 둠: Windows 설치 프로그램·워크플로는 이 앱 코드로는 아직 한 번도 돌려 보지 않았다(`v0.1.0-rc.1`은 골격 시절 것). 태그 전에 `gh workflow run release.yml --ref <브랜치>`(게시 없음)로 한 번 증명하는 것을 권한다.
+- 앱 아이콘은 Branch Dock의 것을 그대로 쓴다 (사용자 결정). `assets/icon/`에 Branch의 `cat.json`(`app_id: branch-dock`)·`source_glyph.{svg,png}`를 복사하고 `generate_icons.py`로 다시 만들어, 마스터·macOS 세트·Windows `.ico`가 Branch와 바이트 단위로 같다. 판 색은 app id 해시이므로 `cat.json`의 `app_id`를 `daylight-taskbench`로 바꾸지 않는다. 쓰지 않게 된 `tool/icon/icons8-grinning-cat-1024.png`는 지웠다.
 
 ## 6. 위험과 결정이 필요한 것
 
