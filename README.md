@@ -30,14 +30,15 @@
 
 ## Features
 
-- **{{TODO: Feature}}** — {{TODO: what it does, concretely (names, numbers, formats)}}
-- **{{TODO: Feature}}** — {{TODO: …}}
-- **{{TODO: Feature}}** — {{TODO: …}}
-- **Light & dark, English & 한국어** — follows the system, or pick one in the toolbar
+- **One folder, two docks** — pick or drop a Git folder once; the shared bar shows the folder, the current branch and an "open in editor" button, and every dock follows. Switch the branch (in the app or in a terminal) and both docks refresh together.
+- **Branch Dock: Git and GitHub** — changes and commit box, branches, tags, remotes, a guided release flow, pull requests, CI runs and a history graph, with conflict and stash recovery. Everything runs the real `git` and `gh`; each command is shown.
+- **Flutty Dock: build and install on real devices** — finds the Flutter project in the folder (or one level below), then builds and installs to a USB iPhone, an Android phone or this computer, with hot reload while running. A doctor tab checks Flutter, Xcode, adb, signing certificates and profiles.
+- **Made to dock** — a 440×960 window (380×560 minimum) that stands beside your editor and remembers its place. Adding more runner docks (Rust, Electron) is one line in a registry.
+- **Light & dark, English & 한국어** — follows the system, or pick one in Settings (colour palette, text size, high contrast).
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="{{TODO: screen 1}}">
-  <img src="docs/screenshots/detail.png" width="360" alt="{{TODO: screen 2}}">
+  <img src="docs/screenshots/home.png" width="360" alt="Branch Dock under the shared bar, light and dark">
+  <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: build and run options for a Flutter project">
 </p>
 
 ## Install
@@ -53,7 +54,7 @@ Download from [**Releases**](https://github.com/jejezz/daylight-taskbench/releas
 
 ## How it works
 
-{{TODO: 2–4 sentences for the curious — the one interesting technical choice (e.g. "Dart drives the UI; a 100-line Swift bridge covers Trash and Full Disk Access"). Delete this section if there is nothing interesting to say.}}
+Daylight Taskbench does not reimplement Git or the Flutter tools — it runs your installed `git`, `gh`, `flutter` and `adb` and shows what they print. One workspace object watches the repository's HEAD and tells every dock when the branch, a commit or a merge state changes, even while a dock is collapsed. A build that is already running is never stopped by a branch switch; you just get a notice.
 
 ## Development
 
@@ -62,7 +63,7 @@ flutter pub get
 flutter run -d macos
 ```
 
-{{TODO: Anything else needed to build (native tools, env vars). Link docs/ for architecture: [ARCHITECTURE.md](ARCHITECTURE.md), [UI_UX.md](UI_UX.md).}}
+Needs Flutter (stable) and, for the docks, `git`, and optionally `gh`, `flutter` and `adb` on your PATH (paths can be set in Settings → Tools). macOS and Windows only. Design and decisions: [PLAN.md](PLAN.md).
 
 Releasing: `scripts/bump-version.sh patch`, merge, then tag `vX.Y.Z` — CI builds and publishes every platform. Rules: [application-release-templates/conventions](https://github.com/jejezz/application-release-templates/tree/main/conventions).
 

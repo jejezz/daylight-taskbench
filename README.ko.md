@@ -30,14 +30,15 @@
 
 ## 기능
 
-- **{{TODO: 기능}}** — {{TODO: 무엇을 하는지 구체적으로 (이름, 숫자, 형식)}}
-- **{{TODO: 기능}}** — {{TODO: …}}
-- **{{TODO: 기능}}** — {{TODO: …}}
-- **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 툴바에서 고를 수 있습니다
+- **폴더 하나, Dock 둘** — Git 폴더를 한 번 고르거나 끌어다 놓으면 공유 막대에 폴더, 현재 브랜치, "편집기에서 열기"가 나오고 두 Dock이 모두 따라갑니다. 앱 안에서든 터미널에서든 브랜치를 바꾸면 두 Dock이 함께 갱신됩니다.
+- **Branch Dock: Git·GitHub** — 변경과 커밋 상자, 브랜치, 태그, 원격, 안내식 릴리스 흐름, PR, CI 실행, 기록 그래프, 충돌·임시 저장 복구. 실제 `git`과 `gh`를 실행하고 명령을 그대로 보여 줍니다.
+- **Flutty Dock: 실기기 빌드·설치** — 폴더(또는 한 단계 아래)에서 Flutter 프로젝트를 찾아 USB iPhone, Android 폰, 이 컴퓨터에 빌드·설치하고, 실행 중에는 핫 리로드를 보냅니다. 점검 탭이 Flutter, Xcode, adb, 서명 인증서·프로파일을 확인합니다.
+- **도킹을 위한 창** — 편집기 옆에 세우는 440×960 창(최소 380×560)이고 위치를 기억합니다. 실행기 Dock(Rust, Electron 등)은 레지스트리에 한 줄이면 더해집니다.
+- **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 설정에서 고릅니다 (색 구성, 글자 크기, 고대비)
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="{{TODO: 화면 1}}">
-  <img src="docs/screenshots/detail.png" width="360" alt="{{TODO: 화면 2}}">
+  <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Branch Dock (라이트·다크)">
+  <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: Flutter 프로젝트의 빌드·실행 옵션">
 </p>
 
 ## 설치
@@ -53,7 +54,7 @@
 
 ## 동작 방식
 
-{{TODO: 궁금한 사람을 위한 2~4문장 — 흥미로운 기술적 선택 한 가지. 말할 것이 없으면 이 절을 지웁니다.}}
+Daylight Taskbench는 Git이나 Flutter 도구를 다시 만들지 않습니다. 설치된 `git`, `gh`, `flutter`, `adb`를 실행하고 그 출력을 보여 줄 뿐입니다. 하나의 워크스페이스 객체가 저장소의 HEAD를 지켜보다가 브랜치, 커밋, 병합 상태가 바뀌면 접혀 있는 Dock까지 모두에게 알립니다. 이미 실행 중인 빌드는 브랜치를 바꿔도 멈추지 않고 알림만 띄웁니다.
 
 ## 개발
 
@@ -62,7 +63,7 @@ flutter pub get
 flutter run -d macos
 ```
 
-{{TODO: 빌드에 더 필요한 것(네이티브 도구, 환경 변수). 구조 문서 링크: [ARCHITECTURE.md](ARCHITECTURE.md), [UI_UX.md](UI_UX.md).}}
+Flutter(stable)가 필요하고, Dock이 쓰는 `git`과 선택적으로 `gh`, `flutter`, `adb`가 PATH에 있어야 합니다 (경로는 설정 → 도구에서 지정할 수 있습니다). macOS와 Windows만 지원합니다. 설계와 결정: [PLAN.md](PLAN.md).
 
 릴리스: `scripts/bump-version.sh patch` → 병합 → `vX.Y.Z` 태그. CI가 모든 플랫폼을 빌드해서 올립니다. 규칙: [application-release-templates/conventions](https://github.com/jejezz/application-release-templates/tree/main/conventions).
 
