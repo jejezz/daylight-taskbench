@@ -104,7 +104,7 @@ class CommandRunner {
     if (custom != null) return custom;
     if (name == 'bash' && Platform.isWindows) {
       return gitBashPath() ??
-          (throw const ProcessException('bash', [], 'Git for Windows의 bash를 찾을 수 없습니다. Git을 설치하거나 설정에서 git 경로를 지정하세요.'));
+          (throw const ProcessException('bash', [], 'bash from Git for Windows was not found. Install Git, or set the git path in Settings → Tools.'));
     }
     return name;
   }
