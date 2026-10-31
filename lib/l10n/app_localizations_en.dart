@@ -4612,4 +4612,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String fdBranchChangedWhileRunning(String branch) {
     return 'The branch changed to $branch while a build is running. The build continues with the previous files.';
   }
+
+  @override
+  String get fdDoctorStale =>
+      'The branch changed. These results are from the previous branch — run the check again.';
+
+  @override
+  String get fdOperationInProgress =>
+      'A merge or rebase is in progress. Build results are unreliable while conflicts exist.';
 }

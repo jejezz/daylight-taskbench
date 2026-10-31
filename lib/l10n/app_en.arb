@@ -3190,5 +3190,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fdDoctorStale": "The branch changed. These results are from the previous branch — run the check again.",
+  "fdOperationInProgress": "A merge or rebase is in progress. Build results are unreliable while conflicts exist."
 }

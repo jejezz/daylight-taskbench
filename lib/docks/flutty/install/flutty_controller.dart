@@ -73,6 +73,9 @@ class FluttyController extends ChangeNotifier {
   BuildOptions options = const BuildOptions();
 
   Diagnostics? diagnostics;
+
+  /// 브랜치가 바뀐 뒤 아직 다시 읽지 않은 점검 결과 (§1.10 — 오래된 값으로 보이게 하고 다시 확인을 권한다).
+  bool diagnosticsStale = false;
   bool diagnosing = false;
 
   /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다 — 탭이 늘어도 저장된 값이 엉뚱한 탭을 가리키지 않는다.
@@ -184,7 +187,10 @@ class FluttyController extends ChangeNotifier {
       _diagnoseAgain = false;
       final result = await service.collect(project);
       // 읽는 사이에 다시 요청됐다면 이 결과는 이미 낡았다 — 보여 주지 않는다.
-      if (!_diagnoseAgain) diagnostics = result;
+      if (!_diagnoseAgain) {
+        diagnostics = result;
+        diagnosticsStale = false;
+      }
     } while (_diagnoseAgain);
     diagnosing = false;
     notifyListeners();
@@ -434,4 +440,11 @@ class FluttyController extends ChangeNotifier {
 
   /// 실행 중인 `flutter run`에 키를 보낸다: `r` 핫 리로드, `R` 핫 리스타트, `q` 종료.
   void sendKey(String key) => _handle?.send(key);
+
+  /// 브랜치가 바뀐 뒤 점검 결과를 오래된 것으로 표시한다. 칸이 시작되고 결과가 있을 때만 의미가 있다.
+  void markDiagnosticsStale() {
+    if (!started || diagnostics == null || diagnosticsStale) return;
+    diagnosticsStale = true;
+    notifyListeners();
+  }
 }

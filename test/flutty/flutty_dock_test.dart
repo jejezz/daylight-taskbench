@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:daylight_taskbench/docks/flutty/devices/device_service.dart';
 import 'package:daylight_taskbench/docks/flutty/devices/mobile_device.dart';
+import 'package:daylight_taskbench/docks/flutty/doctor/diagnostics.dart';
+import 'package:daylight_taskbench/docks/flutty/flutter/flutter_project.dart';
 import 'package:daylight_taskbench/docks/flutty/flutty_dock.dart';
 import 'package:daylight_taskbench/docks/flutty/install/flutty_controller.dart';
 import 'package:daylight_taskbench/theme/taskbench_style.dart';
@@ -21,6 +23,12 @@ class _NoDevices implements DeviceService {
     calls++;
     return const [];
   }
+}
+
+class _FakeDiagnostics implements DiagnosticsService {
+  @override
+  Future<Diagnostics> collect(FlutterProject? project) async =>
+      Diagnostics(flutter: const ToolInfo('3'), xcode: const ToolInfo('1'), adb: const ToolInfo('1'), collectedAt: DateTime(2026));
 }
 
 const _pubspec = 'name: demo_app\nversion: 2.0.0+1\ndependencies:\n  flutter:\n    sdk: flutter\n';
@@ -44,7 +52,7 @@ void main() {
     final ws = await makeWorkspace();
     final source = FakeGitStateSource(GitState(root: dir.path, branch: 'main', sha: '1'));
     ws.attachForTest(source, selectedDir: dir.path);
-    final controller = FluttyController(runner: ws.runner, deviceService: devices, hostIsMac: false, hostIsWindows: false);
+    final controller = FluttyController(runner: ws.runner, deviceService: devices, diagnosticsService: _FakeDiagnostics(), hostIsMac: false, hostIsWindows: false);
     final dock = FluttyDock(controller: controller)..attach(ws);
     await Future<void>.delayed(const Duration(milliseconds: 150));
     return (dock, ws, source);
@@ -100,6 +108,42 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 150));
     expect(dock.appliesTo(ws), isFalse);
     expect(dock.controller!.project, isNull);
+    dock.detach(ws);
+    dock.dispose();
+    ws.dispose();
+  });
+
+  test('브랜치가 바뀌면 읽어 둔 점검 결과가 오래된 값으로 표시되고, 다시 읽으면 풀린다 (§1.10)', () async {
+    final (dock, ws, _) = await setup();
+    final c = dock.controller!;
+    final main = GitState(root: dir.path, branch: 'main', sha: '1');
+    final feature = GitState(root: dir.path, branch: 'feature', sha: '2');
+    c.markDiagnosticsStale(); // 시작 전이거나 결과가 없으면 아무 일도 없다
+    expect(c.diagnosticsStale, isFalse);
+    dock.onHeadChange(ws, HeadChange(main, feature, HeadChangeKind.branch));
+    expect(c.diagnosticsStale, isFalse);
+    dock.ensureStarted();
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    expect(c.diagnostics, isNotNull);
+    dock.onHeadChange(ws, HeadChange(main, feature, HeadChangeKind.branch));
+    expect(c.diagnosticsStale, isTrue);
+    await c.runDiagnostics();
+    expect(c.diagnosticsStale, isFalse);
+    dock.detach(ws);
+    dock.dispose();
+    ws.dispose();
+  });
+
+  test('병합·rebase 중이거나 실행 중 브랜치가 바뀌면 접힌 제목 점이 주의색이 된다', () async {
+    final (dock, ws, source) = await setup();
+    expect(dock.mood(ws), TaskbenchMood.idle);
+    source.set(GitState(root: dir.path, branch: 'main', sha: '1', operation: RepoOperation.merging));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(dock.operationInProgress(ws), isTrue);
+    expect(dock.mood(ws), TaskbenchMood.warning);
+    source.set(GitState(root: dir.path, branch: 'main', sha: '1'));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(dock.mood(ws), TaskbenchMood.idle);
     dock.detach(ws);
     dock.dispose();
     ws.dispose();

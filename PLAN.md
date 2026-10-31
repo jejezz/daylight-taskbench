@@ -524,6 +524,16 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - **테스트 이식**: 원본 22개 중 칸에 해당하는 9개(build_options·desktop_build·doctor·windows_checks·install·banner_adb·devices_tab·secrets·stale_build_cache)를 `test/flutty/` 로 옮겼고, 칸 모듈 테스트 3개를 새로 썼다. 나머지(about·app_settings·high_contrast·update·vscode·tool_paths·title_menu·window_vscode·worktrees·home_screen·tabs·git_and_phase·command_output_decode)는 셸·공통 코어가 이미 같은 일을 하는 테스트가 있거나 화면이 사라진 것이다.
 - **알려 둠**: 실제 기기에 설치하는 흐름(실기기 빌드·`flutter run`)은 이 환경에서 확인하지 못했다 (원본 테스트가 계획 생성·실행 순서를 지킨다). `RunSession` 추출은 7단계 Rust runner 와 함께 한다.
 
+### 단계 5 결과 (2026-10-31)
+
+연결 완료. `flutter analyze` 0, 테스트 381개 통과.
+
+- §1.10 표의 Flutty 열을 채웠다: 브랜치 변경 → 프로젝트 재감지(이미 있음) + **점검 결과를 오래된 값으로 표시**(`diagnosticsStale`, 점검 탭에 안내·흐리게, 다시 점검하면 풀림). 커밋 이동 → 이름·버전만 다시 읽기. 병합·rebase 등 진행 중 → "충돌 중에는 빌드 결과를 믿을 수 없습니다" 배너.
+- **접힌 제목 점**: `TaskbenchMood.warning`(주의색)을 더했다. Flutty 는 실행 중 브랜치가 바뀌었거나 작업(병합 등)이 진행 중이면 이 색이 된다 (실패 > 주의 > 성공 순). 앱 전체 배경 틴트는 그대로 working/failed/success 만 본다.
+- 4가지 빈 상태(폴더 없음 / git 아님 / Flutter 프로젝트 없음 / 둘 다 있음)는 단계 1의 시작 화면·`RunEmptyDock` 로 이미 설명이 붙어 있다.
+- 접힌 칸도 `onHeadChange` 를 받고(계약 테스트), 빌드 상태는 칸 객체(`FluttyController`)가 쥐고 있어 Branch 로 갔다 와도 이어진다.
+- 알려 둠: §1.7 의 폭·테마·글자 크기별 스크린샷 전수 확인은 6단계(릴리스 준비) 때 스크린샷과 함께 한다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

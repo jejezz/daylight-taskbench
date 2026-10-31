@@ -184,8 +184,12 @@ class FluttyDock extends DockModule {
       branchChangedWhileRunning = change.to.branch ?? change.to.sha ?? '';
       notifyListeners();
     }
+    if (change.kind == HeadChangeKind.branch) _controller?.markDiagnosticsStale();
     _detect(w);
   }
+
+  /// 병합·rebase 등이 진행 중이면 빌드 결과를 믿기 어렵다 (§1.10).
+  bool operationInProgress(Workspace w) => (w.git?.operation ?? RepoOperation.none) != RepoOperation.none;
 
   @override
   TaskbenchMood mood(Workspace w) {
@@ -193,6 +197,7 @@ class FluttyDock extends DockModule {
     if (c == null) return TaskbenchMood.idle;
     if (c.running || c.cleaning) return TaskbenchMood.working;
     if (c.statuses.contains(StepStatus.failed)) return TaskbenchMood.failed;
+    if (branchChangedWhileRunning != null || operationInProgress(w)) return TaskbenchMood.warning;
     if (c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) return TaskbenchMood.success;
     return TaskbenchMood.idle;
   }

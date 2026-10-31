@@ -7393,6 +7393,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'실행 중인 빌드가 있는 동안 브랜치가 {branch}(으)로 바뀌었습니다. 빌드는 이전 파일로 계속됩니다.'**
   String fdBranchChangedWhileRunning(String branch);
+
+  /// No description provided for @fdDoctorStale.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치가 바뀌었습니다. 이전 브랜치 기준의 점검 결과이니 다시 점검하세요.'**
+  String get fdDoctorStale;
+
+  /// No description provided for @fdOperationInProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합·리베이스 등이 진행 중입니다. 충돌 중에는 빌드 결과를 믿을 수 없습니다.'**
+  String get fdOperationInProgress;
 }
 
 class _AppLocalizationsDelegate

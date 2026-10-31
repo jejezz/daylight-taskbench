@@ -54,7 +54,12 @@ class DoctorTab extends StatelessWidget {
             child: Text(l10n.fdToolPathsOpen),
           ),
         ),
-        CheckList(checks),
+        if (controller.diagnosticsStale)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Text(l10n.fdDoctorStale, style: theme.textTheme.bodySmall?.copyWith(color: toneColor(context, Tone.warning))),
+          ),
+        Opacity(opacity: controller.diagnosticsStale ? 0.6 : 1, child: CheckList(checks)),
         if (checks.isNotEmpty && firstProblem(checks) == null)
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.md),

@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 
 /// 상태에 따라 배경 색이 바뀌는 효과가 가리키는 앱 상태 (PLAN.md §1.12).
-enum TaskbenchMood { idle, working, failed, success }
+enum TaskbenchMood { idle, working, failed, success, warning }
 
 @immutable
 class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
@@ -23,6 +23,7 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
     required this.working,
     required this.failed,
     required this.success,
+    required this.warning,
     required this.inset,
   });
 
@@ -46,6 +47,9 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
   final Color failed;
   final Color success;
 
+  /// 주의: 실행 중 브랜치가 바뀌었거나 병합 중처럼 결과를 믿기 어려운 때 (접힌 제목 점).
+  final Color warning;
+
   /// 로그·diff 같은 글자 영역 뒤에 까는 안쪽 판.
   final Color inset;
 
@@ -63,6 +67,7 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
       working: dark ? const Color(0xFFA78BFA) : const Color(0xFF6D4AE0),
       failed: scheme.error,
       success: dark ? const Color(0xFF34D399) : const Color(0xFF0F8A5F),
+      warning: dark ? const Color(0xFFFFB020) : const Color(0xFFB45309),
       inset: dark ? Colors.black.withValues(alpha: 0.28) : scheme.onSurface.withValues(alpha: 0.05),
     );
   }
@@ -72,6 +77,7 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
         TaskbenchMood.working => working,
         TaskbenchMood.failed => failed,
         TaskbenchMood.success => success,
+        TaskbenchMood.warning => warning,
       };
 
   @override
@@ -86,6 +92,7 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
         working: working,
         failed: failed,
         success: success,
+        warning: warning,
         inset: inset,
       );
 
@@ -103,6 +110,7 @@ class TaskbenchStyle extends ThemeExtension<TaskbenchStyle> {
       working: Color.lerp(working, other.working, t)!,
       failed: Color.lerp(failed, other.failed, t)!,
       success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
       inset: Color.lerp(inset, other.inset, t)!,
     );
   }
