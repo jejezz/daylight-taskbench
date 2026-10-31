@@ -15,7 +15,7 @@ import '../style/app_mark.dart';
 import '../style/status_pill.dart';
 
 const double sharedBarHeight = 44;
-const double branchBarHeight = 32;
+const double branchBarHeight = 36;
 
 String _name(String path) => path.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull ?? path;
 
@@ -138,12 +138,22 @@ class BranchBar extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(AppRadius.chip),
                   onTap: onBranchTap,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.call_split_rounded, size: 16, color: g.detached ? toneColor(context, Tone.warning) : theme.colorScheme.primary),
-                      const SizedBox(width: 4),
-                      Flexible(child: Text(branch, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleSmall)),
+                  child: Container(
+                    // pill 과 같은 높이·가운데 정렬 — 아이콘·이름·pill 의 눈높이가 한 줄로 맞는다.
+                    height: pillHeight,
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Icon(Icons.call_split_rounded, size: 20, color: g.detached ? toneColor(context, Tone.warning) : theme.colorScheme.primary),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          branch,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          strutStyle: const StrutStyle(fontSize: 15, height: 1.2, forceStrutHeight: true, leading: 0),
+                          style: theme.textTheme.titleMedium?.copyWith(fontSize: 15),
+                        ),
+                      ),
                     ]),
                   ),
                 ),
