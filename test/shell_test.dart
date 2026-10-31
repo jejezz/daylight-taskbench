@@ -91,14 +91,16 @@ void main() {
     expect(find.text('Run'), findsOneWidget);
   });
 
-  testWidgets('긴 브랜치 이름에서도 편집기 단추는 자리를 지킨다', (tester) async {
+  testWidgets('긴 브랜치 이름에도 편집기 단추는 디렉터리 이름 옆에 그대로 있다', (tester) async {
     final (_, source, _) = await _pump(tester, size: const Size(380, 560));
     source.set(GitState(root: '/r', branch: 'feature/${'very-long-branch-name-' * 5}', sha: 'c'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     final rect = tester.getRect(find.byIcon(Icons.code_rounded));
     expect(rect.right, lessThanOrEqualTo(380));
-    expect(rect.left, greaterThan(250));
+    expect(rect.top, lessThan(44)); // 디렉터리 바(첫 줄)에 있다
+    // 디렉터리 이름 바로 옆: 이름 끝에서 멀지 않다
+    expect(rect.left - tester.getRect(find.byIcon(Icons.arrow_drop_down_rounded)).right, lessThan(32));
   });
 
   testWidgets('끌어다 놓기 규칙: 파일만 → 안내, 비-git 폴더 → 열린 저장소 유지 (§1.11)', (tester) async {

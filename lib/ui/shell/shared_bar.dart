@@ -52,7 +52,7 @@ class WorkspaceBar extends StatelessWidget {
         const SizedBox(width: AppSpacing.md),
         const AppMark(size: 24),
         const SizedBox(width: AppSpacing.sm),
-        Expanded(
+        Flexible(
           child: root == null
               ? const SizedBox.shrink()
               : PopupMenuButton<String>(
@@ -91,6 +91,9 @@ class WorkspaceBar extends StatelessWidget {
                   ]),
                 ),
         ),
+        // 편집기에서 열기는 "이 폴더" 옆에 둔다 — 폴더에 하는 동작이라 폴더 이름과 붙어 있어야 한다.
+        if (root != null) EditorOpenButton(workspace: workspace),
+        const Spacer(),
         if (root != null) IconButton(tooltip: l10n.refreshTooltip, icon: const Icon(Icons.refresh_rounded), onPressed: workspace.refresh),
         if (onToggleAlwaysOnTop != null)
           IconButton(
@@ -108,7 +111,7 @@ class WorkspaceBar extends StatelessWidget {
   }
 }
 
-/// ② 브랜치 줄: 브랜치 칩 + 상태 pill + 편집기에서 열기.
+/// ② 브랜치 줄: 브랜치 칩 + 상태 pill. (편집기에서 열기는 ① 디렉터리 이름 옆)
 class BranchBar extends StatelessWidget {
   const BranchBar({super.key, required this.workspace, this.onBranchTap});
 
@@ -147,8 +150,6 @@ class BranchBar extends StatelessWidget {
               ),
             ),
             if (!compact) ...[const SizedBox(width: AppSpacing.sm), ..._pills(l10n, g)] else ...[const SizedBox(width: 4), ..._pills(l10n, g).take(1)],
-            const Spacer(),
-            EditorOpenButton(workspace: workspace),
           ]);
         }),
       ),
