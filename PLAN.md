@@ -466,7 +466,7 @@ abstract class ProjectDetector {
 | **4. Flutty Dock 이식** | `docks/flutty/` + 테스트 이식 (22개) + 프로젝트 검색 depth 0→1, Git 탭 제거 | 〃 |
 | **5. 연결** | §3.4 연결점, `onHeadChange` 정책 전부(§1.10 표), 접힌 제목 요약, 빈 상태 | §1.7 전부 통과 |
 | **6. 릴리스 준비** | README(영·한), 스크린샷, 설치 프로그램, `flutter-app-release-check` | `v0.1.0` 태그 가능 |
-| **7. Rust runner** (확장) | `RunSession` 추출 → Rust 감지·칸·설정 구역·환경 점검(cargo/rustup) | 별도 계획서 `docs/RUST_RUNNER.md`를 먼저 쓰고 승인 후 시작 |
+| **7. Rust runner** (확장) | `RunSession` 추출 → Rust 감지·칸·설정 구역·환경 점검(cargo/rustup) | 계획서 [docs/RUST_RUNNER.md](docs/RUST_RUNNER.md) 작성됨(승인 대기, 질문 §10) — 승인 후 시작 |
 | **8. Electron runner** (확장) | Electron 감지·칸·스크립트 실행·패키징 | 〃 `docs/ELECTRON_RUNNER.md` + `RunnerModule` 모양 재검증 |
 
 단계 1을 먼저 하는 이유: 기능은 이미 있으므로 틀릴 수 있는 것은 **화면**이다. 자리표시자 셸로 구성을 먼저 눈으로 확정하고 나서 기능을 채운다.
