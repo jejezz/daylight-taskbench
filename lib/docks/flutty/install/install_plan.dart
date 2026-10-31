@@ -1,4 +1,5 @@
 import '../../../core/command_log.dart';
+import '../../../core/run_session.dart' show RunStep;
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 import 'build_options.dart';
@@ -12,7 +13,7 @@ enum StepKind { prepare, build, install, launch, run }
 enum RunPhase { all, build, run }
 
 /// 실행할 명령 한 개. 화면에 보이는 명령과 실제로 실행하는 명령이 같다.
-class PlanStep {
+class PlanStep implements RunStep {
   const PlanStep(
     this.kind,
     this.args, {
@@ -21,10 +22,13 @@ class PlanStep {
   });
 
   final StepKind kind;
+  @override
   final List<String> args;
+  @override
   final String? workingDirectory;
 
   /// 이 명령에만 더하는 환경 변수. 화면의 명령에도 `NAME=값` 접두어로 보인다.
+  @override
   final Map<String, String> environment;
 
   /// 터미널에 붙여 넣어 그대로 실행할 수 있는 한 줄.
@@ -34,6 +38,7 @@ class PlanStep {
   ].join(' ');
 
   /// 계속 실행되는 단계(`flutter run`): 끝나는 것이 아니라 사용자가 멈춘다.
+  @override
   bool get interactive => kind == StepKind.run;
 
   /// 빌드 단계(준비·빌드)인지, 기기에서 실행하는 단계(올리기·열기·`flutter run`)인지.

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../../core/command_runner.dart';
+import '../../../core/devices/adb_devices.dart';
 import 'mobile_device.dart';
 
 /// 연결된 iPhone(macOS 전용)과 Android 기기를 찾는다.
@@ -43,8 +44,5 @@ class ProcessDeviceService implements DeviceService {
     }
   }
 
-  Future<List<MobileDevice>> _android() async {
-    final r = await runner.run(['adb', 'devices', '-l'], quiet: true);
-    return r.ok ? parseAdbDevices(r.stdout) : const [];
-  }
+  Future<List<MobileDevice>> _android() => AdbDevices(runner).list();
 }

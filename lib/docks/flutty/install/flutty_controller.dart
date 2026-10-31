@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/command_runner.dart';
+import '../../../core/run_session.dart';
 import '../devices/device_service.dart';
 import '../doctor/checks.dart';
 import '../doctor/diagnostics.dart';
@@ -11,6 +12,9 @@ import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 import 'build_options.dart';
 import 'install_plan.dart';
+
+// [Taskbench에서 달라진 곳] StepStatus 는 core/run_session.dart 로 옮겼다. 기존 import 가 그대로 동작하도록 다시 내보낸다.
+export '../../../core/run_session.dart' show StepStatus;
 
 /// 같은 폴더인지: `\`와 `/`, 끝의 구분자, (Windows·macOS의) 대소문자 차이는 무시한다.
 bool samePath(String a, String b) => _pathKey(a) == _pathKey(b);
@@ -20,7 +24,6 @@ String _pathKey(String p) {
   return Platform.isWindows || Platform.isMacOS ? k.toLowerCase() : k;
 }
 
-enum StepStatus { pending, running, done, failed, cancelled }
 
 /// 프로젝트·기기·모드를 고르고 계획을 실행하는 화면의 상태.
 class FluttyController extends ChangeNotifier {
@@ -97,7 +100,7 @@ class FluttyController extends ChangeNotifier {
 
   /// 실행 파일을 찾지 못해 실패했을 때 그 이름 (`flutter`, `adb` …).
   String? missingCommand;
-  RunHandle? _handle;
+  late final RunSession _session = RunSession(runner);
 
   /// 화면에 보이는 대상: 연결된 실기기 + (프로젝트가 이 OS의 데스크톱을 이미 지원하면) 이 컴퓨터.
   List<MobileDevice> get visibleDevices {
@@ -368,35 +371,18 @@ class FluttyController extends ChangeNotifier {
         statuses[i] = StepStatus.pending;
       }
     }
-    final handle = _handle = RunHandle();
     notifyListeners();
-    for (final i in indices) {
-      final step = p.steps[i];
-      statuses[i] = StepStatus.running;
+    final out = await _session.run(p.steps, indices, onStatus: (i, status) {
+      statuses[i] = status;
       notifyListeners();
-      final r = await runner.run(
-        step.args,
-        workingDirectory: step.workingDirectory,
-        environment: step.environment,
-        handle: handle,
-        keepStdinOpen: step.interactive,
-      );
-      if (handle.cancelled) {
-        statuses[i] = StepStatus.cancelled;
-        break;
-      }
-      // 계속 실행되는 단계(flutter run)는 사용자가 `q`로 끝내도 정상이다.
-      if (r.ok || step.interactive && r.exitCode == 0) {
-        statuses[i] = StepStatus.done;
-        continue;
-      }
-      statuses[i] = StepStatus.failed;
-      if (r.exitCode == 127) missingCommand = step.args.first;
+    });
+    final failed = out.failedIndex;
+    if (failed != null) {
+      final r = out.failedResult!;
+      if (r.exitCode == 127) missingCommand = p.steps[failed].args.first;
       hint = explainFailure(r.combined);
-      break;
     }
     running = false;
-    _handle = null;
     notifyListeners();
   }
 
@@ -436,10 +422,10 @@ class FluttyController extends ChangeNotifier {
     return ok;
   }
 
-  void cancel() => _handle?.cancel();
+  void cancel() => _session.cancel();
 
   /// 실행 중인 `flutter run`에 키를 보낸다: `r` 핫 리로드, `R` 핫 리스타트, `q` 종료.
-  void sendKey(String key) => _handle?.send(key);
+  void sendKey(String key) => _session.send(key);
 
   /// 브랜치가 바뀐 뒤 점검 결과를 오래된 것으로 표시한다. 칸이 시작되고 결과가 있을 때만 의미가 있다.
   void markDiagnosticsStale() {

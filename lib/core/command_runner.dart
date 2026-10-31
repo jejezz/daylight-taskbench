@@ -37,12 +37,45 @@ class RunHandle {
 
   void cancel() {
     _cancelled = true;
-    _process?.kill();
+    final p = _process;
+    if (p == null) return;
+    // [Taskbench에서 달라진 곳] 자식까지 끝낸다. `cargo`·`gradlew`·`flutter` 는 실제 일을 하는 자식 프로세스를 띄우므로
+    // 부모만 죽이면 자식이 고아로 남아 계속 돈다 (특히 Windows).
+    // 부모를 먼저 죽이면 자식이 고아가 되어 pid 관계가 끊기므로, 자손을 먼저 끝내고 부모를 끝낸다.
+    unawaited(killProcessTree(p.pid).whenComplete(p.kill));
   }
 
   /// 실행 중인 프로세스의 표준 입력으로 글자를 보낸다 (`flutter run`의 `r`, `R`, `q`).
   /// [CommandRunner.run]의 `keepStdinOpen` 으로 실행했을 때만 닿는다.
   void send(String text) => _process?.stdin.add(utf8.encode(text));
+}
+
+/// [pid] 와 그 자손 프로세스를 끝낸다. 실패해도 조용히 넘어간다 (이미 끝났을 수 있다).
+Future<void> killProcessTree(int pid) async {
+  try {
+    if (Platform.isWindows) {
+      await Process.run('taskkill', ['/PID', '$pid', '/T', '/F']);
+      return;
+    }
+    // 자손을 먼저 모아 두고(부모가 죽으면 pid 관계가 끊긴다) 아래쪽부터 끝낸다.
+    final all = <int>[];
+    var level = [pid];
+    for (var depth = 0; depth < 6 && level.isNotEmpty; depth++) {
+      final next = <int>[];
+      for (final parent in level) {
+        final r = await Process.run('pgrep', ['-P', '$parent']);
+        if (r.exitCode != 0) continue;
+        next.addAll(const LineSplitter().convert(r.stdout as String).map(int.tryParse).whereType<int>());
+      }
+      all.addAll(next);
+      level = next;
+    }
+    for (final child in all.reversed) {
+      Process.killPid(child);
+    }
+  } on ProcessException {
+    // pgrep/taskkill 이 없는 환경 — 부모만 끝난다.
+  }
 }
 
 /// Branch Dock 쪽 이름 — [RunHandle] 과 같다.
@@ -233,7 +266,7 @@ class CommandRunner {
         to.write(chunk);
         entry?.append(chunk);
         onOutput?.call(chunk);
-        if (entry != null) log.update();
+        if (entry != null) log.updateThrottled();
       }
 
       final outDone = process.stdout.map(decodeProcessOutput).listen((c) => tee(out, c)).asFuture<void>();

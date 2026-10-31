@@ -126,13 +126,15 @@ Rust 계획 §5와 같다. 추가로 Android만의 것:
 
 ## 7. 공통으로 뽑을 것 (Flutty를 건드리는 부분)
 
-| 추출 | 지금 | 뽑은 뒤 |
+| 추출 | 지금 | 뽑은 뒤 (9a에서 한 것) |
 |---|---|---|
-| **adb 기기 목록·파싱** | `ProcessDeviceService._android`, `parseAdbDevices` 류 (`flutty/devices/`) | `lib/core/adb/adb_devices.dart`. Flutty는 여기서 가져다 쓴다 |
-| **기기 감시** | Flutty 컨트롤러가 폴링 | **한 곳의 `DeviceWatcher`** (칸이 둘 이상 구독하면 폴링은 하나, 접힌 칸은 주기를 늘림 — PLAN §6 위험표의 약속). 두 칸이 같은 `adb`를 따로 두드리지 않게 |
-| **Devices 탭 위젯의 Android 부분** | `flutty/ui/devices_tab.dart` | `core/ui/`로 옮겨 두 칸이 쓴다 (iOS·데스크톱 섹션은 Flutty에 남김) |
-| **adb 점검 항목** | `flutty/doctor/checks.dart` | `core/doctor/adb_check.dart` |
-| **`RunSession`** | (Rust 7a) | 이 칸도 그 위에 올린다 |
+| **기기 타입·adb 파싱** | `flutty/devices/mobile_device.dart` | `core/devices/mobile_device.dart` + `core/devices/adb_devices.dart`(`AdbDevices.list`). Flutty 파일은 다시 내보내기만 한다 |
+| **`RunSession`** | `FluttyController.start/cancel/sendKey` | `core/run_session.dart` (`RunStep`, `StepStatus`, `RunSession`). Flutty는 같은 엔진을 쓴다 |
+| **긴 출력 · 갱신 묶기 · 자식 종료** | 출력 무제한, 청크마다 갱신, 부모만 종료 | `CommandLogEntry` 1 MiB 꼬리 상한, `CommandLog.updateThrottled`, `killProcessTree` (공통) |
+| **기록 탭** | `flutty/ui/log_tab.dart` | `core/ui/log_tab.dart` |
+| **Devices 탭 위젯** | `flutty/ui/devices_tab.dart` — `FluttyController`에 묶여 있다 | **9c로 미룬다.** 두 번째 소비자(이 칸의 컨트롤러)가 생긴 뒤 그 모양에 맞게 뽑는다 (지금 추상화하면 틀린 모양이 된다) |
+| **adb 점검 항목** | `flutty/doctor/checks.dart` | 9d에서 Doctor를 만들 때 함께 |
+| ~~`DeviceWatcher`~~ | — | **필요 없다.** Flutty는 기기를 폴링하지 않는다 (칸을 처음 펼칠 때와 사용자가 새로 고칠 때만 `adb devices`). 두 칸이 `adb`를 동시에 두드리는 문제가 없다 |
 
 원칙은 Rust 계획과 같다: **추출은 동작 변경 없이 먼저 하고, Flutty 테스트를 고치지 않고 통과하는 것이 증거다.**
 
@@ -164,15 +166,15 @@ Rust 계획 §5와 같다. 추가로 Android만의 것:
 
 릴리스는 사용자 기능 추가이므로 **minor**. 빈 칸 안내(`dockNoProjectBody`)는 "지원하는 프로젝트(Flutter, Gradle …)"로 고친다.
 
-## 10. 사용자에게 묻는 것
+## 10. 결정 기록 (2026-10-31, 구현 시작 시 사용자 확정)
 
-1. ~~범위와 이름~~ → **확정: `Gradle Runner`**, Android 앱 흐름 + 일반 Gradle 작업 선택기 (§4.0). 새 질문: JVM 쪽 첫 버전을 바로가기만으로 제한할까, 작업 선택기(§4.1b)까지 넣을까? (제안: 둘 다 — 선택기는 `tasks` 출력 파싱뿐이라 비용이 작다)
-2. **Logcat 탭**을 첫 버전에 넣을까? (제안: 나중. 넣으면 `adb logcat` 스트림·필터·상한이 필요해 한 단계가 늘어난다)
-3. **에뮬레이터 시작**(`emulator -avd`)? (제안: 첫 버전은 제외 — 떠 있는 것만 대상으로 보인다)
-4. **릴리스 서명**: 키스토어를 건드리지 않고 Gradle이 실패하면 처방만 보여 주는 것으로 충분한가? (제안: 예)
-5. **`Bundle`(AAB)과 산출물 폴더 열기**를 첫 버전에 넣을까? (제안: 둘 다 넣는다 — 비용이 작다)
-6. **Flutter·React Native의 `android/` 제외**(§3)에 동의하는가? (제안: 예. Flutter는 Flutter Runner가 맡는다)
-7. **순서**: Android를 Rust·Electron보다 앞에 둘까? (참고: Android는 Flutty와 겹치는 부분이 커서 `DeviceWatcher` 공통화가 실제로 쓰이는 첫 사례가 된다. 사용 빈도도 Rust보다 높다고 판단하면 앞에 두는 것이 합리적)
+1. ✅ **이름·범위**: `Gradle Runner` — Android 앱 흐름 + 일반 Gradle은 **바로가기와 작업 선택기 둘 다** (§4.0, §4.1b).
+2. ✅ **첫 버전에 넣는 것**: `Bundle`(AAB) + 산출물 폴더 열기.
+3. ✅ **첫 버전에서 뺀 것**: Logcat 탭, 에뮬레이터 시작(AVD). 떠 있는 에뮬레이터는 `adb`가 보여 주므로 대상으로는 나온다.
+4. ✅ **릴리스 서명**: 키스토어를 건드리지 않는다. Gradle이 실패하면 처방만 보여 준다.
+5. ✅ **Flutter·React Native의 `android/` 제외** (§3).
+6. ✅ **순서**: 공통 추출(9a)을 Flutty 테스트를 고치지 않고 먼저 끝낸다 (§7, §9).
+7. Rust·Electron은 이 일과 별개로 미룬다 (사용자 결정). `RunSession` 추출은 그래서 이 계획의 9a가 맡는다.
 
 ## 11. 위험
 
@@ -182,6 +184,6 @@ Rust 계획 §5와 같다. 추가로 Android만의 것:
 | 설정 단계가 느려 UI가 멈춘 듯 보임 | 백그라운드 + "불러오는 중" + 캐시. 칸이 처음 펼쳐질 때만 시작 (지연 시작) |
 | Gradle 데몬이 남아 메모리를 쓴다 | 중지는 클라이언트만 끈다고 UI에 밝히고 `Stop daemons`를 제공 |
 | JDK/AGP 대응표가 낡는다 | 하드코딩은 작게, "힌트"로 표시. 틀려도 실행은 막지 않는다 |
-| 두 칸(Flutter·Android)이 같은 `adb`를 동시에 두드림 | `DeviceWatcher` 공유 + 접힌 칸은 주기 연장 |
+| 두 칸(Flutter·Android)이 같은 `adb`를 동시에 두드림 | Flutty는 폴링하지 않으므로 문제 없음 (기기 목록은 칸을 펼칠 때·새로 고칠 때만) |
 | Flutter 프로젝트에서 Android 칸이 켜져 혼란 | §3 제외 규칙 + 테스트 |
 | 환경 변수 주입이 사용자의 셸 설정과 달라 "내 터미널에선 되는데" | 주입한 값을 미리보기에 그대로 보이고, 설정 창에서 `java` 경로를 지정할 수 있게 |
