@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../core/run_session.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/taskbench_style.dart';
 import '../../workspace/git_state.dart';
@@ -16,17 +17,27 @@ import '../../workspace/workspace.dart';
 import '../dock_module.dart';
 import 'detect/gradle_detector.dart';
 import 'detect/gradle_project.dart';
+import 'run/gradle_controller.dart';
 import 'ui/gradle_dock_body.dart';
 
 class GradleDock extends DockModule {
-  GradleDock({this.detector = const GradleDetector()});
+  // ignore: prefer_initializing_formals
+  GradleDock({this.detector = const GradleDetector(), GradleController? controller}) : _controller = controller;
 
   final ProjectDetector detector;
+
+  GradleController? _controller;
+
+  /// 화면과 테스트가 읽는다. [attach] 전에는 null.
+  GradleController? get controller => _controller;
+
+  /// 실행 중에 브랜치가 바뀌었다는 알림 (배너). 사용자가 닫거나 실행이 끝나면 사라진다.
+  String? branchChangedWhileRunning;
 
   List<DetectedProject> _projects = const [];
 
   /// 고른 프로젝트의 상세. 아직 읽는 중이거나 프로젝트가 없으면 null.
-  GradleProject? project;
+  GradleProject? get project => _controller?.project;
 
   String? _forDir;
   int _generation = 0;
@@ -66,6 +77,8 @@ class GradleDock extends DockModule {
   @override
   void attach(Workspace w) {
     _workspace = w;
+    _controller ??= GradleController(runner: w.runner, prefs: w.prefs);
+    _controller!.addListener(_onController);
     w.addListener(_onWorkspace);
     _onWorkspace();
   }
@@ -73,6 +86,7 @@ class GradleDock extends DockModule {
   @override
   void detach(Workspace w) {
     w.removeListener(_onWorkspace);
+    _controller?.removeListener(_onController);
     _workspace = null;
     _generation++; // 진행 중이던 검색 결과는 버린다
   }
@@ -80,7 +94,22 @@ class GradleDock extends DockModule {
   @override
   void dispose() {
     _disposed = true;
+    _controller?.dispose();
     super.dispose();
+  }
+
+  /// 칸이 처음 펼쳐질 때 기기 목록을 읽기 시작한다.
+  void ensureStarted() => _controller?.ensureStarted();
+
+  void dismissBranchBanner() {
+    branchChangedWhileRunning = null;
+    notifyListeners();
+  }
+
+  void _onController() {
+    final c = _controller;
+    if (c != null && !c.running) branchChangedWhileRunning = null;
+    if (!_disposed) notifyListeners();
   }
 
   void _onWorkspace() {
@@ -115,18 +144,39 @@ class GradleDock extends DockModule {
       detail = await GradleProject.read(picked.path, name: picked.name, version: picked.version);
     }
     if (_disposed || (generation != null && generation != _generation)) return;
-    project = detail;
+    _controller?.setProject(detail);
   }
 
   @override
   void onHeadChange(Workspace w, HeadChange change) {
     // 브랜치에 따라 settings·모듈이 생기거나 사라질 수 있다 — 다시 찾는다 (§1.10).
     if (change.kind != HeadChangeKind.branch && change.kind != HeadChangeKind.commit) return;
+    if (change.kind == HeadChangeKind.branch && (_controller?.running ?? false)) {
+      // 실행 중이면 중지하지 않고 알리기만 한다 (확정된 결정 12번).
+      branchChangedWhileRunning = change.to.branch ?? change.to.sha ?? '';
+      notifyListeners();
+    }
+    // 모듈·변형·작업 목록은 브랜치마다 다를 수 있다.
+    _controller?.invalidateCaches();
     _detect(w);
   }
 
+  /// 병합·rebase 등이 진행 중이면 빌드 결과를 믿기 어렵다 (§1.10).
+  bool operationInProgress(Workspace w) => (w.git?.operation ?? RepoOperation.none) != RepoOperation.none;
+
   @override
-  TaskbenchMood mood(Workspace w) => TaskbenchMood.idle;
+  TaskbenchMood mood(Workspace w) {
+    final c = _controller;
+    if (c == null) return TaskbenchMood.idle;
+    if (c.busy) return TaskbenchMood.working;
+    if (c.statuses.contains(StepStatus.failed)) return TaskbenchMood.failed;
+    if (branchChangedWhileRunning != null || operationInProgress(w)) return TaskbenchMood.warning;
+    if (c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) return TaskbenchMood.success;
+    return TaskbenchMood.idle;
+  }
+
+  @override
+  bool busy(Workspace w) => _controller?.busy ?? false;
 
   @override
   Widget summary(BuildContext context, Workspace w) {

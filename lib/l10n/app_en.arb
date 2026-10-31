@@ -258,6 +258,77 @@
       "reason": {"type": "String"}
     }
   },
+  "grTabRun": "Run",
+  "grTabDevices": "Devices",
+  "grTabLog": "Log",
+  "grModuleLabel": "Module",
+  "grVariantLabel": "Variant",
+  "grActionLabel": "Action",
+  "grActionInstallRun": "Install & run",
+  "grActionInstall": "Install",
+  "grActionAssemble": "Build APK",
+  "grActionBundle": "Build bundle (AAB)",
+  "grActionTest": "Test",
+  "grActionLint": "Lint",
+  "grActionClean": "Clean",
+  "grActionBuild": "Build",
+  "grActionCheck": "Check",
+  "grActionRun": "Run",
+  "grActionBootRun": "Run (Spring Boot)",
+  "grActionTask": "Other task…",
+  "grOptionsTitle": "Options",
+  "grOptOffline": "Offline (--offline)",
+  "grOptStacktrace": "Stack traces (--stacktrace)",
+  "grOptNoDaemon": "No daemon (--no-daemon)",
+  "grOptContinue": "Keep going after failures (--continue)",
+  "grExtraArgs": "Extra arguments",
+  "grCommandsTitle": "Commands to run",
+  "grStart": "Start",
+  "grStop": "Stop",
+  "grCancel": "Cancel",
+  "grStepGradle": "Gradle",
+  "grStepLaunch": "Open the app",
+  "grLoadVariants": "Load exact variants",
+  "grLoadVariantsHint": "Runs Gradle once to list the variants. The first run can take minutes.",
+  "grLoadingVariants": "Loading variants…",
+  "grTaskField": "Task name(s)",
+  "grLoadTasks": "Load task list",
+  "grLoadingTasks": "Loading tasks…",
+  "grTaskSearch": "Search tasks",
+  "grTaskNone": "No task list yet. Load it, or type a task name above.",
+  "grStopDaemons": "Stop Gradle daemons",
+  "grStopDaemonsHint": "Stopping a run only ends this command. The Gradle daemon keeps running in the background until you stop it here.",
+  "grOpenOutput": "Show output folder",
+  "grBlockNoModule": "No runnable module was found in this project.",
+  "grBlockNoVariant": "Pick a variant.",
+  "grBlockNoTask": "Enter a task name.",
+  "grBlockNoDevice": "Connect a device or start an emulator, then refresh the list.",
+  "grBlockUnauthorized": "Allow USB debugging on the device, then refresh the list.",
+  "grLaunchSkipped": "The app will be installed but not opened: its package name could not be read from the build file.",
+  "grHintSdkLocation": "Gradle can't find the Android SDK. Set ANDROID_HOME or sdk.dir in local.properties.",
+  "grHintLicenses": "Some Android SDK licenses haven't been accepted. Run: sdkmanager --licenses",
+  "grHintJdk": "This project needs a different JDK version than the one Gradle is using. Check JAVA_HOME.",
+  "grHintResolve": "Gradle couldn't download a dependency. Check your network, or try again without --offline.",
+  "grHintKeystore": "The signing keystore file wasn't found. Check the signing config for this build type.",
+  "grHintNoDevice": "No device is connected.",
+  "grBranchChangedWhileRunning": "The branch changed to {branch} while this was running. The result may mix both branches.",
+  "@grBranchChangedWhileRunning": {
+    "placeholders": {
+      "branch": {"type": "String"}
+    }
+  },
+  "grHintInstallFailed": "The device refused the install ({code}).",
+  "@grHintInstallFailed": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "grHintMissingCommand": "Couldn't find “{name}”. Check that it's installed.",
+  "@grHintMissingCommand": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "dockNoProject": "No project to run",
   "dockNoProjectBody": "No Flutter or Gradle project was found in this folder or the folders directly below it. Pick another folder.",
   "dockProjects": "{count} projects",

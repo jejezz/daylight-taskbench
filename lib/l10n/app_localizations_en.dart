@@ -418,6 +418,191 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get grTabRun => 'Run';
+
+  @override
+  String get grTabDevices => 'Devices';
+
+  @override
+  String get grTabLog => 'Log';
+
+  @override
+  String get grModuleLabel => 'Module';
+
+  @override
+  String get grVariantLabel => 'Variant';
+
+  @override
+  String get grActionLabel => 'Action';
+
+  @override
+  String get grActionInstallRun => 'Install & run';
+
+  @override
+  String get grActionInstall => 'Install';
+
+  @override
+  String get grActionAssemble => 'Build APK';
+
+  @override
+  String get grActionBundle => 'Build bundle (AAB)';
+
+  @override
+  String get grActionTest => 'Test';
+
+  @override
+  String get grActionLint => 'Lint';
+
+  @override
+  String get grActionClean => 'Clean';
+
+  @override
+  String get grActionBuild => 'Build';
+
+  @override
+  String get grActionCheck => 'Check';
+
+  @override
+  String get grActionRun => 'Run';
+
+  @override
+  String get grActionBootRun => 'Run (Spring Boot)';
+
+  @override
+  String get grActionTask => 'Other task…';
+
+  @override
+  String get grOptionsTitle => 'Options';
+
+  @override
+  String get grOptOffline => 'Offline (--offline)';
+
+  @override
+  String get grOptStacktrace => 'Stack traces (--stacktrace)';
+
+  @override
+  String get grOptNoDaemon => 'No daemon (--no-daemon)';
+
+  @override
+  String get grOptContinue => 'Keep going after failures (--continue)';
+
+  @override
+  String get grExtraArgs => 'Extra arguments';
+
+  @override
+  String get grCommandsTitle => 'Commands to run';
+
+  @override
+  String get grStart => 'Start';
+
+  @override
+  String get grStop => 'Stop';
+
+  @override
+  String get grCancel => 'Cancel';
+
+  @override
+  String get grStepGradle => 'Gradle';
+
+  @override
+  String get grStepLaunch => 'Open the app';
+
+  @override
+  String get grLoadVariants => 'Load exact variants';
+
+  @override
+  String get grLoadVariantsHint =>
+      'Runs Gradle once to list the variants. The first run can take minutes.';
+
+  @override
+  String get grLoadingVariants => 'Loading variants…';
+
+  @override
+  String get grTaskField => 'Task name(s)';
+
+  @override
+  String get grLoadTasks => 'Load task list';
+
+  @override
+  String get grLoadingTasks => 'Loading tasks…';
+
+  @override
+  String get grTaskSearch => 'Search tasks';
+
+  @override
+  String get grTaskNone =>
+      'No task list yet. Load it, or type a task name above.';
+
+  @override
+  String get grStopDaemons => 'Stop Gradle daemons';
+
+  @override
+  String get grStopDaemonsHint =>
+      'Stopping a run only ends this command. The Gradle daemon keeps running in the background until you stop it here.';
+
+  @override
+  String get grOpenOutput => 'Show output folder';
+
+  @override
+  String get grBlockNoModule => 'No runnable module was found in this project.';
+
+  @override
+  String get grBlockNoVariant => 'Pick a variant.';
+
+  @override
+  String get grBlockNoTask => 'Enter a task name.';
+
+  @override
+  String get grBlockNoDevice =>
+      'Connect a device or start an emulator, then refresh the list.';
+
+  @override
+  String get grBlockUnauthorized =>
+      'Allow USB debugging on the device, then refresh the list.';
+
+  @override
+  String get grLaunchSkipped =>
+      'The app will be installed but not opened: its package name could not be read from the build file.';
+
+  @override
+  String get grHintSdkLocation =>
+      'Gradle can\'t find the Android SDK. Set ANDROID_HOME or sdk.dir in local.properties.';
+
+  @override
+  String get grHintLicenses =>
+      'Some Android SDK licenses haven\'t been accepted. Run: sdkmanager --licenses';
+
+  @override
+  String get grHintJdk =>
+      'This project needs a different JDK version than the one Gradle is using. Check JAVA_HOME.';
+
+  @override
+  String get grHintResolve =>
+      'Gradle couldn\'t download a dependency. Check your network, or try again without --offline.';
+
+  @override
+  String get grHintKeystore =>
+      'The signing keystore file wasn\'t found. Check the signing config for this build type.';
+
+  @override
+  String get grHintNoDevice => 'No device is connected.';
+
+  @override
+  String grBranchChangedWhileRunning(String branch) {
+    return 'The branch changed to $branch while this was running. The result may mix both branches.';
+  }
+
+  @override
+  String grHintInstallFailed(String code) {
+    return 'The device refused the install ($code).';
+  }
+
+  @override
+  String grHintMissingCommand(String name) {
+    return 'Couldn\'t find “$name”. Check that it\'s installed.';
+  }
+
+  @override
   String get dockNoProject => 'No project to run';
 
   @override

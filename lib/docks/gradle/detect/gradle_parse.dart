@@ -79,6 +79,8 @@ class AndroidBuildInfo {
     this.compileSdk,
     this.buildTypes = const [],
     this.flavors = const [],
+    this.typeSuffix = const {},
+    this.flavorSuffix = const {},
   });
 
   final String? applicationId;
@@ -89,6 +91,10 @@ class AndroidBuildInfo {
   /// `debug`, `release` 와 파일에 선언한 것들.
   final List<String> buildTypes;
   final List<String> flavors;
+
+  /// 빌드 타입·flavor 별 `applicationIdSuffix` (`debug` → `.debug`). 설치된 패키지 이름을 알아내는 데 쓴다.
+  final Map<String, String> typeSuffix;
+  final Map<String, String> flavorSuffix;
 }
 
 AndroidBuildInfo parseAndroidBuild(String build) {
@@ -106,7 +112,36 @@ AndroidBuildInfo parseAndroidBuild(String build) {
     compileSdk: sdk == null ? null : int.parse(sdk),
     buildTypes: types,
     flavors: _namesInBlock(text, 'productFlavors').toList(),
+    typeSuffix: _suffixes(text, 'buildTypes'),
+    flavorSuffix: _suffixes(text, 'productFlavors'),
   );
+}
+
+/// `buildTypes { debug { applicationIdSuffix ".debug" } }` 같은 블록에서 이름 → 접미어.
+Map<String, String> _suffixes(String text, String block) {
+  final body = _blockBody(text, block);
+  if (body == null) return const {};
+  final out = <String, String>{};
+  var i = 0;
+  while (i < body.length) {
+    final open = body.indexOf('{', i);
+    if (open < 0) break;
+    // `{` 바로 앞의 이름: `debug {` 또는 `getByName("debug") {` / `create("x") {`.
+    final head = body.substring(i, open);
+    final name = RegExp(r'''["'](\w+)["']\s*\)\s*$''').firstMatch(head)?.group(1) ?? RegExp(r'(\w+)\s*$').firstMatch(head)?.group(1);
+    var depth = 1;
+    var j = open + 1;
+    while (j < body.length && depth > 0) {
+      if (body[j] == '{') depth++;
+      if (body[j] == '}') depth--;
+      j++;
+    }
+    final inner = body.substring(open + 1, depth == 0 ? j - 1 : j);
+    final suffix = RegExp(r'''applicationIdSuffix\s*=?\s*["']([^"']+)["']''').firstMatch(inner)?.group(1);
+    if (name != null && suffix != null) out[name] = suffix;
+    i = j;
+  }
+  return out;
 }
 
 /// 루트 build.gradle 의 `version = '1.2.3'`.

@@ -3,10 +3,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../core/command_log.dart';
 import '../../../core/ui/command_text.dart';
-import '../../../core/ui/copy_output_button.dart';
-import '../../../core/ui/output_viewer.dart';
+import '../../../core/ui/step_status_icon.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../ui/style/status_pill.dart';
@@ -16,6 +14,9 @@ import '../install/install_plan.dart';
 import 'build_options_section.dart';
 import 'check_text.dart';
 import 'widgets.dart';
+
+// [Taskbench에서 달라진 곳] OutputSection 은 core/ui/output_section.dart 로 옮겼다. 다시 내보낸다.
+export '../../../core/ui/output_section.dart';
 
 class BuildSection extends StatefulWidget {
   const BuildSection({super.key, required this.controller});
@@ -80,14 +81,6 @@ class BuildSectionState extends State<BuildSection> {
     return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.fdHomeRunOnlyNeedsBuild, child: button) : button;
   }
 
-  Widget _statusIcon(BuildContext context, StepStatus? s, ThemeData theme) => switch (s) {
-    StepStatus.running => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-    StepStatus.done => Icon(Icons.check_circle_rounded, size: 16, color: toneColor(context, Tone.success)),
-    StepStatus.failed => Icon(Icons.error_rounded, size: 16, color: theme.colorScheme.error),
-    StepStatus.cancelled => Icon(Icons.cancel_rounded, size: 16, color: theme.hintColor),
-    _ => Icon(Icons.radio_button_unchecked_rounded, size: 16, color: theme.hintColor),
-  };
-
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -148,7 +141,7 @@ class BuildSectionState extends State<BuildSection> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
-                            child: _statusIcon(context, i < c.statuses.length ? c.statuses[i] : null, theme),
+                            child: StepStatusIcon(i < c.statuses.length ? c.statuses[i] : null),
                           ),
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(
@@ -239,61 +232,6 @@ class BuildSectionState extends State<BuildSection> {
             child: Text(failureHintText(l10n, c.hint!), style: TextStyle(color: theme.colorScheme.error)),
           ),
       ],
-    );
-  }
-}
-
-class OutputSection extends StatelessWidget {
-  const OutputSection({super.key, required this.log});
-
-  final CommandLog log;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return ListenableBuilder(
-      listenable: log,
-      builder: (context, _) {
-        final last = log.last;
-        if (last == null) return const SizedBox.shrink();
-        final lines = last.output.trimRight().split('\n');
-        final tail = lines.length > 60 ? lines.sublist(lines.length - 60) : lines;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(child: SectionTitle(l10n.fdHomeOutputTitle)),
-                IconButton(
-                  tooltip: l10n.fdOutputViewer,
-                  visualDensity: VisualDensity.compact,
-                  iconSize: 16,
-                  icon: const Icon(Icons.open_in_full_rounded),
-                  onPressed: () => OutputViewerScreen.open(context, log, last),
-                ),
-                CopyOutputButton(text: () => '\$ ${last.commandLine}\n${last.output.trimRight()}'),
-              ],
-            ),
-            Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(maxHeight: 260),
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(AppRadius.button),
-              ),
-              child: SingleChildScrollView(
-                reverse: true,
-                child: SelectableText(
-                  '\$ ${last.commandLine}\n${tail.join('\n')}',
-                  style: AppFonts.mono.copyWith(fontSize: 11.5),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

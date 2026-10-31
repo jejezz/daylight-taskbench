@@ -806,6 +806,342 @@ abstract class AppLocalizations {
   /// **'Gradle 파일을 읽지 못했습니다: {reason}'**
   String grReadFailed(String reason);
 
+  /// No description provided for @grTabRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get grTabRun;
+
+  /// No description provided for @grTabDevices.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get grTabDevices;
+
+  /// No description provided for @grTabLog.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록'**
+  String get grTabLog;
+
+  /// No description provided for @grModuleLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'모듈'**
+  String get grModuleLabel;
+
+  /// No description provided for @grVariantLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'변형'**
+  String get grVariantLabel;
+
+  /// No description provided for @grActionLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'동작'**
+  String get grActionLabel;
+
+  /// No description provided for @grActionInstallRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치하고 실행'**
+  String get grActionInstallRun;
+
+  /// No description provided for @grActionInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치'**
+  String get grActionInstall;
+
+  /// No description provided for @grActionAssemble.
+  ///
+  /// In ko, this message translates to:
+  /// **'APK 만들기'**
+  String get grActionAssemble;
+
+  /// No description provided for @grActionBundle.
+  ///
+  /// In ko, this message translates to:
+  /// **'번들(AAB) 만들기'**
+  String get grActionBundle;
+
+  /// No description provided for @grActionTest.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트'**
+  String get grActionTest;
+
+  /// No description provided for @grActionLint.
+  ///
+  /// In ko, this message translates to:
+  /// **'린트'**
+  String get grActionLint;
+
+  /// No description provided for @grActionClean.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리'**
+  String get grActionClean;
+
+  /// No description provided for @grActionBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get grActionBuild;
+
+  /// No description provided for @grActionCheck.
+  ///
+  /// In ko, this message translates to:
+  /// **'검사'**
+  String get grActionCheck;
+
+  /// No description provided for @grActionRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get grActionRun;
+
+  /// No description provided for @grActionBootRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 (Spring Boot)'**
+  String get grActionBootRun;
+
+  /// No description provided for @grActionTask.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 작업…'**
+  String get grActionTask;
+
+  /// No description provided for @grOptionsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'옵션'**
+  String get grOptionsTitle;
+
+  /// No description provided for @grOptOffline.
+  ///
+  /// In ko, this message translates to:
+  /// **'오프라인 (--offline)'**
+  String get grOptOffline;
+
+  /// No description provided for @grOptStacktrace.
+  ///
+  /// In ko, this message translates to:
+  /// **'스택 트레이스 (--stacktrace)'**
+  String get grOptStacktrace;
+
+  /// No description provided for @grOptNoDaemon.
+  ///
+  /// In ko, this message translates to:
+  /// **'데몬 없이 (--no-daemon)'**
+  String get grOptNoDaemon;
+
+  /// No description provided for @grOptContinue.
+  ///
+  /// In ko, this message translates to:
+  /// **'실패해도 계속 (--continue)'**
+  String get grOptContinue;
+
+  /// No description provided for @grExtraArgs.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가 인자'**
+  String get grExtraArgs;
+
+  /// No description provided for @grCommandsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get grCommandsTitle;
+
+  /// No description provided for @grStart.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작'**
+  String get grStart;
+
+  /// No description provided for @grStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지'**
+  String get grStop;
+
+  /// No description provided for @grCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get grCancel;
+
+  /// No description provided for @grStepGradle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle'**
+  String get grStepGradle;
+
+  /// No description provided for @grStepLaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 열기'**
+  String get grStepLaunch;
+
+  /// No description provided for @grLoadVariants.
+  ///
+  /// In ko, this message translates to:
+  /// **'정확한 변형 불러오기'**
+  String get grLoadVariants;
+
+  /// No description provided for @grLoadVariantsHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 을 한 번 실행해 변형 목록을 읽습니다. 처음에는 몇 분 걸릴 수 있습니다.'**
+  String get grLoadVariantsHint;
+
+  /// No description provided for @grLoadingVariants.
+  ///
+  /// In ko, this message translates to:
+  /// **'변형을 불러오는 중…'**
+  String get grLoadingVariants;
+
+  /// No description provided for @grTaskField.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 이름'**
+  String get grTaskField;
+
+  /// No description provided for @grLoadTasks.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 목록 불러오기'**
+  String get grLoadTasks;
+
+  /// No description provided for @grLoadingTasks.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 불러오는 중…'**
+  String get grLoadingTasks;
+
+  /// No description provided for @grTaskSearch.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 검색'**
+  String get grTaskSearch;
+
+  /// No description provided for @grTaskNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 작업 목록이 없습니다. 불러오거나 위에 작업 이름을 직접 입력하세요.'**
+  String get grTaskNone;
+
+  /// No description provided for @grStopDaemons.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 데몬 끄기'**
+  String get grStopDaemons;
+
+  /// No description provided for @grStopDaemonsHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지는 이 명령만 끝냅니다. Gradle 데몬은 여기서 끄기 전까지 백그라운드에서 계속 돕니다.'**
+  String get grStopDaemonsHint;
+
+  /// No description provided for @grOpenOutput.
+  ///
+  /// In ko, this message translates to:
+  /// **'산출물 폴더 보기'**
+  String get grOpenOutput;
+
+  /// No description provided for @grBlockNoModule.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트에서 실행할 수 있는 모듈을 찾지 못했습니다.'**
+  String get grBlockNoModule;
+
+  /// No description provided for @grBlockNoVariant.
+  ///
+  /// In ko, this message translates to:
+  /// **'변형을 고르세요.'**
+  String get grBlockNoVariant;
+
+  /// No description provided for @grBlockNoTask.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 이름을 입력하세요.'**
+  String get grBlockNoTask;
+
+  /// No description provided for @grBlockNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기를 연결하거나 에뮬레이터를 켜고 목록을 새로 고치세요.'**
+  String get grBlockNoDevice;
+
+  /// No description provided for @grBlockUnauthorized.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기에서 USB 디버깅을 허용한 뒤 목록을 새로 고치세요.'**
+  String get grBlockUnauthorized;
+
+  /// No description provided for @grLaunchSkipped.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱은 설치하지만 열지는 않습니다: 빌드 파일에서 패키지 이름을 읽지 못했습니다.'**
+  String get grLaunchSkipped;
+
+  /// No description provided for @grHintSdkLocation.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 이 Android SDK 를 찾지 못합니다. ANDROID_HOME 이나 local.properties 의 sdk.dir 를 설정하세요.'**
+  String get grHintSdkLocation;
+
+  /// No description provided for @grHintLicenses.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android SDK 라이선스에 동의하지 않았습니다. 다음을 실행하세요: sdkmanager --licenses'**
+  String get grHintLicenses;
+
+  /// No description provided for @grHintJdk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 이 쓰는 JDK 버전이 이 프로젝트와 맞지 않습니다. JAVA_HOME 을 확인하세요.'**
+  String get grHintJdk;
+
+  /// No description provided for @grHintResolve.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 이 의존성을 내려받지 못했습니다. 네트워크를 확인하거나 --offline 을 끄고 다시 해 보세요.'**
+  String get grHintResolve;
+
+  /// No description provided for @grHintKeystore.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 키스토어 파일을 찾지 못했습니다. 이 빌드 타입의 서명 설정을 확인하세요.'**
+  String get grHintKeystore;
+
+  /// No description provided for @grHintNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결된 기기가 없습니다.'**
+  String get grHintNoDevice;
+
+  /// No description provided for @grBranchChangedWhileRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중에 브랜치가 {branch}(으)로 바뀌었습니다. 결과가 두 브랜치의 내용을 섞었을 수 있습니다.'**
+  String grBranchChangedWhileRunning(String branch);
+
+  /// No description provided for @grHintInstallFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기가 설치를 거부했습니다 ({code}).'**
+  String grHintInstallFailed(String code);
+
+  /// No description provided for @grHintMissingCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'“{name}”을(를) 찾지 못했습니다. 설치되어 있는지 확인하세요.'**
+  String grHintMissingCommand(String name);
+
   /// No description provided for @dockNoProject.
   ///
   /// In ko, this message translates to:

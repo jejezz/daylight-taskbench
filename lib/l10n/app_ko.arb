@@ -275,6 +275,77 @@
       "reason": {"type": "String"}
     }
   },
+  "grTabRun": "실행",
+  "grTabDevices": "기기",
+  "grTabLog": "기록",
+  "grModuleLabel": "모듈",
+  "grVariantLabel": "변형",
+  "grActionLabel": "동작",
+  "grActionInstallRun": "설치하고 실행",
+  "grActionInstall": "설치",
+  "grActionAssemble": "APK 만들기",
+  "grActionBundle": "번들(AAB) 만들기",
+  "grActionTest": "테스트",
+  "grActionLint": "린트",
+  "grActionClean": "정리",
+  "grActionBuild": "빌드",
+  "grActionCheck": "검사",
+  "grActionRun": "실행",
+  "grActionBootRun": "실행 (Spring Boot)",
+  "grActionTask": "다른 작업…",
+  "grOptionsTitle": "옵션",
+  "grOptOffline": "오프라인 (--offline)",
+  "grOptStacktrace": "스택 트레이스 (--stacktrace)",
+  "grOptNoDaemon": "데몬 없이 (--no-daemon)",
+  "grOptContinue": "실패해도 계속 (--continue)",
+  "grExtraArgs": "추가 인자",
+  "grCommandsTitle": "실행할 명령",
+  "grStart": "시작",
+  "grStop": "중지",
+  "grCancel": "취소",
+  "grStepGradle": "Gradle",
+  "grStepLaunch": "앱 열기",
+  "grLoadVariants": "정확한 변형 불러오기",
+  "grLoadVariantsHint": "Gradle 을 한 번 실행해 변형 목록을 읽습니다. 처음에는 몇 분 걸릴 수 있습니다.",
+  "grLoadingVariants": "변형을 불러오는 중…",
+  "grTaskField": "작업 이름",
+  "grLoadTasks": "작업 목록 불러오기",
+  "grLoadingTasks": "작업을 불러오는 중…",
+  "grTaskSearch": "작업 검색",
+  "grTaskNone": "아직 작업 목록이 없습니다. 불러오거나 위에 작업 이름을 직접 입력하세요.",
+  "grStopDaemons": "Gradle 데몬 끄기",
+  "grStopDaemonsHint": "중지는 이 명령만 끝냅니다. Gradle 데몬은 여기서 끄기 전까지 백그라운드에서 계속 돕니다.",
+  "grOpenOutput": "산출물 폴더 보기",
+  "grBlockNoModule": "이 프로젝트에서 실행할 수 있는 모듈을 찾지 못했습니다.",
+  "grBlockNoVariant": "변형을 고르세요.",
+  "grBlockNoTask": "작업 이름을 입력하세요.",
+  "grBlockNoDevice": "기기를 연결하거나 에뮬레이터를 켜고 목록을 새로 고치세요.",
+  "grBlockUnauthorized": "기기에서 USB 디버깅을 허용한 뒤 목록을 새로 고치세요.",
+  "grLaunchSkipped": "앱은 설치하지만 열지는 않습니다: 빌드 파일에서 패키지 이름을 읽지 못했습니다.",
+  "grHintSdkLocation": "Gradle 이 Android SDK 를 찾지 못합니다. ANDROID_HOME 이나 local.properties 의 sdk.dir 를 설정하세요.",
+  "grHintLicenses": "Android SDK 라이선스에 동의하지 않았습니다. 다음을 실행하세요: sdkmanager --licenses",
+  "grHintJdk": "Gradle 이 쓰는 JDK 버전이 이 프로젝트와 맞지 않습니다. JAVA_HOME 을 확인하세요.",
+  "grHintResolve": "Gradle 이 의존성을 내려받지 못했습니다. 네트워크를 확인하거나 --offline 을 끄고 다시 해 보세요.",
+  "grHintKeystore": "서명 키스토어 파일을 찾지 못했습니다. 이 빌드 타입의 서명 설정을 확인하세요.",
+  "grHintNoDevice": "연결된 기기가 없습니다.",
+  "grBranchChangedWhileRunning": "실행 중에 브랜치가 {branch}(으)로 바뀌었습니다. 결과가 두 브랜치의 내용을 섞었을 수 있습니다.",
+  "@grBranchChangedWhileRunning": {
+    "placeholders": {
+      "branch": {"type": "String"}
+    }
+  },
+  "grHintInstallFailed": "기기가 설치를 거부했습니다 ({code}).",
+  "@grHintInstallFailed": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "grHintMissingCommand": "“{name}”을(를) 찾지 못했습니다. 설치되어 있는지 확인하세요.",
+  "@grHintMissingCommand": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "dockNoProject": "실행할 프로젝트 없음",
   "dockNoProjectBody": "이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.",
   "dockProjects": "프로젝트 {count}개",

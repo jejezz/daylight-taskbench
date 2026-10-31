@@ -15,6 +15,7 @@ import '../install/flutty_controller.dart';
 import 'banner.dart';
 import 'devices_tab.dart';
 import 'doctor_tab.dart';
+import '../../../core/ui/notice_banner.dart';
 import 'log_tab.dart';
 import 'run_tab.dart';
 import 'signing_tab.dart';
@@ -73,7 +74,7 @@ class _FluttyDockBodyState extends State<FluttyDockBody> with SingleTickerProvid
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FluttyProjectHeader(dock: widget.dock, workspace: widget.workspace),
-          if (widget.dock.operationInProgress(widget.workspace)) _NoticeBanner(text: l10n.fdOperationInProgress),
+          if (widget.dock.operationInProgress(widget.workspace)) NoticeBanner(text: l10n.fdOperationInProgress),
           if (widget.dock.branchChangedWhileRunning != null) _BranchChangedBanner(dock: widget.dock),
           NextStepBanner(controller: c),
           TabBar(
@@ -176,42 +177,8 @@ class _BranchChangedBanner extends StatelessWidget {
   final FluttyDock dock;
 
   @override
-  Widget build(BuildContext context) => _NoticeBanner(
+  Widget build(BuildContext context) => NoticeBanner(
     text: AppLocalizations.of(context).fdBranchChangedWhileRunning(dock.branchChangedWhileRunning!),
     onClose: dock.dismissBranchBanner,
   );
-}
-
-class _NoticeBanner extends StatelessWidget {
-  const _NoticeBanner({required this.text, this.onClose});
-
-  final String text;
-  final VoidCallback? onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final fg = theme.colorScheme.onSecondaryContainer;
-    return Material(
-      color: theme.colorScheme.secondaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xs, AppSpacing.xs, AppSpacing.xs),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline_rounded, size: 16, color: fg),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: fg))),
-            if (onClose != null)
-              IconButton(
-                tooltip: l10n.commonClose,
-                visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.close_rounded, size: 16),
-                onPressed: onClose,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }

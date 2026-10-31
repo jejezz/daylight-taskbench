@@ -411,6 +411,186 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get grTabRun => '실행';
+
+  @override
+  String get grTabDevices => '기기';
+
+  @override
+  String get grTabLog => '기록';
+
+  @override
+  String get grModuleLabel => '모듈';
+
+  @override
+  String get grVariantLabel => '변형';
+
+  @override
+  String get grActionLabel => '동작';
+
+  @override
+  String get grActionInstallRun => '설치하고 실행';
+
+  @override
+  String get grActionInstall => '설치';
+
+  @override
+  String get grActionAssemble => 'APK 만들기';
+
+  @override
+  String get grActionBundle => '번들(AAB) 만들기';
+
+  @override
+  String get grActionTest => '테스트';
+
+  @override
+  String get grActionLint => '린트';
+
+  @override
+  String get grActionClean => '정리';
+
+  @override
+  String get grActionBuild => '빌드';
+
+  @override
+  String get grActionCheck => '검사';
+
+  @override
+  String get grActionRun => '실행';
+
+  @override
+  String get grActionBootRun => '실행 (Spring Boot)';
+
+  @override
+  String get grActionTask => '다른 작업…';
+
+  @override
+  String get grOptionsTitle => '옵션';
+
+  @override
+  String get grOptOffline => '오프라인 (--offline)';
+
+  @override
+  String get grOptStacktrace => '스택 트레이스 (--stacktrace)';
+
+  @override
+  String get grOptNoDaemon => '데몬 없이 (--no-daemon)';
+
+  @override
+  String get grOptContinue => '실패해도 계속 (--continue)';
+
+  @override
+  String get grExtraArgs => '추가 인자';
+
+  @override
+  String get grCommandsTitle => '실행할 명령';
+
+  @override
+  String get grStart => '시작';
+
+  @override
+  String get grStop => '중지';
+
+  @override
+  String get grCancel => '취소';
+
+  @override
+  String get grStepGradle => 'Gradle';
+
+  @override
+  String get grStepLaunch => '앱 열기';
+
+  @override
+  String get grLoadVariants => '정확한 변형 불러오기';
+
+  @override
+  String get grLoadVariantsHint =>
+      'Gradle 을 한 번 실행해 변형 목록을 읽습니다. 처음에는 몇 분 걸릴 수 있습니다.';
+
+  @override
+  String get grLoadingVariants => '변형을 불러오는 중…';
+
+  @override
+  String get grTaskField => '작업 이름';
+
+  @override
+  String get grLoadTasks => '작업 목록 불러오기';
+
+  @override
+  String get grLoadingTasks => '작업을 불러오는 중…';
+
+  @override
+  String get grTaskSearch => '작업 검색';
+
+  @override
+  String get grTaskNone => '아직 작업 목록이 없습니다. 불러오거나 위에 작업 이름을 직접 입력하세요.';
+
+  @override
+  String get grStopDaemons => 'Gradle 데몬 끄기';
+
+  @override
+  String get grStopDaemonsHint =>
+      '중지는 이 명령만 끝냅니다. Gradle 데몬은 여기서 끄기 전까지 백그라운드에서 계속 돕니다.';
+
+  @override
+  String get grOpenOutput => '산출물 폴더 보기';
+
+  @override
+  String get grBlockNoModule => '이 프로젝트에서 실행할 수 있는 모듈을 찾지 못했습니다.';
+
+  @override
+  String get grBlockNoVariant => '변형을 고르세요.';
+
+  @override
+  String get grBlockNoTask => '작업 이름을 입력하세요.';
+
+  @override
+  String get grBlockNoDevice => '기기를 연결하거나 에뮬레이터를 켜고 목록을 새로 고치세요.';
+
+  @override
+  String get grBlockUnauthorized => '기기에서 USB 디버깅을 허용한 뒤 목록을 새로 고치세요.';
+
+  @override
+  String get grLaunchSkipped => '앱은 설치하지만 열지는 않습니다: 빌드 파일에서 패키지 이름을 읽지 못했습니다.';
+
+  @override
+  String get grHintSdkLocation =>
+      'Gradle 이 Android SDK 를 찾지 못합니다. ANDROID_HOME 이나 local.properties 의 sdk.dir 를 설정하세요.';
+
+  @override
+  String get grHintLicenses =>
+      'Android SDK 라이선스에 동의하지 않았습니다. 다음을 실행하세요: sdkmanager --licenses';
+
+  @override
+  String get grHintJdk =>
+      'Gradle 이 쓰는 JDK 버전이 이 프로젝트와 맞지 않습니다. JAVA_HOME 을 확인하세요.';
+
+  @override
+  String get grHintResolve =>
+      'Gradle 이 의존성을 내려받지 못했습니다. 네트워크를 확인하거나 --offline 을 끄고 다시 해 보세요.';
+
+  @override
+  String get grHintKeystore => '서명 키스토어 파일을 찾지 못했습니다. 이 빌드 타입의 서명 설정을 확인하세요.';
+
+  @override
+  String get grHintNoDevice => '연결된 기기가 없습니다.';
+
+  @override
+  String grBranchChangedWhileRunning(String branch) {
+    return '실행 중에 브랜치가 $branch(으)로 바뀌었습니다. 결과가 두 브랜치의 내용을 섞었을 수 있습니다.';
+  }
+
+  @override
+  String grHintInstallFailed(String code) {
+    return '기기가 설치를 거부했습니다 ($code).';
+  }
+
+  @override
+  String grHintMissingCommand(String name) {
+    return '“$name”을(를) 찾지 못했습니다. 설치되어 있는지 확인하세요.';
+  }
+
+  @override
   String get dockNoProject => '실행할 프로젝트 없음';
 
   @override

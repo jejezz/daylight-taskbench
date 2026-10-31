@@ -4,6 +4,7 @@ import 'package:daylight_taskbench/docks/gradle/detect/gradle_parse.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  suffixTests();
   group('settings', () {
     test('rootProject.name (Kotlin·Groovy)', () {
       expect(parseRootProjectName('rootProject.name = "my-app"\n'), 'my-app');
@@ -126,5 +127,25 @@ android {
   test('루트 version', () {
     expect(parseProjectVersion("group = 'x'\nversion = '1.4.0'\n"), '1.4.0');
     expect(parseProjectVersion('// version = "9"\n'), isNull);
+  });
+}
+
+void suffixTests() {
+  test('applicationIdSuffix 를 빌드 타입·flavor 별로 읽는다', () {
+    final info = parseAndroidBuild('''
+android {
+    buildTypes {
+        debug { applicationIdSuffix = ".debug" }
+        getByName("release") { isMinifyEnabled = true }
+        create("staging") { applicationIdSuffix ".stg" }
+    }
+    productFlavors {
+        create("free") { applicationIdSuffix = ".free" }
+        create("paid") { }
+    }
+}
+''');
+    expect(info.typeSuffix, {'debug': '.debug', 'staging': '.stg'});
+    expect(info.flavorSuffix, {'free': '.free'});
   });
 }
