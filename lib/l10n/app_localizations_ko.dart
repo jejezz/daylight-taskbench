@@ -370,11 +370,52 @@ class AppLocalizationsKo extends AppLocalizations {
   String get dockPlaceholderFlutty => 'Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).';
 
   @override
-  String get dockNoProject => 'Flutter 프로젝트 없음';
+  String get dockGradleTitle => 'Gradle Runner';
+
+  @override
+  String get grShapeAndroid => 'Android 앱';
+
+  @override
+  String get grShapeJvm => 'JVM 프로젝트';
+
+  @override
+  String get grModules => '모듈';
+
+  @override
+  String get grModuleAndroidApp => 'Android 앱';
+
+  @override
+  String get grModuleAndroidLib => 'Android 라이브러리';
+
+  @override
+  String get grModuleJvmApp => '실행 가능';
+
+  @override
+  String get grModuleSpring => 'Spring Boot';
+
+  @override
+  String get grModuleOther => '모듈';
+
+  @override
+  String get grWrapperFound => 'Gradle 래퍼';
+
+  @override
+  String get grWrapperMissing => 'Gradle 래퍼 없음';
+
+  @override
+  String get grNoModules => '모듈을 찾지 못했습니다. 이 앱이 아직 읽지 못하는 빌드 파일 구성일 수 있습니다.';
+
+  @override
+  String grReadFailed(String reason) {
+    return 'Gradle 파일을 읽지 못했습니다: $reason';
+  }
+
+  @override
+  String get dockNoProject => '실행할 프로젝트 없음';
 
   @override
   String get dockNoProjectBody =>
-      '이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.';
+      '이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.';
 
   @override
   String dockProjects(int count) {

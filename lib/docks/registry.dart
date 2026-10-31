@@ -9,11 +9,13 @@ import '../workspace/workspace.dart';
 import 'branch/branch_dock.dart';
 import 'dock_module.dart';
 import 'flutty/flutty_dock.dart';
+import 'gradle/gradle_dock.dart';
 
 List<DockModule> createDocks({ToolPaths? tools}) => [
       BranchDock(),
       FluttyDock(tools: tools),
-      // 단계 7·8: RustDock(), ElectronDock() …
+      GradleDock(),
+      // 나중에: RustDock(), ElectronDock() …
     ];
 
 /// 아무 실행기도 감지되지 않았을 때 Flutty 자리에 놓는 안내 칸. 지원 종류와 다음 행동을 보여 준다.

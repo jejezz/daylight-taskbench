@@ -65,7 +65,7 @@ void main() {
     expect(find.text('Run'), findsOneWidget);
     await tester.tap(find.text('Run'));
     await tester.pumpAndSettle();
-    expect(find.text('Flutter 프로젝트 없음'), findsWidgets);
+    expect(find.text('실행할 프로젝트 없음'), findsWidgets);
   });
 
   testWidgets('브랜치가 바뀌면 공유 영역과 접힌 칸까지 한 번에 따라간다 (§1.10)', (tester) async {

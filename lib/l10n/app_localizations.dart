@@ -728,16 +728,94 @@ abstract class AppLocalizations {
   /// **'Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).'**
   String get dockPlaceholderFlutty;
 
+  /// No description provided for @dockGradleTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle Runner'**
+  String get dockGradleTitle;
+
+  /// No description provided for @grShapeAndroid.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android 앱'**
+  String get grShapeAndroid;
+
+  /// No description provided for @grShapeJvm.
+  ///
+  /// In ko, this message translates to:
+  /// **'JVM 프로젝트'**
+  String get grShapeJvm;
+
+  /// No description provided for @grModules.
+  ///
+  /// In ko, this message translates to:
+  /// **'모듈'**
+  String get grModules;
+
+  /// No description provided for @grModuleAndroidApp.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android 앱'**
+  String get grModuleAndroidApp;
+
+  /// No description provided for @grModuleAndroidLib.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android 라이브러리'**
+  String get grModuleAndroidLib;
+
+  /// No description provided for @grModuleJvmApp.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 가능'**
+  String get grModuleJvmApp;
+
+  /// No description provided for @grModuleSpring.
+  ///
+  /// In ko, this message translates to:
+  /// **'Spring Boot'**
+  String get grModuleSpring;
+
+  /// No description provided for @grModuleOther.
+  ///
+  /// In ko, this message translates to:
+  /// **'모듈'**
+  String get grModuleOther;
+
+  /// No description provided for @grWrapperFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 래퍼'**
+  String get grWrapperFound;
+
+  /// No description provided for @grWrapperMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 래퍼 없음'**
+  String get grWrapperMissing;
+
+  /// No description provided for @grNoModules.
+  ///
+  /// In ko, this message translates to:
+  /// **'모듈을 찾지 못했습니다. 이 앱이 아직 읽지 못하는 빌드 파일 구성일 수 있습니다.'**
+  String get grNoModules;
+
+  /// No description provided for @grReadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'Gradle 파일을 읽지 못했습니다: {reason}'**
+  String grReadFailed(String reason);
+
   /// No description provided for @dockNoProject.
   ///
   /// In ko, this message translates to:
-  /// **'Flutter 프로젝트 없음'**
+  /// **'실행할 프로젝트 없음'**
   String get dockNoProject;
 
   /// No description provided for @dockNoProjectBody.
   ///
   /// In ko, this message translates to:
-  /// **'이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.'**
+  /// **'이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.'**
   String get dockNoProjectBody;
 
   /// No description provided for @dockProjects.

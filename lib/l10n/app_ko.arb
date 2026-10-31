@@ -257,8 +257,26 @@
   "dockRunTitle": "Run",
   "dockPlaceholderBranch": "Git·GitHub 도구가 이 칸에 들어옵니다 (단계 3).",
   "dockPlaceholderFlutty": "Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).",
-  "dockNoProject": "Flutter 프로젝트 없음",
-  "dockNoProjectBody": "이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.",
+  "dockGradleTitle": "Gradle Runner",
+  "grShapeAndroid": "Android 앱",
+  "grShapeJvm": "JVM 프로젝트",
+  "grModules": "모듈",
+  "grModuleAndroidApp": "Android 앱",
+  "grModuleAndroidLib": "Android 라이브러리",
+  "grModuleJvmApp": "실행 가능",
+  "grModuleSpring": "Spring Boot",
+  "grModuleOther": "모듈",
+  "grWrapperFound": "Gradle 래퍼",
+  "grWrapperMissing": "Gradle 래퍼 없음",
+  "grNoModules": "모듈을 찾지 못했습니다. 이 앱이 아직 읽지 못하는 빌드 파일 구성일 수 있습니다.",
+  "grReadFailed": "Gradle 파일을 읽지 못했습니다: {reason}",
+  "@grReadFailed": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "dockNoProject": "실행할 프로젝트 없음",
+  "dockNoProjectBody": "이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.",
   "dockProjects": "프로젝트 {count}개",
   "@dockProjects": {
     "placeholders": {

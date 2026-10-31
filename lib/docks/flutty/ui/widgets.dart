@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
 
+// [Taskbench에서 달라진 곳] InfoChip 은 core/ui/info_chip.dart 로 옮겼다 (Gradle 칸도 쓴다). 다시 내보낸다.
+export '../../../core/ui/info_chip.dart';
+
 class SectionTitle extends StatelessWidget {
   const SectionTitle(this.text, {super.key, this.trailing});
 
@@ -19,23 +22,6 @@ class SectionTitle extends StatelessWidget {
         ?trailing,
       ],
     ),
-  );
-}
-
-class InfoChip extends StatelessWidget {
-  const InfoChip(this.label, {super.key, this.color});
-
-  final String label;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-    decoration: BoxDecoration(
-      color: color ?? Theme.of(context).colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(AppRadius.chip),
-    ),
-    child: Text(label, style: const TextStyle(fontSize: 11)),
   );
 }
 

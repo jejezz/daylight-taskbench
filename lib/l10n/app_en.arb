@@ -240,8 +240,26 @@
   "dockRunTitle": "Run",
   "dockPlaceholderBranch": "Git and GitHub tools arrive in this card (step 3).",
   "dockPlaceholderFlutty": "Real-device build and install arrive in this card (step 4).",
-  "dockNoProject": "No Flutter project",
-  "dockNoProjectBody": "No Flutter project was found in this folder or the folders directly below it. Pick another folder.",
+  "dockGradleTitle": "Gradle Runner",
+  "grShapeAndroid": "Android app",
+  "grShapeJvm": "JVM project",
+  "grModules": "Modules",
+  "grModuleAndroidApp": "Android app",
+  "grModuleAndroidLib": "Android library",
+  "grModuleJvmApp": "Runnable",
+  "grModuleSpring": "Spring Boot",
+  "grModuleOther": "Module",
+  "grWrapperFound": "Gradle wrapper",
+  "grWrapperMissing": "No Gradle wrapper",
+  "grNoModules": "No modules found. The build files may use a layout this app can't read yet.",
+  "grReadFailed": "Couldn't read the Gradle files: {reason}",
+  "@grReadFailed": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "dockNoProject": "No project to run",
+  "dockNoProjectBody": "No Flutter or Gradle project was found in this folder or the folders directly below it. Pick another folder.",
   "dockProjects": "{count} projects",
   "@dockProjects": {
     "placeholders": {

@@ -376,11 +376,53 @@ class AppLocalizationsEn extends AppLocalizations {
       'Real-device build and install arrive in this card (step 4).';
 
   @override
-  String get dockNoProject => 'No Flutter project';
+  String get dockGradleTitle => 'Gradle Runner';
+
+  @override
+  String get grShapeAndroid => 'Android app';
+
+  @override
+  String get grShapeJvm => 'JVM project';
+
+  @override
+  String get grModules => 'Modules';
+
+  @override
+  String get grModuleAndroidApp => 'Android app';
+
+  @override
+  String get grModuleAndroidLib => 'Android library';
+
+  @override
+  String get grModuleJvmApp => 'Runnable';
+
+  @override
+  String get grModuleSpring => 'Spring Boot';
+
+  @override
+  String get grModuleOther => 'Module';
+
+  @override
+  String get grWrapperFound => 'Gradle wrapper';
+
+  @override
+  String get grWrapperMissing => 'No Gradle wrapper';
+
+  @override
+  String get grNoModules =>
+      'No modules found. The build files may use a layout this app can\'t read yet.';
+
+  @override
+  String grReadFailed(String reason) {
+    return 'Couldn\'t read the Gradle files: $reason';
+  }
+
+  @override
+  String get dockNoProject => 'No project to run';
 
   @override
   String get dockNoProjectBody =>
-      'No Flutter project was found in this folder or the folders directly below it. Pick another folder.';
+      'No Flutter or Gradle project was found in this folder or the folders directly below it. Pick another folder.';
 
   @override
   String dockProjects(int count) {
