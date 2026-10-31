@@ -1,6 +1,10 @@
 // From jejezz/application-release-templates common/ @ conventions-v1.
 //
-// 테마 모드와 언어 설정 (conventions/theming.md §1·§3, localization.md §3·§5).
+// 테마 모드와 언어 설정 (conventions/theming.md §1·§3, localization.md §3·§5, settings.md).
+//
+// [Taskbench에서 달라진 곳] 설정 규약 문서 둘이 서로 다르다(settings.md ↔ settings-screen.md): 색 구성 키·이름은
+// settings.md/localization.md를 따라 `theme_palette`·`ColorPalette`로 했고, 글자 크기(`text_scale`)와
+// 상태색 배경(`style_state_tint`)을 더했다. 새 앱이라 옛 `accent_palette`를 읽어 오지 않는다.
 // 상태 관리 라이브러리 없이 ChangeNotifier 하나로 두고, AppSettingsScope로
 // 위젯 트리에 내린다. 앱이 Riverpod 등을 이미 쓴다면 이 클래스를 그대로
 // 감싸서 쓰면 된다 — 저장 키와 동작만 같으면 된다.
@@ -11,17 +15,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
 
 class AppSettings extends ChangeNotifier {
-  AppSettings._(this._prefs, this._themeMode, this._locale, this._accentPalette);
+  AppSettings._(this._prefs, this._themeMode, this._locale, this._palette, this._textScale, this._stateTint);
 
-  /// 저장 키 — 모든 앱 공통 (localization.md §5, settings-screen.md §4). 바꾸지 않는다.
+  /// 저장 키 — 모든 앱 공통 (localization.md §5, settings.md §4). 바꾸지 않는다.
   static const themeModeKey = 'theme_mode';
   static const localeKey = 'app_locale';
-  static const accentPaletteKey = 'accent_palette';
+  static const paletteKey = 'theme_palette';
+  static const textScaleKey = 'text_scale';
+  static const stateTintKey = 'style_state_tint';
+
+  /// 글자 크기 선택지 (settings.md): 작게 / 보통 / 크게.
+  static const textScales = [0.9, 1.0, 1.15];
 
   final SharedPreferences _prefs;
   ThemeMode _themeMode;
   Locale? _locale;
-  AccentPalette _accentPalette;
+  ColorPalette _palette;
+  double _textScale;
+  bool _stateTint;
 
   /// 저장된 값을 읽는다. [legacyKeys]는 예전 앱이 쓰던 키를 새 키로 한 번
   /// 옮긴다 — 키를 그냥 바꾸면 사용자 설정이 사라진다.
@@ -35,8 +46,16 @@ class AppSettings extends ChangeNotifier {
     }
     final mode = ThemeMode.values.asNameMap()[prefs.getString(themeModeKey)] ?? ThemeMode.system;
     final code = prefs.getString(localeKey);
-    final palette = AccentPalette.values.asNameMap()[prefs.getString(accentPaletteKey)] ?? AccentPalette.saturn;
-    return AppSettings._(prefs, mode, code == null ? null : Locale(code), palette);
+    final palette = ColorPalette.values.asNameMap()[prefs.getString(paletteKey)] ?? ColorPalette.saturn;
+    final scale = prefs.getDouble(textScaleKey);
+    return AppSettings._(
+      prefs,
+      mode,
+      code == null ? null : Locale(code),
+      palette,
+      textScales.contains(scale) ? scale! : 1.0,
+      prefs.getBool(stateTintKey) ?? true,
+    );
   }
 
   ThemeMode get themeMode => _themeMode;
@@ -44,7 +63,12 @@ class AppSettings extends ChangeNotifier {
   /// null = 시스템 언어를 따른다.
   Locale? get locale => _locale;
 
-  AccentPalette get accentPalette => _accentPalette;
+  ColorPalette get palette => _palette;
+
+  double get textScale => _textScale;
+
+  /// 상태(빌드 중·실패·충돌)에 따라 배경 색이 변하는 효과 (PLAN.md §1.12 B).
+  bool get stateTint => _stateTint;
 
   Future<void> setThemeMode(ThemeMode mode) async {
     if (mode == _themeMode) return;
@@ -64,11 +88,25 @@ class AppSettings extends ChangeNotifier {
     }
   }
 
-  Future<void> setAccentPalette(AccentPalette palette) async {
-    if (palette == _accentPalette) return;
-    _accentPalette = palette;
+  Future<void> setColorPalette(ColorPalette palette) async {
+    if (palette == _palette) return;
+    _palette = palette;
     notifyListeners();
-    await _prefs.setString(accentPaletteKey, palette.name);
+    await _prefs.setString(paletteKey, palette.name);
+  }
+
+  Future<void> setTextScale(double scale) async {
+    if (scale == _textScale) return;
+    _textScale = scale;
+    notifyListeners();
+    await _prefs.setDouble(textScaleKey, scale);
+  }
+
+  Future<void> setStateTint(bool value) async {
+    if (value == _stateTint) return;
+    _stateTint = value;
+    notifyListeners();
+    await _prefs.setBool(stateTintKey, value);
   }
 
   /// MaterialApp.localeResolutionCallback — OS 언어가 한국어면 한국어,

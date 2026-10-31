@@ -481,6 +481,390 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요.'**
   String get updateBusyBody;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get commonCancel;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 확인'**
+  String get commonRetry;
+
+  /// No description provided for @startTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소를 열어 시작하세요'**
+  String get startTitle;
+
+  /// No description provided for @startDropHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더를 끌어다 놓아도 됩니다. 저장소가 아닌 폴더는 git init을 권해 드려요.'**
+  String get startDropHint;
+
+  /// No description provided for @startRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 저장소'**
+  String get startRecent;
+
+  /// No description provided for @startRemoveRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'목록에서 지우기'**
+  String get startRemoveRecent;
+
+  /// No description provided for @startNotARepository.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\"는 git 저장소가 아닙니다.'**
+  String startNotARepository(String path);
+
+  /// No description provided for @startNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\" 폴더를 찾을 수 없습니다.'**
+  String startNotFound(String path);
+
+  /// No description provided for @startInitRepository.
+  ///
+  /// In ko, this message translates to:
+  /// **'git init으로 저장소 만들기'**
+  String get startInitRepository;
+
+  /// No description provided for @startOpening.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소를 여는 중…'**
+  String get startOpening;
+
+  /// No description provided for @envTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'환경'**
+  String get envTitle;
+
+  /// No description provided for @envGitMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.'**
+  String get envGitMissing;
+
+  /// No description provided for @envGhMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.'**
+  String get envGhMissing;
+
+  /// No description provided for @envGitOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'git {version}'**
+  String envGitOk(String version);
+
+  /// No description provided for @envGhOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'gh {version} · {login}'**
+  String envGhOk(String version, String login);
+
+  /// No description provided for @envGhVersionOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'gh {version} (로그인 안 됨)'**
+  String envGhVersionOnly(String version);
+
+  /// No description provided for @dropOverlayTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'여기에 놓아 저장소 열기'**
+  String get dropOverlayTitle;
+
+  /// No description provided for @dropMultiple.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더 여러 개 중 첫 번째만 열었습니다'**
+  String get dropMultiple;
+
+  /// No description provided for @dropFilesOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더를 놓아 주세요'**
+  String get dropFilesOnly;
+
+  /// No description provided for @dropNotRepoTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'git 저장소가 아닙니다'**
+  String get dropNotRepoTitle;
+
+  /// No description provided for @dropNotRepoBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\"를 git 저장소로 만들까요? (git init)'**
+  String dropNotRepoBody(String path);
+
+  /// No description provided for @dropBusyTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중인 작업이 있습니다'**
+  String get dropBusyTitle;
+
+  /// No description provided for @dropBusyBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 저장소를 열면 실행 중인 작업이 중지됩니다.'**
+  String get dropBusyBody;
+
+  /// No description provided for @dropStopAndOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지하고 열기'**
+  String get dropStopAndOpen;
+
+  /// No description provided for @dropSelectedDir.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 폴더를 \"{name}\"(으)로 바꿨습니다'**
+  String dropSelectedDir(String name);
+
+  /// No description provided for @workspaceOpenFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 폴더 열기…'**
+  String get workspaceOpenFolder;
+
+  /// No description provided for @workspaceCloseRepo.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 닫기'**
+  String get workspaceCloseRepo;
+
+  /// No description provided for @workspaceRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 저장소'**
+  String get workspaceRecent;
+
+  /// No description provided for @refreshTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'새로 고침'**
+  String get refreshTooltip;
+
+  /// No description provided for @alwaysOnTopTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'항상 위에 표시'**
+  String get alwaysOnTopTooltip;
+
+  /// No description provided for @branchChipTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 {branch}'**
+  String branchChipTooltip(String branch);
+
+  /// No description provided for @branchDetached.
+  ///
+  /// In ko, this message translates to:
+  /// **'분리된 HEAD'**
+  String get branchDetached;
+
+  /// No description provided for @branchNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격에 없음'**
+  String get branchNoUpstream;
+
+  /// No description provided for @stateMerging.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합 중 · 충돌 {count}'**
+  String stateMerging(int count);
+
+  /// No description provided for @stateRebasing.
+  ///
+  /// In ko, this message translates to:
+  /// **'rebase 중 · 충돌 {count}'**
+  String stateRebasing(int count);
+
+  /// No description provided for @stateOperation.
+  ///
+  /// In ko, this message translates to:
+  /// **'진행 중인 작업'**
+  String get stateOperation;
+
+  /// No description provided for @stateChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경 {count}'**
+  String stateChanges(int count);
+
+  /// No description provided for @stateUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'최신'**
+  String get stateUpToDate;
+
+  /// No description provided for @editorOpenTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기에서 열기 ({command})'**
+  String editorOpenTooltip(String command);
+
+  /// No description provided for @editorOpenNoEditor.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기를 찾지 못했습니다. VS Code를 설치하면 이 단추로 폴더를 열 수 있어요.'**
+  String get editorOpenNoEditor;
+
+  /// No description provided for @editorOpenFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기를 열지 못했습니다'**
+  String get editorOpenFailed;
+
+  /// No description provided for @dockBranchTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Branch Dock'**
+  String get dockBranchTitle;
+
+  /// No description provided for @dockFluttyTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutty Dock'**
+  String get dockFluttyTitle;
+
+  /// No description provided for @dockRunTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Run'**
+  String get dockRunTitle;
+
+  /// No description provided for @dockPlaceholderBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git·GitHub 도구가 이 칸에 들어옵니다 (단계 3).'**
+  String get dockPlaceholderBranch;
+
+  /// No description provided for @dockPlaceholderFlutty.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).'**
+  String get dockPlaceholderFlutty;
+
+  /// No description provided for @dockNoProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 프로젝트 없음'**
+  String get dockNoProject;
+
+  /// No description provided for @dockNoProjectBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.'**
+  String get dockNoProjectBody;
+
+  /// No description provided for @dockProjects.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 {count}개'**
+  String dockProjects(int count);
+
+  /// No description provided for @dockLastChange.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 변화: {text}'**
+  String dockLastChange(String text);
+
+  /// No description provided for @dockChangeBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 {from} → {to}'**
+  String dockChangeBranch(String from, String to);
+
+  /// No description provided for @dockChangeCommit.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋 이동'**
+  String get dockChangeCommit;
+
+  /// No description provided for @dockChangeOperation.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합/rebase 상태 변화'**
+  String get dockChangeOperation;
+
+  /// No description provided for @dockNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'없음'**
+  String get dockNone;
+
+  /// No description provided for @settingsSectionLanguage.
+  ///
+  /// In ko, this message translates to:
+  /// **'언어'**
+  String get settingsSectionLanguage;
+
+  /// No description provided for @settingsFontSize.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크기'**
+  String get settingsFontSize;
+
+  /// No description provided for @fontScaleSmall.
+  ///
+  /// In ko, this message translates to:
+  /// **'작게'**
+  String get fontScaleSmall;
+
+  /// No description provided for @fontScaleNormal.
+  ///
+  /// In ko, this message translates to:
+  /// **'보통'**
+  String get fontScaleNormal;
+
+  /// No description provided for @fontScaleLarge.
+  ///
+  /// In ko, this message translates to:
+  /// **'크게'**
+  String get fontScaleLarge;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In ko, this message translates to:
+  /// **'언어'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsStateTint.
+  ///
+  /// In ko, this message translates to:
+  /// **'상태색 배경'**
+  String get settingsStateTint;
+
+  /// No description provided for @settingsStateTintHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 중·실패·성공에 따라 배경 색이 은은하게 바뀝니다.'**
+  String get settingsStateTintHelp;
+
+  /// No description provided for @summaryPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'Push ↑{count} 가능'**
+  String summaryPush(int count);
+
+  /// No description provided for @summaryPull.
+  ///
+  /// In ko, this message translates to:
+  /// **'Pull ↓{count} 필요'**
+  String summaryPull(int count);
 }
 
 class _AppLocalizationsDelegate

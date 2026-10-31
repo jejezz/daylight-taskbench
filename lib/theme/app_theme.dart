@@ -8,11 +8,13 @@
 
 import 'package:flutter/material.dart';
 
-/// 고를 수 있는 색 구성 (settings-screen.md §4). 기본 [saturn]은 이 파일의 고정 팔레트
+import 'taskbench_style.dart';
+
+/// 고를 수 있는 색 구성 (settings.md §4). 기본 [saturn]은 이 파일의 고정 팔레트
 /// 그대로이고, [highContrast] 전을 뺀 나머지는 주색(primary)만 바꾼다(다크·라이트 한 쌍).
 /// [highContrast]는 주색만이 아니라 전체 대비를 최대로 바꿔야 하므로, 이 enum은 주색만 쥐고
 /// 나머지(배경·글자 전체 대비)는 [AppTheme]이 [_HighContrast]로 따로 만든다.
-enum AccentPalette {
+enum ColorPalette {
   saturn(Color(0xFF4C9DFF), Color(0xFF2C6BE0)),
   teal(Color(0xFF2DD4BF), Color(0xFF0F766E)),
   amber(Color(0xFFFBBF24), Color(0xFFB45309)),
@@ -20,7 +22,7 @@ enum AccentPalette {
   slate(Color(0xFF94A3B8), Color(0xFF475569)),
   highContrast(Color(0xFFFFD60A), Color(0xFF0000CC));
 
-  const AccentPalette(this.darkPrimary, this.lightPrimary);
+  const ColorPalette(this.darkPrimary, this.lightPrimary);
 
   final Color darkPrimary;
   final Color lightPrimary;
@@ -110,7 +112,7 @@ abstract final class AppFonts {
   ]);
 }
 
-/// [AccentPalette.highContrast] 전용 ColorScheme: 주색만이 아니라 배경·글자·테두리를 순흑/순백 최대
+/// [ColorPalette.highContrast] 전용 ColorScheme: 주색만이 아니라 배경·글자·테두리를 순흑/순백 최대
 /// 대비로 바꾼다 (settings.md). 반투명 테두리는 꽉 찬 outline 색으로 대신한다.
 abstract final class _HighContrast {
   static const dimDark = Color(0xFFBFBFBF);
@@ -126,7 +128,7 @@ abstract final class _HighContrast {
     final bg = dark ? Colors.black : Colors.white;
     final dim = dark ? dimDark : dimLight;
     final hi = dark ? surfaceHiDark : surfaceHiLight;
-    final primary = AccentPalette.highContrast.primaryFor(b);
+    final primary = ColorPalette.highContrast.primaryFor(b);
     return ColorScheme(
       brightness: b,
       primary: primary,
@@ -147,7 +149,7 @@ abstract final class _HighContrast {
       outlineVariant: dim,
       inverseSurface: fg,
       onInverseSurface: bg,
-      inversePrimary: AccentPalette.highContrast.primaryFor(dark ? Brightness.light : Brightness.dark),
+      inversePrimary: ColorPalette.highContrast.primaryFor(dark ? Brightness.light : Brightness.dark),
       shadow: Colors.black,
       scrim: Colors.black,
     );
@@ -155,8 +157,8 @@ abstract final class _HighContrast {
 }
 
 abstract final class AppTheme {
-  static ThemeData dark({bool dense = true, AccentPalette palette = AccentPalette.saturn}) => _base(
-        palette == AccentPalette.highContrast
+  static ThemeData dark({bool dense = true, ColorPalette palette = ColorPalette.saturn}) => _base(
+        palette == ColorPalette.highContrast
             ? _HighContrast.scheme(Brightness.dark)
             : palette.apply(const ColorScheme(
           brightness: Brightness.dark,
@@ -182,13 +184,14 @@ abstract final class AppTheme {
           shadow: Colors.black,
           scrim: Colors.black,
         )),
-        background: palette == AccentPalette.highContrast ? Colors.black : AppColors.bg,
-        textLow: palette == AccentPalette.highContrast ? _HighContrast.dimDark : AppColors.textLow,
+        background: palette == ColorPalette.highContrast ? Colors.black : AppColors.bg,
+        textLow: palette == ColorPalette.highContrast ? _HighContrast.dimDark : AppColors.textLow,
         dense: dense,
+        decorate: palette != ColorPalette.highContrast,
       );
 
-  static ThemeData light({bool dense = true, AccentPalette palette = AccentPalette.saturn}) => _base(
-        palette == AccentPalette.highContrast
+  static ThemeData light({bool dense = true, ColorPalette palette = ColorPalette.saturn}) => _base(
+        palette == ColorPalette.highContrast
             ? _HighContrast.scheme(Brightness.light)
             : palette.apply(const ColorScheme(
           brightness: Brightness.light,
@@ -214,14 +217,15 @@ abstract final class AppTheme {
           shadow: Colors.black,
           scrim: Colors.black,
         )),
-        background: palette == AccentPalette.highContrast ? Colors.white : AppColors.bgLight,
-        textLow: palette == AccentPalette.highContrast ? _HighContrast.dimLight : AppColors.textLowLight,
+        background: palette == ColorPalette.highContrast ? Colors.white : AppColors.bgLight,
+        textLow: palette == ColorPalette.highContrast ? _HighContrast.dimLight : AppColors.textLowLight,
         dense: dense,
+        decorate: palette != ColorPalette.highContrast,
       );
 
   /// [dense]: 데스크톱 밀도(본문 13)와 모바일 밀도(본문 15), ui-ux.md §4.
   static ThemeData _base(ColorScheme scheme,
-      {required Color background, required Color textLow, required bool dense}) {
+      {required Color background, required Color textLow, required bool dense, bool decorate = true}) {
     final hi = scheme.onSurface;
     final mid = scheme.onSurfaceVariant;
     final body = dense ? 13.0 : 15.0;
@@ -235,6 +239,9 @@ abstract final class AppTheme {
       colorScheme: scheme,
       fontFamily: AppFonts.family,
       fontFamilyFallback: AppFonts.fallback,
+      // settings.md: Theme.of(context).dividerColor 를 읽는 분할선도 팔레트를 따르게 한다.
+      dividerColor: scheme.outlineVariant,
+      extensions: [TaskbenchStyle.of(scheme, enabled: decorate)],
       scaffoldBackgroundColor: background,
       canvasColor: background,
       splashFactory: InkSparkle.splashFactory,
@@ -268,6 +275,8 @@ abstract final class AppTheme {
           side: BorderSide(color: scheme.outlineVariant),
         ),
       ),
+      // 앱 바 아이콘 크기는 한곳에서 20으로 통일한다 (ui-ux.md §4).
+      iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom(iconSize: dense ? 20 : 24)),
       dividerTheme: DividerThemeData(color: scheme.outlineVariant, thickness: 1, space: 1),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(minimumSize: buttonSize, shape: buttonShape, textStyle: buttonText),

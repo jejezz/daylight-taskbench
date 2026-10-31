@@ -228,4 +228,239 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get updateBusyBody =>
       'A task is in progress. Please try again when it has finished.';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonRetry => 'Check again';
+
+  @override
+  String get startTitle => 'Open a repository to get started';
+
+  @override
+  String get startDropHint =>
+      'You can also drop a folder here. For a non-repository folder we offer git init.';
+
+  @override
+  String get startRecent => 'Recent repositories';
+
+  @override
+  String get startRemoveRecent => 'Remove from list';
+
+  @override
+  String startNotARepository(String path) {
+    return '\"$path\" is not a git repository.';
+  }
+
+  @override
+  String startNotFound(String path) {
+    return 'Folder \"$path\" was not found.';
+  }
+
+  @override
+  String get startInitRepository => 'Create a repository with git init';
+
+  @override
+  String get startOpening => 'Opening repository…';
+
+  @override
+  String get envTitle => 'Environment';
+
+  @override
+  String get envGitMissing =>
+      'git was not found. git is required to open a repository.';
+
+  @override
+  String get envGhMissing =>
+      'gh (GitHub CLI) is missing or not signed in. Only GitHub features such as PRs and releases are unavailable.';
+
+  @override
+  String envGitOk(String version) {
+    return 'git $version';
+  }
+
+  @override
+  String envGhOk(String version, String login) {
+    return 'gh $version · $login';
+  }
+
+  @override
+  String envGhVersionOnly(String version) {
+    return 'gh $version (not signed in)';
+  }
+
+  @override
+  String get dropOverlayTitle => 'Drop to open the repository';
+
+  @override
+  String get dropMultiple => 'Only the first of several folders was opened';
+
+  @override
+  String get dropFilesOnly => 'Please drop a folder';
+
+  @override
+  String get dropNotRepoTitle => 'Not a git repository';
+
+  @override
+  String dropNotRepoBody(String path) {
+    return 'Make \"$path\" a git repository? (git init)';
+  }
+
+  @override
+  String get dropBusyTitle => 'Work is in progress';
+
+  @override
+  String get dropBusyBody =>
+      'Opening another repository stops the work in progress.';
+
+  @override
+  String get dropStopAndOpen => 'Stop and open';
+
+  @override
+  String dropSelectedDir(String name) {
+    return 'Selected folder changed to \"$name\"';
+  }
+
+  @override
+  String get workspaceOpenFolder => 'Open another folder…';
+
+  @override
+  String get workspaceCloseRepo => 'Close repository';
+
+  @override
+  String get workspaceRecent => 'Recent repositories';
+
+  @override
+  String get refreshTooltip => 'Refresh';
+
+  @override
+  String get alwaysOnTopTooltip => 'Always on top';
+
+  @override
+  String branchChipTooltip(String branch) {
+    return 'Branch $branch';
+  }
+
+  @override
+  String get branchDetached => 'Detached HEAD';
+
+  @override
+  String get branchNoUpstream => 'Not on remote';
+
+  @override
+  String stateMerging(int count) {
+    return 'Merging · $count conflicts';
+  }
+
+  @override
+  String stateRebasing(int count) {
+    return 'Rebasing · $count conflicts';
+  }
+
+  @override
+  String get stateOperation => 'Operation in progress';
+
+  @override
+  String stateChanges(int count) {
+    return '$count changes';
+  }
+
+  @override
+  String get stateUpToDate => 'Up to date';
+
+  @override
+  String editorOpenTooltip(String command) {
+    return 'Open in editor ($command)';
+  }
+
+  @override
+  String get editorOpenNoEditor =>
+      'No editor found. Install VS Code to open the folder with this button.';
+
+  @override
+  String get editorOpenFailed => 'Could not open the editor';
+
+  @override
+  String get dockBranchTitle => 'Branch Dock';
+
+  @override
+  String get dockFluttyTitle => 'Flutty Dock';
+
+  @override
+  String get dockRunTitle => 'Run';
+
+  @override
+  String get dockPlaceholderBranch =>
+      'Git and GitHub tools arrive in this card (step 3).';
+
+  @override
+  String get dockPlaceholderFlutty =>
+      'Real-device build and install arrive in this card (step 4).';
+
+  @override
+  String get dockNoProject => 'No Flutter project';
+
+  @override
+  String get dockNoProjectBody =>
+      'No Flutter project was found in this folder or the folders directly below it. Pick another folder.';
+
+  @override
+  String dockProjects(int count) {
+    return '$count projects';
+  }
+
+  @override
+  String dockLastChange(String text) {
+    return 'Last change: $text';
+  }
+
+  @override
+  String dockChangeBranch(String from, String to) {
+    return 'Branch $from → $to';
+  }
+
+  @override
+  String get dockChangeCommit => 'Commit moved';
+
+  @override
+  String get dockChangeOperation => 'Merge/rebase state changed';
+
+  @override
+  String get dockNone => 'none';
+
+  @override
+  String get settingsSectionLanguage => 'Language';
+
+  @override
+  String get settingsFontSize => 'Text size';
+
+  @override
+  String get fontScaleSmall => 'Small';
+
+  @override
+  String get fontScaleNormal => 'Normal';
+
+  @override
+  String get fontScaleLarge => 'Large';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsStateTint => 'State-tinted background';
+
+  @override
+  String get settingsStateTintHelp =>
+      'The background tint changes softly with building, failure and success.';
+
+  @override
+  String summaryPush(int count) {
+    return 'Push ↑$count ready';
+  }
+
+  @override
+  String summaryPull(int count) {
+    return 'Pull ↓$count needed';
+  }
 }

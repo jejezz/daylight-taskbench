@@ -152,5 +152,194 @@
   },
   "updateQuitAndInstall": "종료하고 설치",
   "updateBusyTitle": "지금은 업데이트할 수 없습니다",
-  "updateBusyBody": "작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요."
+  "updateBusyBody": "작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요.",
+  "commonCancel": "취소",
+  "commonRetry": "다시 확인",
+  "startTitle": "저장소를 열어 시작하세요",
+  "startDropHint": "폴더를 끌어다 놓아도 됩니다. 저장소가 아닌 폴더는 git init을 권해 드려요.",
+  "startRecent": "최근 저장소",
+  "startRemoveRecent": "목록에서 지우기",
+  "startNotARepository": "\"{path}\"는 git 저장소가 아닙니다.",
+  "@startNotARepository": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "startNotFound": "\"{path}\" 폴더를 찾을 수 없습니다.",
+  "@startNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "startInitRepository": "git init으로 저장소 만들기",
+  "startOpening": "저장소를 여는 중…",
+  "envTitle": "환경",
+  "envGitMissing": "git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.",
+  "envGhMissing": "gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.",
+  "envGitOk": "git {version}",
+  "@envGitOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "envGhOk": "gh {version} · {login}",
+  "@envGhOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "login": {
+        "type": "String"
+      }
+    }
+  },
+  "envGhVersionOnly": "gh {version} (로그인 안 됨)",
+  "@envGhVersionOnly": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "dropOverlayTitle": "여기에 놓아 저장소 열기",
+  "dropMultiple": "폴더 여러 개 중 첫 번째만 열었습니다",
+  "dropFilesOnly": "폴더를 놓아 주세요",
+  "dropNotRepoTitle": "git 저장소가 아닙니다",
+  "dropNotRepoBody": "\"{path}\"를 git 저장소로 만들까요? (git init)",
+  "@dropNotRepoBody": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "dropBusyTitle": "실행 중인 작업이 있습니다",
+  "dropBusyBody": "다른 저장소를 열면 실행 중인 작업이 중지됩니다.",
+  "dropStopAndOpen": "중지하고 열기",
+  "dropSelectedDir": "선택한 폴더를 \"{name}\"(으)로 바꿨습니다",
+  "@dropSelectedDir": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workspaceOpenFolder": "다른 폴더 열기…",
+  "workspaceCloseRepo": "저장소 닫기",
+  "workspaceRecent": "최근 저장소",
+  "refreshTooltip": "새로 고침",
+  "alwaysOnTopTooltip": "항상 위에 표시",
+  "branchChipTooltip": "브랜치 {branch}",
+  "@branchChipTooltip": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDetached": "분리된 HEAD",
+  "branchNoUpstream": "원격에 없음",
+  "stateMerging": "병합 중 · 충돌 {count}",
+  "@stateMerging": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateRebasing": "rebase 중 · 충돌 {count}",
+  "@stateRebasing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateOperation": "진행 중인 작업",
+  "stateChanges": "변경 {count}",
+  "@stateChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateUpToDate": "최신",
+  "editorOpenTooltip": "편집기에서 열기 ({command})",
+  "@editorOpenTooltip": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "editorOpenNoEditor": "편집기를 찾지 못했습니다. VS Code를 설치하면 이 단추로 폴더를 열 수 있어요.",
+  "editorOpenFailed": "편집기를 열지 못했습니다",
+  "dockBranchTitle": "Branch Dock",
+  "dockFluttyTitle": "Flutty Dock",
+  "dockRunTitle": "Run",
+  "dockPlaceholderBranch": "Git·GitHub 도구가 이 칸에 들어옵니다 (단계 3).",
+  "dockPlaceholderFlutty": "Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).",
+  "dockNoProject": "Flutter 프로젝트 없음",
+  "dockNoProjectBody": "이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.",
+  "dockProjects": "프로젝트 {count}개",
+  "@dockProjects": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dockLastChange": "마지막 변화: {text}",
+  "@dockLastChange": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "dockChangeBranch": "브랜치 {from} → {to}",
+  "@dockChangeBranch": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "dockChangeCommit": "커밋 이동",
+  "dockChangeOperation": "병합/rebase 상태 변화",
+  "dockNone": "없음",
+  "settingsSectionLanguage": "언어",
+  "settingsFontSize": "글자 크기",
+  "fontScaleSmall": "작게",
+  "fontScaleNormal": "보통",
+  "fontScaleLarge": "크게",
+  "settingsLanguage": "언어",
+  "settingsStateTint": "상태색 배경",
+  "settingsStateTintHelp": "빌드 중·실패·성공에 따라 배경 색이 은은하게 바뀝니다.",
+  "summaryPush": "Push ↑{count} 가능",
+  "@summaryPush": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "summaryPull": "Pull ↓{count} 필요",
+  "@summaryPull": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

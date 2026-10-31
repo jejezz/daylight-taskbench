@@ -1,9 +1,9 @@
 // From jejezz/application-release-templates common/ @ conventions-v2.
 //
-// 테마·언어·색 구성 전환 UI (conventions/settings-screen.md, theming.md §3,
+// 테마·언어·색 구성 전환 UI (conventions/settings.md, theming.md §3,
 // localization.md §4). 모두 설정 화면 "외형" 구역 안에만 둔다 — 앱 바에는
 // 테마/언어 아이콘 대신 설정 아이콘 하나(⌘,/Ctrl+,)만 둔다.
-//   ModeSegmentedButton / AccentPaletteChips / LanguageSegmentedButton:
+//   ModeSegmentedButton / ColorPaletteChips / LanguageSegmentedButton:
 //     데스크톱·모바일 공통, 설정 화면 "외형" 구역에 이 순서로 넣는다.
 //   ThemeMenuButton / LanguageMenuButton: conventions-v1의 앱 바 팝업 메뉴.
 //     새 앱에는 쓰지 않는다 — 기존 앱이 옮겨 갈 때까지만 남겨 둔다.
@@ -100,7 +100,7 @@ class ThemeSegmentedButton extends StatelessWidget {
   }
 }
 
-/// 설정 화면 "외형" 구역의 모드(시스템/라이트/다크) 단추 (settings-screen.md §3).
+/// 설정 화면 "외형" 구역의 모드(시스템/라이트/다크) 단추 (settings.md §3).
 class ModeSegmentedButton extends StatelessWidget {
   const ModeSegmentedButton({super.key});
 
@@ -125,18 +125,18 @@ class ModeSegmentedButton extends StatelessWidget {
   }
 }
 
-/// 설정 화면 "외형" 구역의 색 구성 선택 (settings-screen.md §4). 고대비는 색 원 대신
+/// 설정 화면 "외형" 구역의 색 구성 선택 (settings.md §4). 고대비는 색 원 대신
 /// 아이콘(contrast)으로 구분한다 — 주색 하나가 아니라 전체 대비를 바꾸는 항목이라서다.
-class AccentPaletteChips extends StatelessWidget {
-  const AccentPaletteChips({super.key});
+class ColorPaletteChips extends StatelessWidget {
+  const ColorPaletteChips({super.key});
 
-  static String _label(AppLocalizations l10n, AccentPalette p) => switch (p) {
-        AccentPalette.saturn => l10n.settingsPaletteSaturn,
-        AccentPalette.teal => l10n.settingsPaletteTeal,
-        AccentPalette.amber => l10n.settingsPaletteAmber,
-        AccentPalette.rose => l10n.settingsPaletteRose,
-        AccentPalette.slate => l10n.settingsPaletteSlate,
-        AccentPalette.highContrast => l10n.settingsPaletteHighContrast,
+  static String _label(AppLocalizations l10n, ColorPalette p) => switch (p) {
+        ColorPalette.saturn => l10n.settingsPaletteSaturn,
+        ColorPalette.teal => l10n.settingsPaletteTeal,
+        ColorPalette.amber => l10n.settingsPaletteAmber,
+        ColorPalette.rose => l10n.settingsPaletteRose,
+        ColorPalette.slate => l10n.settingsPaletteSlate,
+        ColorPalette.highContrast => l10n.settingsPaletteHighContrast,
       };
 
   @override
@@ -148,15 +148,15 @@ class AccentPaletteChips extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        for (final p in AccentPalette.values)
+        for (final p in ColorPalette.values)
           ChoiceChip(
-            selected: settings.accentPalette == p,
+            selected: settings.palette == p,
             showCheckmark: false,
-            avatar: p == AccentPalette.highContrast
+            avatar: p == ColorPalette.highContrast
                 ? Icon(Icons.contrast_rounded, size: 14, color: Theme.of(context).colorScheme.onSurface)
                 : Icon(Icons.circle, size: 14, color: p.primaryFor(brightness)),
             label: Text(_label(l10n, p)),
-            onSelected: (_) => settings.setAccentPalette(p),
+            onSelected: (_) => settings.setColorPalette(p),
           ),
       ],
     );
@@ -178,6 +178,26 @@ class LanguageSegmentedButton extends StatelessWidget {
       ],
       selected: {settings.locale?.languageCode ?? ''},
       onSelectionChanged: (s) => settings.setLocale(s.single.isEmpty ? null : Locale(s.single)),
+    );
+  }
+}
+
+/// 설정 화면 "화면" 구역의 글자 크기 (settings.md): 작게 · 보통 · 크게.
+class FontScaleSegmentedButton extends StatelessWidget {
+  const FontScaleSegmentedButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = AppSettingsScope.of(context);
+    final l10n = AppLocalizations.of(context);
+    final labels = [l10n.fontScaleSmall, l10n.fontScaleNormal, l10n.fontScaleLarge];
+    return SegmentedButton<double>(
+      showSelectedIcon: false,
+      segments: [
+        for (var i = 0; i < AppSettings.textScales.length; i++) ButtonSegment(value: AppSettings.textScales[i], label: Text(labels[i])),
+      ],
+      selected: {settings.textScale},
+      onSelectionChanged: (s) => settings.setTextScale(s.first),
     );
   }
 }

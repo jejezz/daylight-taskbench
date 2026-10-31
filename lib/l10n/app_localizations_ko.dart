@@ -226,4 +226,233 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get updateBusyBody => '작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요.';
+
+  @override
+  String get commonCancel => '취소';
+
+  @override
+  String get commonRetry => '다시 확인';
+
+  @override
+  String get startTitle => '저장소를 열어 시작하세요';
+
+  @override
+  String get startDropHint => '폴더를 끌어다 놓아도 됩니다. 저장소가 아닌 폴더는 git init을 권해 드려요.';
+
+  @override
+  String get startRecent => '최근 저장소';
+
+  @override
+  String get startRemoveRecent => '목록에서 지우기';
+
+  @override
+  String startNotARepository(String path) {
+    return '\"$path\"는 git 저장소가 아닙니다.';
+  }
+
+  @override
+  String startNotFound(String path) {
+    return '\"$path\" 폴더를 찾을 수 없습니다.';
+  }
+
+  @override
+  String get startInitRepository => 'git init으로 저장소 만들기';
+
+  @override
+  String get startOpening => '저장소를 여는 중…';
+
+  @override
+  String get envTitle => '환경';
+
+  @override
+  String get envGitMissing => 'git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.';
+
+  @override
+  String get envGhMissing =>
+      'gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.';
+
+  @override
+  String envGitOk(String version) {
+    return 'git $version';
+  }
+
+  @override
+  String envGhOk(String version, String login) {
+    return 'gh $version · $login';
+  }
+
+  @override
+  String envGhVersionOnly(String version) {
+    return 'gh $version (로그인 안 됨)';
+  }
+
+  @override
+  String get dropOverlayTitle => '여기에 놓아 저장소 열기';
+
+  @override
+  String get dropMultiple => '폴더 여러 개 중 첫 번째만 열었습니다';
+
+  @override
+  String get dropFilesOnly => '폴더를 놓아 주세요';
+
+  @override
+  String get dropNotRepoTitle => 'git 저장소가 아닙니다';
+
+  @override
+  String dropNotRepoBody(String path) {
+    return '\"$path\"를 git 저장소로 만들까요? (git init)';
+  }
+
+  @override
+  String get dropBusyTitle => '실행 중인 작업이 있습니다';
+
+  @override
+  String get dropBusyBody => '다른 저장소를 열면 실행 중인 작업이 중지됩니다.';
+
+  @override
+  String get dropStopAndOpen => '중지하고 열기';
+
+  @override
+  String dropSelectedDir(String name) {
+    return '선택한 폴더를 \"$name\"(으)로 바꿨습니다';
+  }
+
+  @override
+  String get workspaceOpenFolder => '다른 폴더 열기…';
+
+  @override
+  String get workspaceCloseRepo => '저장소 닫기';
+
+  @override
+  String get workspaceRecent => '최근 저장소';
+
+  @override
+  String get refreshTooltip => '새로 고침';
+
+  @override
+  String get alwaysOnTopTooltip => '항상 위에 표시';
+
+  @override
+  String branchChipTooltip(String branch) {
+    return '브랜치 $branch';
+  }
+
+  @override
+  String get branchDetached => '분리된 HEAD';
+
+  @override
+  String get branchNoUpstream => '원격에 없음';
+
+  @override
+  String stateMerging(int count) {
+    return '병합 중 · 충돌 $count';
+  }
+
+  @override
+  String stateRebasing(int count) {
+    return 'rebase 중 · 충돌 $count';
+  }
+
+  @override
+  String get stateOperation => '진행 중인 작업';
+
+  @override
+  String stateChanges(int count) {
+    return '변경 $count';
+  }
+
+  @override
+  String get stateUpToDate => '최신';
+
+  @override
+  String editorOpenTooltip(String command) {
+    return '편집기에서 열기 ($command)';
+  }
+
+  @override
+  String get editorOpenNoEditor =>
+      '편집기를 찾지 못했습니다. VS Code를 설치하면 이 단추로 폴더를 열 수 있어요.';
+
+  @override
+  String get editorOpenFailed => '편집기를 열지 못했습니다';
+
+  @override
+  String get dockBranchTitle => 'Branch Dock';
+
+  @override
+  String get dockFluttyTitle => 'Flutty Dock';
+
+  @override
+  String get dockRunTitle => 'Run';
+
+  @override
+  String get dockPlaceholderBranch => 'Git·GitHub 도구가 이 칸에 들어옵니다 (단계 3).';
+
+  @override
+  String get dockPlaceholderFlutty => 'Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).';
+
+  @override
+  String get dockNoProject => 'Flutter 프로젝트 없음';
+
+  @override
+  String get dockNoProjectBody =>
+      '이 폴더와 한 단계 아래 폴더에서 Flutter 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.';
+
+  @override
+  String dockProjects(int count) {
+    return '프로젝트 $count개';
+  }
+
+  @override
+  String dockLastChange(String text) {
+    return '마지막 변화: $text';
+  }
+
+  @override
+  String dockChangeBranch(String from, String to) {
+    return '브랜치 $from → $to';
+  }
+
+  @override
+  String get dockChangeCommit => '커밋 이동';
+
+  @override
+  String get dockChangeOperation => '병합/rebase 상태 변화';
+
+  @override
+  String get dockNone => '없음';
+
+  @override
+  String get settingsSectionLanguage => '언어';
+
+  @override
+  String get settingsFontSize => '글자 크기';
+
+  @override
+  String get fontScaleSmall => '작게';
+
+  @override
+  String get fontScaleNormal => '보통';
+
+  @override
+  String get fontScaleLarge => '크게';
+
+  @override
+  String get settingsLanguage => '언어';
+
+  @override
+  String get settingsStateTint => '상태색 배경';
+
+  @override
+  String get settingsStateTintHelp => '빌드 중·실패·성공에 따라 배경 색이 은은하게 바뀝니다.';
+
+  @override
+  String summaryPush(int count) {
+    return 'Push ↑$count 가능';
+  }
+
+  @override
+  String summaryPull(int count) {
+    return 'Pull ↓$count 필요';
+  }
 }

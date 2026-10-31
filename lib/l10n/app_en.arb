@@ -135,5 +135,194 @@
   },
   "updateQuitAndInstall": "Quit and install",
   "updateBusyTitle": "Can't update right now",
-  "updateBusyBody": "A task is in progress. Please try again when it has finished."
+  "updateBusyBody": "A task is in progress. Please try again when it has finished.",
+  "commonCancel": "Cancel",
+  "commonRetry": "Check again",
+  "startTitle": "Open a repository to get started",
+  "startDropHint": "You can also drop a folder here. For a non-repository folder we offer git init.",
+  "startRecent": "Recent repositories",
+  "startRemoveRecent": "Remove from list",
+  "startNotARepository": "\"{path}\" is not a git repository.",
+  "@startNotARepository": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "startNotFound": "Folder \"{path}\" was not found.",
+  "@startNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "startInitRepository": "Create a repository with git init",
+  "startOpening": "Opening repository…",
+  "envTitle": "Environment",
+  "envGitMissing": "git was not found. git is required to open a repository.",
+  "envGhMissing": "gh (GitHub CLI) is missing or not signed in. Only GitHub features such as PRs and releases are unavailable.",
+  "envGitOk": "git {version}",
+  "@envGitOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "envGhOk": "gh {version} · {login}",
+  "@envGhOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "login": {
+        "type": "String"
+      }
+    }
+  },
+  "envGhVersionOnly": "gh {version} (not signed in)",
+  "@envGhVersionOnly": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "dropOverlayTitle": "Drop to open the repository",
+  "dropMultiple": "Only the first of several folders was opened",
+  "dropFilesOnly": "Please drop a folder",
+  "dropNotRepoTitle": "Not a git repository",
+  "dropNotRepoBody": "Make \"{path}\" a git repository? (git init)",
+  "@dropNotRepoBody": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "dropBusyTitle": "Work is in progress",
+  "dropBusyBody": "Opening another repository stops the work in progress.",
+  "dropStopAndOpen": "Stop and open",
+  "dropSelectedDir": "Selected folder changed to \"{name}\"",
+  "@dropSelectedDir": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workspaceOpenFolder": "Open another folder…",
+  "workspaceCloseRepo": "Close repository",
+  "workspaceRecent": "Recent repositories",
+  "refreshTooltip": "Refresh",
+  "alwaysOnTopTooltip": "Always on top",
+  "branchChipTooltip": "Branch {branch}",
+  "@branchChipTooltip": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDetached": "Detached HEAD",
+  "branchNoUpstream": "Not on remote",
+  "stateMerging": "Merging · {count} conflicts",
+  "@stateMerging": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateRebasing": "Rebasing · {count} conflicts",
+  "@stateRebasing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateOperation": "Operation in progress",
+  "stateChanges": "{count} changes",
+  "@stateChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateUpToDate": "Up to date",
+  "editorOpenTooltip": "Open in editor ({command})",
+  "@editorOpenTooltip": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "editorOpenNoEditor": "No editor found. Install VS Code to open the folder with this button.",
+  "editorOpenFailed": "Could not open the editor",
+  "dockBranchTitle": "Branch Dock",
+  "dockFluttyTitle": "Flutty Dock",
+  "dockRunTitle": "Run",
+  "dockPlaceholderBranch": "Git and GitHub tools arrive in this card (step 3).",
+  "dockPlaceholderFlutty": "Real-device build and install arrive in this card (step 4).",
+  "dockNoProject": "No Flutter project",
+  "dockNoProjectBody": "No Flutter project was found in this folder or the folders directly below it. Pick another folder.",
+  "dockProjects": "{count} projects",
+  "@dockProjects": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dockLastChange": "Last change: {text}",
+  "@dockLastChange": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "dockChangeBranch": "Branch {from} → {to}",
+  "@dockChangeBranch": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "dockChangeCommit": "Commit moved",
+  "dockChangeOperation": "Merge/rebase state changed",
+  "dockNone": "none",
+  "settingsSectionLanguage": "Language",
+  "settingsFontSize": "Text size",
+  "fontScaleSmall": "Small",
+  "fontScaleNormal": "Normal",
+  "fontScaleLarge": "Large",
+  "settingsLanguage": "Language",
+  "settingsStateTint": "State-tinted background",
+  "settingsStateTintHelp": "The background tint changes softly with building, failure and success.",
+  "summaryPush": "Push ↑{count} ready",
+  "@summaryPush": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "summaryPull": "Pull ↓{count} needed",
+  "@summaryPull": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

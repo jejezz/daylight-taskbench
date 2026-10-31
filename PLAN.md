@@ -473,6 +473,18 @@ abstract class ProjectDetector {
 
 ---
 
+### 단계 1 결과 (2026-10-31)
+
+만든 것: 장식 스타일(`TaskbenchStyle`·`GlassCard`·`AuroraBackground`·`AppMark`·`PulseDot`), `Workspace`(열기·최근·끌어놓기 규칙·HeadChange 전파), 시작 화면, 공유 영역 두 줄, 아코디언, 설정 창(도킹 배치), 자리표시자 Branch/Flutty 칸, 칸 계약 테스트. `flutter analyze` 0, 테스트 94개 통과.
+
+계획과 달라진 점 (단계 1에서 정한 것):
+- **설정 규약 문서가 둘이었다.** `settings.md`(2026-10-29 오전)와 `settings-screen.md`(같은 날 오전 11:43, 템플릿 코드의 기준)가 키·이름·언어 위치에서 서로 어긋난다. 충돌한 곳은 `settings.md`/`localization.md`를 따랐다: `theme_palette`·`ColorPalette`·`text_scale`·`Icons.settings_outlined`, 언어는 별도 구역. 라벨은 템플릿 ARB(`settingsMode` "모드")를 썼다. **규약 저장소에서 두 문서를 하나로 정리해야 한다.**
+- **GitState 는 가짜가 아니라 가벼운 실제 구현**(`ProcessGitStateSource`: `git status` + `.git` 감시 + `index.lock` 대기)으로 먼저 만들었다. 실제 `git switch`·`checkout --detach` 가 HeadChange 를 정확히 한 번 내는 테스트가 있다. 단계 3에서 RepoController 로 바뀌어도 `GitStateSource` 뒤라서 셸은 그대로다.
+- **시작 화면의 일부는 단계 3으로 미룸**: GitHub 복제, git/gh 경로 지정, 진단 복사 (지금은 열기·최근·끌어놓기·`git init`·환경 요약).
+- **브랜치 칩 전환·편집기 명령 설정**은 단계 3 (지금은 VS Code 기본, 칩은 안내만).
+- 접힌 Branch 칸 요약은 `↑2` 대신 다음 행동(`Push ↑2 가능`)으로 했다 — 공유 줄과 같은 정보를 두 번 보이지 않으려고.
+- 화면 확인용 스크린샷 도구: `SHOTS_DIR=… flutter test test/tool/screenshot_test.dart` (440/380, 라이트/다크).
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**
