@@ -164,11 +164,16 @@ class WorkspaceBar extends StatelessWidget {
                       Text(l10n.refreshTooltip),
                     ]),
                   ),
+                // 체크 표시 대신 넓은 막대의 압정 아이콘과 같은 아이콘(꺼짐 = 윤곽선, 켜짐 = 채움)을 둔다.
+                // 체크는 켜졌을 때만 나타나 글자 위치가 흔들렸다.
                 if (onToggleAlwaysOnTop != null)
-                  CheckedPopupMenuItem(
+                  PopupMenuItem(
                     value: 'pin',
-                    checked: alwaysOnTop ?? false,
-                    child: Text(l10n.alwaysOnTopTooltip),
+                    child: Row(children: [
+                      Icon((alwaysOnTop ?? false) ? Icons.push_pin_rounded : Icons.push_pin_outlined, size: 18),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(l10n.alwaysOnTopTooltip),
+                    ]),
                   ),
               ],
               child: SizedBox(
