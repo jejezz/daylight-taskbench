@@ -744,6 +744,21 @@ class AppLocalizationsKo extends AppLocalizations {
       'signingConfigs 를 추가해 release 빌드 타입에서 쓰거나, storeFile 이 있는 키스토어를 가리키게 하세요.';
 
   @override
+  String grSummaryRunning(String action) {
+    return '$action 중…';
+  }
+
+  @override
+  String grSummaryFailed(String action) {
+    return '$action 실패';
+  }
+
+  @override
+  String grSummaryDone(String action) {
+    return '$action 완료';
+  }
+
+  @override
   String get dockNoProject => '실행할 프로젝트 없음';
 
   @override

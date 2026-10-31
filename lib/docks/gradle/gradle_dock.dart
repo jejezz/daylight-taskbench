@@ -17,9 +17,11 @@ import '../../workspace/project_detector.dart';
 import '../../workspace/workspace.dart';
 import '../dock_module.dart';
 import 'detect/gradle_detector.dart';
+import '../../core/check_status.dart';
 import 'detect/gradle_project.dart';
 import 'run/gradle_controller.dart';
 import 'ui/gradle_dock_body.dart';
+import 'ui/gradle_labels.dart';
 
 class GradleDock extends DockModule {
   // ignore: prefer_initializing_formals
@@ -187,8 +189,10 @@ class GradleDock extends DockModule {
     if (c == null) return TaskbenchMood.idle;
     if (c.busy) return TaskbenchMood.working;
     if (c.statuses.contains(StepStatus.failed)) return TaskbenchMood.failed;
-    if (branchChangedWhileRunning != null || operationInProgress(w)) return TaskbenchMood.warning;
+    if (branchChangedWhileRunning != null || operationInProgress(w) || c.diagnosticsStale) return TaskbenchMood.warning;
     if (c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) return TaskbenchMood.success;
+    // 환경 점검에서 실패한 항목이 있으면(JDK·SDK 없음 등) 실행하기 전에 눈에 띄게 한다.
+    if (c.checks.any((x) => x.status == CheckStatus.fail)) return TaskbenchMood.warning;
     return TaskbenchMood.idle;
   }
 
@@ -199,18 +203,27 @@ class GradleDock extends DockModule {
   Widget summary(BuildContext context, Workspace w) {
     final l10n = AppLocalizations.of(context);
     final p = selected(w);
+    final c = _controller;
     if (p == null) return const SizedBox.shrink();
-    final shape = project == null
-        ? null
-        : project!.shape == GradleShape.androidApp
-            ? l10n.grShapeAndroid
-            : l10n.grShapeJvm;
-    return Text(
-      [p.name, ?shape].join(' · '),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: Theme.of(context).textTheme.bodySmall,
-    );
+    // 실행 중·실패·완료는 접힌 채로도 보여야 한다 (§1.5). 평소에는 프로젝트 이름과 모양.
+    // 실행한 동작의 이름 — 그 뒤에 드롭다운을 바꿔도 "완료" 문구가 엉뚱한 동작을 가리키지 않게 한다.
+    final action = c == null ? '' : gradleActionLabel(l10n, c.lastAction ?? c.action);
+    final String text;
+    if (c != null && c.busy && c.running) {
+      text = l10n.grSummaryRunning(action);
+    } else if (c != null && c.statuses.contains(StepStatus.failed)) {
+      text = l10n.grSummaryFailed(action);
+    } else if (c != null && c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) {
+      text = l10n.grSummaryDone(action);
+    } else {
+      final shape = project == null
+          ? null
+          : project!.shape == GradleShape.androidApp
+              ? l10n.grShapeAndroid
+              : l10n.grShapeJvm;
+      text = [p.name, ?shape].join(' · ');
+    }
+    return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall);
   }
 
   @override

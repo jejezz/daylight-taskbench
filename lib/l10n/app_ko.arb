@@ -451,6 +451,24 @@
   "grStepsAdb": "Android SDK Platform-Tools 를 설치해 PATH 에 넣거나, 도구 경로에서 adb 를 고르세요.",
   "grStepsWrapper": "프로젝트 폴더에서 `gradle wrapper` 를 실행하거나 Gradle 을 설치하세요.",
   "grStepsSigning": "signingConfigs 를 추가해 release 빌드 타입에서 쓰거나, storeFile 이 있는 키스토어를 가리키게 하세요.",
+  "grSummaryRunning": "{action} 중…",
+  "@grSummaryRunning": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "grSummaryFailed": "{action} 실패",
+  "@grSummaryFailed": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "grSummaryDone": "{action} 완료",
+  "@grSummaryDone": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
   "dockNoProject": "실행할 프로젝트 없음",
   "dockNoProjectBody": "이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.",
   "dockProjects": "프로젝트 {count}개",

@@ -17,21 +17,7 @@ import '../../../theme/app_theme.dart';
 import '../detect/gradle_project.dart';
 import '../run/gradle_controller.dart';
 import '../run/gradle_plan.dart';
-
-String _actionLabel(AppLocalizations l10n, GradleAction a) => switch (a) {
-      GradleAction.installRun => l10n.grActionInstallRun,
-      GradleAction.install => l10n.grActionInstall,
-      GradleAction.assemble => l10n.grActionAssemble,
-      GradleAction.bundle => l10n.grActionBundle,
-      GradleAction.test => l10n.grActionTest,
-      GradleAction.lint => l10n.grActionLint,
-      GradleAction.clean => l10n.grActionClean,
-      GradleAction.build => l10n.grActionBuild,
-      GradleAction.check => l10n.grActionCheck,
-      GradleAction.run => l10n.grActionRun,
-      GradleAction.bootRun => l10n.grActionBootRun,
-      GradleAction.task => l10n.grActionTask,
-    };
+import 'gradle_labels.dart';
 
 String _stepLabel(AppLocalizations l10n, GradleStepKind k) => switch (k) {
       GradleStepKind.gradle => l10n.grStepGradle,
@@ -138,7 +124,7 @@ class _GradleRunTabState extends State<GradleRunTab> {
             isExpanded: true,
             isDense: true,
             value: c.actions.contains(c.action) ? c.action : null,
-            items: [for (final a in c.actions) DropdownMenuItem(value: a, child: Text(_actionLabel(l10n, a)))],
+            items: [for (final a in c.actions) DropdownMenuItem(value: a, child: Text(gradleActionLabel(l10n, a)))],
             onChanged: c.running ? null : (a) => a == null ? null : c.selectAction(a),
           ),
         ),
@@ -190,12 +176,8 @@ class _GradleRunTabState extends State<GradleRunTab> {
           Expanded(
             child: c.running
                 ? OutlinedButton(onPressed: c.cancel, child: Text(interactive ? l10n.grStop : l10n.grCancel))
-                : FilledButton(onPressed: plan.runnable ? c.start : null, child: Text(_actionLabel(l10n, c.action))),
+                : FilledButton(onPressed: plan.runnable ? c.start : null, child: Text(gradleActionLabel(l10n, c.action))),
           ),
-          if (c.running && interactive) ...[
-            const SizedBox(width: AppSpacing.sm),
-            IconButton.outlined(tooltip: l10n.grStopDaemons, icon: const Icon(Icons.power_settings_new_rounded), onPressed: c.stopDaemons),
-          ],
         ]),
         Align(
           alignment: Alignment.centerLeft,

@@ -1388,6 +1388,24 @@ abstract class AppLocalizations {
   /// **'signingConfigs 를 추가해 release 빌드 타입에서 쓰거나, storeFile 이 있는 키스토어를 가리키게 하세요.'**
   String get grStepsSigning;
 
+  /// No description provided for @grSummaryRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 중…'**
+  String grSummaryRunning(String action);
+
+  /// No description provided for @grSummaryFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 실패'**
+  String grSummaryFailed(String action);
+
+  /// No description provided for @grSummaryDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 완료'**
+  String grSummaryDone(String action);
+
   /// No description provided for @dockNoProject.
   ///
   /// In ko, this message translates to:

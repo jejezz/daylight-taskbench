@@ -434,6 +434,24 @@
   "grStepsAdb": "Install the Android SDK Platform-Tools and add them to PATH, or choose adb under Tool paths.",
   "grStepsWrapper": "Run `gradle wrapper` in the project folder, or install Gradle.",
   "grStepsSigning": "Add a signingConfigs block and use it in the release build type, or point storeFile at an existing keystore.",
+  "grSummaryRunning": "{action}…",
+  "@grSummaryRunning": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "grSummaryFailed": "{action} failed",
+  "@grSummaryFailed": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "grSummaryDone": "{action} done",
+  "@grSummaryDone": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
   "dockNoProject": "No project to run",
   "dockNoProjectBody": "No Flutter or Gradle project was found in this folder or the folders directly below it. Pick another folder.",
   "dockProjects": "{count} projects",

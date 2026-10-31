@@ -758,6 +758,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a signingConfigs block and use it in the release build type, or point storeFile at an existing keystore.';
 
   @override
+  String grSummaryRunning(String action) {
+    return '$action…';
+  }
+
+  @override
+  String grSummaryFailed(String action) {
+    return '$action failed';
+  }
+
+  @override
+  String grSummaryDone(String action) {
+    return '$action done';
+  }
+
+  @override
   String get dockNoProject => 'No project to run';
 
   @override

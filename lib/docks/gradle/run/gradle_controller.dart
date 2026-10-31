@@ -72,6 +72,9 @@ class GradleController extends ChangeNotifier {
   String? missingCommand;
   GradlePlan? lastPlan;
 
+  /// 마지막으로 시작한 동작 (접힌 제목의 "…중/실패/완료" 문구에 쓴다).
+  GradleAction? lastAction;
+
   int tabIndex = 0;
   bool started = false;
 
@@ -276,6 +279,7 @@ class GradleController extends ChangeNotifier {
     hintDetail = null;
     missingCommand = null;
     lastPlan = p;
+    lastAction = action;
     statuses = List.filled(p.steps.length, StepStatus.pending);
     notifyListeners();
     final out = await _session.run(p.steps, List.generate(p.steps.length, (i) => i), onStatus: (i, s) {

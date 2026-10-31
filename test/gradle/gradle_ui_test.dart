@@ -155,4 +155,15 @@ void main() {
     expect(find.text('Log'), findsOneWidget);
     expect(find.text('Devices'), findsNothing);
   });
+
+  testWidgets('Doctor 탭은 한국어 380px 에서도 넘치지 않는다', (tester) async {
+    androidApp();
+    await pump(tester, locale: const Locale('ko'));
+    await tester.tap(find.text('점검'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Android SDK 를 찾지 못했습니다'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
 }
