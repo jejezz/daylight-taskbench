@@ -215,7 +215,7 @@ class _EditorOpenButtonState extends State<EditorOpenButton> {
               : cmd == null
                   ? l10n.editorOpenNoEditor
                   : l10n.editorOpenTooltip(cmd.join(' ')),
-          icon: const Icon(Icons.code_rounded),
+          icon: const Icon(Icons.description_outlined),
           onPressed: snap.connectionState != ConnectionState.done ? null : () => _open(context, cmd),
         );
       },

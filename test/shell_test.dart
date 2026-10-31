@@ -45,7 +45,7 @@ void main() {
     await _pump(tester, open: false);
     expect(find.text('저장소를 열어 시작하세요'), findsOneWidget);
     expect(find.text('Branch Dock'), findsNothing);
-    expect(find.byIcon(Icons.code_rounded), findsNothing);
+    expect(find.byIcon(Icons.description_outlined), findsNothing);
   });
 
   testWidgets('열리면 공유 영역(디렉터리·브랜치·편집기)과 Branch 칸이 보인다 (§1.1)', (tester) async {
@@ -54,7 +54,7 @@ void main() {
     expect(find.text('main'), findsOneWidget); // 브랜치 칩
     expect(find.text('↑2'), findsOneWidget); // 공유 줄에만 (칸 제목 요약은 "다음 행동")
     expect(find.text('Push ↑2 가능'), findsOneWidget);
-    expect(find.byIcon(Icons.code_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.description_outlined), findsOneWidget);
     expect(find.text('Branch Dock'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -87,7 +87,7 @@ void main() {
   testWidgets('380×560(최소 창)에서 오버플로 없이 제목과 공유 영역이 모두 보인다 (§1.7)', (tester) async {
     await _pump(tester, size: const Size(380, 560));
     expect(tester.takeException(), isNull);
-    expect(find.byIcon(Icons.code_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.description_outlined), findsOneWidget);
     expect(find.text('Run'), findsOneWidget);
   });
 
@@ -96,7 +96,7 @@ void main() {
     source.set(GitState(root: '/r', branch: 'feature/${'very-long-branch-name-' * 5}', sha: 'c'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    final rect = tester.getRect(find.byIcon(Icons.code_rounded));
+    final rect = tester.getRect(find.byIcon(Icons.description_outlined));
     expect(rect.right, lessThanOrEqualTo(380));
     expect(rect.top, lessThan(44)); // 디렉터리 바(첫 줄)에 있다
     // 디렉터리 이름 바로 옆: 이름 끝에서 멀지 않다

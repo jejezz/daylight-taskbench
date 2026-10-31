@@ -98,7 +98,13 @@ class _DockTitle extends StatelessWidget {
               const SizedBox(width: 8),
               Text(dock.title(l10n), style: theme.textTheme.titleSmall),
               const SizedBox(width: 8),
-              Expanded(child: Align(alignment: Alignment.centerRight, child: dock.summary(context, workspace))),
+              // 좁은 창에서 요약이 길면 넘치는 대신 줄어든다.
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerRight, child: dock.summary(context, workspace)),
+                ),
+              ),
               if (mood != TaskbenchMood.idle || busy) ...[
                 const SizedBox(width: 8),
                 PulseDot(color: style.moodColor(busy && mood == TaskbenchMood.idle ? TaskbenchMood.working : mood), pulsing: busy),
