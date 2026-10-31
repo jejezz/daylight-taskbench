@@ -36,6 +36,8 @@
 - **Made to dock** — a 440×960 window (380×560 minimum) that stands beside your editor and remembers its place. Adding more runner docks (Rust, Electron) is one line in a registry.
 - **Light & dark, English & 한국어** — follows the system, or pick one in Settings (colour palette, text size, high contrast).
 
+> Daylight Taskbench replaces the standalone **Branch Dock** and **Flutty Dock** apps, which are no longer developed. Both docks live here now, with the same features, sharing one folder and one header.
+
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="Branch Dock under the shared bar, light and dark">
   <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: build and run options for a Flutter project">

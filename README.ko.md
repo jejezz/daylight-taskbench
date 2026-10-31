@@ -36,6 +36,8 @@
 - **도킹을 위한 창** — 편집기 옆에 세우는 440×960 창(최소 380×560)이고 위치를 기억합니다. 실행기 Dock(Rust, Electron 등)은 레지스트리에 한 줄이면 더해집니다.
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 설정에서 고릅니다 (색 구성, 글자 크기, 고대비)
 
+> Daylight Taskbench는 따로 배포하던 **Branch Dock**과 **Flutty Dock** 앱을 대신합니다. 두 앱은 더 이상 개발하지 않으며, 같은 기능이 이 앱의 두 칸으로 들어와 폴더 하나와 머리줄 하나를 함께 씁니다.
+
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Branch Dock (라이트·다크)">
   <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: Flutter 프로젝트의 빌드·실행 옵션">
