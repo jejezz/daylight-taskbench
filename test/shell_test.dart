@@ -6,6 +6,7 @@ import 'package:daylight_taskbench/docks/flutty/flutty_dock.dart';
 import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
+import 'package:daylight_taskbench/ui/shell/shared_bar.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
 import 'package:daylight_taskbench/workspace/workspace.dart';
@@ -123,6 +124,37 @@ void main() {
     // 편집기 단추는 이름 바로 옆에 그대로 있다 (오른쪽 끝으로 밀리지 않는다).
     expect(tester.getRect(find.byIcon(Icons.description_outlined)).left - tester.getRect(name).right, lessThan(40));
   });
+
+  for (final pinned in const [false, true]) {
+    testWidgets('좁은 막대의 더 보기 메뉴: 항상 위 항목은 켜짐/꺼짐과 상관없이 같은 자리에 압정 아이콘 (pinned: $pinned)', (tester) async {
+      tester.view.physicalSize = const Size(380, 560);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      SharedPreferences.setMockInitialValues({});
+      final ws = await makeWorkspace();
+      ws.attachForTest(FakeGitStateSource(const GitState(root: '/r', branch: 'main', sha: 'a')), selectedDir: '/r');
+      await tester.pumpWidget(AppSettingsScope(
+        settings: await AppSettings.load(),
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: WorkspaceBar(workspace: ws, onOpenFolder: () {}, onOpenRecent: (_) {}, onSettings: () {}, onAbout: () {}, alwaysOnTop: pinned, onToggleAlwaysOnTop: () {}),
+          ),
+        ),
+      ));
+      await tester.tap(find.byIcon(Icons.more_horiz_rounded));
+      await tester.pumpAndSettle();
+      expect(find.byIcon(pinned ? Icons.push_pin_rounded : Icons.push_pin_outlined), findsOneWidget);
+      expect(find.byIcon(pinned ? Icons.push_pin_outlined : Icons.push_pin_rounded), findsNothing);
+      expect(find.byIcon(Icons.check), findsNothing, reason: '체크 표시는 쓰지 않는다');
+      // 새로 고침 항목과 같은 줄 구조라 아이콘·글자의 왼쪽이 맞는다.
+      expect(tester.getRect(find.byIcon(pinned ? Icons.push_pin_rounded : Icons.push_pin_outlined)).left, tester.getRect(find.byIcon(Icons.refresh_rounded).last).left);
+      ws.dispose();
+    });
+  }
 
   testWidgets('끌어다 놓기 규칙: 파일만 → 안내, 비-git 폴더 → 열린 저장소 유지 (§1.11)', (tester) async {
     final (ws, _, _) = await _pump(tester);
