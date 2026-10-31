@@ -84,6 +84,16 @@ void main() {
     expect(find.text('병합 중 · 충돌 2'), findsWidgets);
   });
 
+  testWidgets('진행 중인 작업(cherry-pick·revert·rebase)도 공유 영역 pill 로 보인다', (tester) async {
+    final (_, source, _) = await _pump(tester);
+    source.set(const GitState(root: '/r', branch: 'main', sha: 'a', operation: RepoOperation.cherryPicking, conflictCount: 1));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('cherry-pick 중'), findsWidgets);
+    source.set(const GitState(root: '/r', branch: 'main', sha: 'a', operation: RepoOperation.reverting, conflictCount: 2));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('되돌리는 중'), findsWidgets);
+  });
+
   testWidgets('380×560(최소 창)에서 오버플로 없이 제목과 공유 영역이 모두 보인다 (§1.7)', (tester) async {
     await _pump(tester, size: const Size(380, 560));
     expect(tester.takeException(), isNull);

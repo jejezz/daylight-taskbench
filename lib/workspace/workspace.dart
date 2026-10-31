@@ -99,6 +99,12 @@ class Workspace extends ChangeNotifier {
   List<String> get recent => _recent;
   EnvironmentStatus get environment => _env;
 
+  @visibleForTesting
+  set environment(EnvironmentStatus v) {
+    _env = v;
+    notifyListeners();
+  }
+
   /// 사용자가 고른 폴더. 저장소 루트와 같거나 그 하위 폴더다. Flutty 같은 칸의 프로젝트 검색 기준.
   String? get selectedDir => _selectedDir;
 

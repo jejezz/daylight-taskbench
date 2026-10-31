@@ -9,48 +9,11 @@ import 'package:daylight_taskbench/theme/app_theme.dart';
 import 'help/concept_sheet.dart';
 import 'help/concepts.dart';
 
-/// 상태 색 — 라이트 테마에서는 대비를 위해 진한 글자색을 쓴다 (theming.md).
-enum Tone { primary, success, warning, danger, neutral }
+// [Taskbench에서 달라진 곳] Tone·toneColor·StatusPill 은 앱 공통 위젯(lib/ui/style/status_pill.dart)을 쓴다 —
+// 공유 영역과 Dock 안의 pill 이 같은 크기·색이 되도록.
+import 'package:daylight_taskbench/ui/style/status_pill.dart';
 
-Color toneColor(BuildContext context, Tone tone) {
-  final light = Theme.of(context).brightness == Brightness.light;
-  final scheme = Theme.of(context).colorScheme;
-  return switch (tone) {
-    Tone.primary => scheme.primary,
-    Tone.success => light ? AppColors.successTextLight : AppColors.success,
-    Tone.warning => light ? AppColors.warningTextLight : AppColors.warning,
-    Tone.danger => scheme.error,
-    Tone.neutral => scheme.onSurfaceVariant,
-  };
-}
-
-/// 작은 상태 표시 (ui-ux.md의 StatusPill).
-class StatusPill extends StatelessWidget {
-  const StatusPill({super.key, required this.label, this.tone = Tone.neutral, this.icon, this.tooltip});
-
-  final String label;
-  final Tone tone;
-  final IconData? icon;
-  final String? tooltip;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = toneColor(context, tone);
-    final pill = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadius.chip),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-      ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        if (icon != null) ...[Icon(icon, size: 12, color: color), const SizedBox(width: 4)],
-        Text(label, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: color)),
-      ]),
-    );
-    return tooltip == null ? pill : Tooltip(message: tooltip!, child: pill);
-  }
-}
+export 'package:daylight_taskbench/ui/style/status_pill.dart';
 
 /// 섹션 제목 + 주 행동 (UI_UX.md §3 E).
 class SectionHeader extends StatelessWidget {

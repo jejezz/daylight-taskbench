@@ -5,6 +5,7 @@ import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/settings/settings_dialog.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
+import 'package:daylight_taskbench/workspace/workspace_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'test_support.dart';
 
 void main() {
+  branchSectionTests();
   test('저장한 경로는 runner 에 바로 반영되고, 다시 읽어도 남는다', () async {
     final ws = await makeWorkspace();
     final prefs = ws.prefs;
@@ -97,6 +99,42 @@ void main() {
     await tester.pump();
     expect(tools.customPath('git'), isNull);
     expect(find.text('직접 지정'), findsNothing);
+    ws.dispose();
+  });
+}
+
+void branchSectionTests() {
+  testWidgets('Branch 구역: WorkspaceScope 가 있을 때만 생기고, 편집기 명령·자동 fetch 가 저장된다', (tester) async {
+    tester.view.physicalSize = const Size(480, 560);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final settings = await AppSettings.load();
+    final ws = await makeWorkspace();
+    await tester.pumpWidget(WorkspaceScope(
+      workspace: ws,
+      child: AppSettingsScope(
+        settings: settings,
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          locale: const Locale('ko'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: SettingsDialog()),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Branch Dock'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Switch), findsOneWidget);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    expect(ws.prefs.getBool('branch.auto_fetch'), isFalse);
+    await ws.setEditorCommand('  code -r ');
+    expect(ws.editorCommand, 'code -r');
+    expect(ws.prefs.getString('editor_command'), 'code -r');
+    expect(await ws.folderEditorCommand('/repo'), ['code', '-r', '/repo']);
     ws.dispose();
   });
 }

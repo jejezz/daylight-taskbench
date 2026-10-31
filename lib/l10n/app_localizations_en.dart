@@ -265,32 +265,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startOpening => 'Opening repository…';
 
   @override
-  String get envTitle => 'Environment';
-
-  @override
-  String get envGitMissing =>
-      'git was not found. git is required to open a repository.';
-
-  @override
-  String get envGhMissing =>
-      'gh (GitHub CLI) is missing or not signed in. Only GitHub features such as PRs and releases are unavailable.';
-
-  @override
-  String envGitOk(String version) {
-    return 'git $version';
-  }
-
-  @override
-  String envGhOk(String version, String login) {
-    return 'gh $version · $login';
-  }
-
-  @override
-  String envGhVersionOnly(String version) {
-    return 'gh $version (not signed in)';
-  }
-
-  @override
   String get dropOverlayTitle => 'Drop to open the repository';
 
   @override

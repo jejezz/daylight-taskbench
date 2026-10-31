@@ -23,17 +23,18 @@ Color toneColor(BuildContext context, Tone tone) {
 }
 
 class StatusPill extends StatelessWidget {
-  const StatusPill({super.key, required this.label, this.tone = Tone.neutral, this.icon});
+  const StatusPill({super.key, required this.label, this.tone = Tone.neutral, this.icon, this.tooltip});
 
   final String label;
   final Tone tone;
   final IconData? icon;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
     final color = toneColor(context, tone);
     // 높이를 24로 고정하고 내용을 가운데에 맞춘다 — 같은 줄의 브랜치 칩과 위·아래 눈높이가 같아야 한다.
-    return Container(
+    final pill = Container(
       height: pillHeight,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -46,5 +47,6 @@ class StatusPill extends StatelessWidget {
         Text(label, strutStyle: pillStrut, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: color)),
       ]),
     );
+    return tooltip == null ? pill : Tooltip(message: tooltip!, child: pill);
   }
 }

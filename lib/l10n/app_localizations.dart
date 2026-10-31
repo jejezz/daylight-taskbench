@@ -542,42 +542,6 @@ abstract class AppLocalizations {
   /// **'저장소를 여는 중…'**
   String get startOpening;
 
-  /// No description provided for @envTitle.
-  ///
-  /// In ko, this message translates to:
-  /// **'환경'**
-  String get envTitle;
-
-  /// No description provided for @envGitMissing.
-  ///
-  /// In ko, this message translates to:
-  /// **'git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.'**
-  String get envGitMissing;
-
-  /// No description provided for @envGhMissing.
-  ///
-  /// In ko, this message translates to:
-  /// **'gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.'**
-  String get envGhMissing;
-
-  /// No description provided for @envGitOk.
-  ///
-  /// In ko, this message translates to:
-  /// **'git {version}'**
-  String envGitOk(String version);
-
-  /// No description provided for @envGhOk.
-  ///
-  /// In ko, this message translates to:
-  /// **'gh {version} · {login}'**
-  String envGhOk(String version, String login);
-
-  /// No description provided for @envGhVersionOnly.
-  ///
-  /// In ko, this message translates to:
-  /// **'gh {version} (로그인 안 됨)'**
-  String envGhVersionOnly(String version);
-
   /// No description provided for @dropOverlayTitle.
   ///
   /// In ko, this message translates to:

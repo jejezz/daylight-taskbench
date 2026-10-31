@@ -177,36 +177,6 @@
   },
   "startInitRepository": "git init으로 저장소 만들기",
   "startOpening": "저장소를 여는 중…",
-  "envTitle": "환경",
-  "envGitMissing": "git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.",
-  "envGhMissing": "gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.",
-  "envGitOk": "git {version}",
-  "@envGitOk": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "envGhOk": "gh {version} · {login}",
-  "@envGhOk": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      },
-      "login": {
-        "type": "String"
-      }
-    }
-  },
-  "envGhVersionOnly": "gh {version} (로그인 안 됨)",
-  "@envGhVersionOnly": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
   "dropOverlayTitle": "여기에 놓아 저장소 열기",
   "dropMultiple": "폴더 여러 개 중 첫 번째만 열었습니다",
   "dropFilesOnly": "폴더를 놓아 주세요",

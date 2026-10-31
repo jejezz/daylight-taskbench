@@ -262,31 +262,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get startOpening => '저장소를 여는 중…';
 
   @override
-  String get envTitle => '환경';
-
-  @override
-  String get envGitMissing => 'git을 찾을 수 없습니다. git이 있어야 저장소를 열 수 있어요.';
-
-  @override
-  String get envGhMissing =>
-      'gh(GitHub CLI)가 없거나 로그인하지 않았습니다. PR·릴리스 같은 GitHub 기능만 쓸 수 없어요.';
-
-  @override
-  String envGitOk(String version) {
-    return 'git $version';
-  }
-
-  @override
-  String envGhOk(String version, String login) {
-    return 'gh $version · $login';
-  }
-
-  @override
-  String envGhVersionOnly(String version) {
-    return 'gh $version (로그인 안 됨)';
-  }
-
-  @override
   String get dropOverlayTitle => '여기에 놓아 저장소 열기';
 
   @override

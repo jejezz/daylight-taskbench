@@ -6,12 +6,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../docks/branch/ui/environment_sheet.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../workspace/workspace.dart';
 import 'style/app_mark.dart';
 import 'style/glass_card.dart';
-import 'style/status_pill.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({
@@ -19,12 +19,22 @@ class StartScreen extends StatelessWidget {
     required this.workspace,
     required this.onOpenFolder,
     required this.onOpenPath,
+    required this.onCheckEnvironment,
+    this.onClone,
+    this.onLogin,
+    this.onSetToolPath,
     this.dragging = false,
   });
 
   final Workspace workspace;
   final VoidCallback onOpenFolder;
   final ValueChanged<String> onOpenPath;
+  final VoidCallback onCheckEnvironment;
+
+  /// GitHub 에서 복제 (gh 로그인이 있을 때). 로그인 안내. git/gh 경로 지정(설정 창의 도구 구역으로).
+  final VoidCallback? onClone;
+  final VoidCallback? onLogin;
+  final ValueChanged<String>? onSetToolPath;
   final bool dragging;
 
   @override
@@ -76,11 +86,21 @@ class StartScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(l10n.startOpening),
                   ])
-                : FilledButton.icon(
-                    onPressed: env.checked && !env.hasGit ? null : onOpenFolder,
-                    icon: const Icon(Icons.folder_open_rounded, size: 16),
-                    label: Text('${l10n.homeEmptyAction}  ${_shortcut('O')}'),
-                  ),
+                : Column(mainAxisSize: MainAxisSize.min, children: [
+                    FilledButton.icon(
+                      onPressed: env.checked && !env.hasGit ? null : onOpenFolder,
+                      icon: const Icon(Icons.folder_open_rounded, size: 16),
+                      label: Text('${l10n.homeEmptyAction}  ${_shortcut('O')}'),
+                    ),
+                    if (onClone != null && env.ghReady) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      TextButton.icon(
+                        onPressed: onClone,
+                        icon: const Icon(Icons.download_rounded, size: 16),
+                        label: Text(l10n.bdCloneTitle),
+                      ),
+                    ],
+                  ]),
           ),
           if (workspace.recent.isNotEmpty) ...[
             Padding(
@@ -107,30 +127,10 @@ class StartScreen extends StatelessWidget {
               ]),
             ),
           ],
-          if (env.checked) ...[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.sm, AppSpacing.xl, 0, AppSpacing.sm),
-              child: Text(l10n.envTitle, style: theme.textTheme.titleSmall),
-            ),
-            GlassCard(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _EnvRow(
-                  ok: env.hasGit,
-                  text: env.hasGit ? l10n.envGitOk(env.gitVersion!) : l10n.envGitMissing,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                _EnvRow(
-                  ok: env.ghReady,
-                  warn: env.hasGh && !env.ghLoggedIn,
-                  text: env.ghReady
-                      ? l10n.envGhOk(env.ghVersion!, env.ghLogins['github.com'] ?? '')
-                      : env.hasGh
-                          ? l10n.envGhVersionOnly(env.ghVersion!)
-                          : l10n.envGhMissing,
-                ),
-              ]),
-            ),
+          // git 이 없으면 전체 안내, gh 가 없거나 로그인 전이면 아래에 점검 카드 (Branch 의 환경 카드 그대로).
+          if (env.checked && (!env.hasGit || !env.ghReady)) ...[
+            const SizedBox(height: AppSpacing.xl),
+            EnvironmentCard(environment: env, onRecheck: onCheckEnvironment, onLogin: env.hasGit ? onLogin : null, onSetPath: onSetToolPath),
           ],
         ],
       ),
@@ -139,21 +139,3 @@ class StartScreen extends StatelessWidget {
 }
 
 String _shortcut(String key) => Platform.isMacOS ? '⌘$key' : 'Ctrl+$key';
-
-class _EnvRow extends StatelessWidget {
-  const _EnvRow({required this.ok, required this.text, this.warn = false});
-
-  final bool ok;
-  final bool warn;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final tone = ok ? Tone.success : (warn ? Tone.warning : Tone.danger);
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Icon(ok ? Icons.check_circle_rounded : (warn ? Icons.warning_amber_rounded : Icons.cancel_rounded), size: 16, color: toneColor(context, tone)),
-      const SizedBox(width: AppSpacing.sm),
-      Expanded(child: Text(text, style: Theme.of(context).textTheme.bodySmall)),
-    ]);
-  }
-}

@@ -160,36 +160,6 @@
   },
   "startInitRepository": "Create a repository with git init",
   "startOpening": "Opening repository…",
-  "envTitle": "Environment",
-  "envGitMissing": "git was not found. git is required to open a repository.",
-  "envGhMissing": "gh (GitHub CLI) is missing or not signed in. Only GitHub features such as PRs and releases are unavailable.",
-  "envGitOk": "git {version}",
-  "@envGitOk": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "envGhOk": "gh {version} · {login}",
-  "@envGhOk": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      },
-      "login": {
-        "type": "String"
-      }
-    }
-  },
-  "envGhVersionOnly": "gh {version} (not signed in)",
-  "@envGhVersionOnly": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
   "dropOverlayTitle": "Drop to open the repository",
   "dropMultiple": "Only the first of several folders was opened",
   "dropFilesOnly": "Please drop a folder",

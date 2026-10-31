@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/vscode.dart' show vscodeDownloadUrl;
+import '../../docks/branch/git/refs.dart' show Branch;
+import '../../docks/branch/ui/repo_actions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../workspace/git_state.dart';
@@ -17,7 +19,8 @@ import '../style/status_pill.dart';
 const double sharedBarHeight = 44;
 const double branchBarHeight = 36;
 
-String _name(String path) => path.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull ?? path;
+String _name(String path) =>
+    path.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull ?? path;
 
 /// ① 디렉터리 바.
 class WorkspaceBar extends StatelessWidget {
@@ -48,65 +51,116 @@ class WorkspaceBar extends StatelessWidget {
     final sel = workspace.selectedDir;
     return SizedBox(
       height: sharedBarHeight,
-      child: Row(children: [
-        const SizedBox(width: AppSpacing.md),
-        const AppMark(size: 24),
-        const SizedBox(width: AppSpacing.sm),
-        Flexible(
-          child: root == null
-              ? const SizedBox.shrink()
-              : PopupMenuButton<String>(
-                  tooltip: sel ?? root,
-                  position: PopupMenuPosition.under,
-                  onSelected: (v) {
-                    switch (v) {
-                      case '\u0000open':
-                        onOpenFolder();
-                      case '\u0000close':
-                        workspace.close();
-                      default:
-                        onOpenRecent(v);
-                    }
-                  },
-                  itemBuilder: (_) => [
-                    PopupMenuItem(enabled: false, height: 28, child: Text(l10n.workspaceRecent, style: theme.textTheme.labelMedium)),
-                    for (final p in workspace.recent.take(8)) PopupMenuItem(value: p, child: Text(_name(p), overflow: TextOverflow.ellipsis)),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(value: '\u0000open', child: Text(l10n.workspaceOpenFolder)),
-                    PopupMenuItem(value: '\u0000close', child: Text(l10n.workspaceCloseRepo)),
-                  ],
-                  child: Row(children: [
-                    Flexible(
-                      child: Text.rich(
-                        TextSpan(children: [
-                          TextSpan(text: _name(root), style: theme.textTheme.titleSmall),
-                          if (sel != null && sel != root && sel.startsWith(root))
-                            TextSpan(text: ' / ${sel.substring(root.length).replaceFirst(RegExp(r'^[\\/]'), '')}', style: theme.textTheme.bodySmall),
-                        ]),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+      child: Row(
+        children: [
+          const SizedBox(width: AppSpacing.md),
+          const AppMark(size: 24),
+          const SizedBox(width: AppSpacing.sm),
+          Flexible(
+            child: root == null
+                ? const SizedBox.shrink()
+                : PopupMenuButton<String>(
+                    tooltip: sel ?? root,
+                    position: PopupMenuPosition.under,
+                    onSelected: (v) {
+                      switch (v) {
+                        case '\u0000open':
+                          onOpenFolder();
+                        case '\u0000close':
+                          workspace.close();
+                        default:
+                          onOpenRecent(v);
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        enabled: false,
+                        height: 28,
+                        child: Text(
+                          l10n.workspaceRecent,
+                          style: theme.textTheme.labelMedium,
+                        ),
                       ),
+                      for (final p in workspace.recent.take(8))
+                        PopupMenuItem(
+                          value: p,
+                          child: Text(
+                            _name(p),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem(
+                        value: '\u0000open',
+                        child: Text(l10n.workspaceOpenFolder),
+                      ),
+                      PopupMenuItem(
+                        value: '\u0000close',
+                        child: Text(l10n.workspaceCloseRepo),
+                      ),
+                    ],
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: _name(root),
+                                  style: theme.textTheme.titleSmall,
+                                ),
+                                if (sel != null &&
+                                    sel != root &&
+                                    sel.startsWith(root))
+                                  TextSpan(
+                                    text:
+                                        ' / ${sel.substring(root.length).replaceFirst(RegExp(r'^[\\/]'), '')}',
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ],
                     ),
-                    Icon(Icons.arrow_drop_down_rounded, color: theme.colorScheme.onSurfaceVariant),
-                  ]),
-                ),
-        ),
-        // 편집기에서 열기는 "이 폴더" 옆에 둔다 — 폴더에 하는 동작이라 폴더 이름과 붙어 있어야 한다.
-        if (root != null) EditorOpenButton(workspace: workspace),
-        const Spacer(),
-        if (root != null) IconButton(tooltip: l10n.refreshTooltip, icon: const Icon(Icons.refresh_rounded), onPressed: workspace.refresh),
-        if (onToggleAlwaysOnTop != null)
-          IconButton(
-            tooltip: l10n.alwaysOnTopTooltip,
-            isSelected: alwaysOnTop ?? false,
-            icon: const Icon(Icons.push_pin_outlined),
-            selectedIcon: const Icon(Icons.push_pin_rounded),
-            onPressed: onToggleAlwaysOnTop,
+                  ),
           ),
-        IconButton(tooltip: l10n.settingsTooltip, icon: const Icon(Icons.settings_outlined), onPressed: onSettings),
-        IconButton(tooltip: l10n.aboutTooltip, icon: const Icon(Icons.info_outline_rounded), onPressed: onAbout),
-        const SizedBox(width: AppSpacing.sm),
-      ]),
+          // 편집기에서 열기는 "이 폴더" 옆에 둔다 — 폴더에 하는 동작이라 폴더 이름과 붙어 있어야 한다.
+          if (root != null) EditorOpenButton(workspace: workspace),
+          const Spacer(),
+          if (root != null)
+            IconButton(
+              tooltip: l10n.refreshTooltip,
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: workspace.refresh,
+            ),
+          if (onToggleAlwaysOnTop != null)
+            IconButton(
+              tooltip: l10n.alwaysOnTopTooltip,
+              isSelected: alwaysOnTop ?? false,
+              icon: const Icon(Icons.push_pin_outlined),
+              selectedIcon: const Icon(Icons.push_pin_rounded),
+              onPressed: onToggleAlwaysOnTop,
+            ),
+          IconButton(
+            tooltip: l10n.settingsTooltip,
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: onSettings,
+          ),
+          IconButton(
+            tooltip: l10n.aboutTooltip,
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: onAbout,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+        ],
+      ),
     );
   }
 }
@@ -128,56 +182,151 @@ class BranchBar extends StatelessWidget {
     return SizedBox(
       height: branchBarHeight,
       child: Padding(
-        padding: const EdgeInsets.only(left: AppSpacing.md, right: AppSpacing.sm),
-        child: LayoutBuilder(builder: (context, c) {
-          final compact = c.maxWidth < 340;
-          return Row(children: [
-            Flexible(
-              child: Tooltip(
-                message: l10n.branchChipTooltip(branch),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppRadius.chip),
-                  onTap: onBranchTap,
-                  child: Container(
-                    // pill 과 같은 높이·가운데 정렬 — 아이콘·이름·pill 의 눈높이가 한 줄로 맞는다.
-                    height: pillHeight,
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      Icon(Icons.call_split_rounded, size: 20, color: g.detached ? toneColor(context, Tone.warning) : theme.colorScheme.primary),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          branch,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          strutStyle: const StrutStyle(fontSize: 15, height: 1.2, forceStrutHeight: true, leading: 0),
-                          style: theme.textTheme.titleMedium?.copyWith(fontSize: 15),
+        padding: const EdgeInsets.only(
+          left: AppSpacing.md,
+          right: AppSpacing.sm,
+        ),
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final compact = c.maxWidth < 340;
+            return Row(
+              children: [
+                Flexible(
+                  child: Tooltip(
+                    message: l10n.branchChipTooltip(branch),
+                    child: PopupMenuButton<String>(
+                      tooltip: '',
+                      position: PopupMenuPosition.under,
+                      enabled: workspace.repo != null,
+                      onSelected: (name) => _select(context, name),
+                      itemBuilder: (_) => _menu(context, l10n),
+                      // 칩을 누르면 로컬 브랜치 목록 — 고르면 바로 전환한다. Dock 이 접혀 있어도 된다.
+                      child: Container(
+                        // pill 과 같은 높이·가운데 정렬 — 아이콘·이름·pill 의 눈높이가 한 줄로 맞는다.
+                        height: pillHeight,
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.call_split_rounded,
+                              size: 20,
+                              color: g.detached
+                                  ? toneColor(context, Tone.warning)
+                                  : theme.colorScheme.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                branch,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                strutStyle: const StrutStyle(
+                                  fontSize: 15,
+                                  height: 1.2,
+                                  forceStrutHeight: true,
+                                  leading: 0,
+                                ),
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ]),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            if (!compact) ...[const SizedBox(width: AppSpacing.sm), ..._pills(l10n, g)] else ...[const SizedBox(width: 4), ..._pills(l10n, g).take(1)],
-          ]);
-        }),
+                if (!compact) ...[
+                  const SizedBox(width: AppSpacing.sm),
+                  ..._pills(l10n, g),
+                ] else ...[
+                  const SizedBox(width: 4),
+                  ..._pills(l10n, g).take(1),
+                ],
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
+  static const _openTab = '\u0000tab';
+
+  List<PopupMenuEntry<String>> _menu(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final repo = workspace.repo;
+    final locals = repo?.localBranches ?? const <Branch>[];
+    return [
+      for (final b in locals)
+        CheckedPopupMenuItem<String>(
+          value: b.name,
+          checked: b.current,
+          child: Text(
+            b.name,
+            overflow: TextOverflow.ellipsis,
+            style: AppFonts.userContent,
+          ),
+        ),
+      if (locals.isNotEmpty) const PopupMenuDivider(),
+      PopupMenuItem<String>(value: _openTab, child: Text(l10n.bdTabBranches)),
+    ];
+  }
+
+  Future<void> _select(BuildContext context, String name) async {
+    if (name == _openTab) {
+      onBranchTap?.call();
+      return;
+    }
+    final repo = workspace.repo;
+    if (repo == null) return;
+    final target = repo.localBranches.where((b) => b.name == name).firstOrNull;
+    if (target == null || target.current) return;
+    final l10n = AppLocalizations.of(context);
+    await RepoActions.withStashRetry(
+      context,
+      repo,
+      () => repo.switchTo(target),
+      done: l10n.bdDoneSwitch(name),
+      openRepo: workspace.requestOpen,
+    );
+  }
+
   List<Widget> _pills(AppLocalizations l10n, GitState g) {
-    Widget p(String label, Tone tone) => Padding(padding: const EdgeInsets.only(right: 4), child: StatusPill(label: label, tone: tone));
+    Widget p(String label, Tone tone) => Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: StatusPill(label: label, tone: tone),
+    );
     if (g.operation != RepoOperation.none) {
-      final label = g.operation == RepoOperation.rebasing ? l10n.stateRebasing(g.conflictCount) : l10n.stateMerging(g.conflictCount);
-      return [p(label, Tone.danger)];
+      final n = g.conflictCount;
+      final label = switch (g.operation) {
+        RepoOperation.rebasing => l10n.bdHeaderRebasing(n),
+        RepoOperation.cherryPicking => l10n.bdHeaderCherryPicking(n),
+        RepoOperation.reverting => l10n.bdHeaderReverting(n),
+        _ => l10n.bdHeaderMerging(n),
+      };
+      return [
+        StatusPill(
+          label: label,
+          tone: Tone.danger,
+          icon: Icons.warning_amber_rounded,
+        ),
+      ];
     }
     return [
-      if (g.upstream == null && !g.detached) p(l10n.branchNoUpstream, Tone.neutral),
+      if (g.upstream == null && !g.detached)
+        p(l10n.branchNoUpstream, Tone.neutral),
       if (g.ahead > 0) p('↑${g.ahead}', Tone.primary),
       if (g.behind > 0) p('↓${g.behind}', Tone.warning),
-      if (g.changedCount > 0) p('● ${l10n.stateChanges(g.changedCount)}', Tone.neutral),
-      if (g.clean && g.ahead == 0 && g.behind == 0) p('✓ ${l10n.stateUpToDate}', Tone.success),
+      if (g.changedCount > 0)
+        p('● ${l10n.stateChanges(g.changedCount)}', Tone.neutral),
+      if (g.clean && g.ahead == 0 && g.behind == 0)
+        p('✓ ${l10n.stateUpToDate}', Tone.success),
     ];
   }
 }
@@ -213,10 +362,12 @@ class _EditorOpenButtonState extends State<EditorOpenButton> {
           tooltip: !snap.hasData && snap.connectionState != ConnectionState.done
               ? ''
               : cmd == null
-                  ? l10n.editorOpenNoEditor
-                  : l10n.editorOpenTooltip(cmd.join(' ')),
+              ? l10n.editorOpenNoEditor
+              : l10n.editorOpenTooltip(cmd.join(' ')),
           icon: const Icon(Icons.description_outlined),
-          onPressed: snap.connectionState != ConnectionState.done ? null : () => _open(context, cmd),
+          onPressed: snap.connectionState != ConnectionState.done
+              ? null
+              : () => _open(context, cmd),
         );
       },
     );
@@ -230,7 +381,12 @@ class _EditorOpenButtonState extends State<EditorOpenButton> {
       return;
     }
     try {
-      await Process.start(cmd.first, cmd.sublist(1), mode: ProcessStartMode.detached, runInShell: Platform.isWindows);
+      await Process.start(
+        cmd.first,
+        cmd.sublist(1),
+        mode: ProcessStartMode.detached,
+        runInShell: Platform.isWindows,
+      );
     } on Object {
       messenger.showSnackBar(SnackBar(content: Text(l10n.editorOpenFailed)));
     }

@@ -22,6 +22,7 @@ import '../../window/focus_tint.dart';
 import '../../workspace/git_state.dart';
 import '../../workspace/workspace.dart';
 import '../../docks/branch/ui/branch_dock_body.dart' show branchTabBranches;
+import '../../docks/branch/ui/onboarding.dart';
 import '../start_screen.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
@@ -211,6 +212,21 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     }
   }
 
+  Future<void> _clone() async {
+    final path = await showCloneSheet(context);
+    if (path != null) await _openPath(path);
+  }
+
+  void _login() {
+    final origin = ws.repo?.remotes.where((r) => r.name == 'origin').firstOrNull;
+    showLoginSheet(
+      context,
+      ws.environment,
+      onChanged: ws.checkEnvironment,
+      preferSsh: sshPreferred(remoteIsSsh: origin?.location?.ssh ?? false),
+    );
+  }
+
   // ── 칸 ──────────────────────────────────────────────────────────────────
 
   void _select(String id) {
@@ -331,6 +347,13 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                   workspace: ws,
                                   onOpenFolder: _pickAndOpen,
                                   onOpenPath: _openPath,
+                                  onCheckEnvironment: ws.checkEnvironment,
+                                  onClone: _clone,
+                                  onLogin: _login,
+                                  onSetToolPath: (_) => showSettingsDialog(
+                                    context,
+                                    initial: SettingsSection.tools,
+                                  ),
                                   dragging: _dragging,
                                 ),
                               ),

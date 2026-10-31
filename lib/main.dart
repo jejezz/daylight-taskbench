@@ -25,6 +25,7 @@ import 'docks/dock_module.dart';
 import 'docks/registry.dart';
 import 'ui/shell/taskbench_shell.dart';
 import 'workspace/workspace.dart';
+import 'workspace/workspace_scope.dart';
 import 'theme/app_theme.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
@@ -57,7 +58,9 @@ Future<void> main() async {
   unawaited(workspace.checkEnvironment());
   // 개발 편의: 실행할 때 저장소를 바로 연다 (스크린샷·수동 확인용). 사용자 설정은 건드리지 않는다.
   final autoOpen = Platform.environment['TASKBENCH_OPEN'];
-  if (autoOpen != null && autoOpen.isNotEmpty) unawaited(workspace.open(autoOpen));
+  if (autoOpen != null && autoOpen.isNotEmpty) {
+    unawaited(workspace.open(autoOpen));
+  }
   // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
   final updates = await UpdateService.create();
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
@@ -196,49 +199,52 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return ToolPathsScope(
-      tools: widget.tools,
-      child: AppSettingsScope(
-        settings: widget.settings,
-        child: ListenableBuilder(
-          listenable: widget.settings,
-          builder: (context, _) => MaterialApp(
-            navigatorKey: _navigatorKey,
-            title: AppIdentity.displayName,
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.light(
-              dense: _isDesktop,
-              palette: widget.settings.palette,
-            ),
-            darkTheme: AppTheme.dark(
-              dense: _isDesktop,
-              palette: widget.settings.palette,
-            ),
-            themeMode: widget.settings.themeMode,
-            locale: widget.settings.locale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            localeResolutionCallback: AppSettings.resolveLocale,
-            // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaler: TextScaler.linear(
-                  MediaQuery.textScalerOf(context).scale(1) *
-                      widget.settings.textScale,
+    return WorkspaceScope(
+      workspace: widget.workspace,
+      child: ToolPathsScope(
+        tools: widget.tools,
+        child: AppSettingsScope(
+          settings: widget.settings,
+          child: ListenableBuilder(
+            listenable: widget.settings,
+            builder: (context, _) => MaterialApp(
+              navigatorKey: _navigatorKey,
+              title: AppIdentity.displayName,
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.light(
+                dense: _isDesktop,
+                palette: widget.settings.palette,
+              ),
+              darkTheme: AppTheme.dark(
+                dense: _isDesktop,
+                palette: widget.settings.palette,
+              ),
+              themeMode: widget.settings.themeMode,
+              locale: widget.settings.locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localeResolutionCallback: AppSettings.resolveLocale,
+              // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.linear(
+                    MediaQuery.textScalerOf(context).scale(1) *
+                        widget.settings.textScale,
+                  ),
+                ),
+                child: AppMenuBar(
+                  onAbout: _showAbout,
+                  onCheckForUpdates: widget.updates == null
+                      ? null
+                      : _checkForUpdates,
+                  child: child!,
                 ),
               ),
-              child: AppMenuBar(
+              home: TaskbenchShell(
+                workspace: widget.workspace,
+                docks: _docks,
                 onAbout: _showAbout,
-                onCheckForUpdates: widget.updates == null
-                    ? null
-                    : _checkForUpdates,
-                child: child!,
               ),
-            ),
-            home: TaskbenchShell(
-              workspace: widget.workspace,
-              docks: _docks,
-              onAbout: _showAbout,
             ),
           ),
         ),

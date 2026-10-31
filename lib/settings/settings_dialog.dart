@@ -10,13 +10,16 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 
 import '../core/tool_paths.dart';
+import '../docks/branch/repo/repo_prefs.dart';
 import '../l10n/app_localizations.dart';
+import '../workspace/workspace_scope.dart';
 import 'app_settings.dart';
 import 'settings_menus.dart';
 
 enum SettingsSection {
   appearance(Icons.palette_outlined),
   language(Icons.language_rounded),
+  branch(Icons.call_split_rounded),
   tools(Icons.build_outlined);
 
   const SettingsSection(this.icon);
@@ -26,6 +29,7 @@ enum SettingsSection {
   String label(AppLocalizations l10n) => switch (this) {
     appearance => l10n.settingsSectionAppearance,
     language => l10n.settingsSectionLanguage,
+    branch => l10n.dockBranchTitle,
     tools => l10n.settingsSectionTools,
   };
 }
@@ -53,11 +57,16 @@ class SettingsDialog extends StatefulWidget {
 class _SettingsDialogState extends State<SettingsDialog> {
   late SettingsSection _section = widget.initial;
 
-  /// 도구 구역은 [ToolPaths]가 있을 때만 (앱 루트에서 내려 준다).
+  /// 칸·도구 구역은 해당 객체가 앱 루트에서 내려와 있을 때만 (설정 창이 앱 안 어디서나 같은 코드로 뜬다).
+  bool _available(SettingsSection s) => switch (s) {
+    SettingsSection.branch => WorkspaceScope.maybeOf(context) != null,
+    SettingsSection.tools => ToolPathsScope.maybeOf(context) != null,
+    _ => true,
+  };
+
   List<SettingsSection> get _sections => [
     for (final s in SettingsSection.values)
-      if (s != SettingsSection.tools || ToolPathsScope.maybeOf(context) != null)
-        s,
+      if (_available(s)) s,
   ];
 
   @override
@@ -145,6 +154,7 @@ class _Content extends StatelessWidget {
     child: switch (section) {
       SettingsSection.appearance => const _AppearanceSection(),
       SettingsSection.language => const _LanguageSection(),
+      SettingsSection.branch => const _BranchSection(),
       SettingsSection.tools => const _ToolsSection(),
     },
   );
@@ -378,6 +388,65 @@ class _ToolRowState extends State<_ToolRow> {
           ],
         );
       },
+    );
+  }
+}
+
+/// Branch Dock 설정 — 자동 fetch(5분마다·창으로 돌아올 때)와 파일·폴더를 여는 편집기 명령.
+/// 편집기 명령은 공유 영역의 "편집기에서 열기"와 변경 파일 열기가 함께 쓴다 (공통 키 `editor_command`).
+class _BranchSection extends StatefulWidget {
+  const _BranchSection();
+
+  @override
+  State<_BranchSection> createState() => _BranchSectionState();
+}
+
+class _BranchSectionState extends State<_BranchSection> {
+  TextEditingController? _editor;
+
+  @override
+  void dispose() {
+    _editor?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ws = WorkspaceScope.maybeOf(context);
+    if (ws == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
+    final prefs = RepoPrefs(ws.prefs);
+    _editor ??= TextEditingController(text: ws.editorCommand);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          title: Text(l10n.bdMenuAutoFetch),
+          value: prefs.autoFetch,
+          onChanged: (v) async {
+            await prefs.setAutoFetch(v);
+            if (mounted) setState(() {});
+          },
+        ),
+        _Heading(l10n.bdMenuEditor),
+        Text(
+          l10n.bdEditorMessage,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _editor,
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: 'code',
+            border: const OutlineInputBorder(),
+            labelText: l10n.bdEditorLabel,
+          ),
+          onChanged: ws.setEditorCommand,
+        ),
+      ],
     );
   }
 }

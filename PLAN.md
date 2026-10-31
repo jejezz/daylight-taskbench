@@ -496,22 +496,18 @@ abstract class ProjectDetector {
 - 아직 안 한 것: 두 원본의 `CommandRunner`를 쓰는 기능 테스트(Branch 10개·Flutty 14개)는 각 Dock 이식(단계 3·4)에서 함께 옮긴다.
 - 알려 둘 것: 위젯 테스트에서 실제 파일 I/O(`Directory.createTemp` 등)는 `tester.runAsync` 안에서 해야 한다 — 밖에서 하면 가짜 시계 때문에 영원히 멈춘다. 포커스된 `TextField`가 있으면 `pumpAndSettle`이 끝나지 않는다.
 
-### 단계 3 진행 상황 (2026-10-31) — 3a~3c 완료, 3d·3e 남음
+### 단계 3 결과 (2026-10-31)
 
-**됐다** (실제 저장소 `daylight-taskbench` 로 앱을 띄워 확인: 공유 영역 아래 Branch Dock 에 Fetch/Pull/Push·탭 8개·변경 목록·커밋 상자·명령 바가 동작하고, Flutty 칸은 `daylight_taskbench 0.1.0-rc.1+1`을 감지해 접힌 제목에 보인다)
-- Branch 의 `git/`·`github/`·`release/`·`repo/`·`ui/`(탭 8개·시트·도움말)를 `lib/docks/branch/` 로 옮겼다. 원본은 수정하지 않았다.
-- **ARB**: Branch 키 880여 개 중 이미 같은 값인 58개는 공유, 나머지 821개는 `bd` 접두어로 합쳤다 (`bdHeaderPull` …). 코드는 스크립트로 일괄 치환.
-- **RepoController 는 Workspace 소유**: `RepoGitStateSource` 가 그것을 `GitState` 로 줄여 공유 영역·다른 칸에 알린다. 칸 본문(`BranchDockBody`)은 저장소를 만들지도 닫지도 않고, 바뀌면 ReleaseFlow·탭만 새로 한다.
-- 상태 헤더 1·2행(브랜치 칩·pill·편집기 단추)은 공유 영역으로 올라가 Dock 안에는 추적 브랜치와 Fetch/Pull/Push 만 남았다.
-- 저장 키는 `branch.` 접두어 (`RepoPrefs`), 최근 목록·창 크기·도구 경로는 Workspace·WindowPlacement·ToolPaths 로 옮겼다.
-- 창 제목에 `저장소 (브랜치)` 를 보인다. 개발 편의로 `TASKBENCH_OPEN=<경로>` 환경 변수가 있으면 실행 때 그 저장소를 연다.
+Branch Dock 이식 완료. 실제 저장소로 앱을 띄워 확인했다(공유 영역 아래 Branch Dock 의 Fetch/Pull/Push·탭 8개·추천 배너·변경 목록·커밋 상자·명령 바, 접힌 Flutty 칸). `flutter analyze` 0, 테스트 272개 통과.
 
-**남았다 (3d·3e)**
-- 원본 테스트 19개 이식 (RepoController·git 파싱·충돌·병합·릴리스·화면 테스트). 지금 이식된 건 `vscode_test` 뿐이다.
-- `AppColors.*` 직접 사용 17곳을 `colorScheme` 으로 치환 + 규칙 테스트 (색 구성이 화면 전체에 퍼지게).
-- 공유 영역의 브랜치 칩 눌렀을 때 빠른 전환 목록 (지금은 Branch Dock 의 브랜치 탭으로 간다).
-- 설정 창: 편집기 명령·자동 fetch 구역, 시작 화면의 GitHub 복제·진단 복사·`gh` 로그인 안내.
-- Branch 의 환경 시트(git/gh 경로·로그인)를 새 도구 구역과 이어 주기.
+- Branch 의 `git/`·`github/`·`release/`·`repo/`·`ui/`(탭 8개·시트·도움말)를 `lib/docks/branch/` 로 옮겼다 (원본 수정 없음). ARB 는 같은 값 58개 공유, 821개는 `bd` 접두어.
+- **RepoController 는 Workspace 소유** (`RepoGitStateSource` → `GitState`). 본문(`BranchDockBody`)은 저장소를 만들지도 닫지도 않는다. 상태 헤더 1·2행은 공유 영역으로 올라갔다. 저장 키는 `branch.` 접두어.
+- **원본 테스트 이식**: Branch 고유 테스트 14개 + vscode 를 `test/branch/` 로 옮겼다 (about·app_settings·high_contrast·update 는 템플릿 공통이라 이미 있음). `screens_test` 의 시작 화면 구간은 새 `test/start_screen_test.dart`, 공유 영역 pill 은 `shell_test` 로 옮겼다.
+- **시작 화면 마무리**: GitHub 복제, `gh` 로그인 안내, 환경 점검 카드(진단 복사·경로 지정)를 Branch 것으로 이었다. 경로 지정은 설정 창의 "도구" 구역으로 간다.
+- **공유 영역 브랜치 칩 = 빠른 전환**: 누르면 로컬 브랜치 목록이 뜨고, 고르면 바로 전환한다 (변경 때문에 막히면 임시 저장 후 재시도 제안, 다른 worktree 면 그 폴더 열기). Dock 이 접혀 있어도 된다.
+- **설정 창**: "Branch Dock" 구역(자동 fetch, 편집기 명령 — 공통 키 `editor_command`)을 더했다. 칸·도구 구역은 해당 객체가 있을 때만 보인다.
+- **색 규칙**: 화면 코드의 `AppColors`·색 리터럴을 모두 없앴다(Branch 의 중복 Tone/StatusPill 은 공통 위젯으로 통합, 그래프 줄 색은 `lib/theme/graph_colors.dart`). `test/theme_rules_test.dart` 가 어기면 실패한다.
+- **알려 둠**: 공유 영역 칩의 전환 메뉴는 실제 클릭으로 아직 확인하지 못했다(전환 로직 `withStashRetry`는 원본 테스트가 지킨다). 위젯 테스트 안에서 실제 프로세스를 도는 동작(git init 단추 등)은 단위 테스트로 대신 지킨다.
 
 ## 6. 위험과 결정이 필요한 것
 

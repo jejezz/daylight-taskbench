@@ -30,7 +30,7 @@ void main() {
   testWidgets('도킹 크기(480×480)에서 오버플로 없이 뜨고, 구역은 위쪽 칩이다', (tester) async {
     await _pump(tester, const Size(480, 480));
     expect(tester.takeException(), isNull);
-    expect(find.byType(ChoiceChip), findsNWidgets(2 + 6)); // 구역 칩 둘 + 색 구성 칩 여섯
+    expect(find.byType(ChoiceChip), findsNWidgets(2 + 6)); // 구역 칩 둘(화면·언어) + 색 구성 칩 여섯
     expect(find.byType(VerticalDivider), findsNothing);
     await tester.tap(find.widgetWithText(ChoiceChip, '언어'));
     await tester.pumpAndSettle();

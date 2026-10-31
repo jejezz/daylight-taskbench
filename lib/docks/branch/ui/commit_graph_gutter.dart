@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:daylight_taskbench/theme/graph_colors.dart';
+
 import '../git/graph_layout.dart';
 import 'widgets.dart';
 
@@ -41,8 +43,7 @@ class CommitGraphGutter extends StatelessWidget {
       toneColor(context, Tone.success),
       toneColor(context, Tone.warning),
       toneColor(context, Tone.danger),
-      const Color(0xFFB07CFF),
-      const Color(0xFF3CC8C8),
+      ...GraphColors.extra(theme.brightness),
     ];
     return SizedBox(
       width: lanes * laneWidth,
