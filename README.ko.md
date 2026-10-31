@@ -25,22 +25,22 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Taskbench 데모: 저장소를 열고 Branch Dock과 Flutty Dock을 오가는 흐름">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Taskbench 데모: 저장소를 열고 Git & GitHub와 Flutter Runner 칸을 오가는 흐름">
 </p>
 
 ## 기능
 
 - **폴더 하나, Dock 둘** — Git 폴더를 한 번 고르거나 끌어다 놓으면 공유 막대에 폴더, 현재 브랜치, "편집기에서 열기"가 나오고 두 Dock이 모두 따라갑니다. 앱 안에서든 터미널에서든 브랜치를 바꾸면 두 Dock이 함께 갱신됩니다.
-- **Branch Dock: Git·GitHub** — 변경과 커밋 상자, 브랜치, 태그, 원격, 안내식 릴리스 흐름, PR, CI 실행, 기록 그래프, 충돌·임시 저장 복구. 실제 `git`과 `gh`를 실행하고 명령을 그대로 보여 줍니다.
-- **Flutty Dock: 실기기 빌드·설치** — 폴더(또는 한 단계 아래)에서 Flutter 프로젝트를 찾아 USB iPhone, Android 폰, 이 컴퓨터에 빌드·설치하고, 실행 중에는 핫 리로드를 보냅니다. 점검 탭이 Flutter, Xcode, adb, 서명 인증서·프로파일을 확인합니다.
+- **Git & GitHub** — 변경과 커밋 상자, 브랜치, 태그, 원격, 안내식 릴리스 흐름, PR, CI 실행, 기록 그래프, 충돌·임시 저장 복구. 실제 `git`과 `gh`를 실행하고 명령을 그대로 보여 줍니다.
+- **Flutter Runner: 실기기 빌드·설치** — 폴더(또는 한 단계 아래)에서 Flutter 프로젝트를 찾아 USB iPhone, Android 폰, 이 컴퓨터에 빌드·설치하고, 실행 중에는 핫 리로드를 보냅니다. 점검 탭이 Flutter, Xcode, adb, 서명 인증서·프로파일을 확인합니다.
 - **도킹을 위한 창** — 편집기 옆에 세우는 440×960 창(최소 380×560)이고 위치를 기억합니다. 실행기 Dock(Rust, Electron 등)은 레지스트리에 한 줄이면 더해집니다.
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 설정에서 고릅니다 (색 구성, 글자 크기, 고대비)
 
 > Daylight Taskbench는 따로 배포하던 **Branch Dock**과 **Flutty Dock** 앱을 대신합니다. 두 앱은 더 이상 개발하지 않으며, 같은 기능이 이 앱의 두 칸으로 들어와 폴더 하나와 머리줄 하나를 함께 씁니다.
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Branch Dock (라이트·다크)">
-  <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: Flutter 프로젝트의 빌드·실행 옵션">
+  <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Git & GitHub 칸 (라이트·다크)">
+  <img src="docs/screenshots/detail.png" width="360" alt="Flutter Runner: Flutter 프로젝트의 빌드·실행 옵션">
 </p>
 
 ## 설치

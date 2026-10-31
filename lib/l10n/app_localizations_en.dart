@@ -94,7 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'A docked desktop workbench that sits beside your editor. It works on one folder and combines Git/GitHub tools (Branch Dock) with build-and-install on real Flutter devices (Flutty Dock) in a single window.';
+      'A docked desktop workbench that sits beside your editor. It works on one folder and combines Git/GitHub tools (Git & GitHub) with build-and-install on real Flutter devices (Flutter Runner) in a single window.';
 
   @override
   String get homeEmptyTitle => 'Drop a repository folder to get started';
@@ -356,10 +356,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorOpenFailed => 'Could not open the editor';
 
   @override
-  String get dockBranchTitle => 'Branch Dock';
+  String get dockBranchTitle => 'Git & GitHub';
 
   @override
-  String get dockFluttyTitle => 'Flutty Dock';
+  String get dockFluttyTitle => 'Flutter Runner';
 
   @override
   String get dockRunTitle => 'Run';
@@ -539,7 +539,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bdEnvGitRequired =>
-      'Branch Dock runs the git installed on your computer. Install git first.';
+      'Daylight Taskbench runs the git installed on your computer. Install git first.';
 
   @override
   String get bdEnvGitOnlyNote =>

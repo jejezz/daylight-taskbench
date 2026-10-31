@@ -43,7 +43,7 @@
   "settingsPaletteSlate": "슬레이트",
   "settingsPaletteHighContrast": "고대비",
   "aboutTagline": "Flutter 앱을 GitHub에서 만들고 굴리는 작업대",
-  "aboutDescription": "편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Branch Dock)와 Flutter 앱의 실기기 빌드·설치(Flutty Dock)를 한 창에서 다룹니다.",
+  "aboutDescription": "편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Git & GitHub)와 Flutter 앱의 실기기 빌드·설치(Flutter Runner)를 한 창에서 다룹니다.",
   "homeEmptyTitle": "저장소 폴더를 끌어다 놓아 시작하세요",
   "homeEmptyAction": "폴더 열기",
   "updateCheckMenuItem": "업데이트 확인",
@@ -251,8 +251,8 @@
   },
   "editorOpenNoEditor": "편집기를 찾지 못했습니다. VS Code를 설치하면 이 단추로 폴더를 열 수 있어요.",
   "editorOpenFailed": "편집기를 열지 못했습니다",
-  "dockBranchTitle": "Branch Dock",
-  "dockFluttyTitle": "Flutty Dock",
+  "dockBranchTitle": "Git & GitHub",
+  "dockFluttyTitle": "Flutter Runner",
   "dockRunTitle": "Run",
   "dockPlaceholderBranch": "Git·GitHub 도구가 이 칸에 들어옵니다 (단계 3).",
   "dockPlaceholderFlutty": "Flutter 실기기 빌드·설치가 이 칸에 들어옵니다 (단계 4).",
@@ -363,7 +363,7 @@
     }
   },
   "bdEnvTitle": "환경 점검",
-  "bdEnvGitRequired": "Branch Dock은 설치된 git을 실행합니다. git을 먼저 설치하세요.",
+  "bdEnvGitRequired": "Daylight Taskbench는 설치된 git을 실행합니다. git을 먼저 설치하세요.",
   "bdEnvGitOnlyNote": "gh가 없거나 로그인하지 않아도 브랜치·태그·Pull·Push는 쓸 수 있습니다. GitHub에 올리기, PR, 릴리스에는 gh 로그인이 필요합니다.",
   "bdEnvVersion": "버전 {version}",
   "@bdEnvVersion": {

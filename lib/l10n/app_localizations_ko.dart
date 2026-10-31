@@ -93,7 +93,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      '편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Branch Dock)와 Flutter 앱의 실기기 빌드·설치(Flutty Dock)를 한 창에서 다룹니다.';
+      '편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Git & GitHub)와 Flutter 앱의 실기기 빌드·설치(Flutter Runner)를 한 창에서 다룹니다.';
 
   @override
   String get homeEmptyTitle => '저장소 폴더를 끌어다 놓아 시작하세요';
@@ -352,10 +352,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get editorOpenFailed => '편집기를 열지 못했습니다';
 
   @override
-  String get dockBranchTitle => 'Branch Dock';
+  String get dockBranchTitle => 'Git & GitHub';
 
   @override
-  String get dockFluttyTitle => 'Flutty Dock';
+  String get dockFluttyTitle => 'Flutter Runner';
 
   @override
   String get dockRunTitle => 'Run';
@@ -530,7 +530,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get bdEnvTitle => '환경 점검';
 
   @override
-  String get bdEnvGitRequired => 'Branch Dock은 설치된 git을 실행합니다. git을 먼저 설치하세요.';
+  String get bdEnvGitRequired =>
+      'Daylight Taskbench는 설치된 git을 실행합니다. git을 먼저 설치하세요.';
 
   @override
   String get bdEnvGitOnlyNote =>

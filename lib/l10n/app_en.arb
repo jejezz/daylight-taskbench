@@ -26,7 +26,7 @@
   "settingsPaletteSlate": "Slate",
   "settingsPaletteHighContrast": "High contrast",
   "aboutTagline": "A workbench for building and running Flutter apps on GitHub",
-  "aboutDescription": "A docked desktop workbench that sits beside your editor. It works on one folder and combines Git/GitHub tools (Branch Dock) with build-and-install on real Flutter devices (Flutty Dock) in a single window.",
+  "aboutDescription": "A docked desktop workbench that sits beside your editor. It works on one folder and combines Git/GitHub tools (Git & GitHub) with build-and-install on real Flutter devices (Flutter Runner) in a single window.",
   "homeEmptyTitle": "Drop a repository folder to get started",
   "homeEmptyAction": "Open folder",
   "updateCheckMenuItem": "Check for Updates",
@@ -234,8 +234,8 @@
   },
   "editorOpenNoEditor": "No editor found. Install VS Code to open the folder with this button.",
   "editorOpenFailed": "Could not open the editor",
-  "dockBranchTitle": "Branch Dock",
-  "dockFluttyTitle": "Flutty Dock",
+  "dockBranchTitle": "Git & GitHub",
+  "dockFluttyTitle": "Flutter Runner",
   "dockRunTitle": "Run",
   "dockPlaceholderBranch": "Git and GitHub tools arrive in this card (step 3).",
   "dockPlaceholderFlutty": "Real-device build and install arrive in this card (step 4).",
@@ -346,7 +346,7 @@
     }
   },
   "bdEnvTitle": "git and GitHub CLI",
-  "bdEnvGitRequired": "Branch Dock runs the git installed on your computer. Install git first.",
+  "bdEnvGitRequired": "Daylight Taskbench runs the git installed on your computer. Install git first.",
   "bdEnvGitOnlyNote": "Branches, pull and push work without gh. Publishing to GitHub, pull requests and releases need gh and a login.",
   "bdEnvVersion": "Version {version}",
   "@bdEnvVersion": {

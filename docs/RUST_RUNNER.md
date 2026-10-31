@@ -30,8 +30,8 @@ Branch · Flutty와 같은 원칙을 지킨다: 버튼이 실행할 **정확한 
 
 - 칸 id는 `rust` (설정 키 접두어 `rust.`, 저장된 펼침 상태, ARB 접두어 `rd`). 키 접두어 `rust.`는
   `test/keys_test.dart`가 이미 허용한다.
-- **칸 제목은 상표를 직접 쓰지 않는 이름**이어야 한다 (PLAN §4.4). 임시 후보 `Rusty Dock`. 확정 전까지 코드·ARB의
-  표시 문자열은 한 곳(`dockRustTitle`)에만 둬서 이름만 바꾸면 되게 한다. → §10 질문 1.
+- **칸 제목은 `Rust Runner`** (PLAN 결정 13 — 하는 일이 보이는 이름. `Git & GitHub`·`Flutter Runner`와 같은 방식). 표시 문자열은
+  한 곳(`dockRustTitle`)에만 둔다. 접힌 요약 줄에는 기술 이름 없이 상태만 쓴다(제목이 이미 말한다).
 - 설명 문구(README·칸 안내)에서만 "Rust", "Cargo"를 기술 이름으로 쓴다.
 
 ## 3. 감지 (`CargoDetector`)
@@ -196,7 +196,7 @@ Rust를 Flutty 복사본으로 만들면 실행·취소·출력 처리가 두 �
 
 ## 10. 사용자에게 묻는 것 (코딩 전에 정해야 함)
 
-1. **칸 이름**: 임시 `Rusty Dock`. 상표를 직접 쓰지 않는 이름이면 무엇이든 가능. (Branch/Flutty와 같은 `-y`·`Dock` 계열 권장)
+1. ~~칸 이름~~ → **확정: `Rust Runner`** (PLAN 결정 13).
 2. **첫 버전의 동작 범위**: 위 6개(Build·Run·Test·Check·Clippy·Fmt) 모두 넣을까, 아니면 Build·Run·Test로 시작할까?
    (제안: 6개 — 단추 하나 늘리는 비용이 작고 명령 조립 코드는 같다.)
 3. **크로스 빌드 `--target`**: 첫 버전에 넣을까 (제안: 넣는다, 고급 접힘 안에. 설치 안 된 triple은 Doctor가 경고).

@@ -257,7 +257,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In ko, this message translates to:
-  /// **'편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Branch Dock)와 Flutter 앱의 실기기 빌드·설치(Flutty Dock)를 한 창에서 다룹니다.'**
+  /// **'편집기 옆에 세워 두는 도킹형 작업대입니다. 같은 폴더를 보며 Git·GitHub(Git & GitHub)와 Flutter 앱의 실기기 빌드·설치(Flutter Runner)를 한 창에서 다룹니다.'**
   String get aboutDescription;
 
   /// No description provided for @homeEmptyTitle.
@@ -695,13 +695,13 @@ abstract class AppLocalizations {
   /// No description provided for @dockBranchTitle.
   ///
   /// In ko, this message translates to:
-  /// **'Branch Dock'**
+  /// **'Git & GitHub'**
   String get dockBranchTitle;
 
   /// No description provided for @dockFluttyTitle.
   ///
   /// In ko, this message translates to:
-  /// **'Flutty Dock'**
+  /// **'Flutter Runner'**
   String get dockFluttyTitle;
 
   /// No description provided for @dockRunTitle.
@@ -1013,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @bdEnvGitRequired.
   ///
   /// In ko, this message translates to:
-  /// **'Branch Dock은 설치된 git을 실행합니다. git을 먼저 설치하세요.'**
+  /// **'Daylight Taskbench는 설치된 git을 실행합니다. git을 먼저 설치하세요.'**
   String get bdEnvGitRequired;
 
   /// No description provided for @bdEnvGitOnlyNote.

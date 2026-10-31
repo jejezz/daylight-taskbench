@@ -1,7 +1,7 @@
 # Daylight Taskbench
 
 Flutter 앱을 GitHub에서 만들고 굴리는 도킹형 데스크톱 작업대 (macOS / Windows). 편집기 옆에 세로로 세워 두고
-**한 저장소(폴더)** 를 기준으로 Git·GitHub 도구(**Branch Dock**)와 실기기 빌드·설치(**Flutty Dock**)를
+**한 저장소(폴더)** 를 기준으로 Git·GitHub 도구(칸 제목 **Git & GitHub**, 코드 id `branch`)와 실기기 빌드·설치(**Flutter Runner**, id `flutty`)를
 아코디언 칸으로 번갈아 펼쳐 쓴다. 이후 Rust runner, Electron runner 등 실행기 칸을 더 꽂을 수 있게 설계한다.
 daylight-commander 계열 앱. 처음 작업 이름은 Fig(Flutter in GitHub)였고 어디에도 남기지 않는다.
 
@@ -12,7 +12,7 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - 표시 이름 `Daylight Taskbench`, 파일 이름 `DaylightTaskbench`, 패키지 `daylight_taskbench`,
   식별자 `art.zoomon.daylighttaskbench` (macOS Debug 빌드는 `.dev`), 저장소 `daylight-taskbench`.
   식별자와 `installer/windows/app.iss`의 `AppId`는 릴리스 후 바꾸지 않는다.
-- 이름에 "Flutter"·"GitHub"·"Git"·"Rust"·"Electron"을 넣지 않는다 (상표). 설명 문구에서만 쓴다.
+- **앱 이름·식별자·저장소 이름**에 "Flutter"·"GitHub"·"Git"·"Rust"·"Electron"을 넣지 않는다 (상표). 설명 문구와 **칸 제목**(`Git & GitHub`, `Flutter Runner`, `Rust Runner` …)에는 기능을 알리는 용도로 쓴다 — 사용자가 2026-10-31 정했다 (PLAN.md 결정 13).
 - 원본 앱 branch-dock-flutter, flutty-dock-flutter는 **수정하지 않는다.** 필요한 코드는 이 프로젝트로 복사해서
   쓴다 (daylight-workbench와 같은 방식). 달라진 곳은 코드에 `[Taskbench에서 달라진 곳]` 주석으로 표시한다.
 - **계획과 화면은 [PLAN.md](PLAN.md)가 기준이다.** 이어서 작업할 때 먼저 읽는다 (화면 §1, 합치기 §3, 확장 §4, 단계 §5, 결정 기록 §6).

@@ -125,7 +125,7 @@ void branchSectionTests() {
       ),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Branch Dock'));
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Git & GitHub'));
     await tester.pumpAndSettle();
     expect(find.byType(Switch), findsOneWidget);
     await tester.tap(find.byType(Switch));

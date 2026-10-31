@@ -25,22 +25,22 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Taskbench demo: open a repository, switch the Branch Dock and Flutty Dock">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Taskbench demo: open a repository, switch between the Git & GitHub and Flutter Runner cards">
 </p>
 
 ## Features
 
 - **One folder, two docks** — pick or drop a Git folder once; the shared bar shows the folder, the current branch and an "open in editor" button, and every dock follows. Switch the branch (in the app or in a terminal) and both docks refresh together.
-- **Branch Dock: Git and GitHub** — changes and commit box, branches, tags, remotes, a guided release flow, pull requests, CI runs and a history graph, with conflict and stash recovery. Everything runs the real `git` and `gh`; each command is shown.
-- **Flutty Dock: build and install on real devices** — finds the Flutter project in the folder (or one level below), then builds and installs to a USB iPhone, an Android phone or this computer, with hot reload while running. A doctor tab checks Flutter, Xcode, adb, signing certificates and profiles.
+- **Git & GitHub** — changes and commit box, branches, tags, remotes, a guided release flow, pull requests, CI runs and a history graph, with conflict and stash recovery. Everything runs the real `git` and `gh`; each command is shown.
+- **Flutter Runner: build and install on real devices** — finds the Flutter project in the folder (or one level below), then builds and installs to a USB iPhone, an Android phone or this computer, with hot reload while running. A doctor tab checks Flutter, Xcode, adb, signing certificates and profiles.
 - **Made to dock** — a 440×960 window (380×560 minimum) that stands beside your editor and remembers its place. Adding more runner docks (Rust, Electron) is one line in a registry.
 - **Light & dark, English & 한국어** — follows the system, or pick one in Settings (colour palette, text size, high contrast).
 
 > Daylight Taskbench replaces the standalone **Branch Dock** and **Flutty Dock** apps, which are no longer developed. Both docks live here now, with the same features, sharing one folder and one header.
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="Branch Dock under the shared bar, light and dark">
-  <img src="docs/screenshots/detail.png" width="360" alt="Flutty Dock: build and run options for a Flutter project">
+  <img src="docs/screenshots/home.png" width="360" alt="The Git & GitHub card under the shared bar, light and dark">
+  <img src="docs/screenshots/detail.png" width="360" alt="Flutter Runner: build and run options for a Flutter project">
 </p>
 
 ## Install

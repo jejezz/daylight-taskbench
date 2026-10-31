@@ -44,7 +44,7 @@ void main() {
   testWidgets('저장소가 안 열렸으면 시작 화면만 보이고 아코디언·브랜치 줄은 없다 (§1.0)', (tester) async {
     await _pump(tester, open: false);
     expect(find.text('저장소를 열어 시작하세요'), findsOneWidget);
-    expect(find.text('Branch Dock'), findsNothing);
+    expect(find.text('Git & GitHub'), findsNothing);
     expect(find.byIcon(Icons.description_outlined), findsNothing);
   });
 
@@ -55,13 +55,13 @@ void main() {
     expect(find.text('↑2'), findsOneWidget); // 공유 줄에만 (칸 제목 요약은 "다음 행동")
     expect(find.text('Push ↑2 가능'), findsOneWidget);
     expect(find.byIcon(Icons.description_outlined), findsOneWidget);
-    expect(find.text('Branch Dock'), findsOneWidget);
+    expect(find.text('Git & GitHub'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('프로젝트가 없으면 Flutty 자리에 Run 안내 칸이 서고, 제목을 누르면 펼쳐진다', (tester) async {
     await _pump(tester);
-    expect(find.text('Flutty Dock'), findsNothing);
+    expect(find.text('Flutter Runner'), findsNothing);
     expect(find.text('Run'), findsOneWidget);
     await tester.tap(find.text('Run'));
     await tester.pumpAndSettle();
