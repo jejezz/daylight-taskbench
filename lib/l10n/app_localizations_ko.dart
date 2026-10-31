@@ -302,6 +302,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get workspaceRecent => '최근 저장소';
 
   @override
+  String get moreTooltip => '더 보기';
+
+  @override
   String get refreshTooltip => '새로 고침';
 
   @override

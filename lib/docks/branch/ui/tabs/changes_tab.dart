@@ -1,3 +1,4 @@
+import 'package:daylight_taskbench/core/ui/label_with_shortcut.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -242,7 +243,7 @@ class _ChangesTabState extends State<ChangesTab> {
           child: FilledButton.icon(
             onPressed: canCommit ? () => _commit(repo) : null,
             icon: const Icon(Icons.check_rounded, size: 16),
-            label: Text('$commitLabel  ${shortcutLabel('⏎')}'),
+            label: LabelWithShortcut(commitLabel, shortcutLabel('⏎')),
           ),
         ),
       ]),

@@ -306,6 +306,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceRecent => 'Recent repositories';
 
   @override
+  String get moreTooltip => 'More';
+
+  @override
   String get refreshTooltip => 'Refresh';
 
   @override

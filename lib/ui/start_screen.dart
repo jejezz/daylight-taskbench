@@ -2,6 +2,7 @@
 // 폴더 열기 · 끌어놓기 · 최근 저장소 · 저장소가 아닌 폴더의 git init · git/gh 환경 요약.
 // [Taskbench에서 달라진 곳] GitHub 복제, 도구 경로 지정, 진단 복사는 단계 3(Branch Dock 이식)에서 들어온다.
 
+import 'package:daylight_taskbench/core/ui/label_with_shortcut.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -90,7 +91,7 @@ class StartScreen extends StatelessWidget {
                     FilledButton.icon(
                       onPressed: env.checked && !env.hasGit ? null : onOpenFolder,
                       icon: const Icon(Icons.folder_open_rounded, size: 16),
-                      label: Text('${l10n.homeEmptyAction}  ${_shortcut('O')}'),
+                      label: LabelWithShortcut(l10n.homeEmptyAction, _shortcut('O')),
                     ),
                     if (onClone != null && env.ghReady) ...[
                       const SizedBox(height: AppSpacing.sm),

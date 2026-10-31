@@ -28,6 +28,7 @@ import 'package:daylight_taskbench/docks/branch/github/onboarding.dart';
 import 'package:daylight_taskbench/docks/branch/ui/tabs/release_list.dart' show ReleaseAssets, showRollbackDialog;
 import 'package:daylight_taskbench/docks/branch/git/diff.dart';
 import 'package:daylight_taskbench/docks/branch/git/history.dart';
+import 'package:daylight_taskbench/docks/branch/git/status.dart';
 import 'package:daylight_taskbench/docks/branch/git/commands.dart';
 import 'package:daylight_taskbench/docks/branch/ui/diff_view.dart';
 import 'package:daylight_taskbench/docks/branch/ui/command_palette.dart';
@@ -41,6 +42,7 @@ import 'package:daylight_taskbench/docks/branch/ui/worktree_actions.dart';
 import 'package:daylight_taskbench/docks/branch/ui/tool_path_sheet.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -118,6 +120,70 @@ void main() {
 
       await pump(tester, const RemotesTab(), locale: locale);
       expect(find.text('me/repo'), findsNWidgets(2));
+    });
+  }
+
+  // 공유 영역 안에서 동기화 줄이 받는 폭: 최소 창(380) ≈ 330, 기본 창(440) ≈ 390.
+  // 라벨이 두 줄로 꺾이거나 "…"로 잘리면 안 된다 (v0.1.1 이후 수정).
+  for (final locale in const [Locale('ko'), Locale('en')]) {
+    for (final rowWidth in const [300.0, 330.0, 390.0]) {
+      testWidgets('sync buttons keep one-line labels at row width $rowWidth (${locale.languageCode})', (tester) async {
+        repo.status = const RepoStatus(head: 'main', oid: 'abc1234', upstream: 'origin/main', ahead: 12, behind: 99);
+        tester.view.physicalSize = Size(rowWidth + 24, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(ServicesScope(
+          services: services,
+          child: MaterialApp(
+            theme: AppTheme.dark(),
+            locale: locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(body: RepoScope(repo: repo, environment: env, child: const StatusHeader())),
+          ),
+        ));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('…'), findsNothing);
+
+        for (final label in const ['Pull ↓99', 'Push ↑12']) {
+          final text = find.text(label);
+          expect(text, findsOneWidget, reason: label);
+          expect(tester.getSize(text).height, lessThan(24), reason: '$label wrapped to two lines');
+          final button = find.ancestor(of: text, matching: find.byWidgetPredicate((w) => w is FilledButton || w is OutlinedButton)).first;
+          expect(tester.getRect(text).right, lessThanOrEqualTo(tester.getRect(button).right), reason: '$label sticks out of its button');
+        }
+        // 좁으면 Fetch 는 아이콘만, 넓으면 글자도 보인다.
+        expect(find.text('Fetch'), rowWidth < 360 ? findsNothing : findsOneWidget);
+      });
+    }
+  }
+
+  // 단추 라벨이 두 줄로 꺾이거나 말줄임으로 잘리면 안 된다 (최소 창 380).
+  for (final locale in const [Locale('ko'), Locale('en')]) {
+    testWidgets('no button label wraps or is cut at 380px (${locale.languageCode})', (tester) async {
+      final cut = <String>[];
+      void scan(String where) {
+        final buttons = find.byWidgetPredicate((w) => w is FilledButton || w is OutlinedButton || w is TextButton);
+        for (final e in find.descendant(of: buttons, matching: find.byType(RichText)).evaluate()) {
+          final p = e.renderObject! as RenderParagraph;
+          final fontSize = p.text.style?.fontSize ?? 14;
+          if (p.size.height > fontSize * 1.7 || p.didExceedMaxLines) cut.add('$where: "${p.text.toPlainText()}"');
+        }
+      }
+
+      repo.status = const RepoStatus(head: 'main', oid: 'abc1234', upstream: 'origin/main', ahead: 12, behind: 99);
+      final pages = <String, Widget>{
+        'changes': Column(children: [const StatusHeader(), Expanded(child: ChangesTab(commitFocus: FocusNode()))]),
+        'branches': const BranchesTab(),
+        'remotes': const RemotesTab(),
+        'tags': const TagsTab(),
+      };
+      for (final entry in pages.entries) {
+        await pump(tester, entry.value, locale: locale);
+        scan(entry.key);
+      }
+      expect(cut, isEmpty);
     });
   }
 

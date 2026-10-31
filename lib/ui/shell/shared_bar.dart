@@ -19,6 +19,10 @@ import '../style/status_pill.dart';
 const double sharedBarHeight = 44;
 const double branchBarHeight = 36;
 
+/// 이 폭보다 좁으면 새로 고침·항상 위를 "더 보기" 메뉴로 묶고 아이콘 단추를 좁혀 폴더 이름에 자리를 준다.
+const double _narrowBelow = 420;
+const double _narrowIconWidth = 32;
+
 String _name(String path) =>
     path.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull ?? path;
 
@@ -49,6 +53,11 @@ class WorkspaceBar extends StatelessWidget {
     final theme = Theme.of(context);
     final root = workspace.root;
     final sel = workspace.selectedDir;
+    // [Taskbench에서 달라진 곳] 폴더 이름이 이 줄에서 가장 중요하다 (최소 창 380에서도 읽혀야 한다).
+    // ① 이름 + 편집기 단추를 한 덩어리로 묶어 남는 폭을 모두 받게 했다. 전에는 Spacer 와 남는 폭을 반씩
+    //    나눠 가져서 이름이 절반으로 잘렸다. ② 좁으면 오른쪽 아이콘 단추의 간격을 줄인다.
+    return LayoutBuilder(builder: (context, constraints) {
+    final narrow = constraints.maxWidth < _narrowBelow;
     return SizedBox(
       height: sharedBarHeight,
       child: Row(
@@ -56,6 +65,8 @@ class WorkspaceBar extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           const AppMark(size: 24),
           const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Row(children: [
           Flexible(
             child: root == null
                 ? const SizedBox.shrink()
@@ -100,6 +111,7 @@ class WorkspaceBar extends StatelessWidget {
                       ),
                     ],
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Flexible(
                           child: Text.rich(
@@ -133,27 +145,66 @@ class WorkspaceBar extends StatelessWidget {
           ),
           // 편집기에서 열기는 "이 폴더" 옆에 둔다 — 폴더에 하는 동작이라 폴더 이름과 붙어 있어야 한다.
           if (root != null) EditorOpenButton(workspace: workspace),
-          const Spacer(),
-          if (root != null)
-            IconButton(
-              tooltip: l10n.refreshTooltip,
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: workspace.refresh,
-            ),
-          if (onToggleAlwaysOnTop != null)
-            IconButton(
-              tooltip: l10n.alwaysOnTopTooltip,
-              isSelected: alwaysOnTop ?? false,
-              icon: const Icon(Icons.push_pin_outlined),
-              selectedIcon: const Icon(Icons.push_pin_rounded),
-              onPressed: onToggleAlwaysOnTop,
-            ),
+            ]),
+          ),
+          if (narrow && (root != null || onToggleAlwaysOnTop != null))
+            // 좁으면 새로 고침·항상 위를 한 메뉴로 묶어 폴더 이름에 자리를 준다.
+            PopupMenuButton<String>(
+              tooltip: l10n.moreTooltip,
+              position: PopupMenuPosition.under,
+              padding: EdgeInsets.zero,
+              onSelected: (v) => v == 'refresh' ? workspace.refresh() : onToggleAlwaysOnTop?.call(),
+              itemBuilder: (_) => [
+                if (root != null)
+                  PopupMenuItem(
+                    value: 'refresh',
+                    child: Row(children: [
+                      const Icon(Icons.refresh_rounded, size: 18),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(l10n.refreshTooltip),
+                    ]),
+                  ),
+                if (onToggleAlwaysOnTop != null)
+                  CheckedPopupMenuItem(
+                    value: 'pin',
+                    checked: alwaysOnTop ?? false,
+                    child: Text(l10n.alwaysOnTopTooltip),
+                  ),
+              ],
+              child: SizedBox(
+                width: _narrowIconWidth,
+                height: sharedBarHeight,
+                child: Icon(Icons.more_horiz_rounded, size: 20, color: theme.colorScheme.onSurfaceVariant),
+              ),
+            )
+          else ...[
+            if (root != null)
+              IconButton(
+                tooltip: l10n.refreshTooltip,
+                icon: const Icon(Icons.refresh_rounded),
+                onPressed: workspace.refresh,
+              ),
+            if (onToggleAlwaysOnTop != null)
+              IconButton(
+                tooltip: l10n.alwaysOnTopTooltip,
+                isSelected: alwaysOnTop ?? false,
+                icon: const Icon(Icons.push_pin_outlined),
+                selectedIcon: const Icon(Icons.push_pin_rounded),
+                onPressed: onToggleAlwaysOnTop,
+              ),
+          ],
           IconButton(
+            padding: narrow ? EdgeInsets.zero : null,
+            style: narrow ? IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap) : null,
+            constraints: narrow ? const BoxConstraints.tightFor(width: _narrowIconWidth, height: sharedBarHeight) : null,
             tooltip: l10n.settingsTooltip,
             icon: const Icon(Icons.settings_outlined),
             onPressed: onSettings,
           ),
           IconButton(
+            padding: narrow ? EdgeInsets.zero : null,
+            style: narrow ? IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap) : null,
+            constraints: narrow ? const BoxConstraints.tightFor(width: _narrowIconWidth, height: sharedBarHeight) : null,
             tooltip: l10n.aboutTooltip,
             icon: const Icon(Icons.info_outline_rounded),
             onPressed: onAbout,
@@ -162,6 +213,7 @@ class WorkspaceBar extends StatelessWidget {
         ],
       ),
     );
+    });
   }
 }
 

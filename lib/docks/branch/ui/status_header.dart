@@ -84,75 +84,212 @@ class _SyncButtons extends StatelessWidget {
     // 병합되어 원격에서 지워진 브랜치는 게시·Push를 끄고 이유를 보여 준다.
     final pushTooltip = repo.headMergedAndGone ? l10n.bdHeaderMergedAndGoneTooltip : formatCommandLine(repo.pushCommand);
 
-    return Row(children: [
-      Expanded(
-        child: tip(
-          formatCommandLine(GitCommands.fetch()),
-          OutlinedButton.icon(
-            onPressed: idle && hasRemote ? () => RepoActions.fetch(context, repo) : null,
-            icon: const Icon(Icons.sync_rounded, size: 16),
-            label: Text(l10n.bdHeaderFetch),
-          ),
-        ),
-      ),
-      const SizedBox(width: AppSpacing.sm),
-      Expanded(
-        child: tip(
-          formatCommandLine(GitCommands.pull(mode)),
-          Row(children: [
+    final pullLabel = s.behind > 0
+        ? '${l10n.bdHeaderPull} ↓${s.behind}'
+        : l10n.bdHeaderPull;
+    final pushLabel = publish
+        ? l10n.bdHeaderPublish
+        : (s.ahead > 0
+              ? '${l10n.bdHeaderPush} ↑${s.ahead}'
+              : l10n.bdHeaderPush);
+
+    // [Taskbench에서 달라진 곳] 좁은 창(최소 380)에서 라벨이 두 줄로 꺾이거나 "P…"로 잘리던 문제.
+    // 폭에 따라 두 단계로 나눈다: 넓으면 아이콘+라벨, 좁으면 Fetch 는 아이콘만, Pull·Push 는 글자만.
+    // 라벨은 항상 한 줄이고, 그래도 모자라면 글자를 줄인다 (자르지 않는다).
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < _compactBelow;
+        final fetchPressed = idle && hasRemote
+            ? () => RepoActions.fetch(context, repo)
+            : null;
+        final fetchCommand = formatCommandLine(GitCommands.fetch());
+
+        return Row(
+          children: [
+            if (compact)
+              SizedBox(
+                width: 44,
+                child: tip(
+                  fetchCommand,
+                  OutlinedButton(
+                    onPressed: fetchPressed,
+                    style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
+                    child: const Icon(Icons.sync_rounded, size: 16),
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                flex: 2,
+                child: tip(
+                  fetchCommand,
+                  OutlinedButton.icon(
+                    onPressed: fetchPressed,
+                    style: OutlinedButton.styleFrom(padding: _buttonPadding),
+                    icon: const Icon(Icons.sync_rounded, size: 16),
+                    label: _OneLine(l10n.bdHeaderFetch),
+                  ),
+                ),
+              ),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: pullStyle
-                  ? FilledButton.icon(
-                      onPressed: canPull ? () => RepoActions.pull(context, repo) : null,
-                      icon: const Icon(Icons.south_rounded, size: 16),
-                      label: Text(s.behind > 0 ? '${l10n.bdHeaderPull} ↓${s.behind}' : l10n.bdHeaderPull),
-                    )
-                  : OutlinedButton.icon(
-                      onPressed: canPull ? () => RepoActions.pull(context, repo) : null,
-                      icon: const Icon(Icons.south_rounded, size: 16),
-                      label: Text(l10n.bdHeaderPull),
-                    ),
-            ),
-            SizedBox(
-              width: 24,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                tooltip: l10n.bdPullModeTooltip,
-                iconSize: 18,
-                icon: const Icon(Icons.arrow_drop_down_rounded),
-                onPressed: () => showPullModeSheet(context, repo),
+              flex: 3,
+              child: tip(
+                formatCommandLine(GitCommands.pull(mode)),
+                _SplitButton(
+                  filled: pullStyle,
+                  compact: compact,
+                  icon: Icons.south_rounded,
+                  label: pullLabel,
+                  onPressed: canPull
+                      ? () => RepoActions.pull(context, repo)
+                      : null,
+                  menuTooltip: l10n.bdPullModeTooltip,
+                  onMenu: () => showPullModeSheet(context, repo),
+                ),
               ),
             ),
-          ]),
-        ),
-      ),
-      const SizedBox(width: AppSpacing.sm),
-      Expanded(
-        child: tip(
-          pushTooltip,
-          Row(children: [
-            Expanded(child: FilledButton.icon(
-            onPressed: canPush ? () => RepoActions.push(context, repo) : null,
-            icon: Icon(publish ? Icons.cloud_upload_rounded : Icons.north_rounded, size: 16),
-            label: Text(
-              publish ? l10n.bdHeaderPublish : (s.ahead > 0 ? '${l10n.bdHeaderPush} ↑${s.ahead}' : l10n.bdHeaderPush),
-              overflow: TextOverflow.ellipsis,
-            ),
-          )),
-            SizedBox(
-              width: 24,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                tooltip: l10n.bdPushOptionsTooltip,
-                iconSize: 18,
-                icon: const Icon(Icons.arrow_drop_down_rounded),
-                onPressed: () => showPushOptionsSheet(context, repo),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              flex: 3,
+              child: tip(
+                pushTooltip,
+                _SplitButton(
+                  filled: true,
+                  compact: compact,
+                  icon: publish
+                      ? Icons.cloud_upload_rounded
+                      : Icons.north_rounded,
+                  label: pushLabel,
+                  onPressed: canPush
+                      ? () => RepoActions.push(context, repo)
+                      : null,
+                  menuTooltip: l10n.bdPushOptionsTooltip,
+                  onMenu: () => showPushOptionsSheet(context, repo),
+                ),
               ),
             ),
-          ]),
-        ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// 이 폭보다 좁으면 Fetch 는 아이콘만, Pull·Push 는 글자만 보인다.
+const _compactBelow = 360.0;
+
+const _buttonPadding = EdgeInsets.symmetric(horizontal: 10);
+
+/// 한 줄 라벨. 모자라면 줄바꿈이나 말줄임 대신 글자를 줄인다.
+class _OneLine extends StatelessWidget {
+  const _OneLine(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(text, maxLines: 1, softWrap: false),
+  );
+}
+
+/// 본체 단추 + 붙어 있는 ▾ 단추. 본체는 왼쪽만, ▾ 는 오른쪽만 둥글다.
+class _SplitButton extends StatelessWidget {
+  const _SplitButton({
+    required this.filled,
+    required this.compact,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+    required this.menuTooltip,
+    required this.onMenu,
+  });
+
+  final bool filled;
+  final bool compact;
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+  final String menuTooltip;
+  final VoidCallback onMenu;
+
+  static const _radius = Radius.circular(AppRadius.button);
+  static const _arrowWidth = 28.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final mainShape = const RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(left: _radius),
+    );
+    final arrowShape = const RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(right: _radius),
+    );
+    final mainStyle = (filled
+        ? FilledButton.styleFrom
+        : OutlinedButton.styleFrom)(padding: _buttonPadding, shape: mainShape);
+    final child = _OneLine(label);
+    final main = compact
+        ? (filled
+              ? FilledButton(
+                  onPressed: onPressed,
+                  style: mainStyle,
+                  child: child,
+                )
+              : OutlinedButton(
+                  onPressed: onPressed,
+                  style: mainStyle,
+                  child: child,
+                ))
+        : (filled
+              ? FilledButton.icon(
+                  onPressed: onPressed,
+                  style: mainStyle,
+                  icon: Icon(icon, size: 16),
+                  label: child,
+                )
+              : OutlinedButton.icon(
+                  onPressed: onPressed,
+                  style: mainStyle,
+                  icon: Icon(icon, size: 16),
+                  label: child,
+                ));
+
+    // ▾ 는 본체가 켜져 있을 때만 같은 색이고, 꺼져 있어도 눌러서 옵션을 볼 수 있다 (윤곽선 모양).
+    final arrowFilled = filled && onPressed != null;
+    final arrowStyle =
+        (arrowFilled ? FilledButton.styleFrom : OutlinedButton.styleFrom)(
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(_arrowWidth, 0),
+          maximumSize: const Size(_arrowWidth, double.infinity),
+          shape: arrowShape,
+        );
+    const arrowIcon = Icon(Icons.arrow_drop_down_rounded, size: 20);
+    Widget arrow = Tooltip(
+      message: menuTooltip,
+      child: arrowFilled
+          ? FilledButton(onPressed: onMenu, style: arrowStyle, child: arrowIcon)
+          : OutlinedButton(
+              onPressed: onMenu,
+              style: arrowStyle,
+              child: arrowIcon,
+            ),
+    );
+    // 윤곽선끼리는 테두리가 겹치도록 1px 당기고, 채운 단추끼리는 1px 틈을 구분선으로 쓴다.
+    arrow = arrowFilled
+        ? Padding(padding: const EdgeInsets.only(left: 1), child: arrow)
+        : Transform.translate(offset: const Offset(-1, 0), child: arrow);
+
+    // 본체와 ▾ 의 높이를 맞춘다 (▾ 는 최소 높이가 0 이라 그대로 두면 더 낮아진다).
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: main),
+          SizedBox(width: _arrowWidth, child: arrow),
+        ],
       ),
-    ]);
+    );
   }
 }
 

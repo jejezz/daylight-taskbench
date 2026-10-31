@@ -203,6 +203,7 @@
   "workspaceOpenFolder": "다른 폴더 열기…",
   "workspaceCloseRepo": "저장소 닫기",
   "workspaceRecent": "최근 저장소",
+  "moreTooltip": "더 보기",
   "refreshTooltip": "새로 고침",
   "alwaysOnTopTooltip": "항상 위에 표시",
   "branchChipTooltip": "브랜치 {branch}",

@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'최근 저장소'**
   String get workspaceRecent;
 
+  /// No description provided for @moreTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'더 보기'**
+  String get moreTooltip;
+
   /// No description provided for @refreshTooltip.
   ///
   /// In ko, this message translates to:

@@ -1,3 +1,4 @@
+import 'package:daylight_taskbench/core/ui/label_with_shortcut.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -92,7 +93,7 @@ class _Overview extends StatelessWidget {
                     flow.runChecks();
                   },
             icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-            label: Text('${l10n.bdReleaseStart}  ${shortcutLabel('R', shift: true)}'),
+            label: LabelWithShortcut(l10n.bdReleaseStart, shortcutLabel('R', shift: true)),
           ),
         ),
         // 릴리스 관리 (PLAN.md 3.8.6)

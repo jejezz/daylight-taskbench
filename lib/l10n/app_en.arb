@@ -186,6 +186,7 @@
   "workspaceOpenFolder": "Open another folder…",
   "workspaceCloseRepo": "Close repository",
   "workspaceRecent": "Recent repositories",
+  "moreTooltip": "More",
   "refreshTooltip": "Refresh",
   "alwaysOnTopTooltip": "Always on top",
   "branchChipTooltip": "Branch {branch}",

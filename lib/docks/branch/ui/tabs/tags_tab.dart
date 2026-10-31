@@ -1,3 +1,4 @@
+import 'package:daylight_taskbench/core/ui/label_with_shortcut.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daylight_taskbench/core/command_runner.dart';
@@ -56,7 +57,7 @@ class _TagsTabState extends State<TagsTab> {
           trailing: FilledButton.tonalIcon(
             onPressed: repo.busy || repo.status.unborn ? null : () => showCreateTagSheet(context, repo, onOpenReleaseWizard: widget.onOpenReleaseWizard),
             icon: const Icon(Icons.add_rounded, size: 16),
-            label: Text('${l10n.bdTagsNew}  ${shortcutLabel('T')}', overflow: TextOverflow.ellipsis),
+            label: LabelWithShortcut(l10n.bdTagsNew, shortcutLabel('T')),
           ),
         ),
         if (localOnly.isNotEmpty && remote != null)

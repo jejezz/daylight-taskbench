@@ -113,6 +113,17 @@ void main() {
     expect(rect.left - tester.getRect(find.byIcon(Icons.arrow_drop_down_rounded)).right, lessThan(32));
   });
 
+  testWidgets('최소 창(380)에서도 폴더 이름이 먼저 읽힌다: 아이콘 단추에 밀려 "andr…"로 잘리지 않는다', (tester) async {
+    await _pump(tester, size: const Size(380, 560), dir: '/work/android_project_with_a_long_name');
+    expect(tester.takeException(), isNull);
+    final name = find.textContaining('android_project', findRichText: true);
+    expect(name, findsOneWidget);
+    // 이름이 차지하는 폭. 전에는 남는 폭을 Spacer 와 반씩 나눠 약 60px 만 받았다.
+    expect(tester.getSize(name).width, greaterThan(130));
+    // 편집기 단추는 이름 바로 옆에 그대로 있다 (오른쪽 끝으로 밀리지 않는다).
+    expect(tester.getRect(find.byIcon(Icons.description_outlined)).left - tester.getRect(name).right, lessThan(40));
+  });
+
   testWidgets('끌어다 놓기 규칙: 파일만 → 안내, 비-git 폴더 → 열린 저장소 유지 (§1.11)', (tester) async {
     final (ws, _, _) = await _pump(tester);
     late DropResult r;
