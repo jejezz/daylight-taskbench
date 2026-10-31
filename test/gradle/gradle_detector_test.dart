@@ -100,6 +100,15 @@ void main() {
       expect(p.readError, isNull);
     });
 
+    test('루트 build 파일의 `apply false` 선언은 모듈로 치지 않는다 (흔한 Android Studio 구조)', () async {
+      write(tmp, 'settings.gradle.kts', 'rootProject.name = "x"\ninclude(":app")');
+      write(tmp, 'build.gradle.kts', 'plugins {\n    alias(libs.plugins.android.application) apply false\n    id("com.android.library") version "8.2.0" apply false\n}');
+      write(tmp, 'app/build.gradle.kts', 'plugins { id("com.android.application") }');
+      final p = await GradleProject.read(tmp.path);
+      expect(p.modules.map((m) => m.path), [':app']);
+      expect(p.shape, GradleShape.androidApp);
+    });
+
     test('중첩 모듈 경로를 폴더로 바꿔 읽는다', () async {
       write(tmp, 'settings.gradle', "include ':feature:login'");
       write(tmp, 'feature/login/build.gradle', "plugins {\n  id 'com.android.library'\n}");

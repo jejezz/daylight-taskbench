@@ -545,6 +545,18 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - 알려 둠: Windows 설치 프로그램·워크플로는 이 앱 코드로는 아직 한 번도 돌려 보지 않았다(`v0.1.0-rc.1`은 골격 시절 것). 태그 전에 `gh workflow run release.yml --ref <브랜치>`(게시 없음)로 한 번 증명하는 것을 권한다.
 - 앱 아이콘은 Branch Dock의 것을 그대로 쓴다 (사용자 결정). `assets/icon/`에 Branch의 `cat.json`(`app_id: branch-dock`)·`source_glyph.{svg,png}`를 복사하고 `generate_icons.py`로 다시 만들어, 마스터·macOS 세트·Windows `.ico`가 Branch와 바이트 단위로 같다. 판 색은 app id 해시이므로 `cat.json`의 `app_id`를 `daylight-taskbench`로 바꾸지 않는다. 쓰지 않게 된 `tool/icon/icons8-grinning-cat-1024.png`는 지웠다.
 
+### 단계 9 결과 (2026-10-31) — Gradle runner
+
+계획서는 [docs/GRADLE_RUNNER.md](docs/GRADLE_RUNNER.md). `flutter analyze` 0, 테스트 500여 개 통과, Flutty 테스트는 한 줄도 고치지 않았다.
+
+- **9a 공통 추출**: `RunSession`(단계 실행·취소·키), `core/devices`(기기 타입·`AdbDevices`), 출력 1 MiB 꼬리 상한과 갱신 묶기, 취소가 자식 프로세스까지 끝냄, `LogTab`·`InfoChip`·`DeviceListSection`·`OutputSection`·`StepStatusIcon`·`NoticeBanner`·`SectionTitle`을 `core/ui`로. 계획서의 `DeviceWatcher`는 Flutty가 기기를 폴링하지 않아 필요 없었다.
+- **9b 감지·뼈대**: `GradleDetector`(Flutter·React Native의 `android/` 제외), 한 줄 단위의 가벼운 Gradle 읽기, Android 앱/JVM 모양 판정.
+- **9c Run·Devices·Log 탭**: 모듈·변형·동작·옵션 → 실제 실행 명령(미리보기 = 실행) → 시작/중지, `ANDROID_SERIAL`로 기기 하나 지정, `adb shell monkey`로 앱 열기, 일반 Gradle은 작업 선택기. 정확한 변형·작업 목록은 자동이 아니라 **단추를 눌렀을 때만** 읽는다 (펼치기만 해도 Gradle 배포판 다운로드가 시작되면 놀라므로).
+- **9d Doctor 탭**: JDK·SDK·플랫폼·라이선스·adb·래퍼·릴리스 서명 점검, AGP→JDK 작은 힌트, 환경에 없는 `JAVA_HOME`·`ANDROID_HOME`만 실행 때 넣고 미리보기에 보인다.
+- **9e 연결**: 접힌 제목의 요약(실행 중·실패·완료), 색(점검 실패·오래된 점검이면 경고), 실행 중 브랜치 전환은 배너만, `Stop daemons`.
+- **9f**: README(영·한)·스크린샷(`gradle.png`). **실제 앱으로 보다가 잡은 오류**: 루트 build 파일의 `plugins { id("com.android.application") apply false }`를 적용한 플러그인으로 읽어 루트가 Android 앱 모듈이 되던 것 — 실제 Android Studio 구조에서 흔한 형태라 `apply false` 줄은 건너뛰도록 고치고 테스트를 더했다.
+- **알려 둠**: 실제 Gradle·기기로 설치해 열어 본 적은 없다 (테스트와 스크린샷은 가짜 `gradlew`·`adb`). `ANDROID_SERIAL`로 기기를 좁히는 방식과 `monkey`로 앱을 여는 방식은 직접 확인이 필요하다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

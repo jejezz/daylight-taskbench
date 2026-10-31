@@ -55,6 +55,21 @@ void main() {
       expect(parsePlugins('plugins {\n  kotlin("jvm")\n}'), contains('org.jetbrains.kotlin.jvm'));
     });
 
+    test('루트의 `apply false` 선언은 적용한 플러그인이 아니다', () {
+      const root = '''
+plugins {
+    id("com.android.application") version "8.2.0" apply false
+    alias(libs.plugins.android.library) apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+}
+''';
+      final p = parsePlugins(root);
+      expect(isAndroidApplication(p), isFalse);
+      expect(isAndroidLibrary(p), isFalse);
+      expect(p, isEmpty);
+      expect(isAndroidApplication(parsePlugins('plugins {\n  id("com.android.application")\n}')), isTrue);
+    });
+
     test('주석 안의 플러그인은 무시한다', () {
       expect(isAndroidApplication(parsePlugins('// id("com.android.application")\nplugins { }')), isFalse);
     });

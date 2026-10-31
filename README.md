@@ -30,9 +30,10 @@
 
 ## Features
 
-- **One folder, two docks** — pick or drop a Git folder once; the shared bar shows the folder, the current branch and an "open in editor" button, and every dock follows. Switch the branch (in the app or in a terminal) and both docks refresh together.
+- **One folder, many docks** — pick or drop a Git folder once; the shared bar shows the folder, the current branch and an "open in editor" button, and every dock follows. Switch the branch (in the app or in a terminal) and all docks refresh together.
 - **Git & GitHub** — changes and commit box, branches, tags, remotes, a guided release flow, pull requests, CI runs and a history graph, with conflict and stash recovery. Everything runs the real `git` and `gh`; each command is shown.
 - **Flutter Runner: build and install on real devices** — finds the Flutter project in the folder (or one level below), then builds and installs to a USB iPhone, an Android phone or this computer, with hot reload while running. A doctor tab checks Flutter, Xcode, adb, signing certificates and profiles.
+- **Gradle Runner: Android apps and JVM projects** — finds a Gradle project in the folder (or one level below; the `android/` folder of a Flutter project stays with Flutter Runner). For an Android app it builds an APK or bundle, installs to a USB device or running emulator and opens the app; for any other Gradle project it offers build, test, run and a searchable task list. A doctor tab checks the JDK, Android SDK, licences, adb and release signing, and passes the JDK and SDK it found to Gradle as `JAVA_HOME` and `ANDROID_HOME`.
 - **Made to dock** — a 440×960 window (380×560 minimum) that stands beside your editor and remembers its place. Adding more runner docks (Rust, Electron) is one line in a registry.
 - **Light & dark, English & 한국어** — follows the system, or pick one in Settings (colour palette, text size, high contrast).
 
@@ -41,6 +42,7 @@
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="The Git & GitHub card under the shared bar, light and dark">
   <img src="docs/screenshots/detail.png" width="360" alt="Flutter Runner: build and run options for a Flutter project">
+  <img src="docs/screenshots/gradle.png" width="360" alt="Gradle Runner: variant, action and the exact commands for an Android app, light and dark">
 </p>
 
 ## Install
@@ -56,7 +58,7 @@ Download from [**Releases**](https://github.com/jejezz/daylight-taskbench/releas
 
 ## How it works
 
-Daylight Taskbench does not reimplement Git or the Flutter tools — it runs your installed `git`, `gh`, `flutter` and `adb` and shows what they print. One workspace object watches the repository's HEAD and tells every dock when the branch, a commit or a merge state changes, even while a dock is collapsed. A build that is already running is never stopped by a branch switch; you just get a notice.
+Daylight Taskbench does not reimplement Git or the Flutter tools — it runs your installed `git`, `gh`, `flutter`, `gradle` (or the project's wrapper) and `adb` and shows what they print. One workspace object watches the repository's HEAD and tells every dock when the branch, a commit or a merge state changes, even while a dock is collapsed. A build that is already running is never stopped by a branch switch; you just get a notice.
 
 ## Development
 

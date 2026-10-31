@@ -30,9 +30,10 @@
 
 ## 기능
 
-- **폴더 하나, Dock 둘** — Git 폴더를 한 번 고르거나 끌어다 놓으면 공유 막대에 폴더, 현재 브랜치, "편집기에서 열기"가 나오고 두 Dock이 모두 따라갑니다. 앱 안에서든 터미널에서든 브랜치를 바꾸면 두 Dock이 함께 갱신됩니다.
+- **폴더 하나, Dock 여럿** — Git 폴더를 한 번 고르거나 끌어다 놓으면 공유 막대에 폴더, 현재 브랜치, "편집기에서 열기"가 나오고 모든 Dock이 따라갑니다. 앱 안에서든 터미널에서든 브랜치를 바꾸면 모든 Dock이 함께 갱신됩니다.
 - **Git & GitHub** — 변경과 커밋 상자, 브랜치, 태그, 원격, 안내식 릴리스 흐름, PR, CI 실행, 기록 그래프, 충돌·임시 저장 복구. 실제 `git`과 `gh`를 실행하고 명령을 그대로 보여 줍니다.
 - **Flutter Runner: 실기기 빌드·설치** — 폴더(또는 한 단계 아래)에서 Flutter 프로젝트를 찾아 USB iPhone, Android 폰, 이 컴퓨터에 빌드·설치하고, 실행 중에는 핫 리로드를 보냅니다. 점검 탭이 Flutter, Xcode, adb, 서명 인증서·프로파일을 확인합니다.
+- **Gradle Runner: Android 앱·JVM 프로젝트** — 폴더(또는 한 단계 아래)에서 Gradle 프로젝트를 찾습니다 (Flutter 프로젝트의 `android/` 폴더는 Flutter Runner가 맡습니다). Android 앱은 APK·번들을 만들고 USB 기기나 켜진 에뮬레이터에 설치해 앱을 엽니다. 그 밖의 Gradle 프로젝트는 빌드·테스트·실행과 검색되는 작업 목록을 줍니다. 점검 탭이 JDK, Android SDK, 라이선스, adb, 릴리스 서명을 확인하고, 찾은 JDK·SDK 위치를 Gradle에 `JAVA_HOME`·`ANDROID_HOME`으로 넘깁니다.
 - **도킹을 위한 창** — 편집기 옆에 세우는 440×960 창(최소 380×560)이고 위치를 기억합니다. 실행기 Dock(Rust, Electron 등)은 레지스트리에 한 줄이면 더해집니다.
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 설정에서 고릅니다 (색 구성, 글자 크기, 고대비)
 
@@ -41,6 +42,7 @@
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Git & GitHub 칸 (라이트·다크)">
   <img src="docs/screenshots/detail.png" width="360" alt="Flutter Runner: Flutter 프로젝트의 빌드·실행 옵션">
+  <img src="docs/screenshots/gradle.png" width="360" alt="Gradle Runner: Android 앱의 변형·동작과 실제 실행 명령 (라이트·다크)">
 </p>
 
 ## 설치
@@ -56,7 +58,7 @@
 
 ## 동작 방식
 
-Daylight Taskbench는 Git이나 Flutter 도구를 다시 만들지 않습니다. 설치된 `git`, `gh`, `flutter`, `adb`를 실행하고 그 출력을 보여 줄 뿐입니다. 하나의 워크스페이스 객체가 저장소의 HEAD를 지켜보다가 브랜치, 커밋, 병합 상태가 바뀌면 접혀 있는 Dock까지 모두에게 알립니다. 이미 실행 중인 빌드는 브랜치를 바꿔도 멈추지 않고 알림만 띄웁니다.
+Daylight Taskbench는 Git이나 Flutter 도구를 다시 만들지 않습니다. 설치된 `git`, `gh`, `flutter`, `gradle`(또는 프로젝트의 래퍼), `adb`를 실행하고 그 출력을 보여 줄 뿐입니다. 하나의 워크스페이스 객체가 저장소의 HEAD를 지켜보다가 브랜치, 커밋, 병합 상태가 바뀌면 접혀 있는 Dock까지 모두에게 알립니다. 이미 실행 중인 빌드는 브랜치를 바꿔도 멈추지 않고 알림만 띄웁니다.
 
 ## 개발
 

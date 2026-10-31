@@ -34,7 +34,12 @@ String moduleDir(String modulePath) => modulePath.replaceFirst(RegExp(r'^:+'), '
 
 /// 빌드 파일이 적용하는 플러그인 id (소문자). 버전 카탈로그 별칭은 `alias:android.application` 꼴로 담는다.
 Set<String> parsePlugins(String build) {
-  final text = _stripComments(build);
+  // `id("com.android.application") version "8.2.0" apply false` 는 루트 build 파일이 하위 모듈에서 쓸
+  // 플러그인의 버전만 정해 두는 선언이다 — 이 프로젝트가 적용하는 것이 아니므로 뺀다.
+  final text = _stripComments(build)
+      .split('\n')
+      .where((l) => !RegExp(r'\bapply\s*(?:\(\s*)?false\b').hasMatch(l))
+      .join('\n');
   final out = <String>{};
   for (final m in RegExp(r'''\bid\s*\(?\s*["']([\w.\-]+)["']''').allMatches(text)) {
     out.add(m.group(1)!.toLowerCase());
