@@ -95,8 +95,16 @@ class _BranchDockBodyState extends State<BranchDockBody> with TickerProviderStat
     _sync();
   }
 
+  /// [Taskbench에서 달라진 곳] 본문이 저장소(RepoController)를 직접 듣는다. Workspace 는 GitState 가 바뀔 때만
+  /// 알리므로(branch·ahead·changed …) 진행 표시줄(busy)이나 태그·원격·PR 같은 값만 바뀌면 본문이 다시 그려지지
+  /// 않아, 이미 최신인 `git pull` 처럼 상태가 그대로인 작업이 끝나도 진행 표시줄이 남았다.
+  void _onRepo() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _repo?.removeListener(_onRepo);
     if (_isDesktop) windowManager.removeListener(this);
     _autoFetch?.cancel();
     ws.removeListener(_sync);
@@ -126,7 +134,9 @@ class _BranchDockBodyState extends State<BranchDockBody> with TickerProviderStat
     }
     _flow?.dispose();
     _flow = null;
+    _repo?.removeListener(_onRepo);
     _repo = repo;
+    repo?.addListener(_onRepo);
     if (repo != null) {
       final flow = ReleaseFlow(repo, ghReady: ws.environment.ghReady)
         ..onRunFinished = _onReleaseRunFinished
