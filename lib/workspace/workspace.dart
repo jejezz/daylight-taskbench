@@ -16,6 +16,7 @@ import '../core/vscode.dart';
 import '../docks/branch/git/commands.dart';
 import '../docks/branch/repo/environment.dart';
 import '../docks/branch/repo/repo_controller.dart';
+import 'folder_scan.dart';
 import 'git_state.dart';
 
 export '../docks/branch/repo/repo_controller.dart' show OpenFailure;
@@ -54,9 +55,14 @@ class DropResult {
 }
 
 class Workspace extends ChangeNotifier {
-  Workspace({required this.runner, required SharedPreferences prefs, EnvironmentStatus environment = const EnvironmentStatus()})
-      : _prefs = prefs,
-        _env = environment {
+  Workspace({
+    required this.runner,
+    required SharedPreferences prefs,
+    EnvironmentStatus environment = const EnvironmentStatus(),
+    FolderScanner? scanner,
+  })  : _prefs = prefs,
+        _env = environment,
+        _scanner = scanner ?? FolderScanner() {
     _recent = prefs.getStringList(recentKey) ?? const [];
   }
 
@@ -66,6 +72,7 @@ class Workspace extends ChangeNotifier {
 
   final CommandRunner runner;
   final SharedPreferences _prefs;
+  final FolderScanner _scanner;
 
   List<String> _recent = const [];
   EnvironmentStatus _env;
@@ -75,6 +82,7 @@ class Workspace extends ChangeNotifier {
   GitState? _git;
   OpenFailure? _failure;
   String? _failedPath;
+  NotRepoInfo? _notRepoInfo;
   bool _opening = false;
   final _headChanges = StreamController<HeadChange>.broadcast(sync: true);
   final List<bool Function()> _busy = [];
@@ -119,6 +127,9 @@ class Workspace extends ChangeNotifier {
   OpenFailure? get failure => _failure;
   String? get failedPath => _failedPath;
 
+  /// [OpenFailure.notARepository] 일 때 그 폴더의 분석: 하위 저장소 목록, `git init`을 제안해도 되는지 (§1.13).
+  NotRepoInfo? get notRepoInfo => _notRepoInfo;
+
   /// 브랜치 전환·커밋 이동·병합 시작/끝. 같은 저장소 안에서만 나온다.
   Stream<HeadChange> get headChanges => _headChanges.stream;
 
@@ -154,7 +165,9 @@ class Workspace extends ChangeNotifier {
     if (dir == null) return _fail(OpenFailure.notFound, path);
     final top = await runner.run(GitCommands.topLevel, workingDirectory: dir, quiet: true);
     final raw = top.stdout.trim();
-    if (!top.ok || raw.isEmpty) return _fail(OpenFailure.notARepository, dir);
+    if (!top.ok || raw.isEmpty) {
+      return _fail(OpenFailure.notARepository, dir, info: await _scanner.analyze(dir));
+    }
     final newRoot = _normalize(raw) ?? raw;
 
     final current = _git?.root;
@@ -162,6 +175,7 @@ class Workspace extends ChangeNotifier {
       // 같은 저장소(중첩된 worktree는 toplevel 이 달라 여기에 오지 않는다).
       _failure = null;
       _failedPath = null;
+      _notRepoInfo = null;
       if (_selectedDir != null && _same(_selectedDir!, dir)) {
         await _source?.refresh();
         return OpenOutcome.refreshed;
@@ -185,6 +199,7 @@ class Workspace extends ChangeNotifier {
       _selectedDir = dir;
       _failure = null;
       _failedPath = null;
+      _notRepoInfo = null;
       await _remember(dir);
       return OpenOutcome.opened;
     } finally {
@@ -219,6 +234,7 @@ class Workspace extends ChangeNotifier {
 
   /// 저장소를 닫고 시작 화면으로 돌아간다.
   void close() {
+    _notRepoInfo = null;
     _sub?.cancel();
     _source?.dispose();
     _source = null;
@@ -244,10 +260,21 @@ class Workspace extends ChangeNotifier {
     return DropResult(outcome, path: dirs.first, extraIgnored: dirs.length > 1);
   }
 
-  /// 저장소가 아닌 폴더를 git 저장소로 만든다 — 사용자가 "git init" 을 눌렀을 때만.
-  Future<OpenOutcome> initRepository(String path) async {
+  /// 저장소가 아닌 폴더를 git 저장소로 만든다 — 사용자가 확인 창에서 "저장소 만들기"를 눌렀을 때만.
+  /// 하위에 저장소가 있거나 위험한 위치(홈·바탕화면 등)면 **만들지 않는다**. 첫 커밋은 만들지 않는다.
+  /// [flutterGitignore]가 true 이고 `.gitignore`가 아직 없으면 Flutter용 `.gitignore`를 쓴다.
+  Future<OpenOutcome> initRepository(String path, {bool flutterGitignore = false}) async {
+    final info = _notRepoInfo?.path == path ? _notRepoInfo! : await _scanner.analyze(path);
+    if (!info.initAllowed) return _fail(OpenFailure.notARepository, path, info: info);
     final r = await runner.run(GitCommands.init, workingDirectory: path);
-    if (!r.ok) return _fail(OpenFailure.notARepository, path);
+    if (!r.ok) return _fail(OpenFailure.notARepository, path, info: info);
+    if (flutterGitignore && !info.hasGitignore) {
+      try {
+        await File('$path${Platform.pathSeparator}.gitignore').writeAsString(flutterGitignoreTemplate);
+      } on FileSystemException {
+        // .gitignore 를 못 써도 저장소는 만들어졌다 — 그대로 연다.
+      }
+    }
     return open(path);
   }
 
@@ -262,9 +289,10 @@ class Workspace extends ChangeNotifier {
     await _prefs.setStringList(recentKey, _recent);
   }
 
-  OpenOutcome _fail(OpenFailure f, String path) {
+  OpenOutcome _fail(OpenFailure f, String path, {NotRepoInfo? info}) {
     _failure = f;
     _failedPath = path;
+    _notRepoInfo = info;
     notifyListeners();
     return OpenOutcome.failed;
   }

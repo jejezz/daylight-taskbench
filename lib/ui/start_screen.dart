@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 import '../docks/branch/ui/environment_sheet.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../workspace/folder_scan.dart';
 import '../workspace/workspace.dart';
+import 'repo_choice.dart';
 import 'style/app_mark.dart';
 import 'style/glass_card.dart';
 
@@ -45,6 +47,7 @@ class StartScreen extends StatelessWidget {
     final env = workspace.environment;
     final failure = workspace.failure;
     final failed = workspace.failedPath;
+    final info = workspace.notRepoInfo;
     return DecoratedBox(
       decoration: BoxDecoration(
         border: dragging ? Border.all(color: theme.colorScheme.primary, width: 2) : null,
@@ -65,13 +68,20 @@ class StartScreen extends StatelessWidget {
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
-                  failure == OpenFailure.notARepository ? l10n.startNotARepository(failed) : l10n.startNotFound(failed),
+                  _failureMessage(l10n, failure, failed, info),
                   style: TextStyle(color: theme.colorScheme.error),
                 ),
-                if (failure == OpenFailure.notARepository) ...[
+                // §1.13: 하위에 저장소가 있으면 목록에서 고르게 하고 git init 은 권하지 않는다.
+                if (failure == OpenFailure.notARepository && info != null && info.childRepos.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  ChildRepoList(info: info, onPick: onOpenPath),
+                ] else if (failure == OpenFailure.notARepository && info != null && info.initAllowed) ...[
                   const SizedBox(height: AppSpacing.sm),
                   OutlinedButton.icon(
-                    onPressed: () => workspace.initRepository(failed),
+                    onPressed: () async {
+                      final choice = await showInitRepoDialog(context, info);
+                      if (choice != null) await workspace.initRepository(info.path, flutterGitignore: choice.flutterGitignore);
+                    },
                     icon: const Icon(Icons.create_new_folder_outlined, size: 16),
                     label: Text(l10n.startInitRepository),
                   ),
@@ -137,6 +147,14 @@ class StartScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _failureMessage(AppLocalizations l10n, OpenFailure failure, String failed, NotRepoInfo? info) {
+  if (failure != OpenFailure.notARepository) return l10n.startNotFound(failed);
+  if (info == null) return l10n.startNotARepository(failed);
+  if (info.childRepos.isNotEmpty) return l10n.startNotARepositoryHasRepos(failed);
+  if (!info.initAllowed) return l10n.startInitUnsafe(failed);
+  return l10n.startNotARepository(failed);
 }
 
 String _shortcut(String key) => Platform.isMacOS ? '⌘$key' : 'Ctrl+$key';

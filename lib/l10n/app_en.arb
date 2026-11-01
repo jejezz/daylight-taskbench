@@ -163,15 +163,6 @@
   "dropOverlayTitle": "Drop to open the repository",
   "dropMultiple": "Only the first of several folders was opened",
   "dropFilesOnly": "Please drop a folder",
-  "dropNotRepoTitle": "Not a git repository",
-  "dropNotRepoBody": "Make \"{path}\" a git repository? (git init)",
-  "@dropNotRepoBody": {
-    "placeholders": {
-      "path": {
-        "type": "String"
-      }
-    }
-  },
   "dropBusyTitle": "Work is in progress",
   "dropBusyBody": "Opening another repository stops the work in progress.",
   "dropStopAndOpen": "Stop and open",
@@ -3415,5 +3406,19 @@
   "panelEditorOff": "The built-in editor is off",
   "settingsSectionEditor": "Editor",
   "settingsEditorEmbedded": "Use built-in editor",
-  "settingsEditorEmbeddedHelp": "When off, there is no editor panel and files open in external VS Code."
+  "settingsEditorEmbeddedHelp": "When off, there is no editor panel and files open in external VS Code.",
+  "startNotARepositoryHasRepos": "\"{path}\" is not a git repository. Pick one of the repositories inside it.",
+  "@startNotARepositoryHasRepos": {"placeholders": {"path": {"type": "String"}}},
+  "startInitUnsafe": "\"{path}\" is not a safe place to create a repository (home, Desktop, Documents, system folders…). Open a project folder instead.",
+  "@startInitUnsafe": {"placeholders": {"path": {"type": "String"}}},
+  "initRepoTitle": "Create a git repository?",
+  "initRepoBody": "A new repository will be created in this folder:\n{path}",
+  "@initRepoBody": {"placeholders": {"path": {"type": "String"}}},
+  "initRepoCommand": "Command to run",
+  "initRepoGitignore": "Create a Flutter .gitignore",
+  "initRepoNoCommit": "No first commit is made. Commit your changes in the Git & GitHub panel.",
+  "initRepoConfirm": "Create repository",
+  "chooseRepoTitle": "Choose a repository",
+  "chooseRepoBody": "There are several repositories inside \"{path}\".",
+  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}}
 }

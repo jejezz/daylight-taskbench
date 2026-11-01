@@ -23,6 +23,7 @@ import '../../workspace/git_state.dart';
 import '../../workspace/workspace.dart';
 import '../../docks/branch/ui/branch_dock_body.dart' show branchTabBranches;
 import '../../docks/branch/ui/onboarding.dart';
+import '../repo_choice.dart';
 import '../start_screen.dart';
 import '../../window/window_mode.dart';
 import '../style/aurora_background.dart';
@@ -210,25 +211,25 @@ class _TaskbenchShellState extends State<TaskbenchShell>
         if (ws.isOpen &&
             ws.failure == OpenFailure.notARepository &&
             ws.failedPath != null) {
-          final target = ws.failedPath!;
-          final init = await showDialog<bool>(
-            context: context,
-            builder: (c) => AlertDialog(
-              title: Text(l10n.dropNotRepoTitle),
-              content: Text(l10n.dropNotRepoBody(target)),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(c, false),
-                  child: Text(l10n.commonCancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(c, true),
-                  child: const Text('git init'),
-                ),
-              ],
-            ),
-          );
-          if (init == true) await ws.initRepository(target);
+          final info = ws.notRepoInfo;
+          if (info == null) break;
+          if (info.childRepos.isNotEmpty) {
+            // 하위에 저장소가 여럿 — git init 대신 그 목록에서 고른다 (§1.13).
+            final picked = await showChildRepoChooser(context, info);
+            if (picked != null && mounted) await _openPath(picked);
+          } else if (info.initAllowed) {
+            final choice = await showInitRepoDialog(context, info);
+            if (choice != null) {
+              await ws.initRepository(
+                info.path,
+                flutterGitignore: choice.flutterGitignore,
+              );
+            }
+          } else {
+            messenger.showSnackBar(
+              SnackBar(content: Text(l10n.startInitUnsafe(info.path))),
+            );
+          }
         }
       case _:
         break;

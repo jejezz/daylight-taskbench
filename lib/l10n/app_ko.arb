@@ -180,15 +180,6 @@
   "dropOverlayTitle": "여기에 놓아 저장소 열기",
   "dropMultiple": "폴더 여러 개 중 첫 번째만 열었습니다",
   "dropFilesOnly": "폴더를 놓아 주세요",
-  "dropNotRepoTitle": "git 저장소가 아닙니다",
-  "dropNotRepoBody": "\"{path}\"를 git 저장소로 만들까요? (git init)",
-  "@dropNotRepoBody": {
-    "placeholders": {
-      "path": {
-        "type": "String"
-      }
-    }
-  },
   "dropBusyTitle": "실행 중인 작업이 있습니다",
   "dropBusyBody": "다른 저장소를 열면 실행 중인 작업이 중지됩니다.",
   "dropStopAndOpen": "중지하고 열기",
@@ -3467,5 +3458,19 @@
   "panelEditorOff": "내장 에디터를 사용하지 않습니다",
   "settingsSectionEditor": "에디터",
   "settingsEditorEmbedded": "내장 에디터 사용",
-  "settingsEditorEmbeddedHelp": "끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다."
+  "settingsEditorEmbeddedHelp": "끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다.",
+  "startNotARepositoryHasRepos": "\"{path}\"는 git 저장소가 아닙니다. 안에 있는 저장소를 골라 여세요.",
+  "@startNotARepositoryHasRepos": {"placeholders": {"path": {"type": "String"}}},
+  "startInitUnsafe": "\"{path}\"는 저장소로 만들지 않는 편이 안전한 위치입니다(홈·바탕화면·문서·시스템 폴더 등). 프로젝트 폴더를 열어 주세요.",
+  "@startInitUnsafe": {"placeholders": {"path": {"type": "String"}}},
+  "initRepoTitle": "git 저장소로 만들까요?",
+  "initRepoBody": "이 폴더에 새 저장소를 만듭니다:\n{path}",
+  "@initRepoBody": {"placeholders": {"path": {"type": "String"}}},
+  "initRepoCommand": "실행할 명령",
+  "initRepoGitignore": "Flutter용 .gitignore 만들기",
+  "initRepoNoCommit": "첫 커밋은 만들지 않습니다. 변경은 Git & GitHub 칸에서 커밋하세요.",
+  "initRepoConfirm": "저장소 만들기",
+  "chooseRepoTitle": "저장소 고르기",
+  "chooseRepoBody": "\"{path}\" 안에 저장소가 여럿 있습니다.",
+  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}}
 }
