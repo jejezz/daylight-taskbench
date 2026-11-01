@@ -35,9 +35,13 @@
 - **Flutter Runner: build and install on real devices** — finds the Flutter project in the folder (or one level below), then builds and installs to a USB iPhone, an Android phone or this computer, with hot reload while running. A doctor tab checks Flutter, Xcode, adb, signing certificates and profiles.
 - **Gradle Runner: Android apps and JVM projects** — finds a Gradle project in the folder (or one level below; the `android/` folder of a Flutter project stays with Flutter Runner). For an Android app it builds an APK or bundle, installs to a USB device or running emulator and opens the app; for any other Gradle project it offers build, test, run and a searchable task list. A doctor tab checks the JDK, Android SDK, licences, adb and release signing, and passes the JDK and SDK it found to Gradle as `JAVA_HOME` and `ANDROID_HOME`.
 - **Made to dock** — a 440×960 window (380×560 minimum) that stands beside your editor and remembers its place. Adding more runner docks (Rust, Electron) is one line in a registry.
+- **Expands into a workbench** — the Panels button (top bar) adds a **file explorer**, a **code editor** and a **terminal** to the left of the same dock column; the window widens, the dock column stays as it was. Each panel has a close button and a draggable width, and the editor and terminal share the centre (switch with a toggle). Turning every panel off returns to the narrow docked window; the app always starts docked.
+- **Built-in editor is optional** — syntax highlighting, tabs, find, format (Dart, JSON), Markdown preview, indent guides and format-on-save. Turn off *Use built-in editor* in Settings to keep opening files in VS Code (or your editor command) instead. Unsaved edits are protected on quit and across branch switches.
+- **Build errors jump to the code** — file locations in a command's full output (`lib/main.dart:12:5`, `package:…`) are links that open the file at that line.
+- **Shortcuts** — `⌘/Ctrl+Shift+E` explorer, `⌘/Ctrl+Shift+D` editor, `Ctrl+\`` terminal, `⌘/Ctrl+Shift+O` open by file name; the menu shows them.
 - **Light & dark, English & 한국어** — follows the system, or pick one in Settings (colour palette, text size, high contrast).
 
-> Daylight Taskbench replaces the standalone **Branch Dock** and **Flutty Dock** apps, which are no longer developed. Both docks live here now, with the same features, sharing one folder and one header.
+> Daylight Taskbench replaces the standalone **Branch Dock** and **Flutty Dock** apps, and also **Daylight Workbench** (its explorer, editor and terminal now live here as optional panels; its pre-merge verification gate was not carried over). Those apps are no longer developed.
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="The Git & GitHub card under the shared bar, light and dark">
