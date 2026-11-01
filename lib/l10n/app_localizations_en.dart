@@ -5082,4 +5082,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String chooseRepoBody(String path) {
     return 'There are several repositories inside \"$path\".';
   }
+
+  @override
+  String get explorerRefresh => 'Refresh tree';
+
+  @override
+  String explorerQuickOpenTooltip(String shortcut) {
+    return 'Open by file name ($shortcut)';
+  }
+
+  @override
+  String get quickOpenHint => 'Type part of a file name';
+
+  @override
+  String get quickOpenNoMatch => 'No matching files';
+
+  @override
+  String get quickOpenLoading => 'Reading the file list…';
 }
