@@ -4755,4 +4755,34 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get fdOperationInProgress =>
       '병합·리베이스 등이 진행 중입니다. 충돌 중에는 빌드 결과를 믿을 수 없습니다.';
+
+  @override
+  String get panelsTooltip => '패널';
+
+  @override
+  String get panelExplorer => '탐색기';
+
+  @override
+  String get panelEditor => '에디터';
+
+  @override
+  String get panelTerminal => '터미널';
+
+  @override
+  String get panelPlaceholderBody => '이 패널은 다음 단계에서 연결됩니다.';
+
+  @override
+  String get panelsDockHint => '패널을 모두 닫으면 도킹 모드로 돌아갑니다';
+
+  @override
+  String get panelEditorOff => '내장 에디터를 사용하지 않습니다';
+
+  @override
+  String get settingsSectionEditor => '에디터';
+
+  @override
+  String get settingsEditorEmbedded => '내장 에디터 사용';
+
+  @override
+  String get settingsEditorEmbeddedHelp => '끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다.';
 }

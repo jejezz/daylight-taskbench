@@ -24,8 +24,11 @@ import '../../workspace/workspace.dart';
 import '../../docks/branch/ui/branch_dock_body.dart' show branchTabBranches;
 import '../../docks/branch/ui/onboarding.dart';
 import '../start_screen.dart';
+import '../../window/window_mode.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
+import 'panels/expanded_area.dart';
+import 'panels/panel_layout.dart';
 import 'shared_bar.dart';
 
 class TaskbenchShell extends StatefulWidget {
@@ -34,12 +37,20 @@ class TaskbenchShell extends StatefulWidget {
     required this.workspace,
     required this.docks,
     required this.onAbout,
+    required this.panels,
+    this.windowMode,
     this.pickFolder,
   });
 
   final Workspace workspace;
   final List<DockModule> docks;
   final VoidCallback onAbout;
+
+  /// 확장 패널 켜짐 상태 — 모드(도킹/확장)는 여기서 파생된다 (§1.13).
+  final PanelLayout panels;
+
+  /// 모드가 바뀔 때 창 크기를 맞추는 쪽. 테스트에서는 null.
+  final WindowModeController? windowMode;
 
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
@@ -57,6 +68,10 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   String? _expandedId;
   bool _dragging = false;
   bool _pinned = false;
+
+  /// 도크 열은 도킹↔확장 전환에서 같은 State 를 유지한다 (펼친 칸·스크롤·실행 중 빌드가 그대로).
+  final _dockColumnKey = GlobalKey(debugLabel: 'dockColumn');
+  bool? _lastExpanded;
 
   Workspace get ws => widget.workspace;
   bool get _desktop =>
@@ -81,6 +96,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     ws.pickFolderHandler = _pickAndOpen;
     ws.addListener(_syncTitle);
     _syncTitle();
+    widget.panels.addListener(_syncWindowMode);
+    _lastExpanded = widget.panels.expanded;
+  }
+
+  /// 패널이 켜지거나 꺼져 모드가 바뀌면 창 크기를 그 모드의 크기로 바꾼다 (모드별로 기억).
+  void _syncWindowMode() {
+    final expanded = widget.panels.expanded;
+    if (expanded == _lastExpanded) return;
+    _lastExpanded = expanded;
+    widget.windowMode?.switchTo(expanded ? WindowMode.expanded : WindowMode.dock);
   }
 
   String? _title;
@@ -107,6 +132,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   @override
   void dispose() {
     ws.removeListener(_syncTitle);
+    widget.panels.removeListener(_syncWindowMode);
     if (ws.openHandler == _openPath) ws.openHandler = null;
     if (ws.pickFolderHandler == _pickAndOpen) ws.pickFolderHandler = null;
     ws.unregisterBusyCheck(_anyBusy);
@@ -251,6 +277,25 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     return TaskbenchMood.idle;
   }
 
+  /// 도킹 모드면 도크 열이 창 전체를 쓰고, 확장 모드면 왼쪽에 확장 영역이 붙고 도크 열은 고정 폭이 된다 (§1.13).
+  /// 도크 열은 [GlobalKey]를 달아 두 모드 사이를 오가도 State 가 유지된다.
+  Widget _body(Widget dockColumn) {
+    final panels = widget.panels;
+    if (!panels.expanded) return dockColumn;
+    // 창이 확장 최소 폭보다 좁은 순간(모드 전환으로 창 크기를 바꾸는 중)에도 넘치지 않게 도크 열 폭을 줄인다.
+    return LayoutBuilder(
+      builder: (context, c) => Row(
+        children: [
+          Expanded(child: ExpandedArea(panels: panels)),
+          SizedBox(
+            width: dockColumnWidth.clamp(0, c.maxWidth * 0.65),
+            child: dockColumn,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -286,7 +331,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
             _onDrop([for (final f in d.files) f.path]);
           },
           child: ListenableBuilder(
-            listenable: Listenable.merge([ws, ...widget.docks, settings]),
+            listenable: Listenable.merge([ws, ...widget.docks, settings, widget.panels]),
             builder: (context, _) {
               final open = ws.isOpen;
               final shown = open
@@ -314,6 +359,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                   onOpenRecent: _openPath,
                                   onSettings: () => showSettingsDialog(context),
                                   onAbout: widget.onAbout,
+                                  panels: widget.panels,
                                   alwaysOnTop: _pinned,
                                   onToggleAlwaysOnTop: _desktop
                                       ? _togglePin
@@ -334,11 +380,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                 },
                               ),
                               Expanded(
-                                child: DockAccordion(
-                                  docks: shown,
-                                  workspace: ws,
-                                  expandedId: expanded,
-                                  onSelect: _select,
+                                child: _body(
+                                  KeyedSubtree(
+                                    key: _dockColumnKey,
+                                    child: DockAccordion(
+                                      docks: shown,
+                                      workspace: ws,
+                                      expandedId: expanded,
+                                      onSelect: _select,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ] else

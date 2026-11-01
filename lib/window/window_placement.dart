@@ -112,12 +112,15 @@ abstract final class PlacementMath {
 /// 마지막 창 위치를 기억하고 다시 켤 때 복원한다 (Windows). 기억한 곳이 없거나 그 모니터가 없어졌으면
 /// 주 모니터 가운데에 연다.
 class WindowPlacement with WindowListener {
-  WindowPlacement(this._prefs, {required this.defaultSize, this.isDocked});
+  WindowPlacement(this._prefs, {required this.defaultSize, this.isDocked, this.key = defaultKey});
 
   /// Windows에서만 쓴다. 다른 OS는 window_manager의 `center`가 올바르게 동작한다.
   static bool get enabled => Platform.isWindows;
 
-  static const _key = 'window_placement';
+  static const defaultKey = 'window_placement';
+
+  /// 저장 키. 모드(도킹·확장)마다 따로 기억하려고 바꿀 수 있다.
+  final String key;
 
   final SharedPreferences _prefs;
   final Size defaultSize;
@@ -135,7 +138,7 @@ class WindowPlacement with WindowListener {
   }
 
   SavedPlacement? _load() {
-    final raw = _prefs.getString(_key);
+    final raw = _prefs.getString(key);
     if (raw == null) return null;
     try {
       return SavedPlacement.fromJson(jsonDecode(raw));
@@ -232,7 +235,7 @@ class WindowPlacement with WindowListener {
         );
       }
       final last = _last;
-      if (last != null) await _prefs.setString(_key, jsonEncode(last.toJson()));
+      if (last != null) await _prefs.setString(key, jsonEncode(last.toJson()));
     } catch (e) {
       debugPrint('window placement save failed: $e');
     }

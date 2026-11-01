@@ -6,6 +6,7 @@ import 'package:daylight_taskbench/docks/flutty/flutty_dock.dart';
 import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
+import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
 import 'package:daylight_taskbench/ui/shell/shared_bar.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
@@ -33,7 +34,7 @@ Future<(Workspace, FakeGitStateSource, List<DockModule>)> _pump(WidgetTester tes
       locale: const Locale('ko'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: TaskbenchShell(workspace: ws, docks: docks, onAbout: () {}),
+      home: TaskbenchShell(workspace: ws, docks: docks, onAbout: () {}, panels: PanelLayout(await SharedPreferences.getInstance())),
     ),
   ));
   await tester.pumpAndSettle();

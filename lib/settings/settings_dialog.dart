@@ -13,6 +13,7 @@ import '../core/tool_paths.dart';
 import '../docks/branch/repo/repo_prefs.dart';
 import '../docks/flutty/secrets/secrets_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../ui/shell/panels/panel_layout.dart';
 import '../workspace/workspace_scope.dart';
 import 'app_settings.dart';
 import 'settings_menus.dart';
@@ -20,6 +21,7 @@ import 'settings_menus.dart';
 enum SettingsSection {
   appearance(Icons.palette_outlined),
   language(Icons.language_rounded),
+  editor(Icons.edit_note_rounded),
   branch(Icons.call_split_rounded),
   tools(Icons.build_outlined),
   secrets(Icons.key_rounded);
@@ -31,6 +33,7 @@ enum SettingsSection {
   String label(AppLocalizations l10n) => switch (this) {
     appearance => l10n.settingsSectionAppearance,
     language => l10n.settingsSectionLanguage,
+    editor => l10n.settingsSectionEditor,
     branch => l10n.dockBranchTitle,
     tools => l10n.settingsSectionTools,
     secrets => l10n.fdSecretsTitle,
@@ -62,6 +65,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
 
   /// 칸·도구 구역은 해당 객체가 앱 루트에서 내려와 있을 때만 (설정 창이 앱 안 어디서나 같은 코드로 뜬다).
   bool _available(SettingsSection s) => switch (s) {
+    SettingsSection.editor => PanelLayoutScope.maybeOf(context) != null,
     SettingsSection.branch => WorkspaceScope.maybeOf(context) != null,
     SettingsSection.tools => ToolPathsScope.maybeOf(context) != null,
     // macOS 릴리스 서명 시크릿 — Windows 릴리스는 시크릿이 필요 없다 (Flutty 원본과 같은 규칙).
@@ -159,6 +163,7 @@ class _Content extends StatelessWidget {
     child: switch (section) {
       SettingsSection.appearance => const _AppearanceSection(),
       SettingsSection.language => const _LanguageSection(),
+      SettingsSection.editor => const _EditorSection(),
       SettingsSection.branch => const _BranchSection(),
       SettingsSection.tools => const _ToolsSection(),
       SettingsSection.secrets => const SecretsPanel(),
@@ -256,6 +261,25 @@ class _AppearanceSection extends StatelessWidget {
           onChanged: settings.setStateTint,
         ),
       ],
+    );
+  }
+}
+
+/// 에디터 구역 (§1.13): 내장 에디터를 쓸지. 끄면 에디터 패널이 없고 파일은 외부 VS Code 로 열린다.
+class _EditorSection extends StatelessWidget {
+  const _EditorSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final panels = PanelLayoutScope.of(context);
+    return SwitchListTile(
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      title: Text(l10n.settingsEditorEmbedded),
+      subtitle: Text(l10n.settingsEditorEmbeddedHelp),
+      value: panels.embeddedEditor,
+      onChanged: panels.setEmbeddedEditor,
     );
   }
 }

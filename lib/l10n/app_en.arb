@@ -3405,5 +3405,15 @@
     }
   },
   "fdDoctorStale": "The branch changed. These results are from the previous branch — run the check again.",
-  "fdOperationInProgress": "A merge or rebase is in progress. Build results are unreliable while conflicts exist."
+  "fdOperationInProgress": "A merge or rebase is in progress. Build results are unreliable while conflicts exist.",
+  "panelsTooltip": "Panels",
+  "panelExplorer": "Explorer",
+  "panelEditor": "Editor",
+  "panelTerminal": "Terminal",
+  "panelPlaceholderBody": "This panel is connected in a later step.",
+  "panelsDockHint": "Close all panels to return to dock mode",
+  "panelEditorOff": "The built-in editor is off",
+  "settingsSectionEditor": "Editor",
+  "settingsEditorEmbedded": "Use built-in editor",
+  "settingsEditorEmbeddedHelp": "When off, there is no editor panel and files open in external VS Code."
 }

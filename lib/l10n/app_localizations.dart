@@ -8089,6 +8089,66 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'병합·리베이스 등이 진행 중입니다. 충돌 중에는 빌드 결과를 믿을 수 없습니다.'**
   String get fdOperationInProgress;
+
+  /// No description provided for @panelsTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'패널'**
+  String get panelsTooltip;
+
+  /// No description provided for @panelExplorer.
+  ///
+  /// In ko, this message translates to:
+  /// **'탐색기'**
+  String get panelExplorer;
+
+  /// No description provided for @panelEditor.
+  ///
+  /// In ko, this message translates to:
+  /// **'에디터'**
+  String get panelEditor;
+
+  /// No description provided for @panelTerminal.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널'**
+  String get panelTerminal;
+
+  /// No description provided for @panelPlaceholderBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 패널은 다음 단계에서 연결됩니다.'**
+  String get panelPlaceholderBody;
+
+  /// No description provided for @panelsDockHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'패널을 모두 닫으면 도킹 모드로 돌아갑니다'**
+  String get panelsDockHint;
+
+  /// No description provided for @panelEditorOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'내장 에디터를 사용하지 않습니다'**
+  String get panelEditorOff;
+
+  /// No description provided for @settingsSectionEditor.
+  ///
+  /// In ko, this message translates to:
+  /// **'에디터'**
+  String get settingsSectionEditor;
+
+  /// No description provided for @settingsEditorEmbedded.
+  ///
+  /// In ko, this message translates to:
+  /// **'내장 에디터 사용'**
+  String get settingsEditorEmbedded;
+
+  /// No description provided for @settingsEditorEmbeddedHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다.'**
+  String get settingsEditorEmbeddedHelp;
 }
 
 class _AppLocalizationsDelegate

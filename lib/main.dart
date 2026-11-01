@@ -29,7 +29,8 @@ import 'workspace/workspace_scope.dart';
 import 'theme/app_theme.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
-import 'window/window_placement.dart';
+import 'window/window_mode.dart';
+import 'ui/shell/panels/panel_layout.dart';
 
 final bool _isDesktop =
     Platform.isMacOS || Platform.isWindows || Platform.isLinux;
@@ -42,13 +43,19 @@ Future<void> main() async {
   // 테마가 입혀지지 않은 빈 화면이 잠깐 보였다가 바뀌는 깜빡임이 생기므로, 첫 프레임 뒤로 미룬다
   // (window-placement.md §5 — windows/runner/flutter_window.cpp의 자동 show()도 지워야 한다).
   Future<void> Function()? showWindow;
+  final prefs = await SharedPreferences.getInstance();
+  // 패널이 하나라도 켜져 있으면 확장 모드로 시작한다 (§1.13) — 창 크기도 그 모드의 것을 쓴다.
+  final panels = PanelLayout(prefs);
+  final windowMode = WindowModeController(
+    prefs,
+    initial: panels.expanded ? WindowMode.expanded : WindowMode.dock,
+  );
   if (_isDesktop) {
     await windowManager.ensureInitialized();
-    showWindow = await _prepareWindow();
+    showWindow = await _prepareWindow(windowMode);
   }
 
   final settings = await AppSettings.load();
-  final prefs = await SharedPreferences.getInstance();
   final workspace = Workspace(
     runner: CommandRunner(log: CommandLog(), path: await resolvePath()),
     prefs: prefs,
@@ -72,6 +79,8 @@ Future<void> main() async {
         updates: updates,
         workspace: workspace,
         tools: tools,
+        panels: panels,
+        windowMode: _isDesktop ? windowMode : null,
       ),
     ),
   );
@@ -94,18 +103,15 @@ Future<void> _nextFrame() {
 /// 창 크기·위치를 계산해 둔다. 창을 실제로 보이려면 돌려준 함수를 불러야 한다(첫 프레임이 그려진
 /// 뒤에 부르는 것은 호출하는 쪽의 몫). ui-ux.md §5: 최소 크기는 960×600 이하(1366×768 노트북).
 /// 위치는 center: true 대신 WindowPlacement — window-placement.md.
-Future<Future<void> Function()> _prepareWindow() async {
-  const size = Size(440, 960); // PLAN.md §1.5: 편집기 옆 세로 창
-  WindowPlacement? placement;
-  if (WindowPlacement.enabled) {
-    placement = WindowPlacement(
-      await SharedPreferences.getInstance(),
-      defaultSize: size,
-    );
-  }
+Future<Future<void> Function()> _prepareWindow(
+  WindowModeController windowMode,
+) async {
+  // PLAN.md §1.5·§1.13: 도킹은 편집기 옆 세로 창, 확장은 넓은 작업대. 모드별로 기억한 크기를 쓴다.
+  final size = windowMode.initialSize;
+  final placement = windowMode.placement;
   final options = WindowOptions(
     size: size,
-    minimumSize: const Size(380, 560),
+    minimumSize: windowMode.spec.minimum,
     center: placement == null,
     title: AppIdentity.displayName,
   );
@@ -121,7 +127,7 @@ Future<Future<void> Function()> _prepareWindow() async {
     await _nextFrame();
     await windowManager.show();
     await windowManager.focus();
-    placement?.attach();
+    windowMode.attach();
   };
 }
 
@@ -132,8 +138,12 @@ class App extends StatefulWidget {
     this.updates,
     required this.workspace,
     required this.tools,
+    required this.panels,
+    this.windowMode,
   });
 
+  final PanelLayout panels;
+  final WindowModeController? windowMode;
   final AppSettings settings;
   final Workspace workspace;
   final ToolPaths tools;
@@ -199,7 +209,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return WorkspaceScope(
+    return PanelLayoutScope(
+      panels: widget.panels,
+      child: WorkspaceScope(
       workspace: widget.workspace,
       child: ToolPathsScope(
         tools: widget.tools,
@@ -244,10 +256,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 workspace: widget.workspace,
                 docks: _docks,
                 onAbout: _showAbout,
+                panels: widget.panels,
+                windowMode: widget.windowMode,
               ),
             ),
           ),
         ),
+      ),
       ),
     );
   }

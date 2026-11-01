@@ -5020,4 +5020,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get fdOperationInProgress =>
       'A merge or rebase is in progress. Build results are unreliable while conflicts exist.';
+
+  @override
+  String get panelsTooltip => 'Panels';
+
+  @override
+  String get panelExplorer => 'Explorer';
+
+  @override
+  String get panelEditor => 'Editor';
+
+  @override
+  String get panelTerminal => 'Terminal';
+
+  @override
+  String get panelPlaceholderBody => 'This panel is connected in a later step.';
+
+  @override
+  String get panelsDockHint => 'Close all panels to return to dock mode';
+
+  @override
+  String get panelEditorOff => 'The built-in editor is off';
+
+  @override
+  String get settingsSectionEditor => 'Editor';
+
+  @override
+  String get settingsEditorEmbedded => 'Use built-in editor';
+
+  @override
+  String get settingsEditorEmbeddedHelp =>
+      'When off, there is no editor panel and files open in external VS Code.';
 }
