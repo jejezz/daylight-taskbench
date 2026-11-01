@@ -159,9 +159,7 @@ class WorkspaceBar extends StatelessWidget {
               position: PopupMenuPosition.under,
               padding: EdgeInsets.zero,
               onSelected: (v) {
-                if (v == expandChoice) {
-                  panels!.toggleAll();
-                } else if (v == 'refresh') {
+                if (v == 'refresh') {
                   workspace.refresh();
                 } else {
                   onToggleAlwaysOnTop?.call();
@@ -188,10 +186,6 @@ class WorkspaceBar extends StatelessWidget {
                       Text(l10n.alwaysOnTopTooltip),
                     ]),
                   ),
-                if (panels != null && root != null) ...[
-                  const PopupMenuDivider(),
-                  expandMenuItem(context, panels!),
-                ],
               ],
               child: SizedBox(
                 width: _narrowIconWidth,
@@ -217,10 +211,11 @@ class WorkspaceBar extends StatelessWidget {
           ],
           // 확장(탐색기·에디터·터미널 모두 켜기/끄기) — 도킹 모드에서도 보여야 해서 앱 바에 둔다 (§1.13).
           // 좁은 막대(도킹 최소 폭)에서는 폴더 이름에 자리를 주려고 "더 보기" 메뉴 안에 넣는다.
-          if (panels != null && root != null && !narrow)
+          // 좁아도 가리지 않는다 — 가장 자주 쓰는 단추라 "더 보기" 메뉴에 넣지 않는다.
+          if (panels != null && root != null)
             ListenableBuilder(
               listenable: panels!,
-              builder: (_, _) => ExpandButton(panels: panels!),
+              builder: (_, _) => ExpandButton(panels: panels!, compact: narrow),
             ),
           IconButton(
             padding: narrow ? EdgeInsets.zero : null,
