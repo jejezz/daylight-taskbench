@@ -3478,5 +3478,20 @@
   "@explorerQuickOpenTooltip": {"placeholders": {"shortcut": {"type": "String"}}},
   "quickOpenHint": "파일 이름 일부를 입력하세요",
   "quickOpenNoMatch": "맞는 파일이 없습니다",
-  "quickOpenLoading": "파일 목록을 읽는 중…"
+  "quickOpenLoading": "파일 목록을 읽는 중…",
+  "terminalCloseTooltip": "터미널 닫기",
+  "terminalStartError": "셸을 시작하지 못했습니다: {error}",
+  "@terminalStartError": {"placeholders": {"error": {"type": "String"}}},
+  "terminalExited": "{shell} 종료됨 (코드 {code})",
+  "@terminalExited": {"placeholders": {"shell": {"type": "String"}, "code": {"type": "int"}}},
+  "terminalRestart": "다시 시작",
+  "terminalNoShells": "쓸 수 있는 셸을 찾지 못했습니다",
+  "terminalNew": "새 터미널",
+  "terminalEmpty": "열린 터미널이 없습니다",
+  "terminalEmptyHint": "+ 를 눌러 새 터미널을 엽니다",
+  "settingsSectionTerminal": "터미널",
+  "settingsTerminalFontSize": "글자 크기",
+  "settingsTerminalScrollback": "스크롤백 줄 수",
+  "settingsTerminalHelp": "새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.",
+  "panelClose": "패널 닫기"
 }

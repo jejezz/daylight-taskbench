@@ -13,6 +13,7 @@ import '../core/tool_paths.dart';
 import '../docks/branch/repo/repo_prefs.dart';
 import '../docks/flutty/secrets/secrets_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../terminal/terminal_settings.dart';
 import '../ui/shell/panels/panel_layout.dart';
 import '../workspace/workspace_scope.dart';
 import 'app_settings.dart';
@@ -22,6 +23,7 @@ enum SettingsSection {
   appearance(Icons.palette_outlined),
   language(Icons.language_rounded),
   editor(Icons.edit_note_rounded),
+  terminal(Icons.terminal_rounded),
   branch(Icons.call_split_rounded),
   tools(Icons.build_outlined),
   secrets(Icons.key_rounded);
@@ -34,6 +36,7 @@ enum SettingsSection {
     appearance => l10n.settingsSectionAppearance,
     language => l10n.settingsSectionLanguage,
     editor => l10n.settingsSectionEditor,
+    terminal => l10n.settingsSectionTerminal,
     branch => l10n.dockBranchTitle,
     tools => l10n.settingsSectionTools,
     secrets => l10n.fdSecretsTitle,
@@ -66,6 +69,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   /// 칸·도구 구역은 해당 객체가 앱 루트에서 내려와 있을 때만 (설정 창이 앱 안 어디서나 같은 코드로 뜬다).
   bool _available(SettingsSection s) => switch (s) {
     SettingsSection.editor => PanelLayoutScope.maybeOf(context) != null,
+    SettingsSection.terminal => TerminalSettingsScope.maybeOf(context) != null,
     SettingsSection.branch => WorkspaceScope.maybeOf(context) != null,
     SettingsSection.tools => ToolPathsScope.maybeOf(context) != null,
     // macOS 릴리스 서명 시크릿 — Windows 릴리스는 시크릿이 필요 없다 (Flutty 원본과 같은 규칙).
@@ -164,6 +168,7 @@ class _Content extends StatelessWidget {
       SettingsSection.appearance => const _AppearanceSection(),
       SettingsSection.language => const _LanguageSection(),
       SettingsSection.editor => const _EditorSection(),
+      SettingsSection.terminal => const _TerminalSection(),
       SettingsSection.branch => const _BranchSection(),
       SettingsSection.tools => const _ToolsSection(),
       SettingsSection.secrets => const SecretsPanel(),
@@ -280,6 +285,56 @@ class _EditorSection extends StatelessWidget {
       subtitle: Text(l10n.settingsEditorEmbeddedHelp),
       value: panels.embeddedEditor,
       onChanged: panels.setEmbeddedEditor,
+    );
+  }
+}
+
+/// 터미널 구역 (§1.13): 글자 크기(바로 적용)와 스크롤백(새 탭부터). 색은 설정 없이 늘 현재 테마를 따른다.
+class _TerminalSection extends StatelessWidget {
+  const _TerminalSection();
+
+  static const _scrollbackChoices = [1000, 5000, 10000, 50000, 100000];
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final settings = TerminalSettingsScope.maybeOf(context)!;
+    final choices = {..._scrollbackChoices, settings.scrollback}.toList()..sort();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Heading(l10n.settingsTerminalFontSize),
+        Row(
+          children: [
+            Expanded(
+              child: Slider(
+                min: TerminalSettings.minSize,
+                max: TerminalSettings.maxSize,
+                divisions: (TerminalSettings.maxSize - TerminalSettings.minSize).round(),
+                value: settings.size,
+                label: settings.size.round().toString(),
+                onChanged: settings.setSize,
+              ),
+            ),
+            SizedBox(
+              width: 36,
+              child: Text('${settings.size.round()}', textAlign: TextAlign.end),
+            ),
+          ],
+        ),
+        _Heading(l10n.settingsTerminalScrollback),
+        DropdownButton<int>(
+          value: settings.scrollback,
+          items: [
+            for (final n in choices) DropdownMenuItem(value: n, child: Text('$n')),
+          ],
+          onChanged: (v) {
+            if (v != null) settings.setScrollback(v);
+          },
+        ),
+        const SizedBox(height: 8),
+        Text(l10n.settingsTerminalHelp, style: Theme.of(context).textTheme.bodySmall),
+      ],
     );
   }
 }

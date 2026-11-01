@@ -12,6 +12,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - build/**
+    - packages/**   # 복사해 온 xterm2·flutter_pty (고친 점은 각 PATCHES.md) — 원본의 린트는 따로 보지 않는다
     - android/**
     - ios/**
     - web/**

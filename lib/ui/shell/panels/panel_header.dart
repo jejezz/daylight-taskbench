@@ -2,7 +2,27 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 const double panelHeaderHeight = 44;
+
+/// 패널 머리줄 오른쪽 끝의 닫기(x) 단추 — 패널을 그 자리에서 바로 끈다 (§1.13).
+class PanelCloseButton extends StatelessWidget {
+  const PanelCloseButton({super.key, required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: AppLocalizations.of(context).panelClose,
+      visualDensity: VisualDensity.compact,
+      iconSize: 18,
+      icon: const Icon(Icons.close_rounded),
+      onPressed: onPressed,
+    );
+  }
+}
 
 /// 아래에 선이 있는 [panelHeaderHeight] 높이의 줄.
 class PanelHeader extends StatelessWidget {

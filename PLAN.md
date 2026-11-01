@@ -654,6 +654,17 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - **옮기지 않은 것**: 프로젝트 안 **검색·바꾸기**(`project_search`·`project_replace`), 심볼 검색(`symbol_search`·`symbol_index`), worktree 선택. 에디터가 붙는 단계 15에서 같이 정하거나 쓰지 않기로 한다 — 검색 결과를 에디터로 여는 기능이라 외부 편집기만으로는 반쪽이다. `recent_projects`는 taskbench 에 이미 같은 기능(시작 화면·디렉터리 바 메뉴)이 있어 옮기지 않았다.
 - 테스트 19개 추가(파일 종류·점수·목록·트리 선택·방향키·더블클릭·열기·빠른 열기·셸 안 탐색기). **알려 둠**: 앱 화면으로 직접 눌러 본 확인은 사용자 몫이다.
 
+### 단계 14 결과 (2026-11-01) — 터미널 이식
+
+- **패키지(복사)**: `packages/xterm2`(드래그 선택·한글 IME 결함을 고친 복사본)와 `packages/flutter_pty`(Windows 결함 4가지를 고친 복사본, **네이티브 코드 포함**)를 workbench 에서 그대로 복사하고 `path:` 의존성으로 걸었다. 고친 점은 각 폴더의 `PATCHES.md`. `analysis_options.yaml`은 `packages/**`를 분석에서 뺀다.
+- **`lib/terminal/`(독립 모듈)**: `local_shell`·`local_shell_finder`·`local_shell_session`·`pty_backend`·`terminal_session`·`terminal_sessions_controller`·`pass_through_cursor`는 workbench 코드 그대로(원본 테스트 15개도 함께). 새로 만들거나 고친 것: `terminal_settings`(글자 크기·스크롤백), `terminal_theme`(ColorScheme·상태색으로 ANSI 16색 — 색 리터럴 없음), `terminal_pane`(앱 전역 단축키 ⌘/Ctrl+`,`·⌘/Ctrl+Shift+O만 셸로 넘김), `terminal_panel`(탭 줄 + 종료 안내 + 다시 시작), `terminal_host`(처음 보일 때 기본 셸을 **저장소 루트**에서 한 번 자동 실행).
+- **세션은 셸이 쥔다**: `TerminalSessionsController`를 셸 State 가 가지고 있어서 터미널 패널을 껐다 켜도, 에디터와 전환해도 세션(과 셸 프로세스)이 살아 있다. 탭을 모두 닫으면 다시 자동으로 띄우지 않고 안내만 나온다. 새 탭의 작업 폴더는 그때 열린 저장소 루트다(이미 열린 셸은 자기 폴더 그대로).
+- **설정 창**에 "터미널" 구역(글자 크기 슬라이더 — 바로 적용, 스크롤백 — 새 탭부터). 저장 키 `terminal_font_size`·`terminal_scrollback`. workbench 의 "편집기와 같은 글꼴"·글꼴 이름은 내장 에디터가 생기는 단계 15 이후에 다시 본다.
+- **빌드 확인**: macOS 디버그 빌드 성공(`flutter_pty.framework`가 앱에 들어간다, `Podfile.lock`·Xcode 프로젝트·Windows `generated_plugins.cmake`가 자동 갱신됨). macOS 릴리스 워크플로의 서명은 `codesign --deep`이라 안쪽 프레임워크까지 서명한다. Windows 설치 프로그램은 빌드 폴더를 통째로(`recursesubdirs`) 담아 DLL 이 포함된다.
+- **확인하지 못한 것(알려 둠)**: ① **진짜 셸이 뜨는지는 앱으로 눌러 보지 못했다** — 테스트는 가짜 pty 로 한다. ② **Windows 빌드·실행은 이 컴퓨터에서 할 수 없어 확인하지 못했다**(ConPTY, PowerShell·cmd·WSL 찾기). ③ 한글 IME 는 workbench 에서 고쳐 둔 대로 가져왔을 뿐 이 앱에서 다시 입력해 보지 않았다.
+- **패널 닫기 x (사용자 요청)**: 탐색기 머리줄과 가운데(에디터·터미널) 머리줄 오른쪽 끝에 x 단추. 탐색기의 x 는 탐색기를, 가운데의 x 는 **지금 보이는 쪽**만 끈다(둘 다 켜져 있으면 다른 쪽은 남는다). 마지막 패널을 닫으면 도킹 모드로 돌아간다. 둘 다 켜져 있을 때는 전환 단추가 제목을 겸해서(아이콘·제목 글자 생략) 최소 폭(960)에서도 넘치지 않고, 더 좁아지면 전환 단추가 줄어든다.
+- 테스트 33개 추가(원본 15 + 패널·호스트·설정 13 + 닫기 x 3 + 열쇠). 전체 634개 통과.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

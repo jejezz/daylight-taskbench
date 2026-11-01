@@ -18,6 +18,8 @@ import '../../explorer/file_opener.dart';
 import '../../explorer/project_files.dart';
 import '../../explorer/quick_open.dart';
 import '../../l10n/app_localizations.dart';
+import '../../terminal/terminal_sessions_controller.dart';
+import '../../terminal/terminal_settings.dart';
 import '../../settings/app_settings.dart';
 import '../../settings/settings_dialog.dart';
 import '../../theme/taskbench_style.dart';
@@ -44,6 +46,8 @@ class TaskbenchShell extends StatefulWidget {
     required this.panels,
     this.windowMode,
     this.opener,
+    this.terminals,
+    this.terminalSettings,
     this.pickFolder,
   });
 
@@ -60,6 +64,10 @@ class TaskbenchShell extends StatefulWidget {
   /// 탐색기에서 고른 파일을 여는 쪽. 테스트에서 바꾼다.
   final FileOpener? opener;
 
+  /// 터미널 세션과 설정. 테스트에서 가짜 pty 로 바꾼다.
+  final TerminalSessionsController? terminals;
+  final TerminalSettings? terminalSettings;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -73,6 +81,17 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
   final _empty = RunEmptyDock();
   late final _opener = widget.opener ?? FileOpener(widget.workspace);
+  // 밖에서 받지 않으면 셸이 직접 만들고 직접 정리한다 (처음 쓸 때 만든다).
+  TerminalSettings? _ownTerminalSettings;
+  TerminalSessionsController? _ownTerminals;
+  TerminalSettings get _terminalSettings =>
+      widget.terminalSettings ??
+      (_ownTerminalSettings ??= TerminalSettings(widget.workspace.prefs));
+  TerminalSessionsController get _terminals =>
+      widget.terminals ??
+      (_ownTerminals ??= TerminalSessionsController(
+        scrollback: () => _terminalSettings.scrollback,
+      ));
   StreamSubscription<HeadChange>? _heads;
   String? _expandedId;
   bool _dragging = false;
@@ -150,6 +169,8 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       d.detach(ws);
     }
     WidgetsBinding.instance.removeObserver(this);
+    _ownTerminals?.dispose();
+    _ownTerminalSettings?.dispose();
     super.dispose();
   }
 
@@ -355,6 +376,8 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                 panels: panels,
                 workspace: ws,
                 onOpenFile: _openFile,
+                terminals: _terminals,
+                terminalSettings: _terminalSettings,
                 onQuickOpen: _quickOpen,
                 quickOpenShortcut: _quickOpenShortcut,
               ),

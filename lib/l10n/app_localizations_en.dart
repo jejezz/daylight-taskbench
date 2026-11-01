@@ -5099,4 +5099,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickOpenLoading => 'Reading the file list…';
+
+  @override
+  String get terminalCloseTooltip => 'Close terminal';
+
+  @override
+  String terminalStartError(String error) {
+    return 'Couldn\'t start the shell: $error';
+  }
+
+  @override
+  String terminalExited(String shell, int code) {
+    return '$shell exited (code $code)';
+  }
+
+  @override
+  String get terminalRestart => 'Restart';
+
+  @override
+  String get terminalNoShells => 'No shell was found';
+
+  @override
+  String get terminalNew => 'New terminal';
+
+  @override
+  String get terminalEmpty => 'No terminal is open';
+
+  @override
+  String get terminalEmptyHint => 'Click + to open a new terminal';
+
+  @override
+  String get settingsSectionTerminal => 'Terminal';
+
+  @override
+  String get settingsTerminalFontSize => 'Font size';
+
+  @override
+  String get settingsTerminalScrollback => 'Scrollback lines';
+
+  @override
+  String get settingsTerminalHelp =>
+      'Font size applies immediately; scrollback applies to new terminal tabs.';
+
+  @override
+  String get panelClose => 'Close panel';
 }

@@ -4832,4 +4832,48 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get quickOpenLoading => '파일 목록을 읽는 중…';
+
+  @override
+  String get terminalCloseTooltip => '터미널 닫기';
+
+  @override
+  String terminalStartError(String error) {
+    return '셸을 시작하지 못했습니다: $error';
+  }
+
+  @override
+  String terminalExited(String shell, int code) {
+    return '$shell 종료됨 (코드 $code)';
+  }
+
+  @override
+  String get terminalRestart => '다시 시작';
+
+  @override
+  String get terminalNoShells => '쓸 수 있는 셸을 찾지 못했습니다';
+
+  @override
+  String get terminalNew => '새 터미널';
+
+  @override
+  String get terminalEmpty => '열린 터미널이 없습니다';
+
+  @override
+  String get terminalEmptyHint => '+ 를 눌러 새 터미널을 엽니다';
+
+  @override
+  String get settingsSectionTerminal => '터미널';
+
+  @override
+  String get settingsTerminalFontSize => '글자 크기';
+
+  @override
+  String get settingsTerminalScrollback => '스크롤백 줄 수';
+
+  @override
+  String get settingsTerminalHelp =>
+      '새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.';
+
+  @override
+  String get panelClose => '패널 닫기';
 }
