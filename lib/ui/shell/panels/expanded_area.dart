@@ -1,5 +1,5 @@
 // 확장 모드에서 도크 열 왼쪽에 붙는 영역: 탐색기 + 가운데(에디터 | 터미널 전환). PLAN.md §1.13.
-// 모양은 daylight-workbench 를 따른다 — 떠 있는 카드가 아니라 얇은 구분선으로 나뉜 평평한 패널,
+// 탐색기와 가운데는 도크 열의 칸과 같은 둥근 카드다 (panel_card.dart) — 카드 사이의 틈이 곧 크기 조절 손잡이.
 // 가운데 위쪽은 파일 탭 줄(오른쪽 끝에 에디터↔터미널 전환). 오른쪽의 도크 열(아코디언)은 taskbench 그대로다.
 // 단계 11에서는 알맹이가 빈 자리표시자다 — 탐색기(13)·터미널(14)·에디터(15) 단계에서 꽂는다.
 // 가운데의 두 패널은 서로 전환되어도 위젯을 살려 둔다 (열린 파일·터미널 세션이 유지돼야 하므로).
@@ -14,6 +14,7 @@ import '../../../terminal/terminal_host.dart';
 import '../../../terminal/terminal_sessions_controller.dart';
 import '../../../terminal/terminal_settings.dart';
 import '../../../workspace/workspace.dart';
+import 'panel_card.dart';
 import 'panel_divider.dart';
 import 'panel_header.dart';
 import 'panel_layout.dart';
@@ -60,10 +61,15 @@ class ExpandedArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
-    return DecoratedBox(
-      decoration: BoxDecoration(color: scheme.surface),
+    // 배경은 칠하지 않는다 — 도크 열과 같은 배경 위에 카드가 떠 있다.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        PanelWidths.pad,
+        PanelWidths.pad,
+        0,
+        PanelWidths.pad,
+      ),
       child: LayoutBuilder(
         builder: (context, c) {
           // 가운데가 없으면 탐색기가 남는 폭을 쓴다 (창이 이미 그 폭에 맞춰져 있어 빈칸이 생기지 않는다).
@@ -79,10 +85,7 @@ class ExpandedArea extends StatelessWidget {
                 _fit(
                   fill: !panels.hasCenter,
                   width: explorer,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerLow,
-                    ),
+                  child: PanelCard(
                     child: ExplorerPanel(
                       workspace: workspace,
                       onOpenFile: onOpenFile,
@@ -101,12 +104,14 @@ class ExpandedArea extends StatelessWidget {
                 ),
               if (panels.hasCenter)
                 Expanded(
-                  child: CenterArea(
-                    panels: panels,
-                    workspace: workspace,
-                    terminals: terminals,
-                    terminalSettings: terminalSettings,
-                    editor: editor,
+                  child: PanelCard(
+                    child: CenterArea(
+                      panels: panels,
+                      workspace: workspace,
+                      terminals: terminals,
+                      terminalSettings: terminalSettings,
+                      editor: editor,
+                    ),
                   ),
                 ),
             ],

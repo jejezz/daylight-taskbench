@@ -48,12 +48,12 @@ void main() {
       expect(PanelWidths.explorerFit(area: 300, hasCenter: true, preferred: 400), PanelWidths.minExplorer);
     });
 
-    test('areaMin: 있는 패널의 최소 폭과 구분선을 더한다', () {
-      expect(PanelWidths.areaMin(hasExplorer: true, hasCenter: false), PanelWidths.minExplorer);
-      expect(PanelWidths.areaMin(hasExplorer: false, hasCenter: true), PanelWidths.minCenter);
+    test('areaMin: 창 가장자리 여백과 있는 패널의 최소 폭, 구분선을 더한다', () {
+      expect(PanelWidths.areaMin(hasExplorer: true, hasCenter: false), PanelWidths.pad + PanelWidths.minExplorer);
+      expect(PanelWidths.areaMin(hasExplorer: false, hasCenter: true), PanelWidths.pad + PanelWidths.minCenter);
       expect(
         PanelWidths.areaMin(hasExplorer: true, hasCenter: true),
-        PanelWidths.minExplorer + PanelWidths.minCenter + PanelWidths.handle,
+        PanelWidths.pad + PanelWidths.minExplorer + PanelWidths.minCenter + PanelWidths.handle,
       );
     });
 
@@ -249,7 +249,8 @@ void main() {
       expect(tester.takeException(), isNull); // 넘치지 않는다
       expect(widths.dock, PanelWidths.maxDock); // 저장값은 그대로
       final center = tester.getSize(find.byType(CenterArea));
-      expect(center.width, greaterThanOrEqualTo(PanelWidths.minCenter));
+      // 카드(minCenter)의 안쪽: 테두리 1px 씩을 뺀다.
+      expect(center.width, greaterThanOrEqualTo(PanelWidths.minCenter - 2));
       expect(dockWidth(tester, 960), greaterThanOrEqualTo(PanelWidths.minDock));
     });
 

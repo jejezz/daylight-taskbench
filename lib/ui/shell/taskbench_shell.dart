@@ -137,6 +137,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   bool _pinned = false;
 
   /// 도크 열은 도킹↔확장 전환에서 같은 State 를 유지한다 (펼친 칸·스크롤·실행 중 빌드가 그대로).
+  final _topKey = GlobalKey(debugLabel: 'top');
   final _dockColumnKey = GlobalKey(debugLabel: 'dockColumn');
   WindowMode? _lastWindowMode;
 
@@ -492,64 +493,81 @@ class _TaskbenchShellState extends State<TaskbenchShell>
         panels: widget.panels,
         alwaysOnTop: _pinned,
         // 확장 모드에서는 "항상 위"를 숨긴다 (큰 작업창은 다른 창 위에 고정할 일이 없다). 도킹으로 돌아오면 다시 보인다.
-        onToggleAlwaysOnTop: _desktop && !widget.panels.expanded ? _togglePin : null,
+        onToggleAlwaysOnTop: _desktop && !widget.panels.expanded
+            ? _togglePin
+            : null,
       ),
     ],
   );
 
-  /// 도킹 모드면 도크 열이 창 전체를 쓰고, 확장 모드면 왼쪽에 확장 영역이 붙고 도크 열은 고정 폭이 된다 (§1.13).
-  /// 도크 열은 [GlobalKey]를 달아 두 모드 사이를 오가도 State 가 유지된다.
-  Widget _body(Widget dockColumn) {
+  /// 제목 줄·브랜치 줄([top])은 두 모드 모두 창 전체 폭으로 맨 위에 있고, 그 아래가 [accordion]이다.
+  /// 도킹 모드면 아코디언이 창 전체 폭을 쓰고, 확장 모드면 왼쪽에 확장 영역(카드)이 붙고 아코디언은 고정 폭 열이 된다 (§1.13).
+  /// 제목 줄과 아코디언은 [GlobalKey]를 달아 두 모드 사이를 오가도 State 가 유지된다.
+  Widget _body(Widget top, Widget accordion) {
     final panels = widget.panels;
-    if (!panels.expanded) return dockColumn;
+    if (!panels.expanded) {
+      return Column(
+        children: [
+          top,
+          Expanded(child: accordion),
+        ],
+      );
+    }
     final l10n = AppLocalizations.of(context);
     final widths = _panelWidths;
     // 도크 열 폭은 원하는 폭(저장한 값)이되, 왼쪽 영역이 최소 폭을 지킬 수 있게 창이 좁아진 순간에는 줄여서 보인다.
     // 모드 전환으로 창 크기를 바꾸는 중에도 넘치지 않는다.
-    return LayoutBuilder(
-      builder: (context, c) {
-        final dock = PanelWidths.dockFit(
-          total: c.maxWidth,
-          areaMin: PanelWidths.areaMin(
-            hasExplorer: panels.explorer,
-            hasCenter: panels.hasCenter,
+    return Column(
+      children: [
+        top,
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final dock = PanelWidths.dockFit(
+                total: c.maxWidth,
+                areaMin: PanelWidths.areaMin(
+                  hasExplorer: panels.explorer,
+                  hasCenter: panels.hasCenter,
+                ),
+                preferred: widths.dock,
+              );
+              return Row(
+                children: [
+                  Expanded(
+                    child: ExpandedArea(
+                      panels: panels,
+                      workspace: ws,
+                      onOpenFile: _openFile,
+                      terminals: _terminals,
+                      terminalSettings: _terminalSettings,
+                      editor: _editor,
+                      widths: widths,
+                      onQuickOpen: _quickOpen,
+                      quickOpenShortcut: _quickOpenShortcut,
+                    ),
+                  ),
+                  PanelDivider(
+                    semanticLabel: l10n.panelResizeHandle,
+                    // 왼쪽으로 끌면 도크 열이 넓어진다 (지금 보이는 폭에서 시작한다).
+                    onDelta: (dx) => widths.setDock(dock - dx),
+                    onReset: widths.resetDock,
+                  ),
+                  SizedBox(
+                    width: dock,
+                    // 아코디언 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
+                    // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
+                    child: MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(size: Size(dock, c.maxHeight)),
+                      child: accordion,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
-          preferred: widths.dock,
-        );
-        return Row(
-          children: [
-            Expanded(
-              child: ExpandedArea(
-                panels: panels,
-                workspace: ws,
-                onOpenFile: _openFile,
-                terminals: _terminals,
-                terminalSettings: _terminalSettings,
-                editor: _editor,
-                widths: widths,
-                onQuickOpen: _quickOpen,
-                quickOpenShortcut: _quickOpenShortcut,
-              ),
-            ),
-            PanelDivider(
-              semanticLabel: l10n.panelResizeHandle,
-              // 왼쪽으로 끌면 도크 열이 넓어진다 (지금 보이는 폭에서 시작한다).
-              onDelta: (dx) => widths.setDock(dock - dx),
-              onReset: widths.resetDock,
-            ),
-            SizedBox(
-              width: dock,
-              // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
-              // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
-              child: MediaQuery(
-                data: MediaQuery.of(context)
-                    .copyWith(size: Size(dock, c.maxHeight)),
-                child: dockColumn,
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ],
     );
   }
 
@@ -622,11 +640,10 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                     child: Stack(
                       children: [
                         if (open)
-                          // 디렉터리 바·브랜치 줄·아코디언은 한 덩어리(도크 열)다. 확장해도 이 덩어리가 그대로
-                          // 오른쪽에 남아서 도킹 모드와 같은 모습·위치를 유지한다 (§1.13).
+                          // 제목 줄·브랜치 줄은 두 모드 모두 창 전체 폭으로 맨 위에 두고, 그 아래에 카드들이 놓인다 (§1.13).
                           _body(
                             KeyedSubtree(
-                              key: _dockColumnKey,
+                              key: _topKey,
                               child: Column(
                                 children: [
                                   _workspaceBar(),
@@ -641,15 +658,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                       branch.showTab(branchTabBranches);
                                     },
                                   ),
-                                  Expanded(
-                                    child: DockAccordion(
-                                      docks: shown,
-                                      workspace: ws,
-                                      expandedId: expanded,
-                                      onSelect: _select,
-                                    ),
-                                  ),
                                 ],
+                              ),
+                            ),
+                            KeyedSubtree(
+                              key: _dockColumnKey,
+                              child: DockAccordion(
+                                docks: shown,
+                                workspace: ws,
+                                expandedId: expanded,
+                                onSelect: _select,
                               ),
                             ),
                           )
@@ -675,13 +693,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                             ],
                           ),
                         if (_dragging && open)
-                          _DropOverlay(
-                            title: l10n.dropOverlayTitle,
-                            // 확장 모드에서는 도크 열 위에만 덮는다 — 폴더를 놓는 자리가 그쪽이다.
-                            width: widget.panels.expanded
-                                ? dockColumnWidth
-                                : null,
-                          ),
+                          _DropOverlay(title: l10n.dropOverlayTitle),
                       ],
                     ),
                   ),
@@ -697,12 +709,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
 /// 끄는 동안 공유 영역 두 줄 위에 덮는 안내 (§1.11). 그 아래 Dock 영역은 살짝 어둡게 한다.
 class _DropOverlay extends StatelessWidget {
-  const _DropOverlay({required this.title, this.width});
+  const _DropOverlay({required this.title});
 
   final String title;
-
-  /// null 이면 창 전체, 아니면 오른쪽 이 폭만.
-  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -731,13 +740,6 @@ class _DropOverlay extends StatelessWidget {
         ],
       ),
     );
-    return Positioned.fill(
-      child: width == null
-          ? overlay
-          : Align(
-              alignment: Alignment.centerRight,
-              child: SizedBox(width: width, child: overlay),
-            ),
-    );
+    return Positioned.fill(child: overlay);
   }
 }

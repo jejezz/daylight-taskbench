@@ -49,8 +49,12 @@ class _PanelDividerState extends State<PanelDivider> {
                 duration: MediaQuery.disableAnimationsOf(context)
                     ? Duration.zero
                     : const Duration(milliseconds: 120),
-                width: active ? 2 : 1,
-                color: active ? scheme.primary : Theme.of(context).dividerColor,
+                // 카드 사이의 틈이 곧 손잡이다. 평소에는 보이지 않고, 올리거나 끄는 동안만 선이 나타난다.
+                width: 2,
+                decoration: BoxDecoration(
+                  color: active ? scheme.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(1),
+                ),
               ),
             ),
           ),
