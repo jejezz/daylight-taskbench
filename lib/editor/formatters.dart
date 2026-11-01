@@ -63,10 +63,14 @@ class DartFormatter {
         quiet: true,
       );
       if (r.exitCode == 127) {
-        return const FormatResult.failed(FormatFailure(FormatFailureKind.noDart));
+        return const FormatResult.failed(
+          FormatFailure(FormatFailureKind.noDart),
+        );
       }
       if (!r.ok) {
-        return FormatResult.failed(_firstError(r.combined, file.uri.pathSegments.last));
+        return FormatResult.failed(
+          _firstError(r.combined, file.uri.pathSegments.last),
+        );
       }
       return FormatResult.ok(await tmp.readAsString());
     } on FileSystemException catch (e) {
@@ -88,7 +92,10 @@ class DartFormatter {
         .split('\n')
         .map((l) => l.trim())
         .firstWhere((l) => l.isNotEmpty, orElse: () => '');
-    final cleaned = line.replaceAll(RegExp(r'\.studio_format_\d+\.dart'), fileName);
+    final cleaned = line.replaceAll(
+      RegExp(r'\.studio_format_\d+\.dart'),
+      fileName,
+    );
     return cleaned.isEmpty
         ? const FormatFailure(FormatFailureKind.failed)
         : FormatFailure(FormatFailureKind.failedDetail, cleaned);
@@ -102,6 +109,8 @@ FormatResult formatJson(String text) {
     final formatted = const JsonEncoder.withIndent('  ').convert(value);
     return FormatResult.ok(text.endsWith('\n') ? '$formatted\n' : formatted);
   } on FormatException catch (e) {
-    return FormatResult.failed(FormatFailure(FormatFailureKind.jsonInvalid, e.message));
+    return FormatResult.failed(
+      FormatFailure(FormatFailureKind.jsonInvalid, e.message),
+    );
   }
 }

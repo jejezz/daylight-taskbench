@@ -3507,5 +3507,18 @@
   "settingsFormatOnSaveNote": "Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.",
   "settingsIndentGuides": "Indent guides",
   "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.",
-  "panelResizeHandle": "Resize panel (double-click to reset)"
+  "panelResizeHandle": "Resize panel (double-click to reset)",
+  "messageHeadChangedPrefix": "The branch changed — open files were updated",
+  "messageHeadReloaded": "{count} reloaded",
+  "@messageHeadReloaded": {"placeholders": {"count": {"type": "int"}}},
+  "messageHeadClosed": "{count} tab(s) closed (not on this branch)",
+  "@messageHeadClosed": {"placeholders": {"count": {"type": "int"}}},
+  "messageHeadKept": "{count} file(s) left as is because you were editing them (choose in the tab's banner)",
+  "@messageHeadKept": {"placeholders": {"count": {"type": "int"}}},
+  "quitUnsavedTitle": "You have unsaved changes",
+  "quitUnsavedBody": "{count} file(s) have unsaved changes: {names}",
+  "@quitUnsavedBody": {"placeholders": {"count": {"type": "int"}, "names": {"type": "String"}}},
+  "quitSaveAndExit": "Save all and quit",
+  "quitDiscardAndExit": "Quit without saving",
+  "quitSaveFailed": "Quit was cancelled because some files could not be saved"
 }

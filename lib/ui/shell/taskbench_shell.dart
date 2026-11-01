@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
@@ -41,6 +42,9 @@ import 'panels/panel_divider.dart';
 import 'panels/panel_layout.dart';
 import 'panels/panel_widths.dart';
 import 'shared_bar.dart';
+
+/// 종료 확인 창의 선택.
+enum _QuitChoice { cancel, discard, save }
 
 class TaskbenchShell extends StatefulWidget {
   const TaskbenchShell({
@@ -107,6 +111,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   EditorSettings get _editorSettings =>
       widget.editorSettings ??
       (_ownEditorSettings ??= EditorSettings(widget.workspace.prefs));
+  AppLifecycleListener? _exitListener;
+  bool _quitDialogOpen = false;
+  EditorController? get _editorIfCreated => widget.editor ?? _ownEditor;
   EditorController? _ownEditor;
   EditorController get _editor =>
       widget.editor ??
@@ -150,7 +157,11 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       for (final d in widget.docks) {
         d.onHeadChange(ws, c);
       }
+      // 열린 편집기 파일도 바로 정리한다: 다시 읽기·이 브랜치에 없는 탭 닫기·고치던 것은 그대로 (§1.10).
+      _editorIfCreated?.handleHeadChange();
     });
+    // 앱을 끄려 할 때(창 닫기·⌘Q) 저장하지 않은 수정이 있으면 먼저 묻는다.
+    _exitListener = AppLifecycleListener(onExitRequested: _onExitRequested);
     ws.registerBusyCheck(_anyBusy);
     ws.openHandler = _openPath;
     ws.pickFolderHandler = _pickAndOpen;
@@ -201,12 +212,69 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       d.detach(ws);
     }
     WidgetsBinding.instance.removeObserver(this);
+    _exitListener?.dispose();
     _ownPanelWidths?.dispose();
     _ownEditor?.dispose();
     _ownEditorSettings?.dispose();
     _ownTerminals?.dispose();
     _ownTerminalSettings?.dispose();
     super.dispose();
+  }
+
+  /// 저장하지 않은 수정이 있으면 종료 전에 묻는다: 모두 저장하고 종료 · 저장하지 않고 종료 · 취소.
+  /// 저장하지 못한 파일이 있으면 종료를 취소한다(잃지 않게).
+  Future<AppExitResponse> _onExitRequested() async {
+    final editor = _editorIfCreated;
+    if (editor == null || !editor.hasUnsaved || !mounted) {
+      return AppExitResponse.exit;
+    }
+    if (_quitDialogOpen) return AppExitResponse.cancel; // 이미 묻는 중이다
+    _quitDialogOpen = true;
+    try {
+      final l10n = AppLocalizations.of(context);
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      final names = [
+        for (final t in editor.tabs)
+          if (t.dirty) t.name,
+      ];
+      final shown = names.length <= 5
+          ? names.join(', ')
+          : '${names.take(5).join(', ')} …';
+      final choice = await showDialog<_QuitChoice>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.quitUnsavedTitle),
+          content: Text(l10n.quitUnsavedBody(names.length, shown)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.cancel),
+              child: Text(l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.discard),
+              child: Text(l10n.quitDiscardAndExit),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.save),
+              child: Text(l10n.quitSaveAndExit),
+            ),
+          ],
+        ),
+      );
+      switch (choice) {
+        case _QuitChoice.discard:
+          return AppExitResponse.exit;
+        case _QuitChoice.save:
+          if (await editor.saveAll()) return AppExitResponse.exit;
+          messenger?.showSnackBar(SnackBar(content: Text(l10n.quitSaveFailed)));
+          return AppExitResponse.cancel;
+        case _QuitChoice.cancel || null:
+          return AppExitResponse.cancel;
+      }
+    } finally {
+      _quitDialogOpen = false;
+    }
   }
 
   @override

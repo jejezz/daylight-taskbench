@@ -5336,4 +5336,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get panelResizeHandle => 'Resize panel (double-click to reset)';
+
+  @override
+  String get messageHeadChangedPrefix =>
+      'The branch changed — open files were updated';
+
+  @override
+  String messageHeadReloaded(int count) {
+    return '$count reloaded';
+  }
+
+  @override
+  String messageHeadClosed(int count) {
+    return '$count tab(s) closed (not on this branch)';
+  }
+
+  @override
+  String messageHeadKept(int count) {
+    return '$count file(s) left as is because you were editing them (choose in the tab\'s banner)';
+  }
+
+  @override
+  String get quitUnsavedTitle => 'You have unsaved changes';
+
+  @override
+  String quitUnsavedBody(int count, String names) {
+    return '$count file(s) have unsaved changes: $names';
+  }
+
+  @override
+  String get quitSaveAndExit => 'Save all and quit';
+
+  @override
+  String get quitDiscardAndExit => 'Quit without saving';
+
+  @override
+  String get quitSaveFailed =>
+      'Quit was cancelled because some files could not be saved';
 }
