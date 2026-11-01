@@ -613,6 +613,12 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - **9f**: README(영·한)·스크린샷(`gradle.png`). **실제 앱으로 보다가 잡은 오류**: 루트 build 파일의 `plugins { id("com.android.application") apply false }`를 적용한 플러그인으로 읽어 루트가 Android 앱 모듈이 되던 것 — 실제 Android Studio 구조에서 흔한 형태라 `apply false` 줄은 건너뛰도록 고치고 테스트를 더했다.
 - **알려 둠**: 실제 Gradle·기기로 설치해 열어 본 적은 없다 (테스트와 스크린샷은 가짜 `gradlew`·`adb`). `ANDROID_SERIAL`로 기기를 좁히는 방식과 `monkey`로 앱을 여는 방식은 직접 확인이 필요하다.
 
+### 단계 10 결과 (2026-11-01) — 확장 모드 통합 기준 정리
+
+비교 결과는 [docs/WORKBENCH_MERGE.md](docs/WORKBENCH_MERGE.md). 코드는 바꾸지 않았다.
+- branch 코드의 갈라짐은 **대부분 UI 스타일 API 차이**(아이콘 `context.icons` ↔ `Icons.x`, 글꼴, 문구 접두어)이고 로직 차이는 몇 군데에 몰려 있다. 공통 60개 파일 중 26개는 정규화 후 완전히 같다.
+- **정해야 할 것**(같은 문서 §4): 확장 모드에서 바텀시트를 도크 열에 가둘지, 확인 못 한 workbench 수정 3건의 실제 확인. (검증 관문은 결정 21, 아이콘 통일은 결정 22로 확정.)
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**
@@ -655,3 +661,6 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 18. ✅ 저장소의 **하위 폴더**를 열면 저장소 루트로 연다 (기존 동작 유지).
 19. ✅ 저장소가 아니고 하위에 저장소가 여럿이면 **목록을 보여 주고 고르게** 한다. `git init`은 상·하위 어디에도 저장소가 없고 위험한 위치가 아닐 때만 제안한다.
 20. ✅ **개발 기반은 taskbench**다. daylight-workbench의 탐색기·에디터·터미널을 확장 패널 모듈로 옮겨 오고, 통합 후 workbench는 보관(archive)한다. 같은 코드를 두 앱이 복사해 따로 고쳐 가는 일을 되풀이하지 않는다 (workbench `lib/branchdock/`와 taskbench `lib/docks/branch/`는 경로가 같은 파일 50개가 하나도 바이트 단위로 같지 않다 — import 경로·접두어 차이만인지 실제 로직 차이인지는 아직 읽지 않았다). 확인 필요: 두 앱의 branch 코드 중 어느 쪽이 최신인지 (단계 착수 전에 diff로 가린다).
+21. ✅ **검증 관문(병합 전 로컬 검증 기록)은 가져오지 않는다** (2026-11-01 확정 — 사용자가 쓰지 않음). workbench의 `verify/`·`merge_gate`는 이식 대상에서 제외하고, workbench 보관 시 사라지는 기능으로 릴리스 노트에 적는다. 근거: [docs/WORKBENCH_MERGE.md](docs/WORKBENCH_MERGE.md) §3 B-1.
+22. ✅ **아이콘은 taskbench 방식(`Icons.x_rounded`)으로 통일한다** (2026-11-01 확정). workbench의 `context.icons`/`studio_icons`는 가져오지 않고, 에디터·탐색기·터미널·diff 이식 때 해당 파일(약 24개)의 아이콘 호출을 변환한다 (단계 13~15). 근거: [docs/WORKBENCH_MERGE.md](docs/WORKBENCH_MERGE.md) §4-1.
+
