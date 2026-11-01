@@ -8,7 +8,6 @@ import 'dart:ui' show AppExitResponse;
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../app_identity.dart';
@@ -39,6 +38,7 @@ import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
 import 'panels/expanded_area.dart';
 import 'panels/panel_divider.dart';
+import 'shell_shortcuts.dart';
 import 'panels/panel_layout.dart';
 import 'panels/panel_widths.dart';
 import 'shared_bar.dart';
@@ -165,6 +165,8 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     ws.registerBusyCheck(_anyBusy);
     ws.openHandler = _openPath;
     ws.pickFolderHandler = _pickAndOpen;
+    ws.openFileHandler = _openFile;
+    ws.openLocationHandler = _openLocation;
     ws.addListener(_syncTitle);
     _syncTitle();
     widget.panels.addListener(_syncWindowMode);
@@ -206,6 +208,8 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     widget.panels.removeListener(_syncWindowMode);
     if (ws.openHandler == _openPath) ws.openHandler = null;
     if (ws.pickFolderHandler == _pickAndOpen) ws.pickFolderHandler = null;
+    if (ws.openFileHandler == _openFile) ws.openFileHandler = null;
+    if (ws.openLocationHandler == _openLocation) ws.openLocationHandler = null;
     ws.unregisterBusyCheck(_anyBusy);
     _heads?.cancel();
     for (final d in widget.docks) {
@@ -398,16 +402,33 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   /// 탐색기·빠른 열기에서 고른 파일을 연다 (PLAN.md §1.13).
   /// 확장 모드(작업대)이고 "내장 에디터 사용"이 켜져 있으면 내장 에디터로 열고(에디터 패널이 꺼져 있으면 켠다),
   /// 도킹 모드이거나 내장 에디터를 껐으면 외부 편집기(설정의 편집기 명령, 없으면 VS Code)로 연다.
-  Future<void> _openFile(String path) async {
+  Future<void> _openFile(String path) => _openIn(
+    path,
+    embedded: () => _editor.openFile(path),
+    external: () => _opener.open(path),
+  );
+
+  /// [path] 의 [line]:[column] 을 연다 (빌드 오류 위치 등). 열 곳은 [_openFile]과 같다.
+  Future<void> _openLocation(String path, int line, int column) => _openIn(
+    path,
+    embedded: () => _editor.openAt(path, line, column),
+    external: () => _opener.openAt(path, line, column),
+  );
+
+  Future<void> _openIn(
+    String path, {
+    required Future<void> Function() embedded,
+    required Future<OpenFileResult> Function() external,
+  }) async {
     final panels = widget.panels;
     if (panels.embeddedEditor && panels.expanded) {
       panels.setEditor(true);
-      await _editor.openFile(path);
+      await embedded();
       return;
     }
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final result = await _opener.open(path);
+    final result = await external();
     if (!mounted) return;
     switch (result) {
       case OpenFileResult.opened:
@@ -535,29 +556,31 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final settings = AppSettingsScope.of(context);
-    final mac = Platform.isMacOS;
+    // 키 조합은 shell_shortcuts.dart 의 표 한곳에서 정한다 (겹침 검사·터미널 전달 목록과 같은 표).
     final shortcuts = <ShortcutActivator, VoidCallback>{
-      SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac):
-          _pickAndOpen,
-      SingleActivator(
-        LogicalKeyboardKey.keyO,
-        control: !mac,
-        meta: mac,
-        shift: true,
-      ): () {
+      activatorOf(ShellShortcut.openFolder): _pickAndOpen,
+      activatorOf(ShellShortcut.quickOpen): () {
         if (ws.isOpen) _quickOpen();
       },
-      SingleActivator(LogicalKeyboardKey.comma, control: !mac, meta: mac): () =>
-          showSettingsDialog(context),
-      SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac):
-          ws.refresh,
-      for (var i = 0; i < 4; i++)
-        SingleActivator(
-          LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i),
-          control: !mac,
-          meta: mac,
-          alt: true,
-        ): () {
+      activatorOf(ShellShortcut.settings): () => showSettingsDialog(context),
+      activatorOf(ShellShortcut.refresh): ws.refresh,
+      // 패널: 저장소가 열려 있을 때만 (시작 화면에는 패널이 없다).
+      activatorOf(ShellShortcut.explorer): () {
+        if (ws.isOpen) widget.panels.toggleExplorer();
+      },
+      activatorOf(ShellShortcut.editor): () {
+        if (ws.isOpen) widget.panels.toggleEditor();
+      },
+      activatorOf(ShellShortcut.terminal): () {
+        if (ws.isOpen) widget.panels.toggleTerminal();
+      },
+      for (final (i, s) in [
+        ShellShortcut.dock1,
+        ShellShortcut.dock2,
+        ShellShortcut.dock3,
+        ShellShortcut.dock4,
+      ].indexed)
+        activatorOf(s): () {
           final shown = visibleDocks(widget.docks, _empty, ws);
           if (i < shown.length) _select(shown[i].id);
         },

@@ -91,6 +91,33 @@ class PanelLayout extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 단축키: 탐색기를 켜고 끈다.
+  void toggleExplorer() => setExplorer(!_explorer);
+
+  /// 단축키: 에디터를 보이거나 끈다. 지금 보이는 중이면 끄고, 켜져 있지만 터미널 뒤에 있으면 앞으로 가져오고, 꺼져 있으면
+  /// 켠다(켜면 바로 보인다). 내장 에디터를 껐다면 아무 일도 하지 않는다.
+  void toggleEditor() {
+    if (!_embeddedEditor) return;
+    if (!_editor) {
+      setEditor(true);
+    } else if (center == CenterView.editor) {
+      setEditor(false);
+    } else {
+      showCenter(CenterView.editor);
+    }
+  }
+
+  /// 단축키: 터미널을 보이거나 끈다 ([toggleEditor]와 같은 규칙).
+  void toggleTerminal() {
+    if (!_terminal) {
+      setTerminal(true);
+    } else if (center == CenterView.terminal) {
+      setTerminal(false);
+    } else {
+      showCenter(CenterView.terminal);
+    }
+  }
+
   void setEmbeddedEditor(bool on) {
     if (on == _embeddedEditor) return;
     _embeddedEditor = on;

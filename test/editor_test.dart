@@ -15,6 +15,7 @@ import 'package:daylight_taskbench/theme/app_theme.dart';
 import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
+import 'package:daylight_taskbench/workspace/workspace.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -435,7 +436,7 @@ void main() {
     setUp(() async => repo = await tempDir('editor_repo'));
     tearDown(() => repo.deleteSync(recursive: true));
 
-    Future<({PanelLayout panels, EditorController editor, List<List<String>> started})> pumpShell(
+    Future<({PanelLayout panels, EditorController editor, List<List<String>> started, Workspace ws})> pumpShell(
       WidgetTester tester, {
       bool embedded = true,
     }) async {
@@ -487,7 +488,7 @@ void main() {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
         await tester.pump(const Duration(milliseconds: 50));
       }
-      return (panels: panels, editor: editor, started: started);
+      return (panels: panels, editor: editor, started: started, ws: ws);
     }
 
     Future<void> doubleTap(WidgetTester tester, Finder f) async {
@@ -532,6 +533,29 @@ void main() {
       expect(r.editor.tabs, hasLength(1));
       expect(r.editor.activeTab!.controller.text, '// 고치던 글');
       expect(r.editor.activeTab!.dirty, isTrue);
+    });
+
+    testWidgets('오류 위치(requestOpenLocation)는 작업대에서 내장 에디터의 그 줄로 연다', (tester) async {
+      final r = await pumpShell(tester);
+      r.panels.setExplorer(true);
+      final path = '${repo.path}/lib/main.dart';
+      await tester.runAsync(() => r.ws.requestOpenLocation(path, 1, 6));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(r.panels.editor, isTrue);
+      expect(r.editor.activeTab!.name, 'main.dart');
+      final sel = r.editor.activeTab!.controller.selection;
+      expect((sel.baseIndex, sel.baseOffset), (0, 5));
+      expect(r.started, isEmpty);
+    });
+
+    testWidgets('내장 에디터를 껐다면 오류 위치는 편집기 명령으로 연다', (tester) async {
+      final r = await pumpShell(tester, embedded: false);
+      final path = '${repo.path}/lib/main.dart';
+      await tester.runAsync(() => r.ws.requestOpenLocation(path, 3, 2));
+      expect(r.started, [
+        ['myeditor', path],
+      ]);
+      expect(r.editor.tabs, isEmpty);
     });
   });
 }
