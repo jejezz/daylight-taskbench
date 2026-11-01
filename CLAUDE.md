@@ -19,7 +19,7 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
   현재 단계: 0 완료(골격), 1 완료(셸: 시작 화면·공유 영역·아코디언·설정 창·장식) 2 완료(공통 코어: command_runner 합집합·도구 경로·키 검사) 3 완료(Branch Dock 이식) 4 완료(Flutty Dock 이식) 5 완료(연결) 6 완료(릴리스 준비) — v0.1.x 배포됨. 9 완료(Gradle Runner: 감지·실행·점검, 계획서 docs/GRADLE_RUNNER.md) → 다음 v0.2.0. 7(Rust runner)·8(Electron runner)은 계획서만 있고 보류.
 - 플랫폼은 macOS + Windows (Linux 없음). 릴리스 워크플로에서도 build-linux 잡을 뺐다.
 - macOS 샌드박스는 꺼져 있다 (`app-sandbox=false`) — git/gh/flutter를 호출하고 임의 폴더를 연다.
-- 창은 도킹형 세로 창(440×960, 최소 380×560)이다. 크기·위치를 기억한다.
+- 기본 상태는 도킹형 세로 창(440×960, 최소 380×560)이다. 탐색기·에디터·터미널 중 하나라도 켜면 확장 모드가 되어 도킹이 풀리고, 도크 열(아코디언)은 두 모드에서 같다 (PLAN.md §1.13). 크기·위치는 모드별로 기억한다.
 - 작업은 브랜치 → 커밋 → 사용자 확인 후 `main` 병합. push는 요청받을 때만.
 
 ## 테마 규칙
