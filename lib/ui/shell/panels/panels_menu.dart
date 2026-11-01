@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../shell_shortcuts.dart';
 import 'panel_layout.dart';
 
 /// 패널 메뉴 항목 값. 좁은 앱 바에서는 "더 보기" 메뉴에 같은 항목을 끼워 넣는다.
@@ -20,21 +21,56 @@ void applyPanelChoice(PanelLayout panels, String value) {
   }
 }
 
-List<PopupMenuEntry<String>> panelMenuEntries(BuildContext context, PanelLayout panels) {
+/// 메뉴 글자 오른쪽에 단축키를 흐리게 붙인다.
+Widget _withShortcut(BuildContext context, String text, ShellShortcut shortcut) {
+  final style = Theme.of(context).textTheme.bodySmall?.copyWith(
+    color: Theme.of(context).colorScheme.onSurfaceVariant,
+  );
+  return Row(
+    children: [
+      Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
+      const SizedBox(width: 16),
+      Text(shortcutLabel(shortcut), style: style),
+    ],
+  );
+}
+
+List<PopupMenuEntry<String>> panelMenuEntries(
+  BuildContext context,
+  PanelLayout panels,
+) {
   final l10n = AppLocalizations.of(context);
   final theme = Theme.of(context);
   return [
-    CheckedPopupMenuItem(value: 'explorer', checked: panels.explorer, child: Text(l10n.panelExplorer)),
+    CheckedPopupMenuItem(
+      value: 'explorer',
+      checked: panels.explorer,
+      child: _withShortcut(context, l10n.panelExplorer, ShellShortcut.explorer),
+    ),
     CheckedPopupMenuItem(
       value: 'editor',
       checked: panels.editorShown,
       enabled: panels.embeddedEditor,
-      child: Text(panels.embeddedEditor ? l10n.panelEditor : '${l10n.panelEditor} — ${l10n.panelEditorOff}'),
+      child: _withShortcut(
+        context,
+        panels.embeddedEditor
+            ? l10n.panelEditor
+            : '${l10n.panelEditor} — ${l10n.panelEditorOff}',
+        ShellShortcut.editor,
+      ),
     ),
-    CheckedPopupMenuItem(value: 'terminal', checked: panels.terminal, child: Text(l10n.panelTerminal)),
+    CheckedPopupMenuItem(
+      value: 'terminal',
+      checked: panels.terminal,
+      child: _withShortcut(context, l10n.panelTerminal, ShellShortcut.terminal),
+    ),
     if (panels.expanded) ...[
       const PopupMenuDivider(),
-      PopupMenuItem(enabled: false, height: 32, child: Text(l10n.panelsDockHint, style: theme.textTheme.bodySmall)),
+      PopupMenuItem(
+        enabled: false,
+        height: 32,
+        child: Text(l10n.panelsDockHint, style: theme.textTheme.bodySmall),
+      ),
     ],
   ];
 }

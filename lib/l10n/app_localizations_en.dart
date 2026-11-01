@@ -5274,4 +5274,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorSaveTooltip => 'Save (⌘/Ctrl+S)';
+
+  @override
+  String get messageFormatted => 'Formatted';
+
+  @override
+  String get messageAlreadyFormatted => 'Already formatted';
+
+  @override
+  String get formatNoDart =>
+      'dart command not found. Make sure the Flutter SDK bin folder is on your PATH.';
+
+  @override
+  String formatTempWriteFailed(String error) {
+    return 'Couldn\'t write a temp file: $error';
+  }
+
+  @override
+  String get formatFailed => 'Couldn\'t format.';
+
+  @override
+  String formatFailedDetail(String detail) {
+    return 'Couldn\'t format: $detail';
+  }
+
+  @override
+  String formatJsonInvalid(String detail) {
+    return 'Invalid JSON, couldn\'t format: $detail';
+  }
+
+  @override
+  String get editorFormat => 'Format (Ctrl+Alt+L)';
+
+  @override
+  String get editorEdit => 'Edit';
+
+  @override
+  String get editorPreview => 'View';
+
+  @override
+  String markdownImage(String alt) {
+    return '(image: $alt)';
+  }
+
+  @override
+  String get markdownImageUnavailable => '(image unavailable)';
+
+  @override
+  String get settingsFormatOnSave => 'Format on save';
+
+  @override
+  String get settingsFormatOnSaveNote =>
+      'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
+
+  @override
+  String get settingsIndentGuides => 'Indent guides';
+
+  @override
+  String get settingsIndentGuidesNote =>
+      'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
+
+  @override
+  String get panelResizeHandle => 'Resize panel (double-click to reset)';
+
+  @override
+  String get messageHeadChangedPrefix =>
+      'The branch changed — open files were updated';
+
+  @override
+  String messageHeadReloaded(int count) {
+    return '$count reloaded';
+  }
+
+  @override
+  String messageHeadClosed(int count) {
+    return '$count tab(s) closed (not on this branch)';
+  }
+
+  @override
+  String messageHeadKept(int count) {
+    return '$count file(s) left as is because you were editing them (choose in the tab\'s banner)';
+  }
+
+  @override
+  String get quitUnsavedTitle => 'You have unsaved changes';
+
+  @override
+  String quitUnsavedBody(int count, String names) {
+    return '$count file(s) have unsaved changes: $names';
+  }
+
+  @override
+  String get quitSaveAndExit => 'Save all and quit';
+
+  @override
+  String get quitDiscardAndExit => 'Quit without saving';
+
+  @override
+  String get quitSaveFailed =>
+      'Quit was cancelled because some files could not be saved';
 }

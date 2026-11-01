@@ -3,6 +3,8 @@
 
 import 'dart:io';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../workspace/workspace.dart';
 
 enum OpenFileResult {
@@ -20,10 +22,13 @@ class FileOpener {
   FileOpener(
     this.workspace, {
     Future<void> Function(List<String> command)? start,
-  }) : _start = start ?? _spawn;
+    Future<bool> Function(Uri uri)? launch,
+  }) : _start = start ?? _spawn,
+       _launch = launch ?? _launchUrl;
 
   final Workspace workspace;
   final Future<void> Function(List<String> command) _start;
+  final Future<bool> Function(Uri uri) _launch;
 
   /// [path] 파일을 외부 편집기로 연다.
   Future<OpenFileResult> open(String path) async {
@@ -37,6 +42,25 @@ class FileOpener {
       return OpenFileResult.failed;
     }
   }
+
+  /// [path] 의 [line]:[column] 을 외부 편집기로 연다. 편집기 명령을 따로 정하지 않았으면 VS Code 의
+  /// `vscode://file/…` 주소로 줄까지 가고, 그것이 안 되거나 편집기 명령이 있으면 파일만 연다.
+  Future<OpenFileResult> openAt(String path, int line, int column) async {
+    if (workspace.editorCommand.isEmpty) {
+      final normalized = path.replaceAll(r'\', '/');
+      final uri = Uri.parse(
+        'vscode://file${normalized.startsWith('/') ? '' : '/'}${Uri.encodeFull(normalized)}:$line:$column',
+      );
+      try {
+        if (await _launch(uri)) return OpenFileResult.opened;
+      } on Object {
+        // 주소를 처리하는 앱이 없으면 아래에서 파일만 연다.
+      }
+    }
+    return open(path);
+  }
+
+  static Future<bool> _launchUrl(Uri uri) => launchUrl(uri);
 
   static Future<void> _spawn(List<String> command) async {
     await Process.start(

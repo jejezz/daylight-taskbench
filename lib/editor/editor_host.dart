@@ -20,7 +20,28 @@ String editorMessageText(AppLocalizations l10n, EditorMessage m) =>
       EditorMessageKind.changedReloaded => l10n.messageChangedReloaded(m.arg),
       EditorMessageKind.reloadedFromDisk => l10n.messageReloadedFromDisk(m.arg),
       EditorMessageKind.notUtf8Reload => l10n.messageNotUtf8Reload,
+      EditorMessageKind.formatted => l10n.messageFormatted,
+      EditorMessageKind.alreadyFormatted => l10n.messageAlreadyFormatted,
+      EditorMessageKind.formatNoDart => l10n.formatNoDart,
+      EditorMessageKind.formatTempWriteFailed => l10n.formatTempWriteFailed(
+        m.arg,
+      ),
+      EditorMessageKind.formatFailed => l10n.formatFailed,
+      EditorMessageKind.formatFailedDetail => l10n.formatFailedDetail(m.arg),
+      EditorMessageKind.formatJsonInvalid => l10n.formatJsonInvalid(m.arg),
+      EditorMessageKind.headChanged => _headChangedText(l10n, m.counts),
     };
+
+/// "브랜치가 바뀌어 열린 파일을 정리했습니다: 다시 읽음 2개 · 이 브랜치에 없어 닫은 탭 1개" 처럼 0 이 아닌 것만 잇는다.
+String _headChangedText(AppLocalizations l10n, List<int> counts) {
+  final [reloaded, closed, kept] = counts;
+  final parts = [
+    if (reloaded > 0) l10n.messageHeadReloaded(reloaded),
+    if (closed > 0) l10n.messageHeadClosed(closed),
+    if (kept > 0) l10n.messageHeadKept(kept),
+  ];
+  return '${l10n.messageHeadChangedPrefix}: ${parts.join(' · ')}';
+}
 
 class EditorHost extends StatefulWidget {
   const EditorHost({super.key, required this.controller});
@@ -40,6 +61,8 @@ class _EditorHostState extends State<EditorHost> {
       ..addListener(_showMessage)
       ..startWatching()
       ..checkExternalChanges();
+    // 에디터가 보이지 않는 동안 남은 알림(예: 브랜치가 바뀌어 파일을 정리한 요약)이 있으면 지금 보인다.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage());
   }
 
   @override

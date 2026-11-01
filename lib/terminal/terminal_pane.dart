@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xterm2/ui.dart' as xterm_ui;
@@ -7,6 +6,7 @@ import 'package:xterm2/xterm.dart';
 import '../theme/app_theme.dart';
 import 'local_shell_session.dart';
 import 'pass_through_cursor.dart';
+import '../ui/shell/shell_shortcuts.dart';
 import 'terminal_settings.dart';
 import 'terminal_theme.dart';
 
@@ -88,16 +88,10 @@ class _TerminalPaneState extends State<TerminalPane> {
   /// 설정(⌘/Ctrl+,)과 파일 이름으로 열기(⌘/Ctrl+Shift+O)만 넘긴다. `Ctrl+O·R` 같은 것은 셸의 줄 편집에서 쓰므로
   /// 가로채지 않는다.
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
-    final mac = defaultTargetPlatform == TargetPlatform.macOS;
-    final keys = HardwareKeyboard.instance;
-    final primary = mac ? keys.isMetaPressed : keys.isControlPressed;
-    if (!primary) return KeyEventResult.ignored;
-    final forward = switch (event.logicalKey) {
-      LogicalKeyboardKey.comma => true,
-      LogicalKeyboardKey.keyO => keys.isShiftPressed,
-      _ => false,
-    };
-    return forward ? KeyEventResult.skipRemainingHandlers : KeyEventResult.ignored;
+    // 어떤 키를 앱에 돌려줄지는 단축키 표(shell_shortcuts.dart)가 정한다.
+    return isForwardedFromTerminal(event, HardwareKeyboard.instance)
+        ? KeyEventResult.skipRemainingHandlers
+        : KeyEventResult.ignored;
   }
 
   @override

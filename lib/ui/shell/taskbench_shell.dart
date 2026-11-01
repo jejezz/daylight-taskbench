@@ -3,11 +3,11 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../app_identity.dart';
@@ -15,6 +15,8 @@ import '../../docks/branch/branch_dock.dart';
 import '../../docks/dock_module.dart';
 import '../../docks/registry.dart';
 import '../../editor/editor_controller.dart';
+import '../../editor/editor_settings.dart';
+import '../../editor/formatters.dart';
 import '../../explorer/file_opener.dart';
 import '../../explorer/project_files.dart';
 import '../../explorer/quick_open.dart';
@@ -35,8 +37,14 @@ import '../../window/window_mode.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
 import 'panels/expanded_area.dart';
+import 'panels/panel_divider.dart';
+import 'shell_shortcuts.dart';
 import 'panels/panel_layout.dart';
+import 'panels/panel_widths.dart';
 import 'shared_bar.dart';
+
+/// 종료 확인 창의 선택.
+enum _QuitChoice { cancel, discard, save }
 
 class TaskbenchShell extends StatefulWidget {
   const TaskbenchShell({
@@ -50,6 +58,8 @@ class TaskbenchShell extends StatefulWidget {
     this.terminals,
     this.terminalSettings,
     this.editor,
+    this.editorSettings,
+    this.panelWidths,
     this.pickFolder,
   });
 
@@ -73,6 +83,12 @@ class TaskbenchShell extends StatefulWidget {
   /// 열린 편집기 탭들. 테스트에서 바꾼다.
   final EditorController? editor;
 
+  /// 편집기 설정(들여쓰기 선·저장 시 정렬). 테스트에서 바꾼다.
+  final EditorSettings? editorSettings;
+
+  /// 탐색기·도크 열 너비(끌어서 조절, 저장). 테스트에서 바꾼다.
+  final PanelWidths? panelWidths;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -87,9 +103,24 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   final _empty = RunEmptyDock();
   late final _opener = widget.opener ?? FileOpener(widget.workspace);
   // 밖에서 받지 않으면 셸이 직접 만들고 직접 정리한다 (처음 쓸 때 만든다).
+  PanelWidths? _ownPanelWidths;
+  PanelWidths get _panelWidths =>
+      widget.panelWidths ??
+      (_ownPanelWidths ??= PanelWidths(widget.workspace.prefs));
+  EditorSettings? _ownEditorSettings;
+  EditorSettings get _editorSettings =>
+      widget.editorSettings ??
+      (_ownEditorSettings ??= EditorSettings(widget.workspace.prefs));
+  AppLifecycleListener? _exitListener;
+  bool _quitDialogOpen = false;
+  EditorController? get _editorIfCreated => widget.editor ?? _ownEditor;
   EditorController? _ownEditor;
   EditorController get _editor =>
-      widget.editor ?? (_ownEditor ??= EditorController());
+      widget.editor ??
+      (_ownEditor ??= EditorController(
+        formatDart: DartFormatter(widget.workspace.runner).format,
+        formatOnSave: () => _editorSettings.formatOnSave,
+      ));
   TerminalSettings? _ownTerminalSettings;
   TerminalSessionsController? _ownTerminals;
   TerminalSettings get _terminalSettings =>
@@ -126,10 +157,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       for (final d in widget.docks) {
         d.onHeadChange(ws, c);
       }
+      // 열린 편집기 파일도 바로 정리한다: 다시 읽기·이 브랜치에 없는 탭 닫기·고치던 것은 그대로 (§1.10).
+      _editorIfCreated?.handleHeadChange();
     });
+    // 앱을 끄려 할 때(창 닫기·⌘Q) 저장하지 않은 수정이 있으면 먼저 묻는다.
+    _exitListener = AppLifecycleListener(onExitRequested: _onExitRequested);
     ws.registerBusyCheck(_anyBusy);
     ws.openHandler = _openPath;
     ws.pickFolderHandler = _pickAndOpen;
+    ws.openFileHandler = _openFile;
+    ws.openLocationHandler = _openLocation;
     ws.addListener(_syncTitle);
     _syncTitle();
     widget.panels.addListener(_syncWindowMode);
@@ -171,16 +208,77 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     widget.panels.removeListener(_syncWindowMode);
     if (ws.openHandler == _openPath) ws.openHandler = null;
     if (ws.pickFolderHandler == _pickAndOpen) ws.pickFolderHandler = null;
+    if (ws.openFileHandler == _openFile) ws.openFileHandler = null;
+    if (ws.openLocationHandler == _openLocation) ws.openLocationHandler = null;
     ws.unregisterBusyCheck(_anyBusy);
     _heads?.cancel();
     for (final d in widget.docks) {
       d.detach(ws);
     }
     WidgetsBinding.instance.removeObserver(this);
+    _exitListener?.dispose();
+    _ownPanelWidths?.dispose();
     _ownEditor?.dispose();
+    _ownEditorSettings?.dispose();
     _ownTerminals?.dispose();
     _ownTerminalSettings?.dispose();
     super.dispose();
+  }
+
+  /// 저장하지 않은 수정이 있으면 종료 전에 묻는다: 모두 저장하고 종료 · 저장하지 않고 종료 · 취소.
+  /// 저장하지 못한 파일이 있으면 종료를 취소한다(잃지 않게).
+  Future<AppExitResponse> _onExitRequested() async {
+    final editor = _editorIfCreated;
+    if (editor == null || !editor.hasUnsaved || !mounted) {
+      return AppExitResponse.exit;
+    }
+    if (_quitDialogOpen) return AppExitResponse.cancel; // 이미 묻는 중이다
+    _quitDialogOpen = true;
+    try {
+      final l10n = AppLocalizations.of(context);
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      final names = [
+        for (final t in editor.tabs)
+          if (t.dirty) t.name,
+      ];
+      final shown = names.length <= 5
+          ? names.join(', ')
+          : '${names.take(5).join(', ')} …';
+      final choice = await showDialog<_QuitChoice>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.quitUnsavedTitle),
+          content: Text(l10n.quitUnsavedBody(names.length, shown)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.cancel),
+              child: Text(l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.discard),
+              child: Text(l10n.quitDiscardAndExit),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, _QuitChoice.save),
+              child: Text(l10n.quitSaveAndExit),
+            ),
+          ],
+        ),
+      );
+      switch (choice) {
+        case _QuitChoice.discard:
+          return AppExitResponse.exit;
+        case _QuitChoice.save:
+          if (await editor.saveAll()) return AppExitResponse.exit;
+          messenger?.showSnackBar(SnackBar(content: Text(l10n.quitSaveFailed)));
+          return AppExitResponse.cancel;
+        case _QuitChoice.cancel || null:
+          return AppExitResponse.cancel;
+      }
+    } finally {
+      _quitDialogOpen = false;
+    }
   }
 
   @override
@@ -304,16 +402,33 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   /// 탐색기·빠른 열기에서 고른 파일을 연다 (PLAN.md §1.13).
   /// 확장 모드(작업대)이고 "내장 에디터 사용"이 켜져 있으면 내장 에디터로 열고(에디터 패널이 꺼져 있으면 켠다),
   /// 도킹 모드이거나 내장 에디터를 껐으면 외부 편집기(설정의 편집기 명령, 없으면 VS Code)로 연다.
-  Future<void> _openFile(String path) async {
+  Future<void> _openFile(String path) => _openIn(
+    path,
+    embedded: () => _editor.openFile(path),
+    external: () => _opener.open(path),
+  );
+
+  /// [path] 의 [line]:[column] 을 연다 (빌드 오류 위치 등). 열 곳은 [_openFile]과 같다.
+  Future<void> _openLocation(String path, int line, int column) => _openIn(
+    path,
+    embedded: () => _editor.openAt(path, line, column),
+    external: () => _opener.openAt(path, line, column),
+  );
+
+  Future<void> _openIn(
+    String path, {
+    required Future<void> Function() embedded,
+    required Future<OpenFileResult> Function() external,
+  }) async {
     final panels = widget.panels;
     if (panels.embeddedEditor && panels.expanded) {
       panels.setEditor(true);
-      await _editor.openFile(path);
+      await embedded();
       return;
     }
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final result = await _opener.open(path);
+    final result = await external();
     if (!mounted) return;
     switch (result) {
       case OpenFileResult.opened:
@@ -386,10 +501,20 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   Widget _body(Widget dockColumn) {
     final panels = widget.panels;
     if (!panels.expanded) return dockColumn;
-    // 창이 확장 최소 폭보다 좁은 순간(모드 전환으로 창 크기를 바꾸는 중)에도 넘치지 않게 도크 열 폭을 줄인다.
+    final l10n = AppLocalizations.of(context);
+    final widths = _panelWidths;
+    // 도크 열 폭은 원하는 폭(저장한 값)이되, 왼쪽 영역이 최소 폭을 지킬 수 있게 창이 좁아진 순간에는 줄여서 보인다.
+    // 모드 전환으로 창 크기를 바꾸는 중에도 넘치지 않는다.
     return LayoutBuilder(
       builder: (context, c) {
-        final width = dockColumnWidth.clamp(0.0, c.maxWidth * 0.65);
+        final dock = PanelWidths.dockFit(
+          total: c.maxWidth,
+          areaMin: PanelWidths.areaMin(
+            hasExplorer: panels.explorer,
+            hasCenter: panels.hasCenter,
+          ),
+          preferred: widths.dock,
+        );
         return Row(
           children: [
             Expanded(
@@ -400,17 +525,24 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                 terminals: _terminals,
                 terminalSettings: _terminalSettings,
                 editor: _editor,
+                widths: widths,
                 onQuickOpen: _quickOpen,
                 quickOpenShortcut: _quickOpenShortcut,
               ),
             ),
+            PanelDivider(
+              semanticLabel: l10n.panelResizeHandle,
+              // 왼쪽으로 끌면 도크 열이 넓어진다 (지금 보이는 폭에서 시작한다).
+              onDelta: (dx) => widths.setDock(dock - dx),
+              onReset: widths.resetDock,
+            ),
             SizedBox(
-              width: width,
+              width: dock,
               // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
               // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
               child: MediaQuery(
                 data: MediaQuery.of(context)
-                    .copyWith(size: Size(width, c.maxHeight)),
+                    .copyWith(size: Size(dock, c.maxHeight)),
                 child: dockColumn,
               ),
             ),
@@ -424,29 +556,31 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final settings = AppSettingsScope.of(context);
-    final mac = Platform.isMacOS;
+    // 키 조합은 shell_shortcuts.dart 의 표 한곳에서 정한다 (겹침 검사·터미널 전달 목록과 같은 표).
     final shortcuts = <ShortcutActivator, VoidCallback>{
-      SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac):
-          _pickAndOpen,
-      SingleActivator(
-        LogicalKeyboardKey.keyO,
-        control: !mac,
-        meta: mac,
-        shift: true,
-      ): () {
+      activatorOf(ShellShortcut.openFolder): _pickAndOpen,
+      activatorOf(ShellShortcut.quickOpen): () {
         if (ws.isOpen) _quickOpen();
       },
-      SingleActivator(LogicalKeyboardKey.comma, control: !mac, meta: mac): () =>
-          showSettingsDialog(context),
-      SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac):
-          ws.refresh,
-      for (var i = 0; i < 4; i++)
-        SingleActivator(
-          LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i),
-          control: !mac,
-          meta: mac,
-          alt: true,
-        ): () {
+      activatorOf(ShellShortcut.settings): () => showSettingsDialog(context),
+      activatorOf(ShellShortcut.refresh): ws.refresh,
+      // 패널: 저장소가 열려 있을 때만 (시작 화면에는 패널이 없다).
+      activatorOf(ShellShortcut.explorer): () {
+        if (ws.isOpen) widget.panels.toggleExplorer();
+      },
+      activatorOf(ShellShortcut.editor): () {
+        if (ws.isOpen) widget.panels.toggleEditor();
+      },
+      activatorOf(ShellShortcut.terminal): () {
+        if (ws.isOpen) widget.panels.toggleTerminal();
+      },
+      for (final (i, s) in [
+        ShellShortcut.dock1,
+        ShellShortcut.dock2,
+        ShellShortcut.dock3,
+        ShellShortcut.dock4,
+      ].indexed)
+        activatorOf(s): () {
           final shown = visibleDocks(widget.docks, _empty, ws);
           if (i < shown.length) _select(shown[i].id);
         },
@@ -468,6 +602,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
               ...widget.docks,
               settings,
               widget.panels,
+              _panelWidths,
             ]),
             builder: (context, _) {
               final open = ws.isOpen;

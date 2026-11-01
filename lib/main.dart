@@ -30,8 +30,10 @@ import 'theme/app_theme.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
 import 'window/window_mode.dart';
+import 'editor/editor_settings.dart';
 import 'editor/editor_zoom.dart';
 import 'terminal/terminal_settings.dart';
+import 'ui/shell/panels/panel_widths.dart';
 import 'ui/shell/panels/panel_layout.dart';
 
 final bool _isDesktop =
@@ -81,6 +83,8 @@ Future<void> main() async {
         panels: panels,
         terminalSettings: TerminalSettings(prefs),
         editorZoom: EditorZoom(prefs),
+        editorSettings: EditorSettings(prefs),
+        panelWidths: PanelWidths(prefs),
         windowMode: _isDesktop ? windowMode : null,
       ),
     ),
@@ -142,12 +146,16 @@ class App extends StatefulWidget {
     required this.panels,
     required this.terminalSettings,
     required this.editorZoom,
+    required this.editorSettings,
+    required this.panelWidths,
     this.windowMode,
   });
 
   final PanelLayout panels;
   final TerminalSettings terminalSettings;
   final EditorZoom editorZoom;
+  final EditorSettings editorSettings;
+  final PanelWidths panelWidths;
   final WindowModeController? windowMode;
   final AppSettings settings;
   final Workspace workspace;
@@ -214,67 +222,73 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return EditorZoomScope(
-      zoom: widget.editorZoom,
-      child: TerminalSettingsScope(
-      settings: widget.terminalSettings,
-      child: PanelLayoutScope(
-      panels: widget.panels,
-      child: WorkspaceScope(
-      workspace: widget.workspace,
-      child: ToolPathsScope(
-        tools: widget.tools,
-        child: AppSettingsScope(
-          settings: widget.settings,
-          child: ListenableBuilder(
-            listenable: widget.settings,
-            builder: (context, _) => MaterialApp(
-              navigatorKey: _navigatorKey,
-              title: AppIdentity.displayName,
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.light(
-                dense: _isDesktop,
-                palette: widget.settings.palette,
-              ),
-              darkTheme: AppTheme.dark(
-                dense: _isDesktop,
-                palette: widget.settings.palette,
-              ),
-              themeMode: widget.settings.themeMode,
-              locale: widget.settings.locale,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localeResolutionCallback: AppSettings.resolveLocale,
-              // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.linear(
-                    MediaQuery.textScalerOf(context).scale(1) *
-                        widget.settings.textScale,
+    return EditorSettingsScope(
+      settings: widget.editorSettings,
+      child: EditorZoomScope(
+        zoom: widget.editorZoom,
+        child: TerminalSettingsScope(
+          settings: widget.terminalSettings,
+          child: PanelLayoutScope(
+            panels: widget.panels,
+            child: WorkspaceScope(
+              workspace: widget.workspace,
+              child: ToolPathsScope(
+                tools: widget.tools,
+                child: AppSettingsScope(
+                  settings: widget.settings,
+                  child: ListenableBuilder(
+                    listenable: widget.settings,
+                    builder: (context, _) => MaterialApp(
+                      navigatorKey: _navigatorKey,
+                      title: AppIdentity.displayName,
+                      debugShowCheckedModeBanner: false,
+                      theme: AppTheme.light(
+                        dense: _isDesktop,
+                        palette: widget.settings.palette,
+                      ),
+                      darkTheme: AppTheme.dark(
+                        dense: _isDesktop,
+                        palette: widget.settings.palette,
+                      ),
+                      themeMode: widget.settings.themeMode,
+                      locale: widget.settings.locale,
+                      localizationsDelegates:
+                          AppLocalizations.localizationsDelegates,
+                      supportedLocales: AppLocalizations.supportedLocales,
+                      localeResolutionCallback: AppSettings.resolveLocale,
+                      // 글자 크기(settings.md): 시스템 배율 위에 사용자가 고른 배율을 곱한다 (fonts.md §6).
+                      builder: (context, child) => MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          textScaler: TextScaler.linear(
+                            MediaQuery.textScalerOf(context).scale(1) *
+                                widget.settings.textScale,
+                          ),
+                        ),
+                        child: AppMenuBar(
+                          onAbout: _showAbout,
+                          onCheckForUpdates: widget.updates == null
+                              ? null
+                              : _checkForUpdates,
+                          child: child!,
+                        ),
+                      ),
+                      home: TaskbenchShell(
+                        workspace: widget.workspace,
+                        docks: _docks,
+                        onAbout: _showAbout,
+                        panels: widget.panels,
+                        terminalSettings: widget.terminalSettings,
+                        editorSettings: widget.editorSettings,
+                        panelWidths: widget.panelWidths,
+                        windowMode: widget.windowMode,
+                      ),
+                    ),
                   ),
                 ),
-                child: AppMenuBar(
-                  onAbout: _showAbout,
-                  onCheckForUpdates: widget.updates == null
-                      ? null
-                      : _checkForUpdates,
-                  child: child!,
-                ),
-              ),
-              home: TaskbenchShell(
-                workspace: widget.workspace,
-                docks: _docks,
-                onAbout: _showAbout,
-                panels: widget.panels,
-                terminalSettings: widget.terminalSettings,
-                windowMode: widget.windowMode,
               ),
             ),
           ),
         ),
-      ),
-      ),
-      ),
       ),
     );
   }

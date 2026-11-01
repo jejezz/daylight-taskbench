@@ -14,15 +14,17 @@ import '../../../terminal/terminal_host.dart';
 import '../../../terminal/terminal_sessions_controller.dart';
 import '../../../terminal/terminal_settings.dart';
 import '../../../workspace/workspace.dart';
+import 'panel_divider.dart';
 import 'panel_header.dart';
 import 'panel_layout.dart';
+import 'panel_widths.dart';
 
-/// 도크 열의 폭 (확장 모드). 도킹 모드의 기본 폭(440)과 같게 해서 앱 바·브랜치 줄·아코디언이 도킹 모드와
-/// 똑같이 보이게 한다 (좁은 막대 기준 420 이상). 도킹 모드에서는 창 전체를 쓴다.
-const double dockColumnWidth = 440;
+/// 도크 열의 기본 폭 (확장 모드). 도킹 모드의 기본 폭(440)과 같게 해서 앱 바·브랜치 줄·아코디언이 도킹 모드와
+/// 똑같이 보이게 한다. 구분선을 끌어 바꾼 폭은 [PanelWidths]가 쥔다. 도킹 모드에서는 창 전체를 쓴다.
+const double dockColumnWidth = PanelWidths.defaultDock;
 
-/// 탐색기 폭. 이후 단계에서 끌어서 조절하게 할 수 있다.
-const double explorerWidth = 240;
+/// 탐색기의 기본 폭. 구분선을 끌어 바꾼 폭은 [PanelWidths]가 쥔다.
+const double explorerWidth = PanelWidths.defaultExplorer;
 
 class ExpandedArea extends StatelessWidget {
   const ExpandedArea({
@@ -33,12 +35,16 @@ class ExpandedArea extends StatelessWidget {
     required this.terminals,
     required this.terminalSettings,
     required this.editor,
+    required this.widths,
     this.onQuickOpen,
     this.quickOpenShortcut = '',
   });
 
   final PanelLayout panels;
   final Workspace workspace;
+
+  /// 탐색기·도크 열의 너비(끌어서 조절, 저장).
+  final PanelWidths widths;
 
   /// 터미널 세션과 설정 — 터미널 패널을 껐다 켜도 세션이 살아 있도록 셸이 쥔다.
   final TerminalSessionsController terminals;
@@ -55,51 +61,67 @@ class ExpandedArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final divider = BorderSide(color: Theme.of(context).dividerColor);
+    final l10n = AppLocalizations.of(context);
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        border: Border(right: divider),
-      ),
-      child: Row(
-        children: [
-          if (panels.explorer)
-            // 가운데가 없으면 탐색기가 남는 폭을 쓴다 (창이 이미 그 폭에 맞춰져 있어 빈칸이 생기지 않는다).
-            _fit(
-              fill: !panels.hasCenter,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainerLow,
-                  border: Border(right: divider),
+      decoration: BoxDecoration(color: scheme.surface),
+      child: LayoutBuilder(
+        builder: (context, c) {
+          // 가운데가 없으면 탐색기가 남는 폭을 쓴다 (창이 이미 그 폭에 맞춰져 있어 빈칸이 생기지 않는다).
+          // 가운데가 있으면 탐색기는 원하는 폭이되, 가운데가 최소 폭을 지킬 수 있게 줄여서 보인다.
+          final explorer = PanelWidths.explorerFit(
+            area: c.maxWidth,
+            hasCenter: panels.hasCenter,
+            preferred: widths.explorer,
+          );
+          return Row(
+            children: [
+              if (panels.explorer)
+                _fit(
+                  fill: !panels.hasCenter,
+                  width: explorer,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerLow,
+                    ),
+                    child: ExplorerPanel(
+                      workspace: workspace,
+                      onOpenFile: onOpenFile,
+                      onQuickOpen: onQuickOpen,
+                      onClose: () => panels.setExplorer(false),
+                      quickOpenShortcut: quickOpenShortcut,
+                    ),
+                  ),
                 ),
-                child: ExplorerPanel(
-                  workspace: workspace,
-                  onOpenFile: onOpenFile,
-                  onQuickOpen: onQuickOpen,
-                  onClose: () => panels.setExplorer(false),
-                  quickOpenShortcut: quickOpenShortcut,
+              if (panels.explorer && panels.hasCenter)
+                PanelDivider(
+                  semanticLabel: l10n.panelResizeHandle,
+                  // 오른쪽으로 끌면 탐색기가 넓어진다 (지금 보이는 폭에서 시작한다).
+                  onDelta: (dx) => widths.setExplorer(explorer + dx),
+                  onReset: widths.resetExplorer,
                 ),
-              ),
-            ),
-          if (panels.hasCenter)
-            Expanded(
-              child: CenterArea(
-                panels: panels,
-                workspace: workspace,
-                terminals: terminals,
-                terminalSettings: terminalSettings,
-                editor: editor,
-              ),
-            ),
-        ],
+              if (panels.hasCenter)
+                Expanded(
+                  child: CenterArea(
+                    panels: panels,
+                    workspace: workspace,
+                    terminals: terminals,
+                    terminalSettings: terminalSettings,
+                    editor: editor,
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-Widget _fit({required bool fill, required Widget child}) => fill
-    ? Expanded(child: child)
-    : SizedBox(width: explorerWidth, child: child);
+Widget _fit({
+  required bool fill,
+  required double width,
+  required Widget child,
+}) => fill ? Expanded(child: child) : SizedBox(width: width, child: child);
 
 /// 가운데: 위에 파일 탭 줄(오른쪽 끝에 에디터↔터미널 전환), 아래에 에디터 또는 터미널 중 하나만 보인다.
 class CenterArea extends StatelessWidget {

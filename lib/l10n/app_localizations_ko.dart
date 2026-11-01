@@ -5003,4 +5003,101 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editorSaveTooltip => '저장 (⌘/Ctrl+S)';
+
+  @override
+  String get messageFormatted => '정렬했습니다';
+
+  @override
+  String get messageAlreadyFormatted => '이미 정렬되어 있습니다';
+
+  @override
+  String get formatNoDart =>
+      'dart 명령을 찾을 수 없습니다. Flutter SDK의 bin 폴더가 PATH에 있는지 확인하세요.';
+
+  @override
+  String formatTempWriteFailed(String error) {
+    return '임시 파일을 쓰지 못했습니다: $error';
+  }
+
+  @override
+  String get formatFailed => '정렬하지 못했습니다.';
+
+  @override
+  String formatFailedDetail(String detail) {
+    return '정렬하지 못했습니다: $detail';
+  }
+
+  @override
+  String formatJsonInvalid(String detail) {
+    return 'JSON 문법 오류라 정렬하지 못했습니다: $detail';
+  }
+
+  @override
+  String get editorFormat => '정렬 (Ctrl+Alt+L)';
+
+  @override
+  String get editorEdit => '편집';
+
+  @override
+  String get editorPreview => '보기';
+
+  @override
+  String markdownImage(String alt) {
+    return '(이미지: $alt)';
+  }
+
+  @override
+  String get markdownImageUnavailable => '(이미지를 불러올 수 없습니다)';
+
+  @override
+  String get settingsFormatOnSave => '저장할 때 자동 정렬';
+
+  @override
+  String get settingsFormatOnSaveNote =>
+      'Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.';
+
+  @override
+  String get settingsIndentGuides => '들여쓰기 선';
+
+  @override
+  String get settingsIndentGuidesNote =>
+      '들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.';
+
+  @override
+  String get panelResizeHandle => '패널 너비 조절 (두 번 누르면 기본 너비)';
+
+  @override
+  String get messageHeadChangedPrefix => '브랜치가 바뀌어 열린 파일을 정리했습니다';
+
+  @override
+  String messageHeadReloaded(int count) {
+    return '다시 읽음 $count개';
+  }
+
+  @override
+  String messageHeadClosed(int count) {
+    return '이 브랜치에 없어 닫은 탭 $count개';
+  }
+
+  @override
+  String messageHeadKept(int count) {
+    return '고치던 중이라 그대로 둔 파일 $count개 (탭의 배너에서 고르세요)';
+  }
+
+  @override
+  String get quitUnsavedTitle => '저장하지 않은 수정이 있습니다';
+
+  @override
+  String quitUnsavedBody(int count, String names) {
+    return '$count개 파일에 저장하지 않은 수정이 있습니다: $names';
+  }
+
+  @override
+  String get quitSaveAndExit => '모두 저장하고 종료';
+
+  @override
+  String get quitDiscardAndExit => '저장하지 않고 종료';
+
+  @override
+  String get quitSaveFailed => '저장하지 못한 파일이 있어 종료를 취소했습니다';
 }

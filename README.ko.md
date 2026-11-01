@@ -35,9 +35,13 @@
 - **Flutter Runner: 실기기 빌드·설치** — 폴더(또는 한 단계 아래)에서 Flutter 프로젝트를 찾아 USB iPhone, Android 폰, 이 컴퓨터에 빌드·설치하고, 실행 중에는 핫 리로드를 보냅니다. 점검 탭이 Flutter, Xcode, adb, 서명 인증서·프로파일을 확인합니다.
 - **Gradle Runner: Android 앱·JVM 프로젝트** — 폴더(또는 한 단계 아래)에서 Gradle 프로젝트를 찾습니다 (Flutter 프로젝트의 `android/` 폴더는 Flutter Runner가 맡습니다). Android 앱은 APK·번들을 만들고 USB 기기나 켜진 에뮬레이터에 설치해 앱을 엽니다. 그 밖의 Gradle 프로젝트는 빌드·테스트·실행과 검색되는 작업 목록을 줍니다. 점검 탭이 JDK, Android SDK, 라이선스, adb, 릴리스 서명을 확인하고, 찾은 JDK·SDK 위치를 Gradle에 `JAVA_HOME`·`ANDROID_HOME`으로 넘깁니다.
 - **도킹을 위한 창** — 편집기 옆에 세우는 440×960 창(최소 380×560)이고 위치를 기억합니다. 실행기 Dock(Rust, Electron 등)은 레지스트리에 한 줄이면 더해집니다.
+- **작업대로 확장** — 상단 막대의 패널 버튼으로 **파일 탐색기**, **코드 에디터**, **터미널**을 같은 도크 열 왼쪽에 붙입니다. 창이 넓어질 뿐 도크 열은 그대로입니다. 각 패널에는 닫기 버튼이 있고 너비를 끌어 바꿀 수 있으며, 에디터와 터미널은 가운데를 나눠 쓰고 전환 버튼으로 바꿉니다. 패널을 모두 끄면 좁은 도킹 창으로 돌아오고, 앱은 항상 도킹 모드로 시작합니다.
+- **내장 에디터는 선택** — 구문 강조, 탭, 찾기, 서식(Dart·JSON), Markdown 미리보기, 들여쓰기 안내선, 저장 시 서식. 설정에서 *내장 에디터 사용*을 끄면 파일을 계속 VS Code(또는 설정한 편집기 명령)로 엽니다. 종료할 때와 브랜치를 바꿀 때 저장하지 않은 수정을 지켜 줍니다.
+- **빌드 오류에서 코드로** — 명령의 전체 출력에 나오는 파일 위치(`lib/main.dart:12:5`, `package:…`)가 링크가 되어 그 줄로 열립니다.
+- **단축키** — `⌘/Ctrl+Shift+E` 탐색기, `⌘/Ctrl+Shift+D` 에디터, `Ctrl+\`` 터미널, `⌘/Ctrl+Shift+O` 파일 이름으로 열기. 메뉴에 표시됩니다.
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 설정에서 고릅니다 (색 구성, 글자 크기, 고대비)
 
-> Daylight Taskbench는 따로 배포하던 **Branch Dock**과 **Flutty Dock** 앱을 대신합니다. 두 앱은 더 이상 개발하지 않으며, 같은 기능이 이 앱의 두 칸으로 들어와 폴더 하나와 머리줄 하나를 함께 씁니다.
+> Daylight Taskbench는 따로 배포하던 **Branch Dock**·**Flutty Dock** 앱과 **Daylight Workbench**를 대신합니다(Workbench의 탐색기·에디터·터미널은 선택 패널로 들어왔고, 병합 전 검증 관문은 가져오지 않았습니다). 이 앱들은 더 이상 개발하지 않습니다.
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="공유 막대 아래의 Git & GitHub 칸 (라이트·다크)">
