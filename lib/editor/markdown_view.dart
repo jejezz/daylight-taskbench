@@ -42,7 +42,11 @@ class _MarkdownViewState extends State<MarkdownView> {
     final zoom = EditorZoomScope.scaleOf(context);
     final sheet = MarkdownStyleSheet.fromTheme(theme).copyWith(
       // 글자 배율은 본문과 코드에 한 번만 곱한다 — 코드 글꼴은 배율을 곱하지 않은 값(13)을 쓴다.
-      code: editorTextStyle(context).copyWith(fontSize: 13, backgroundColor: scheme.surfaceContainerHighest, color: scheme.onSurface),
+      code: editorTextStyle(context).copyWith(
+        fontSize: 13,
+        backgroundColor: scheme.surfaceContainerHighest,
+        color: scheme.onSurface,
+      ),
       codeblockPadding: const EdgeInsets.all(AppSpacing.md),
       codeblockDecoration: BoxDecoration(
         color: scheme.surfaceContainerLowest,
@@ -53,14 +57,17 @@ class _MarkdownViewState extends State<MarkdownView> {
         color: scheme.surfaceContainerLow,
         border: Border(left: BorderSide(color: scheme.primary, width: 3)),
       ),
-      horizontalRuleDecoration: BoxDecoration(border: Border(top: BorderSide(color: scheme.outlineVariant))),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: scheme.outlineVariant)),
+      ),
       tableBorder: TableBorder.all(color: scheme.outlineVariant),
     );
     return ZoomWheel(
       scrollers: [_scroll],
       // 글자 배율은 본문과 코드에 한 번만 곱한다 (코드 글꼴은 배율을 곱하지 않은 값을 쓴다).
       child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(zoom)),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(zoom)),
         child: Markdown(
           controller: _scroll,
           data: widget.text,
@@ -77,12 +84,18 @@ class _MarkdownViewState extends State<MarkdownView> {
 
   Widget _image(Uri uri, String? alt) {
     final l10n = AppLocalizations.of(context);
-    final fallback = Text(alt == null || alt.isEmpty ? l10n.markdownImageUnavailable : l10n.markdownImage(alt));
+    final fallback = Text(
+      alt == null || alt.isEmpty
+          ? l10n.markdownImageUnavailable
+          : l10n.markdownImage(alt),
+    );
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       return Image.network(uri.toString(), errorBuilder: (_, _, _) => fallback);
     }
     final file = File(
-      uri.scheme == 'file' ? uri.toFilePath() : '${widget.baseDir}${Platform.pathSeparator}${Uri.decodeComponent(uri.path)}',
+      uri.scheme == 'file'
+          ? uri.toFilePath()
+          : '${widget.baseDir}${Platform.pathSeparator}${Uri.decodeComponent(uri.path)}',
     );
     return Image.file(file, errorBuilder: (_, _, _) => fallback);
   }

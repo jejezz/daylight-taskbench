@@ -19,7 +19,11 @@ int? leadingColumns(String line, {int tabWidth = 2}) {
 
 /// 한 단계가 몇 칸인지: 앞 [limit]줄에서 들여쓰기가 늘어나는 폭 중 가장 작은 값.
 /// 알 수 없으면 [fallback] (Dart·Flutter 관례의 2칸).
-int detectIndentUnit(Iterable<String> lines, {int limit = 400, int fallback = 2}) {
+int detectIndentUnit(
+  Iterable<String> lines, {
+  int limit = 400,
+  int fallback = 2,
+}) {
   var previous = 0;
   int? unit;
   var seen = 0;
@@ -36,7 +40,13 @@ int detectIndentUnit(Iterable<String> lines, {int limit = 400, int fallback = 2}
 
 /// [index]번 줄의 들여쓰기 깊이. 빈 줄은 위아래 가장 가까운 글자 있는 줄 중 더 얕은 쪽을 따른다
 /// (함수 몸통 안의 빈 줄에서 선이 끊기지 않고, 블록 사이의 빈 줄에서는 이어지지 않는다).
-int indentLevelAt(int count, String Function(int) line, int index, int unit, {int scan = 200}) {
+int indentLevelAt(
+  int count,
+  String Function(int) line,
+  int index,
+  int unit, {
+  int scan = 200,
+}) {
   final own = leadingColumns(line(index));
   if (own != null) return own ~/ unit;
   int? up, down;

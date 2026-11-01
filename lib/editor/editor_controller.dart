@@ -32,14 +32,20 @@ enum EditorMessageKind {
   formatFailed,
   formatFailedDetail,
   formatJsonInvalid,
+
+  /// 브랜치·커밋이 바뀐 뒤 열린 파일을 정리한 결과의 요약. [EditorMessage.counts]는 [다시 읽음, 닫음, 수정 중이라 남김].
+  headChanged,
 }
 
 /// 화면이 번역해서 보여 주는 알림 하나. [arg]는 파일 이름 또는 오류 문구.
 class EditorMessage {
-  const EditorMessage(this.kind, [this.arg = '']);
+  const EditorMessage(this.kind, [this.arg = '', this.counts = const []]);
 
   final EditorMessageKind kind;
   final String arg;
+
+  /// 요약 알림이 쓰는 개수들.
+  final List<int> counts;
 }
 
 /// 경로 비교용 키: 구분자를 `/`로 통일하고 Windows 에서는 대소문자를 무시한다.
@@ -47,6 +53,10 @@ String pathKey(String path) {
   final p = path.replaceAll('\\', '/');
   return Platform.isWindows ? p.toLowerCase() : p;
 }
+
+/// [EditorController._applyDiskChange]의 결과: 화면을 다시 그릴 일이 없다 / 다시 그리기만 / 고치지 않은 탭을 다시 읽었다 /
+/// 고치던 탭이라 건드리지 않고 표시만 했다.
+enum _DiskOutcome { none, redraw, reloaded, keptMine }
 
 class EditorController extends ChangeNotifier {
   EditorController({this.formatDart, this.formatOnSave});
@@ -252,26 +262,64 @@ class EditorController extends ChangeNotifier {
 
   /// 열린 탭마다 디스크의 파일이 바뀌었는지 보고 처리한다.
   /// 수정하지 않은 탭은 조용히 다시 읽고, 수정 중인 탭은 사용자가 고르도록 표시만 한다.
-  Future<void> checkExternalChanges() async {
+  ///
+  /// [afterHeadChange]가 true 면 브랜치 전환·병합·pull 같은 HEAD 변화 직후의 정리다 (§1.10): 파일별 알림 대신 **한 번의
+  /// 요약**(다시 읽음·닫음·수정 중이라 남김 개수)만 남기고, 이 브랜치에 없는 파일의 **고치지 않은 탭은 닫는다**
+  /// (보기만 하던 탭이라 잃을 것이 없다). 고치던 탭은 어느 경우에도 닫거나 덮어쓰지 않는다.
+  Future<void> checkExternalChanges({bool afterHeadChange = false}) async {
     if (_checking || _disposed) return;
     _checking = true;
     try {
       var changed = false;
+      var reloaded = 0, closed = 0, kept = 0;
       for (final tab in List.of(tabs)) {
         final now = await _stampOf(tab.path);
         if (_disposed || !tabs.contains(tab)) continue;
         if (now == null) {
+          if (afterHeadChange && !tab.dirty) {
+            tabs.remove(tab);
+            Future<void>.microtask(tab.dispose);
+            closed++;
+            changed = true;
+            continue;
+          }
           if (tab.external != ExternalChange.deleted) {
             tab.external = ExternalChange.deleted;
             tab.stamp = null;
             changed = true;
+            if (afterHeadChange) kept++;
           }
           continue;
         }
         if (now == tab.stamp && tab.external != ExternalChange.deleted) {
           continue;
         }
-        changed |= await _applyDiskChange(tab, now);
+        switch (await _applyDiskChange(tab, now, quiet: afterHeadChange)) {
+          case _DiskOutcome.none:
+            break;
+          case _DiskOutcome.redraw:
+            changed = true;
+          case _DiskOutcome.reloaded:
+            changed = true;
+            reloaded++;
+          case _DiskOutcome.keptMine:
+            changed = true;
+            kept++;
+        }
+      }
+      if (afterHeadChange) {
+        if (tabs.isEmpty) {
+          activeIndex = -1;
+        } else if (activeIndex < 0 || activeIndex >= tabs.length) {
+          activeIndex = tabs.length - 1;
+        }
+        if (reloaded + closed + kept > 0) {
+          message = EditorMessage(EditorMessageKind.headChanged, '', [
+            reloaded,
+            closed,
+            kept,
+          ]);
+        }
       }
       if (changed) notifyListeners();
     } finally {
@@ -279,34 +327,51 @@ class EditorController extends ChangeNotifier {
     }
   }
 
-  /// 디스크의 글이 달라졌을 때의 처리. 화면을 다시 그려야 하면 true.
-  Future<bool> _applyDiskChange(EditorTab tab, FileStamp now) async {
+  /// 브랜치·커밋이 바뀐 직후에 부른다 — 열린 파일을 바로(주기 확인을 기다리지 않고) 정리한다.
+  /// 확인 중이던 것이 있으면 끝난 뒤 한 번 더 한다.
+  Future<void> handleHeadChange() async {
+    while (_checking && !_disposed) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
+    await checkExternalChanges(afterHeadChange: true);
+  }
+
+  /// 디스크의 글이 달라졌을 때의 처리. [quiet]이면 파일별 알림을 남기지 않는다(요약이 대신한다).
+  Future<_DiskOutcome> _applyDiskChange(
+    EditorTab tab,
+    FileStamp now, {
+    bool quiet = false,
+  }) async {
     String disk;
     try {
       disk = utf8.decode(await File(tab.path).readAsBytes());
     } on FormatException {
       tab.stamp = now;
       tab.external = ExternalChange.modified;
-      message = EditorMessage(EditorMessageKind.changedNotUtf8, tab.name);
-      return true;
+      if (!quiet) {
+        message = EditorMessage(EditorMessageKind.changedNotUtf8, tab.name);
+      }
+      return quiet ? _DiskOutcome.keptMine : _DiskOutcome.redraw;
     } on FileSystemException {
-      return false; // 쓰는 도중이었을 수 있다 — 다음 확인 때 다시 본다.
+      return _DiskOutcome.none; // 쓰는 도중이었을 수 있다 — 다음 확인 때 다시 본다.
     }
     tab.stamp = now;
     final wasExternal = tab.external != ExternalChange.none;
     // 시각만 바뀌고 글이 같으면 없던 일로 한다 (줄 끝 차이도 같은 글로 본다).
     if (_sameText(tab, disk)) {
       tab.external = ExternalChange.none;
-      return wasExternal;
+      return wasExternal ? _DiskOutcome.redraw : _DiskOutcome.none;
     }
     if (tab.dirty) {
       tab.external = ExternalChange.modified;
-      return true;
+      return quiet ? _DiskOutcome.keptMine : _DiskOutcome.redraw;
     }
     _replaceText(tab, disk);
     tab.external = ExternalChange.none;
-    message = EditorMessage(EditorMessageKind.changedReloaded, tab.name);
-    return true;
+    if (!quiet) {
+      message = EditorMessage(EditorMessageKind.changedReloaded, tab.name);
+    }
+    return _DiskOutcome.reloaded;
   }
 
   bool _sameText(EditorTab tab, String disk) =>
@@ -383,7 +448,8 @@ class EditorController extends ChangeNotifier {
     if (failure != null) {
       message = EditorMessage(switch (failure.kind) {
         FormatFailureKind.noDart => EditorMessageKind.formatNoDart,
-        FormatFailureKind.tempWriteFailed => EditorMessageKind.formatTempWriteFailed,
+        FormatFailureKind.tempWriteFailed =>
+          EditorMessageKind.formatTempWriteFailed,
         FormatFailureKind.failed => EditorMessageKind.formatFailed,
         FormatFailureKind.failedDetail => EditorMessageKind.formatFailedDetail,
         FormatFailureKind.jsonInvalid => EditorMessageKind.formatJsonInvalid,

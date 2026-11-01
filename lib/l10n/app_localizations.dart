@@ -8623,6 +8623,60 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'패널 너비 조절 (두 번 누르면 기본 너비)'**
   String get panelResizeHandle;
+
+  /// No description provided for @messageHeadChangedPrefix.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치가 바뀌어 열린 파일을 정리했습니다'**
+  String get messageHeadChangedPrefix;
+
+  /// No description provided for @messageHeadReloaded.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 읽음 {count}개'**
+  String messageHeadReloaded(int count);
+
+  /// No description provided for @messageHeadClosed.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 브랜치에 없어 닫은 탭 {count}개'**
+  String messageHeadClosed(int count);
+
+  /// No description provided for @messageHeadKept.
+  ///
+  /// In ko, this message translates to:
+  /// **'고치던 중이라 그대로 둔 파일 {count}개 (탭의 배너에서 고르세요)'**
+  String messageHeadKept(int count);
+
+  /// No description provided for @quitUnsavedTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하지 않은 수정이 있습니다'**
+  String get quitUnsavedTitle;
+
+  /// No description provided for @quitUnsavedBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 파일에 저장하지 않은 수정이 있습니다: {names}'**
+  String quitUnsavedBody(int count, String names);
+
+  /// No description provided for @quitSaveAndExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 저장하고 종료'**
+  String get quitSaveAndExit;
+
+  /// No description provided for @quitDiscardAndExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하지 않고 종료'**
+  String get quitDiscardAndExit;
+
+  /// No description provided for @quitSaveFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하지 못한 파일이 있어 종료를 취소했습니다'**
+  String get quitSaveFailed;
 }
 
 class _AppLocalizationsDelegate

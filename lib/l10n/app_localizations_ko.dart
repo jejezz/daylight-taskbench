@@ -5065,4 +5065,39 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get panelResizeHandle => '패널 너비 조절 (두 번 누르면 기본 너비)';
+
+  @override
+  String get messageHeadChangedPrefix => '브랜치가 바뀌어 열린 파일을 정리했습니다';
+
+  @override
+  String messageHeadReloaded(int count) {
+    return '다시 읽음 $count개';
+  }
+
+  @override
+  String messageHeadClosed(int count) {
+    return '이 브랜치에 없어 닫은 탭 $count개';
+  }
+
+  @override
+  String messageHeadKept(int count) {
+    return '고치던 중이라 그대로 둔 파일 $count개 (탭의 배너에서 고르세요)';
+  }
+
+  @override
+  String get quitUnsavedTitle => '저장하지 않은 수정이 있습니다';
+
+  @override
+  String quitUnsavedBody(int count, String names) {
+    return '$count개 파일에 저장하지 않은 수정이 있습니다: $names';
+  }
+
+  @override
+  String get quitSaveAndExit => '모두 저장하고 종료';
+
+  @override
+  String get quitDiscardAndExit => '저장하지 않고 종료';
+
+  @override
+  String get quitSaveFailed => '저장하지 못한 파일이 있어 종료를 취소했습니다';
 }
