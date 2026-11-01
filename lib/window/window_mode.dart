@@ -35,8 +35,8 @@ class WindowModeSpec {
   final String sizeKey;
 }
 
-/// 도킹: 편집기 옆 세로 창 (§1.5). 확장: 도크 열 400 + 확장 영역 (§1.13).
-/// 확장의 최소 폭 920 = 도크 열 400 + 확장 영역 520 (탐색기 240 + 가운데 최소 270 + 여백).
+/// 도킹: 편집기 옆 세로 창 (§1.5). 확장: 도크 열 440 + 확장 영역 (§1.13).
+/// 확장의 최소 폭 960 = 도크 열 440 + 확장 영역 520 (탐색기 240 + 가운데 최소 270 + 여백).
 const dockSpec = WindowModeSpec(
   size: Size(440, 960),
   minimum: Size(380, 560),
@@ -45,7 +45,7 @@ const dockSpec = WindowModeSpec(
 );
 const expandedSpec = WindowModeSpec(
   size: Size(1240, 820),
-  minimum: Size(920, 560),
+  minimum: Size(960, 560),
   placementKey: 'window_placement_expanded',
   sizeKey: 'window_size_expanded',
 );

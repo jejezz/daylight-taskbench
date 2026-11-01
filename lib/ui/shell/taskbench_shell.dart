@@ -105,7 +105,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     final expanded = widget.panels.expanded;
     if (expanded == _lastExpanded) return;
     _lastExpanded = expanded;
-    widget.windowMode?.switchTo(expanded ? WindowMode.expanded : WindowMode.dock);
+    widget.windowMode?.switchTo(
+      expanded ? WindowMode.expanded : WindowMode.dock,
+    );
   }
 
   String? _title;
@@ -244,7 +246,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   }
 
   void _login() {
-    final origin = ws.repo?.remotes.where((r) => r.name == 'origin').firstOrNull;
+    final origin = ws.repo?.remotes
+        .where((r) => r.name == 'origin')
+        .firstOrNull;
     showLoginSheet(
       context,
       ws.environment,
@@ -276,6 +280,22 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     }
     return TaskbenchMood.idle;
   }
+
+  Widget _workspaceBar() => Stack(
+    children: [
+      const Positioned.fill(child: FocusTint()),
+      WorkspaceBar(
+        workspace: ws,
+        onOpenFolder: _pickAndOpen,
+        onOpenRecent: _openPath,
+        onSettings: () => showSettingsDialog(context),
+        onAbout: widget.onAbout,
+        panels: widget.panels,
+        alwaysOnTop: _pinned,
+        onToggleAlwaysOnTop: _desktop ? _togglePin : null,
+      ),
+    ],
+  );
 
   /// 도킹 모드면 도크 열이 창 전체를 쓰고, 확장 모드면 왼쪽에 확장 영역이 붙고 도크 열은 고정 폭이 된다 (§1.13).
   /// 도크 열은 [GlobalKey]를 달아 두 모드 사이를 오가도 State 가 유지된다.
@@ -331,7 +351,12 @@ class _TaskbenchShellState extends State<TaskbenchShell>
             _onDrop([for (final f in d.files) f.path]);
           },
           child: ListenableBuilder(
-            listenable: Listenable.merge([ws, ...widget.docks, settings, widget.panels]),
+            listenable: Listenable.merge([
+              ws,
+              ...widget.docks,
+              settings,
+              widget.panels,
+            ]),
             builder: (context, _) {
               final open = ws.isOpen;
               final shown = open
@@ -348,41 +373,27 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                   body: SafeArea(
                     child: Stack(
                       children: [
-                        Column(
-                          children: [
-                            Stack(
-                              children: [
-                                const Positioned.fill(child: FocusTint()),
-                                WorkspaceBar(
-                                  workspace: ws,
-                                  onOpenFolder: _pickAndOpen,
-                                  onOpenRecent: _openPath,
-                                  onSettings: () => showSettingsDialog(context),
-                                  onAbout: widget.onAbout,
-                                  panels: widget.panels,
-                                  alwaysOnTop: _pinned,
-                                  onToggleAlwaysOnTop: _desktop
-                                      ? _togglePin
-                                      : null,
-                                ),
-                              ],
-                            ),
-                            if (open) ...[
-                              BranchBar(
-                                workspace: ws,
-                                onBranchTap: () {
-                                  final branch = widget.docks
-                                      .whereType<BranchDock>()
-                                      .firstOrNull;
-                                  if (branch == null) return;
-                                  _select(branch.id);
-                                  branch.showTab(branchTabBranches);
-                                },
-                              ),
-                              Expanded(
-                                child: _body(
-                                  KeyedSubtree(
-                                    key: _dockColumnKey,
+                        if (open)
+                          // 디렉터리 바·브랜치 줄·아코디언은 한 덩어리(도크 열)다. 확장해도 이 덩어리가 그대로
+                          // 오른쪽에 남아서 도킹 모드와 같은 모습·위치를 유지한다 (§1.13).
+                          _body(
+                            KeyedSubtree(
+                              key: _dockColumnKey,
+                              child: Column(
+                                children: [
+                                  _workspaceBar(),
+                                  BranchBar(
+                                    workspace: ws,
+                                    onBranchTap: () {
+                                      final branch = widget.docks
+                                          .whereType<BranchDock>()
+                                          .firstOrNull;
+                                      if (branch == null) return;
+                                      _select(branch.id);
+                                      branch.showTab(branchTabBranches);
+                                    },
+                                  ),
+                                  Expanded(
                                     child: DockAccordion(
                                       docks: shown,
                                       workspace: ws,
@@ -390,9 +401,14 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                       onSelect: _select,
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ] else
+                            ),
+                          )
+                        else
+                          Column(
+                            children: [
+                              _workspaceBar(),
                               Expanded(
                                 child: StartScreen(
                                   workspace: ws,
@@ -408,10 +424,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                   dragging: _dragging,
                                 ),
                               ),
-                          ],
-                        ),
+                            ],
+                          ),
                         if (_dragging && open)
-                          _DropOverlay(title: l10n.dropOverlayTitle),
+                          _DropOverlay(
+                            title: l10n.dropOverlayTitle,
+                            // 확장 모드에서는 도크 열 위에만 덮는다 — 폴더를 놓는 자리가 그쪽이다.
+                            width: widget.panels.expanded
+                                ? dockColumnWidth
+                                : null,
+                          ),
                       ],
                     ),
                   ),
@@ -427,38 +449,47 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
 /// 끄는 동안 공유 영역 두 줄 위에 덮는 안내 (§1.11). 그 아래 Dock 영역은 살짝 어둡게 한다.
 class _DropOverlay extends StatelessWidget {
-  const _DropOverlay({required this.title});
+  const _DropOverlay({required this.title, this.width});
 
   final String title;
+
+  /// null 이면 창 전체, 아니면 오른쪽 이 폭만.
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: Column(
-          children: [
-            Container(
-              height: sharedBarHeight + branchBarHeight,
-              margin: const EdgeInsets.all(4),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: scheme.primary.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: scheme.primary, width: 2),
-              ),
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleSmall
-                    ?.copyWith(color: scheme.primary),
-              ),
+    final overlay = IgnorePointer(
+      child: Column(
+        children: [
+          Container(
+            height: sharedBarHeight + branchBarHeight,
+            margin: const EdgeInsets.all(4),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: scheme.primary, width: 2),
             ),
-            Expanded(
-              child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12)),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleSmall
+                  ?.copyWith(color: scheme.primary),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12)),
+          ),
+        ],
       ),
+    );
+    return Positioned.fill(
+      child: width == null
+          ? overlay
+          : Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(width: width, child: overlay),
+            ),
     );
   }
 }

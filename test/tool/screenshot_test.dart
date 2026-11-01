@@ -91,7 +91,7 @@ void main() {
 
   // 확장 모드 (PLAN.md §1.13): 탐색기 + [에디터|터미널] + 도크 열.
   for (final dark in [false, true]) {
-    for (final size in const [Size(1240, 820), Size(920, 560)]) {
+    for (final size in const [Size(1240, 820), Size(960, 560)]) {
       testWidgets('shot expanded ${dark ? 'dark' : 'light'} ${size.width.toInt()}', skip: out == null, (tester) async {
         await tester.runAsync(_loadFonts);
         tester.view.physicalSize = size;

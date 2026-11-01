@@ -95,7 +95,7 @@ void main() {
     expect(column.left, lessThan(200)); // 왼쪽에서 시작 — 창 전체를 쓴다
   });
 
-  testWidgets('탐색기를 켜면 확장 모드: 도크 열은 오른쪽 400, 왼쪽에 탐색기 자리가 생긴다', (tester) async {
+  testWidgets('탐색기를 켜면 확장 모드: 도크 열은 오른쪽 440, 왼쪽에 탐색기 자리가 생긴다', (tester) async {
     final panels = await _pump(tester);
     panels.setExplorer(true);
     await tester.pumpAndSettle();
@@ -176,8 +176,8 @@ void main() {
     expect(find.byType(ExpandedArea), findsOneWidget);
   });
 
-  testWidgets('확장 모드 최소 창(920×560)에서 오버플로 없이 그려진다', (tester) async {
-    await _pump(tester, size: const Size(920, 560), prefs: {'panel_explorer': true, 'panel_editor': true, 'panel_terminal': true}, docks: [BranchDock()]);
+  testWidgets('확장 모드 최소 창(960×560)에서 오버플로 없이 그려진다', (tester) async {
+    await _pump(tester, size: const Size(960, 560), prefs: {'panel_explorer': true, 'panel_editor': true, 'panel_terminal': true}, docks: [BranchDock()]);
     expect(tester.takeException(), isNull);
   });
 

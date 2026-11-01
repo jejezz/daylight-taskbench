@@ -9,14 +9,15 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import 'panel_layout.dart';
 
-/// 도크 열의 폭 (확장 모드). 도킹 모드에서는 창 전체를 쓴다.
-const double dockColumnWidth = 400;
+/// 도크 열의 폭 (확장 모드). 도킹 모드의 기본 폭(440)과 같게 해서 앱 바·브랜치 줄·아코디언이 도킹 모드와
+/// 똑같이 보이게 한다 (좁은 막대 기준 420 이상). 도킹 모드에서는 창 전체를 쓴다.
+const double dockColumnWidth = 440;
 
 /// 탐색기 폭. 이후 단계에서 끌어서 조절하게 할 수 있다.
 const double explorerWidth = 240;
 
-/// 패널 위쪽 머리줄(탐색기 제목 · 파일 탭 줄)의 높이. 두 패널이 같은 높이라 선이 이어진다.
-const double panelHeaderHeight = 40;
+/// 패널 위쪽 머리줄(탐색기 제목 · 파일 탭 줄)의 높이. 도크 열의 디렉터리 바(44)와 같아서 선이 이어진다.
+const double panelHeaderHeight = 44;
 
 class ExpandedArea extends StatelessWidget {
   const ExpandedArea({super.key, required this.panels});
@@ -30,7 +31,7 @@ class ExpandedArea extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: scheme.surface,
-        border: Border(top: divider, right: divider),
+        border: Border(right: divider),
       ),
       child: Row(
         children: [

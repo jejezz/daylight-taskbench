@@ -65,8 +65,8 @@ void main() {
     expect(WindowModeMath.parseSize(null), isNull);
   });
 
-  test('도크 열 400 + 확장 영역이 들어가도록 확장 최소 폭을 정했다', () {
-    expect(expandedSpec.minimum.width, greaterThanOrEqualTo(400 + 240 + 270));
+  test('도크 열 440 + 확장 영역이 들어가도록 확장 최소 폭을 정했다', () {
+    expect(expandedSpec.minimum.width, greaterThanOrEqualTo(440 + 240 + 270));
     expect(dockSpec.minimum, const Size(380, 560)); // PLAN §1.5 그대로
   });
 }
