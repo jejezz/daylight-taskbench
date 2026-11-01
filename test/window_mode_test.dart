@@ -65,6 +65,11 @@ void main() {
     expect(WindowModeMath.parseSize(null), isNull);
   });
 
+  test('탐색기만 켠 창은 탐색기 240 + 도크 열 440 이상이다', () {
+    expect(explorerSpec.minimum.width, greaterThanOrEqualTo(240 + 440));
+    expect(explorerSpec.size.width, lessThan(expandedSpec.size.width));
+  });
+
   test('도크 열 440 + 확장 영역이 들어가도록 확장 최소 폭을 정했다', () {
     expect(expandedSpec.minimum.width, greaterThanOrEqualTo(440 + 240 + 270));
     expect(dockSpec.minimum, const Size(380, 560)); // PLAN §1.5 그대로

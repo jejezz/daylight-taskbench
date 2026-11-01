@@ -35,28 +35,28 @@ class ExpandedArea extends StatelessWidget {
       ),
       child: Row(
         children: [
-          if (panels.explorer) ...[
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: scheme.surfaceContainerLow,
-                border: Border(right: divider),
-              ),
-              child: const SizedBox(
-                width: explorerWidth,
-                child: ExplorerPlaceholder(),
+          if (panels.explorer)
+            // 가운데가 없으면 탐색기가 남는 폭을 쓴다 (창이 이미 그 폭에 맞춰져 있어 빈칸이 생기지 않는다).
+            _fit(
+              fill: !panels.hasCenter,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: scheme.surfaceContainerLow,
+                  border: Border(right: divider),
+                ),
+                child: const ExplorerPlaceholder(),
               ),
             ),
-          ],
-          Expanded(
-            child: panels.hasCenter
-                ? CenterArea(panels: panels)
-                : const SizedBox.shrink(),
-          ),
+          if (panels.hasCenter) Expanded(child: CenterArea(panels: panels)),
         ],
       ),
     );
   }
 }
+
+Widget _fit({required bool fill, required Widget child}) => fill
+    ? Expanded(child: child)
+    : SizedBox(width: explorerWidth, child: child);
 
 /// 패널 머리줄: 아래에 선이 있는 [panelHeaderHeight] 높이의 줄.
 class _Header extends StatelessWidget {
@@ -92,11 +92,7 @@ class ExplorerPlaceholder extends StatelessWidget {
           children: [
             Text(l10n.panelExplorer, style: theme.textTheme.titleSmall),
             const Spacer(),
-            Icon(
-              Icons.refresh_rounded,
-              size: 18,
-              color: theme.disabledColor,
-            ),
+            Icon(Icons.refresh_rounded, size: 18, color: theme.disabledColor),
           ],
         ),
         Expanded(

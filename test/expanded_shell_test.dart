@@ -141,6 +141,18 @@ void main() {
     expect(find.byType(ExpandedArea), findsNothing);
   });
 
+  testWidgets('탐색기만 켜면 가운데 빈칸이 없다: 탐색기가 남는 폭을 쓴다', (tester) async {
+    final panels = await _pump(tester);
+    panels.setExplorer(true);
+    await tester.pumpAndSettle();
+    final explorer = tester.getRect(find.byType(ExplorerPlaceholder));
+    final dock = tester.getRect(find.text('Probe')); // 도크 열 안
+    expect(explorer.left, 0);
+    expect(explorer.right, greaterThan(1240 - dockColumnWidth - 2)); // 도크 열 바로 앞까지
+    expect(dock.left, greaterThan(explorer.right - 1));
+    expect(find.byType(CenterArea), findsNothing);
+  });
+
   testWidgets('에디터와 터미널이 둘 다 켜지면 전환 단추가 나오고, 전환해도 가운데는 한 번에 하나만 보인다', (tester) async {
     final panels = await _pump(tester);
     panels

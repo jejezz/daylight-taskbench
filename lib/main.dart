@@ -48,7 +48,7 @@ Future<void> main() async {
   final panels = PanelLayout(prefs);
   final windowMode = WindowModeController(
     prefs,
-    initial: panels.expanded ? WindowMode.expanded : WindowMode.dock,
+    initial: panels.windowMode,
   );
   if (_isDesktop) {
     await windowManager.ensureInitialized();

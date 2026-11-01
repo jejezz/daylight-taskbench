@@ -5,6 +5,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../window/window_mode.dart' show WindowMode;
+
 /// 가운데 영역에 보이는 것. 에디터와 터미널은 동시에 보이지 않고 서로 전환된다.
 enum CenterView { editor, terminal }
 
@@ -62,6 +64,12 @@ class PanelLayout extends ChangeNotifier {
 
   /// 확장 모드 = 보이는 패널이 하나라도 있음. 아니면 도킹 모드다.
   bool get expanded => _explorer || hasCenter;
+
+  /// 창 크기 모드. 도킹 / 탐색기만(가운데 자리 없음) / 가운데가 있는 전체.
+  WindowMode get windowMode {
+    if (!expanded) return WindowMode.dock;
+    return hasCenter ? WindowMode.expanded : WindowMode.explorer;
+  }
 
   void setExplorer(bool on) {
     if (on == _explorer) return;

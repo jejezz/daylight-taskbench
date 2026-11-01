@@ -71,7 +71,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
   /// 도크 열은 도킹↔확장 전환에서 같은 State 를 유지한다 (펼친 칸·스크롤·실행 중 빌드가 그대로).
   final _dockColumnKey = GlobalKey(debugLabel: 'dockColumn');
-  bool? _lastExpanded;
+  WindowMode? _lastWindowMode;
 
   Workspace get ws => widget.workspace;
   bool get _desktop =>
@@ -97,17 +97,15 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     ws.addListener(_syncTitle);
     _syncTitle();
     widget.panels.addListener(_syncWindowMode);
-    _lastExpanded = widget.panels.expanded;
+    _lastWindowMode = widget.panels.windowMode;
   }
 
   /// 패널이 켜지거나 꺼져 모드가 바뀌면 창 크기를 그 모드의 크기로 바꾼다 (모드별로 기억).
   void _syncWindowMode() {
-    final expanded = widget.panels.expanded;
-    if (expanded == _lastExpanded) return;
-    _lastExpanded = expanded;
-    widget.windowMode?.switchTo(
-      expanded ? WindowMode.expanded : WindowMode.dock,
-    );
+    final mode = widget.panels.windowMode;
+    if (mode == _lastWindowMode) return;
+    _lastWindowMode = mode;
+    widget.windowMode?.switchTo(mode);
   }
 
   String? _title;

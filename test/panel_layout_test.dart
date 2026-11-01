@@ -1,6 +1,7 @@
 // 확장 패널 상태와 거기서 파생되는 모드 (PLAN.md §1.13).
 
 import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
+import 'package:daylight_taskbench/window/window_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -113,6 +114,22 @@ void main() {
   test('알 수 없는 저장값은 기본(에디터)으로 읽는다', () async {
     final p = await _layout({'panel_center': 'nope', 'panel_editor': true, 'panel_terminal': true});
     expect(p.center, CenterView.editor);
+  });
+
+  test('창 크기 모드: 도킹 / 탐색기만(가운데 자리 없음) / 가운데가 있는 전체', () async {
+    final p = await _layout();
+    expect(p.windowMode, WindowMode.dock);
+    p.setExplorer(true);
+    expect(p.windowMode, WindowMode.explorer); // 탐색기만 — 창도 그만큼만
+    p.setTerminal(true);
+    expect(p.windowMode, WindowMode.expanded);
+    p.setTerminal(false);
+    expect(p.windowMode, WindowMode.explorer);
+    p.setExplorer(false);
+    p.setEditor(true);
+    expect(p.windowMode, WindowMode.expanded); // 탐색기 없이 에디터만이어도 가운데가 있다
+    p.setEmbeddedEditor(false); // 내장 에디터를 끄면 가운데가 사라진다
+    expect(p.windowMode, WindowMode.dock);
   });
 
   test('바뀔 때만 알린다', () async {

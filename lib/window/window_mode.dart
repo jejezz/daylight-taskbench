@@ -15,7 +15,8 @@ import 'package:window_manager/window_manager.dart';
 
 import 'window_placement.dart';
 
-enum WindowMode { dock, expanded }
+/// 창 크기 모드 (§1.13). 패널 켜짐에서 파생된다 — 탐색기만 켜면 가운데 자리가 없어서 창도 그만큼만 넓어진다.
+enum WindowMode { dock, explorer, expanded }
 
 class WindowModeSpec {
   const WindowModeSpec({
@@ -43,6 +44,14 @@ const dockSpec = WindowModeSpec(
   placementKey: 'window_placement',
   sizeKey: 'window_size_dock',
 );
+
+/// 탐색기만 켠 상태: 탐색기 240 + 도크 열 440.
+const explorerSpec = WindowModeSpec(
+  size: Size(680, 960),
+  minimum: Size(680, 560),
+  placementKey: 'window_placement_explorer',
+  sizeKey: 'window_size_explorer',
+);
 const expandedSpec = WindowModeSpec(
   size: Size(1240, 820),
   minimum: Size(960, 560),
@@ -50,8 +59,11 @@ const expandedSpec = WindowModeSpec(
   sizeKey: 'window_size_expanded',
 );
 
-WindowModeSpec specOf(WindowMode mode) =>
-    mode == WindowMode.dock ? dockSpec : expandedSpec;
+WindowModeSpec specOf(WindowMode mode) => switch (mode) {
+  WindowMode.dock => dockSpec,
+  WindowMode.explorer => explorerSpec,
+  WindowMode.expanded => expandedSpec,
+};
 
 /// 크기 계산 (화면에 아무것도 하지 않는 순수 함수라서 테스트할 수 있다).
 abstract final class WindowModeMath {
