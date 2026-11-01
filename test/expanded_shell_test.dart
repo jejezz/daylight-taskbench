@@ -239,30 +239,50 @@ void main() {
     expect(panels.center, CenterView.terminal);
   });
 
-  testWidgets('앱 바의 패널 메뉴로 켜고 끈다. 켜져 있으면 "모두 닫으면 도킹으로 돌아간다" 안내가 보인다', (
-    tester,
-  ) async {
+  testWidgets('확장 단추: 모두 켜고, 하나라도 켜져 있으면 모두 끈다', (tester) async {
     final panels = await _pump(tester);
-    await tester.tap(find.byTooltip('패널'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('패널을 모두 닫으면 도킹 모드로 돌아갑니다'),
-      findsNothing,
-    ); // 도킹 모드에서는 안내 없음
-    await tester.tap(find.widgetWithText(CheckedPopupMenuItem<String>, '탐색기'));
+    await tester.tap(find.byIcon(Icons.open_in_full_rounded));
     await tester.pumpAndSettle();
     expect(panels.explorer, isTrue);
-    await tester.tap(find.byTooltip('패널'));
+    expect(panels.editorShown, isTrue);
+    expect(panels.terminal, isTrue);
+    // 개별 패널을 x 로 닫아도 확장 단추는 "접기"다.
+    panels.setEditor(false);
+    panels.setTerminal(false);
     await tester.pumpAndSettle();
-    expect(find.text('패널을 모두 닫으면 도킹 모드로 돌아갑니다'), findsOneWidget);
+    expect(find.byIcon(Icons.close_fullscreen_rounded), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.close_fullscreen_rounded));
+    await tester.pumpAndSettle();
+    expect(panels.expanded, isFalse);
+    expect(find.byType(ExpandedArea), findsNothing);
   });
 
-  testWidgets('내장 에디터를 끄면 메뉴의 에디터 항목이 꺼진다', (tester) async {
+  testWidgets('확장 단추 설명에 개별 패널 단축키가 보인다', (tester) async {
+    await _pump(tester);
+    final tip = tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.open_in_full_rounded)).tooltip!;
+    expect(tip, contains('탐색기'));
+    expect(tip, contains('터미널'));
+  });
+
+  testWidgets('내장 에디터를 껐으면 확장 단추는 에디터를 켜지 않는다', (tester) async {
     final panels = await _pump(tester, prefs: {'editor_embedded': false});
-    expect(panels.embeddedEditor, isFalse);
-    await tester.tap(find.byTooltip('패널'));
+    await tester.tap(find.byIcon(Icons.open_in_full_rounded));
     await tester.pumpAndSettle();
-    expect(find.textContaining('내장 에디터를 사용하지 않습니다'), findsOneWidget);
+    expect(panels.explorer, isTrue);
+    expect(panels.terminal, isTrue);
+    expect(panels.editor, isFalse);
+  });
+
+  test('toggleAll 은 알림을 한 번만 보낸다 (창 크기가 여러 번 바뀌지 않게)', () async {
+    SharedPreferences.setMockInitialValues({});
+    final panels = PanelLayout(await SharedPreferences.getInstance());
+    var n = 0;
+    panels.addListener(() => n++);
+    panels.toggleAll();
+    expect(n, 1);
+    panels.toggleAll();
+    expect(n, 2);
+    expect(panels.expanded, isFalse);
   });
 
   testWidgets('패널 켜짐은 저장되지 않아서 항상 도킹 모드로 시작한다', (tester) async {
@@ -312,7 +332,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('도킹 최소 창(380×560)에서는 패널 항목이 "더 보기" 메뉴 안에 있다 (폴더 이름에 자리를 준다)', (
+  testWidgets('도킹 최소 창(380×560)에서는 확장 항목이 "더 보기" 메뉴 안에 있다 (폴더 이름에 자리를 준다)', (
     tester,
   ) async {
     final panels = await _pump(
@@ -321,13 +341,13 @@ void main() {
       docks: [BranchDock()],
     );
     expect(tester.takeException(), isNull);
-    expect(find.byTooltip('패널'), findsNothing);
+    expect(find.byIcon(Icons.open_in_full_rounded), findsNothing);
     await tester.tap(find.byTooltip('더 보기'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(CheckedPopupMenuItem<String>, '터미널'));
+    await tester.tap(find.textContaining('확장'));
     tester.view.physicalSize = const Size(1240, 820); // 모드가 바뀌면 창이 확장 크기로 커진다
     await tester.pumpAndSettle();
-    expect(panels.terminal, isTrue);
+    expect(panels.expanded, isTrue);
     expect(tester.takeException(), isNull);
   });
 }
