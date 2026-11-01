@@ -14,6 +14,8 @@ import '../../theme/app_theme.dart';
 import '../../workspace/git_state.dart';
 import '../../workspace/workspace.dart';
 import '../style/app_mark.dart';
+import 'panels/panel_layout.dart';
+import 'panels/panels_menu.dart';
 import '../style/status_pill.dart';
 
 const double sharedBarHeight = 44;
@@ -37,8 +39,11 @@ class WorkspaceBar extends StatelessWidget {
     required this.onAbout,
     this.alwaysOnTop,
     this.onToggleAlwaysOnTop,
+    this.panels,
   });
 
+  /// 확장 패널 상태. null이면 패널 단추를 보이지 않는다.
+  final PanelLayout? panels;
   final Workspace workspace;
   final VoidCallback onOpenFolder;
   final ValueChanged<String> onOpenRecent;
@@ -153,7 +158,15 @@ class WorkspaceBar extends StatelessWidget {
               tooltip: l10n.moreTooltip,
               position: PopupMenuPosition.under,
               padding: EdgeInsets.zero,
-              onSelected: (v) => v == 'refresh' ? workspace.refresh() : onToggleAlwaysOnTop?.call(),
+              onSelected: (v) {
+                if (panelChoices.contains(v)) {
+                  applyPanelChoice(panels!, v);
+                } else if (v == 'refresh') {
+                  workspace.refresh();
+                } else {
+                  onToggleAlwaysOnTop?.call();
+                }
+              },
               itemBuilder: (_) => [
                 if (root != null)
                   PopupMenuItem(
@@ -175,6 +188,10 @@ class WorkspaceBar extends StatelessWidget {
                       Text(l10n.alwaysOnTopTooltip),
                     ]),
                   ),
+                if (panels != null && root != null) ...[
+                  const PopupMenuDivider(),
+                  ...panelMenuEntries(context, panels!),
+                ],
               ],
               child: SizedBox(
                 width: _narrowIconWidth,
@@ -198,6 +215,13 @@ class WorkspaceBar extends StatelessWidget {
                 onPressed: onToggleAlwaysOnTop,
               ),
           ],
+          // 패널(탐색기·에디터·터미널) 켜기/끄기 — 도킹 모드에서도 보여야 해서 앱 바에 둔다 (§1.13).
+          // 좁은 막대(도킹 최소 폭)에서는 폴더 이름에 자리를 주려고 "더 보기" 메뉴 안에 넣는다.
+          if (panels != null && root != null && !narrow)
+            ListenableBuilder(
+              listenable: panels!,
+              builder: (_, _) => PanelsMenuButton(panels: panels!),
+            ),
           IconButton(
             padding: narrow ? EdgeInsets.zero : null,
             style: narrow ? IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap) : null,

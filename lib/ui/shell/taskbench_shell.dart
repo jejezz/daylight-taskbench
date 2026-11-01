@@ -24,8 +24,11 @@ import '../../workspace/workspace.dart';
 import '../../docks/branch/ui/branch_dock_body.dart' show branchTabBranches;
 import '../../docks/branch/ui/onboarding.dart';
 import '../start_screen.dart';
+import '../../window/window_mode.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
+import 'panels/expanded_area.dart';
+import 'panels/panel_layout.dart';
 import 'shared_bar.dart';
 
 class TaskbenchShell extends StatefulWidget {
@@ -34,12 +37,20 @@ class TaskbenchShell extends StatefulWidget {
     required this.workspace,
     required this.docks,
     required this.onAbout,
+    required this.panels,
+    this.windowMode,
     this.pickFolder,
   });
 
   final Workspace workspace;
   final List<DockModule> docks;
   final VoidCallback onAbout;
+
+  /// 확장 패널 켜짐 상태 — 모드(도킹/확장)는 여기서 파생된다 (§1.13).
+  final PanelLayout panels;
+
+  /// 모드가 바뀔 때 창 크기를 맞추는 쪽. 테스트에서는 null.
+  final WindowModeController? windowMode;
 
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
@@ -57,6 +68,10 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   String? _expandedId;
   bool _dragging = false;
   bool _pinned = false;
+
+  /// 도크 열은 도킹↔확장 전환에서 같은 State 를 유지한다 (펼친 칸·스크롤·실행 중 빌드가 그대로).
+  final _dockColumnKey = GlobalKey(debugLabel: 'dockColumn');
+  WindowMode? _lastWindowMode;
 
   Workspace get ws => widget.workspace;
   bool get _desktop =>
@@ -81,6 +96,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     ws.pickFolderHandler = _pickAndOpen;
     ws.addListener(_syncTitle);
     _syncTitle();
+    widget.panels.addListener(_syncWindowMode);
+    _lastWindowMode = widget.panels.windowMode;
+  }
+
+  /// 패널이 켜지거나 꺼져 모드가 바뀌면 창 크기를 그 모드의 크기로 바꾼다 (모드별로 기억).
+  void _syncWindowMode() {
+    final mode = widget.panels.windowMode;
+    if (mode == _lastWindowMode) return;
+    _lastWindowMode = mode;
+    widget.windowMode?.switchTo(mode);
   }
 
   String? _title;
@@ -107,6 +132,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   @override
   void dispose() {
     ws.removeListener(_syncTitle);
+    widget.panels.removeListener(_syncWindowMode);
     if (ws.openHandler == _openPath) ws.openHandler = null;
     if (ws.pickFolderHandler == _pickAndOpen) ws.pickFolderHandler = null;
     ws.unregisterBusyCheck(_anyBusy);
@@ -218,7 +244,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   }
 
   void _login() {
-    final origin = ws.repo?.remotes.where((r) => r.name == 'origin').firstOrNull;
+    final origin = ws.repo?.remotes
+        .where((r) => r.name == 'origin')
+        .firstOrNull;
     showLoginSheet(
       context,
       ws.environment,
@@ -249,6 +277,50 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       return TaskbenchMood.working;
     }
     return TaskbenchMood.idle;
+  }
+
+  Widget _workspaceBar() => Stack(
+    children: [
+      const Positioned.fill(child: FocusTint()),
+      WorkspaceBar(
+        workspace: ws,
+        onOpenFolder: _pickAndOpen,
+        onOpenRecent: _openPath,
+        onSettings: () => showSettingsDialog(context),
+        onAbout: widget.onAbout,
+        panels: widget.panels,
+        alwaysOnTop: _pinned,
+        onToggleAlwaysOnTop: _desktop ? _togglePin : null,
+      ),
+    ],
+  );
+
+  /// 도킹 모드면 도크 열이 창 전체를 쓰고, 확장 모드면 왼쪽에 확장 영역이 붙고 도크 열은 고정 폭이 된다 (§1.13).
+  /// 도크 열은 [GlobalKey]를 달아 두 모드 사이를 오가도 State 가 유지된다.
+  Widget _body(Widget dockColumn) {
+    final panels = widget.panels;
+    if (!panels.expanded) return dockColumn;
+    // 창이 확장 최소 폭보다 좁은 순간(모드 전환으로 창 크기를 바꾸는 중)에도 넘치지 않게 도크 열 폭을 줄인다.
+    return LayoutBuilder(
+      builder: (context, c) {
+        final width = dockColumnWidth.clamp(0.0, c.maxWidth * 0.65);
+        return Row(
+          children: [
+            Expanded(child: ExpandedArea(panels: panels)),
+            SizedBox(
+              width: width,
+              // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
+              // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
+              child: MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(size: Size(width, c.maxHeight)),
+                child: dockColumn,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -286,7 +358,12 @@ class _TaskbenchShellState extends State<TaskbenchShell>
             _onDrop([for (final f in d.files) f.path]);
           },
           child: ListenableBuilder(
-            listenable: Listenable.merge([ws, ...widget.docks, settings]),
+            listenable: Listenable.merge([
+              ws,
+              ...widget.docks,
+              settings,
+              widget.panels,
+            ]),
             builder: (context, _) {
               final open = ws.isOpen;
               final shown = open
@@ -303,45 +380,42 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                   body: SafeArea(
                     child: Stack(
                       children: [
-                        Column(
-                          children: [
-                            Stack(
-                              children: [
-                                const Positioned.fill(child: FocusTint()),
-                                WorkspaceBar(
-                                  workspace: ws,
-                                  onOpenFolder: _pickAndOpen,
-                                  onOpenRecent: _openPath,
-                                  onSettings: () => showSettingsDialog(context),
-                                  onAbout: widget.onAbout,
-                                  alwaysOnTop: _pinned,
-                                  onToggleAlwaysOnTop: _desktop
-                                      ? _togglePin
-                                      : null,
-                                ),
-                              ],
+                        if (open)
+                          // 디렉터리 바·브랜치 줄·아코디언은 한 덩어리(도크 열)다. 확장해도 이 덩어리가 그대로
+                          // 오른쪽에 남아서 도킹 모드와 같은 모습·위치를 유지한다 (§1.13).
+                          _body(
+                            KeyedSubtree(
+                              key: _dockColumnKey,
+                              child: Column(
+                                children: [
+                                  _workspaceBar(),
+                                  BranchBar(
+                                    workspace: ws,
+                                    onBranchTap: () {
+                                      final branch = widget.docks
+                                          .whereType<BranchDock>()
+                                          .firstOrNull;
+                                      if (branch == null) return;
+                                      _select(branch.id);
+                                      branch.showTab(branchTabBranches);
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: DockAccordion(
+                                      docks: shown,
+                                      workspace: ws,
+                                      expandedId: expanded,
+                                      onSelect: _select,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            if (open) ...[
-                              BranchBar(
-                                workspace: ws,
-                                onBranchTap: () {
-                                  final branch = widget.docks
-                                      .whereType<BranchDock>()
-                                      .firstOrNull;
-                                  if (branch == null) return;
-                                  _select(branch.id);
-                                  branch.showTab(branchTabBranches);
-                                },
-                              ),
-                              Expanded(
-                                child: DockAccordion(
-                                  docks: shown,
-                                  workspace: ws,
-                                  expandedId: expanded,
-                                  onSelect: _select,
-                                ),
-                              ),
-                            ] else
+                          )
+                        else
+                          Column(
+                            children: [
+                              _workspaceBar(),
                               Expanded(
                                 child: StartScreen(
                                   workspace: ws,
@@ -357,10 +431,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                                   dragging: _dragging,
                                 ),
                               ),
-                          ],
-                        ),
+                            ],
+                          ),
                         if (_dragging && open)
-                          _DropOverlay(title: l10n.dropOverlayTitle),
+                          _DropOverlay(
+                            title: l10n.dropOverlayTitle,
+                            // 확장 모드에서는 도크 열 위에만 덮는다 — 폴더를 놓는 자리가 그쪽이다.
+                            width: widget.panels.expanded
+                                ? dockColumnWidth
+                                : null,
+                          ),
                       ],
                     ),
                   ),
@@ -376,38 +456,47 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
 /// 끄는 동안 공유 영역 두 줄 위에 덮는 안내 (§1.11). 그 아래 Dock 영역은 살짝 어둡게 한다.
 class _DropOverlay extends StatelessWidget {
-  const _DropOverlay({required this.title});
+  const _DropOverlay({required this.title, this.width});
 
   final String title;
+
+  /// null 이면 창 전체, 아니면 오른쪽 이 폭만.
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: Column(
-          children: [
-            Container(
-              height: sharedBarHeight + branchBarHeight,
-              margin: const EdgeInsets.all(4),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: scheme.primary.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: scheme.primary, width: 2),
-              ),
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleSmall
-                    ?.copyWith(color: scheme.primary),
-              ),
+    final overlay = IgnorePointer(
+      child: Column(
+        children: [
+          Container(
+            height: sharedBarHeight + branchBarHeight,
+            margin: const EdgeInsets.all(4),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: scheme.primary, width: 2),
             ),
-            Expanded(
-              child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12)),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleSmall
+                  ?.copyWith(color: scheme.primary),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: ColoredBox(color: scheme.scrim.withValues(alpha: 0.12)),
+          ),
+        ],
       ),
+    );
+    return Positioned.fill(
+      child: width == null
+          ? overlay
+          : Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(width: width, child: overlay),
+            ),
     );
   }
 }

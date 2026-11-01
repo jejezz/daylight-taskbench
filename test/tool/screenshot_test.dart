@@ -11,6 +11,7 @@ import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/settings/settings_dialog.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
+import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ void main() {
         }
 
         final tag = '${dark ? 'dark' : 'light'}_${size.width.toInt()}';
-        await pump(TaskbenchShell(workspace: ws, docks: [BranchDock(), FluttyDock()], onAbout: () {}));
+        await pump(TaskbenchShell(workspace: ws, docks: [BranchDock(), FluttyDock()], onAbout: () {}, panels: PanelLayout(await SharedPreferences.getInstance())));
         await shot(tester, key, 'open_$tag');
         await tester.tap(find.text('Run'));
         await tester.pumpAndSettle();
@@ -84,6 +85,48 @@ void main() {
         await shot(tester, key, 'start_$tag');
         await pump(const Scaffold(body: SettingsDialog()));
         await shot(tester, key, 'settings_$tag');
+      });
+    }
+  }
+
+  // 확장 모드 (PLAN.md §1.13): 탐색기 + [에디터|터미널] + 도크 열.
+  for (final dark in [false, true]) {
+    for (final size in const [Size(1240, 820), Size(960, 560)]) {
+      testWidgets('shot expanded ${dark ? 'dark' : 'light'} ${size.width.toInt()}', skip: out == null, (tester) async {
+        await tester.runAsync(_loadFonts);
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        SharedPreferences.setMockInitialValues({});
+        final settings = await AppSettings.load();
+        final panels = PanelLayout(await SharedPreferences.getInstance())
+          ..setExplorer(true)
+          ..setEditor(true)
+          ..setTerminal(true);
+        final ws = await makeWorkspace();
+        ws.attachForTest(FakeGitStateSource(const GitState(root: '/Users/me/dev/my_app', branch: 'feature/login', sha: 'abc1234', upstream: 'origin/feature/login', ahead: 2, changedCount: 3)));
+        final key = GlobalKey();
+        await tester.pumpWidget(RepaintBoundary(
+          key: key,
+          child: PanelLayoutScope(
+            panels: panels,
+            child: AppSettingsScope(
+              settings: settings,
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.light(),
+                darkTheme: AppTheme.dark(),
+                themeMode: dark ? ThemeMode.dark : ThemeMode.light,
+                locale: const Locale('ko'),
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                home: TaskbenchShell(workspace: ws, docks: [BranchDock(), FluttyDock()], onAbout: () {}, panels: panels),
+              ),
+            ),
+          ),
+        ));
+        await tester.pumpAndSettle();
+        await shot(tester, key, 'expanded_${dark ? 'dark' : 'light'}_${size.width.toInt()}');
       });
     }
   }
