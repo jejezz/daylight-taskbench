@@ -4761,9 +4761,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get panelTerminal => '터미널';
 
   @override
-  String get panelPlaceholderBody => '이 패널은 다음 단계에서 연결됩니다.';
-
-  @override
   String get panelsDockHint => '패널을 모두 닫으면 도킹 모드로 돌아갑니다';
 
   @override
@@ -4876,4 +4873,134 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get panelClose => '패널 닫기';
+
+  @override
+  String get findNoResults => '결과 없음';
+
+  @override
+  String findCount(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get findToggleReplace => '바꾸기 보기/숨기기';
+
+  @override
+  String get findHint => '찾기';
+
+  @override
+  String get findMatchCase => '대소문자 구분';
+
+  @override
+  String get findRegex => '정규식';
+
+  @override
+  String get findPrevious => '이전 (Shift+Enter)';
+
+  @override
+  String get findNext => '다음 (Enter)';
+
+  @override
+  String get findClose => '찾기 닫기 (Esc)';
+
+  @override
+  String get findReplaceHint => '바꿀 내용';
+
+  @override
+  String get findReplaceOne => '바꾸기';
+
+  @override
+  String get findReplaceAll => '모두 바꾸기';
+
+  @override
+  String get editorFileGone => '이 파일이 디스크에서 사라졌습니다.';
+
+  @override
+  String get editorFileChanged => '디스크의 파일이 바뀌었습니다. 저장하면 그쪽 수정을 덮어씁니다.';
+
+  @override
+  String get editorCloseTab => '탭 닫기';
+
+  @override
+  String get editorLeaveAsIs => '그대로 두기';
+
+  @override
+  String get editorReloadDiscard => '다시 읽기 (내 수정 버림)';
+
+  @override
+  String get editorKeepMine => '내 수정 유지';
+
+  @override
+  String editorSavePromptTitle(String name) {
+    return '$name 저장할까요?';
+  }
+
+  @override
+  String get editorSavePromptBody => '저장하지 않은 수정이 있습니다.';
+
+  @override
+  String get editorDontSave => '저장 안 함';
+
+  @override
+  String get commonSave => '저장';
+
+  @override
+  String get editorZoomHint => 'Ctrl+스크롤 또는 Ctrl +/- 로 글자 크기 조절 · 클릭하면 100%';
+
+  @override
+  String get editorFoldAll => '모두 접기';
+
+  @override
+  String get editorUnfoldAll => '모두 펴기';
+
+  @override
+  String messageFileTooLarge(String name) {
+    return '2MB보다 큰 파일은 열지 않습니다: $name';
+  }
+
+  @override
+  String messageNotUtf8Open(String name) {
+    return '글자 파일(UTF-8)이 아니라서 열 수 없습니다: $name';
+  }
+
+  @override
+  String messageReadFailed(String error) {
+    return '파일을 읽지 못했습니다: $error';
+  }
+
+  @override
+  String messageSaveFailed(String error) {
+    return '저장하지 못했습니다: $error';
+  }
+
+  @override
+  String get messageDiskChangedSaveBlocked =>
+      '디스크의 파일이 바뀌었습니다. 저장하기 전에 \"다시 읽기\"나 \"내 수정 유지\"를 먼저 고르세요.';
+
+  @override
+  String messageChangedNotUtf8(String name) {
+    return '$name이(가) 디스크에서 바뀌었지만 글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.';
+  }
+
+  @override
+  String messageChangedReloaded(String name) {
+    return '$name이(가) 디스크에서 바뀌어 다시 읽었습니다.';
+  }
+
+  @override
+  String messageReloadedFromDisk(String name) {
+    return '$name을(를) 디스크 내용으로 다시 읽었습니다.';
+  }
+
+  @override
+  String get messageNotUtf8Reload => '글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.';
+
+  @override
+  String get languagePlain => '텍스트';
+
+  @override
+  String get editorOpenFromExplorer => '탐색기에서 파일을 열면 여기에 나타납니다';
+
+  @override
+  String get editorSaveTooltip => '저장 (⌘/Ctrl+S)';
 }

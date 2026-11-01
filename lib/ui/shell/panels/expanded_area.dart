@@ -6,6 +6,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../editor/editor_controller.dart';
+import '../../../editor/editor_host.dart';
 import '../../../explorer/explorer_panel.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../terminal/terminal_host.dart';
@@ -30,6 +32,7 @@ class ExpandedArea extends StatelessWidget {
     required this.onOpenFile,
     required this.terminals,
     required this.terminalSettings,
+    required this.editor,
     this.onQuickOpen,
     this.quickOpenShortcut = '',
   });
@@ -40,6 +43,9 @@ class ExpandedArea extends StatelessWidget {
   /// 터미널 세션과 설정 — 터미널 패널을 껐다 켜도 세션이 살아 있도록 셸이 쥔다.
   final TerminalSessionsController terminals;
   final TerminalSettings terminalSettings;
+
+  /// 열린 편집기 탭들 — 에디터 패널을 껐다 켜도 탭과 고치던 글이 남도록 셸이 쥔다.
+  final EditorController editor;
 
   /// 탐색기에서 고른 파일을 연다 (내장 에디터 또는 외부 편집기 — 셸이 정한다).
   final ValueChanged<String> onOpenFile;
@@ -82,6 +88,7 @@ class ExpandedArea extends StatelessWidget {
                 workspace: workspace,
                 terminals: terminals,
                 terminalSettings: terminalSettings,
+                editor: editor,
               ),
             ),
         ],
@@ -102,12 +109,14 @@ class CenterArea extends StatelessWidget {
     required this.workspace,
     required this.terminals,
     required this.terminalSettings,
+    required this.editor,
   });
 
   final PanelLayout panels;
   final Workspace workspace;
   final TerminalSessionsController terminals;
   final TerminalSettings terminalSettings;
+  final EditorController editor;
 
   @override
   Widget build(BuildContext context) {
@@ -185,10 +194,7 @@ class CenterArea extends StatelessWidget {
               if (panels.editorShown)
                 _Switchable(
                   visible: shown == CenterView.editor,
-                  child: _Placeholder(
-                    icon: Icons.edit_note_rounded,
-                    body: l10n.panelPlaceholderBody,
-                  ),
+                  child: EditorHost(controller: editor),
                 ),
               if (panels.terminalShown)
                 _Switchable(
@@ -220,34 +226,4 @@ class _Switchable extends StatelessWidget {
       child: TickerMode(enabled: visible, child: child),
     ),
   );
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.icon, required this.body});
-
-  final IconData icon;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7);
-    return SizedBox.expand(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 28, color: muted),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              body,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(color: muted),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

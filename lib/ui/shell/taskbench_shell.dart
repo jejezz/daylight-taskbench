@@ -14,6 +14,7 @@ import '../../app_identity.dart';
 import '../../docks/branch/branch_dock.dart';
 import '../../docks/dock_module.dart';
 import '../../docks/registry.dart';
+import '../../editor/editor_controller.dart';
 import '../../explorer/file_opener.dart';
 import '../../explorer/project_files.dart';
 import '../../explorer/quick_open.dart';
@@ -48,6 +49,7 @@ class TaskbenchShell extends StatefulWidget {
     this.opener,
     this.terminals,
     this.terminalSettings,
+    this.editor,
     this.pickFolder,
   });
 
@@ -68,6 +70,9 @@ class TaskbenchShell extends StatefulWidget {
   final TerminalSessionsController? terminals;
   final TerminalSettings? terminalSettings;
 
+  /// 열린 편집기 탭들. 테스트에서 바꾼다.
+  final EditorController? editor;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -82,6 +87,9 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   final _empty = RunEmptyDock();
   late final _opener = widget.opener ?? FileOpener(widget.workspace);
   // 밖에서 받지 않으면 셸이 직접 만들고 직접 정리한다 (처음 쓸 때 만든다).
+  EditorController? _ownEditor;
+  EditorController get _editor =>
+      widget.editor ?? (_ownEditor ??= EditorController());
   TerminalSettings? _ownTerminalSettings;
   TerminalSessionsController? _ownTerminals;
   TerminalSettings get _terminalSettings =>
@@ -169,6 +177,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       d.detach(ws);
     }
     WidgetsBinding.instance.removeObserver(this);
+    _ownEditor?.dispose();
     _ownTerminals?.dispose();
     _ownTerminalSettings?.dispose();
     super.dispose();
@@ -176,7 +185,12 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) ws.onWindowFocused();
+    if (state == AppLifecycleState.resumed) {
+      ws.onWindowFocused();
+      // 창에 돌아왔을 때 바로 열린 파일이 디스크에서 바뀌었는지 본다 (밖에서 Claude Code 등이 고쳤을 수 있다).
+      _ownEditor?.checkExternalChanges();
+      widget.editor?.checkExternalChanges();
+    }
   }
 
   // ── 열기 ────────────────────────────────────────────────────────────────
@@ -287,9 +301,16 @@ class _TaskbenchShellState extends State<TaskbenchShell>
 
   // ── 파일 열기 ───────────────────────────────────────────────────────────
 
-  /// 탐색기·빠른 열기에서 고른 파일을 연다. 내장 에디터(단계 15)가 붙기 전과 내장 에디터를 껐을 때는 외부 편집기다
-  /// — 내장 에디터가 생기면 여기 한 곳만 바꾸면 된다 (PLAN.md §1.13).
+  /// 탐색기·빠른 열기에서 고른 파일을 연다 (PLAN.md §1.13).
+  /// 확장 모드(작업대)이고 "내장 에디터 사용"이 켜져 있으면 내장 에디터로 열고(에디터 패널이 꺼져 있으면 켠다),
+  /// 도킹 모드이거나 내장 에디터를 껐으면 외부 편집기(설정의 편집기 명령, 없으면 VS Code)로 연다.
   Future<void> _openFile(String path) async {
+    final panels = widget.panels;
+    if (panels.embeddedEditor && panels.expanded) {
+      panels.setEditor(true);
+      await _editor.openFile(path);
+      return;
+    }
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final result = await _opener.open(path);
@@ -378,6 +399,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                 onOpenFile: _openFile,
                 terminals: _terminals,
                 terminalSettings: _terminalSettings,
+                editor: _editor,
                 onQuickOpen: _quickOpen,
                 quickOpenShortcut: _quickOpenShortcut,
               ),

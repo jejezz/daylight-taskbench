@@ -14,6 +14,7 @@ const _commonKeys = {
   'window_size_dock', 'window_width_dock', 'window_width_explorer', 'window_width_expanded', // 모드별 창 크기 (§1.13)
   'panel_center', 'editor_embedded', // 확장 패널: 가운데 마지막 선택 · 내장 에디터 설정 (§1.13)
   'terminal_font_size', 'terminal_scrollback', // 터미널 설정 (§1.13)
+  'editor_zoom', // 에디터 글자 크기 배율 (§1.13)
 };
 
 /// 칸 id 접두어. 칸이 늘면 여기에 더한다.
