@@ -733,8 +733,8 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 ### 시작할 때 깜빡임 수정 (2026-11-01)
 
 - **원인**: macOS 는 `.xib`의 800×600 빈 창이 시작 즉시 보였다가 Dart 가 크기·위치를 바꿨고(`MainFlutterWindow.swift`에 window_manager 의 `hiddenWindowAtLaunch()` 호출이 없었다), Windows 는 `flutter_window.cpp`의 첫 프레임 자동 `Show()`가 남아 Dart 의 배치 전에 1280×720 창이 보였다(`main.dart` 주석이 지우라고 한 줄).
-- **수정**: macOS `order` 재정의에서 `hiddenWindowAtLaunch()` 호출, Windows 자동 `Show()` 삭제 — 창은 첫 프레임 뒤 Dart 의 `show()`로만 보인다. 덧붙여 macOS 는 매번 가운데로 뜨던 것을 **도킹 모드의 창 위치를 기억**(`window_pos_dock`)해 복원하고, 기억한 위치가 어느 모니터에도 안 걸치면 가운데로 둔다.
-- 확인 못 함: 실제 시작 화면(macOS·Windows)은 사용자 몫. Windows 는 이 환경에서 빌드도 못 했다.
+- **수정**: Windows 자동 `Show()` 삭제 — 창은 첫 프레임 뒤 Dart 의 `show()`로만 보인다. macOS 는 창을 **투명(alpha 0)한 채 시작**하고 Dart 가 크기·위치를 정한 뒤 `setOpacity(1)`로 보인다. (처음에는 `hiddenWindowAtLaunch()`로 숨겼는데, 보이지 않는 창은 Flutter 가 프레임을 만들지 않아서 "첫 프레임 뒤에 보이기"가 영영 오지 않았고 `open`으로 켜면 창이 안 떴다 — 실제 실행으로 잡아 고쳤다.) 덧붙여 macOS 는 매번 가운데로 뜨던 것을 **도킹 모드의 창 위치를 기억**(`window_pos_dock`)해 복원하고, 기억한 위치가 어느 모니터에도 안 걸치면 가운데로 둔다.
+- 확인함(macOS, `open`으로 켜기): 켜기 → 창 이동 → 종료 → 다시 켜기에서 창이 깜빡임 없이 저장한 위치(120,90)에 바로 뜨고, 저장 위치가 모니터 밖이면 가운데에 뜬다. 창 위치·알파는 `CGWindowList` 폴링으로 쟀다. 확인 못 함: Windows(이 환경에서 빌드도 못 했다).
 
 ## 6. 위험과 결정이 필요한 것
 

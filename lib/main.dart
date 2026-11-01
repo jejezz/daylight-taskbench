@@ -135,6 +135,8 @@ Future<Future<void> Function()> _prepareWindow(
     // 배치가 끝난 직후에도 Flutter가 그 크기로 다시 그릴 프레임이 아직 안 나왔을 수 있어, 한
     // 프레임 더 기다렸다가 보여준다 (창 안 내용이 잠깐 엉뚱한 크기로 보였다가 바뀌는 것을 막는다).
     await _nextFrame();
+    // macOS 는 창이 투명한 채 시작한다 (macos/Runner/MainFlutterWindow.swift).
+    if (Platform.isMacOS) await windowManager.setOpacity(1);
     await windowManager.show();
     await windowManager.focus();
     windowMode.attach();
