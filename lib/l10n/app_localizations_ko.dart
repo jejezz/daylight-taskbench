@@ -271,14 +271,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get dropFilesOnly => '폴더를 놓아 주세요';
 
   @override
-  String get dropNotRepoTitle => 'git 저장소가 아닙니다';
-
-  @override
-  String dropNotRepoBody(String path) {
-    return '\"$path\"를 git 저장소로 만들까요? (git init)';
-  }
-
-  @override
   String get dropBusyTitle => '실행 중인 작업이 있습니다';
 
   @override
@@ -4785,4 +4777,42 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsEditorEmbeddedHelp => '끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다.';
+
+  @override
+  String startNotARepositoryHasRepos(String path) {
+    return '\"$path\"는 git 저장소가 아닙니다. 안에 있는 저장소를 골라 여세요.';
+  }
+
+  @override
+  String startInitUnsafe(String path) {
+    return '\"$path\"는 저장소로 만들지 않는 편이 안전한 위치입니다(홈·바탕화면·문서·시스템 폴더 등). 프로젝트 폴더를 열어 주세요.';
+  }
+
+  @override
+  String get initRepoTitle => 'git 저장소로 만들까요?';
+
+  @override
+  String initRepoBody(String path) {
+    return '이 폴더에 새 저장소를 만듭니다:\n$path';
+  }
+
+  @override
+  String get initRepoCommand => '실행할 명령';
+
+  @override
+  String get initRepoGitignore => 'Flutter용 .gitignore 만들기';
+
+  @override
+  String get initRepoNoCommit => '첫 커밋은 만들지 않습니다. 변경은 Git & GitHub 칸에서 커밋하세요.';
+
+  @override
+  String get initRepoConfirm => '저장소 만들기';
+
+  @override
+  String get chooseRepoTitle => '저장소 고르기';
+
+  @override
+  String chooseRepoBody(String path) {
+    return '\"$path\" 안에 저장소가 여럿 있습니다.';
+  }
 }

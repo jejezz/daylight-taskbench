@@ -633,6 +633,16 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - **알려진 디버그 소음 두 가지 (나중에 고치기로 함, 2026-11-01)**: ① 시작 직후 `DockAccordion`의 `Column`이 "아래로 N픽셀 넘침"을 낸다 — 창 높이가 칸 제목들보다 작은 시작 순간으로 추정하며(측정은 못 함), `dock_accordion.dart`는 이 단계에서 바꾸지 않았다. ② 시작할 때 `FluttyDock.attach` → `ToolPaths.register`가 build 중에 알림을 보내 "setState() called during build"가 난다 (디버그 모드). 둘 다 기능에는 영향이 없다.
 - 테스트 549개 통과, `flutter analyze` 깨끗.
 
+### 단계 12 결과 (2026-11-01) — 폴더 열기 분기
+
+설계는 §1.13 표. 구현은 `lib/workspace/folder_scan.dart`(분석), `Workspace`(`notRepoInfo`·`initRepository`), `lib/ui/repo_choice.dart`(두 창), 시작 화면·셸의 끌어다 놓기.
+- **분석(`FolderScanner`)**: 저장소가 아닌 폴더를 열면 하위 **2단계**까지 `.git`(폴더 또는 파일)을 찾는다 — 저장소 안으로는 들어가지 않고, 숨김·`node_modules`·`build` 등은 건너뛰며 30개에서 멈춘다. 위험한 위치(파일 시스템 루트, 홈과 그 부모, 홈 아래 Desktop·Documents·Downloads·Library 등 기본 폴더, 시스템 폴더)는 `git init`을 허용하지 않는다. 정확한 목록은 `isUnsafeInitLocation`에 있다.
+- **동작**: 하위에 저장소가 있으면 시작 화면에 목록(폴더 이름 + 상대 경로)을 보이고 누르면 그 저장소를 연다 — `git init` 단추 없음. 열린 저장소가 있을 때 끌어다 놓은 폴더면 고르기 창. 하위에도 없고 안전하면 `git init` 단추 → **확인 창**(실행할 명령 `git init -b main`, Flutter 프로젝트이고 `.gitignore`가 없으면 Flutter용 `.gitignore` 선택(기본 켬), "첫 커밋은 만들지 않습니다") → 만든 뒤 연다. 위험한 위치면 안내 문구만 있다.
+- **`initRepository`는 스스로도 막는다**: UI 가 단추를 숨기는 것과 별개로, 하위에 저장소가 있거나 위험한 위치면 `git init`을 실행하지 않는다.
+- 실제 폴더로 확인: `FlutterProject`(하위 저장소 19개, init 불허), 홈(30개에서 멈춤, init 불허), `Desktop`(init 불허), 저장소 없는 빈 프로젝트 폴더(init 허용).
+- `path` 패키지를 직접 의존성으로 올렸다(이미 잠겨 있던 1.9.1). 테스트 584개 통과.
+- **알려 둠**: 위험한 위치 목록은 macOS·Windows·Linux 기본 폴더 이름 기준이다 (한글로 보이는 폴더 이름이 실제로는 영문이다). 앱으로 직접 눌러 본 확인은 사용자 몫이다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

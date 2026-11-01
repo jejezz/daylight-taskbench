@@ -274,14 +274,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dropFilesOnly => 'Please drop a folder';
 
   @override
-  String get dropNotRepoTitle => 'Not a git repository';
-
-  @override
-  String dropNotRepoBody(String path) {
-    return 'Make \"$path\" a git repository? (git init)';
-  }
-
-  @override
   String get dropBusyTitle => 'Work is in progress';
 
   @override
@@ -5051,4 +5043,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsEditorEmbeddedHelp =>
       'When off, there is no editor panel and files open in external VS Code.';
+
+  @override
+  String startNotARepositoryHasRepos(String path) {
+    return '\"$path\" is not a git repository. Pick one of the repositories inside it.';
+  }
+
+  @override
+  String startInitUnsafe(String path) {
+    return '\"$path\" is not a safe place to create a repository (home, Desktop, Documents, system folders…). Open a project folder instead.';
+  }
+
+  @override
+  String get initRepoTitle => 'Create a git repository?';
+
+  @override
+  String initRepoBody(String path) {
+    return 'A new repository will be created in this folder:\n$path';
+  }
+
+  @override
+  String get initRepoCommand => 'Command to run';
+
+  @override
+  String get initRepoGitignore => 'Create a Flutter .gitignore';
+
+  @override
+  String get initRepoNoCommit =>
+      'No first commit is made. Commit your changes in the Git & GitHub panel.';
+
+  @override
+  String get initRepoConfirm => 'Create repository';
+
+  @override
+  String get chooseRepoTitle => 'Choose a repository';
+
+  @override
+  String chooseRepoBody(String path) {
+    return 'There are several repositories inside \"$path\".';
+  }
 }

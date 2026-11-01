@@ -560,18 +560,6 @@ abstract class AppLocalizations {
   /// **'폴더를 놓아 주세요'**
   String get dropFilesOnly;
 
-  /// No description provided for @dropNotRepoTitle.
-  ///
-  /// In ko, this message translates to:
-  /// **'git 저장소가 아닙니다'**
-  String get dropNotRepoTitle;
-
-  /// No description provided for @dropNotRepoBody.
-  ///
-  /// In ko, this message translates to:
-  /// **'\"{path}\"를 git 저장소로 만들까요? (git init)'**
-  String dropNotRepoBody(String path);
-
   /// No description provided for @dropBusyTitle.
   ///
   /// In ko, this message translates to:
@@ -8149,6 +8137,66 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'끄면 에디터 패널이 없고 파일은 외부 VS Code로 엽니다.'**
   String get settingsEditorEmbeddedHelp;
+
+  /// No description provided for @startNotARepositoryHasRepos.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\"는 git 저장소가 아닙니다. 안에 있는 저장소를 골라 여세요.'**
+  String startNotARepositoryHasRepos(String path);
+
+  /// No description provided for @startInitUnsafe.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\"는 저장소로 만들지 않는 편이 안전한 위치입니다(홈·바탕화면·문서·시스템 폴더 등). 프로젝트 폴더를 열어 주세요.'**
+  String startInitUnsafe(String path);
+
+  /// No description provided for @initRepoTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'git 저장소로 만들까요?'**
+  String get initRepoTitle;
+
+  /// No description provided for @initRepoBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 폴더에 새 저장소를 만듭니다:\n{path}'**
+  String initRepoBody(String path);
+
+  /// No description provided for @initRepoCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get initRepoCommand;
+
+  /// No description provided for @initRepoGitignore.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter용 .gitignore 만들기'**
+  String get initRepoGitignore;
+
+  /// No description provided for @initRepoNoCommit.
+  ///
+  /// In ko, this message translates to:
+  /// **'첫 커밋은 만들지 않습니다. 변경은 Git & GitHub 칸에서 커밋하세요.'**
+  String get initRepoNoCommit;
+
+  /// No description provided for @initRepoConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 만들기'**
+  String get initRepoConfirm;
+
+  /// No description provided for @chooseRepoTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 고르기'**
+  String get chooseRepoTitle;
+
+  /// No description provided for @chooseRepoBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'\"{path}\" 안에 저장소가 여럿 있습니다.'**
+  String chooseRepoBody(String path);
 }
 
 class _AppLocalizationsDelegate
