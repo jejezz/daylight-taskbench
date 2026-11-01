@@ -12,6 +12,7 @@ import 'package:daylight_taskbench/ui/shell/panels/panel_widths.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
 import 'package:daylight_taskbench/workspace/workspace.dart';
+import 'package:daylight_taskbench/ui/shell/shared_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -255,6 +256,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(panels.expanded, isFalse);
     expect(find.byType(ExpandedArea), findsNothing);
+  });
+
+  testWidgets('제목 줄은 확장 모드에서도 창 전체 폭이고, 그 아래에 카드들이 놓인다', (tester) async {
+    final panels = await _pump(tester);
+    final bar = find.byType(WorkspaceBar);
+    expect(tester.getSize(bar).width, 1240); // 도킹: 창 전체
+    panels
+      ..setExplorer(true)
+      ..setTerminal(true);
+    await tester.pumpAndSettle();
+    expect(tester.getSize(bar).width, 1240); // 확장해도 창 전체 폭
+    final barBottom = tester.getBottomLeft(bar).dy;
+    expect(tester.getTopLeft(find.byType(ExpandedArea)).dy, greaterThanOrEqualTo(barBottom));
   });
 
   testWidgets('확장 단추 설명에 개별 패널 단축키가 보인다', (tester) async {
