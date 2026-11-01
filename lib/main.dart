@@ -30,6 +30,7 @@ import 'theme/app_theme.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
 import 'window/window_mode.dart';
+import 'terminal/terminal_settings.dart';
 import 'ui/shell/panels/panel_layout.dart';
 
 final bool _isDesktop =
@@ -77,6 +78,7 @@ Future<void> main() async {
         workspace: workspace,
         tools: tools,
         panels: panels,
+        terminalSettings: TerminalSettings(prefs),
         windowMode: _isDesktop ? windowMode : null,
       ),
     ),
@@ -136,10 +138,12 @@ class App extends StatefulWidget {
     required this.workspace,
     required this.tools,
     required this.panels,
+    required this.terminalSettings,
     this.windowMode,
   });
 
   final PanelLayout panels;
+  final TerminalSettings terminalSettings;
   final WindowModeController? windowMode;
   final AppSettings settings;
   final Workspace workspace;
@@ -206,7 +210,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return PanelLayoutScope(
+    return TerminalSettingsScope(
+      settings: widget.terminalSettings,
+      child: PanelLayoutScope(
       panels: widget.panels,
       child: WorkspaceScope(
       workspace: widget.workspace,
@@ -254,11 +260,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 docks: _docks,
                 onAbout: _showAbout,
                 panels: widget.panels,
+                terminalSettings: widget.terminalSettings,
                 windowMode: widget.windowMode,
               ),
             ),
           ),
         ),
+      ),
       ),
       ),
     );

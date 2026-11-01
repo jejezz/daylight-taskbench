@@ -41,6 +41,13 @@ dependencies:
   cupertino_icons: ^1.0.8
   package_info_plus: ^10.2.2
   path: ^1.9.1
+  # 터미널 (daylight-workbench 에서 복사). 고친 점은 각 폴더의 PATCHES.md
+  # xterm2: 드래그 선택 중 스크롤돼도 시작점이 안 옮겨가게, 한글 IME 결함을 고친 복사본
+  xterm2:
+    path: packages/xterm2
+  # flutter_pty: Windows 결함(실행 파일 중복·비ASCII 경로·공백 인용·1초 멈춤)을 고친 복사본 — 네이티브 코드를 포함한다
+  flutter_pty:
+    path: packages/flutter_pty
   url_launcher: ^6.3.3
   shared_preferences: ^2.5.6
   intl: any

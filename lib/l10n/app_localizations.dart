@@ -8227,6 +8227,78 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'파일 목록을 읽는 중…'**
   String get quickOpenLoading;
+
+  /// No description provided for @terminalCloseTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널 닫기'**
+  String get terminalCloseTooltip;
+
+  /// No description provided for @terminalStartError.
+  ///
+  /// In ko, this message translates to:
+  /// **'셸을 시작하지 못했습니다: {error}'**
+  String terminalStartError(String error);
+
+  /// No description provided for @terminalExited.
+  ///
+  /// In ko, this message translates to:
+  /// **'{shell} 종료됨 (코드 {code})'**
+  String terminalExited(String shell, int code);
+
+  /// No description provided for @terminalRestart.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시작'**
+  String get terminalRestart;
+
+  /// No description provided for @terminalNoShells.
+  ///
+  /// In ko, this message translates to:
+  /// **'쓸 수 있는 셸을 찾지 못했습니다'**
+  String get terminalNoShells;
+
+  /// No description provided for @terminalNew.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 터미널'**
+  String get terminalNew;
+
+  /// No description provided for @terminalEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'열린 터미널이 없습니다'**
+  String get terminalEmpty;
+
+  /// No description provided for @terminalEmptyHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 를 눌러 새 터미널을 엽니다'**
+  String get terminalEmptyHint;
+
+  /// No description provided for @settingsSectionTerminal.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널'**
+  String get settingsSectionTerminal;
+
+  /// No description provided for @settingsTerminalFontSize.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크기'**
+  String get settingsTerminalFontSize;
+
+  /// No description provided for @settingsTerminalScrollback.
+  ///
+  /// In ko, this message translates to:
+  /// **'스크롤백 줄 수'**
+  String get settingsTerminalScrollback;
+
+  /// No description provided for @settingsTerminalHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.'**
+  String get settingsTerminalHelp;
 }
 
 class _AppLocalizationsDelegate

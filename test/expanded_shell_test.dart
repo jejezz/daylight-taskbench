@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'terminal/helpers/fake_pty.dart';
+import 'terminal/helpers/fake_shell_finder.dart';
 import 'test_support.dart';
 
 /// 본문에 State 가 있는 칸 — 모드가 바뀌어도 그 State 가 유지되는지 본다.
@@ -100,6 +102,7 @@ Future<PanelLayout> _pump(
             docks: docks ?? [_ProbeDock()],
             onAbout: () {},
             panels: panels,
+            terminals: fakeTerminals(FakePtyFactory()),
           ),
         ),
       ),

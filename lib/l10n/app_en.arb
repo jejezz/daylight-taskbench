@@ -3426,5 +3426,19 @@
   "@explorerQuickOpenTooltip": {"placeholders": {"shortcut": {"type": "String"}}},
   "quickOpenHint": "Type part of a file name",
   "quickOpenNoMatch": "No matching files",
-  "quickOpenLoading": "Reading the file list…"
+  "quickOpenLoading": "Reading the file list…",
+  "terminalCloseTooltip": "Close terminal",
+  "terminalStartError": "Couldn't start the shell: {error}",
+  "@terminalStartError": {"placeholders": {"error": {"type": "String"}}},
+  "terminalExited": "{shell} exited (code {code})",
+  "@terminalExited": {"placeholders": {"shell": {"type": "String"}, "code": {"type": "int"}}},
+  "terminalRestart": "Restart",
+  "terminalNoShells": "No shell was found",
+  "terminalNew": "New terminal",
+  "terminalEmpty": "No terminal is open",
+  "terminalEmptyHint": "Click + to open a new terminal",
+  "settingsSectionTerminal": "Terminal",
+  "settingsTerminalFontSize": "Font size",
+  "settingsTerminalScrollback": "Scrollback lines",
+  "settingsTerminalHelp": "Font size applies immediately; scrollback applies to new terminal tabs."
 }

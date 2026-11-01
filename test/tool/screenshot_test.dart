@@ -20,6 +20,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../terminal/helpers/fake_pty.dart';
+import '../terminal/helpers/fake_shell_finder.dart';
 import '../test_support.dart';
 
 Future<void> _loadFonts() async {
@@ -120,7 +122,7 @@ void main() {
                 locale: const Locale('ko'),
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
-                home: TaskbenchShell(workspace: ws, docks: [BranchDock(), FluttyDock()], onAbout: () {}, panels: panels),
+                home: TaskbenchShell(workspace: ws, docks: [BranchDock(), FluttyDock()], onAbout: () {}, panels: panels, terminals: fakeTerminals(FakePtyFactory())),
               ),
             ),
           ),

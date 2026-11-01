@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 
 import '../../../explorer/explorer_panel.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../terminal/terminal_host.dart';
+import '../../../terminal/terminal_sessions_controller.dart';
+import '../../../terminal/terminal_settings.dart';
 import '../../../workspace/workspace.dart';
 import 'panel_header.dart';
 import 'panel_layout.dart';
@@ -25,12 +28,18 @@ class ExpandedArea extends StatelessWidget {
     required this.panels,
     required this.workspace,
     required this.onOpenFile,
+    required this.terminals,
+    required this.terminalSettings,
     this.onQuickOpen,
     this.quickOpenShortcut = '',
   });
 
   final PanelLayout panels;
   final Workspace workspace;
+
+  /// 터미널 세션과 설정 — 터미널 패널을 껐다 켜도 세션이 살아 있도록 셸이 쥔다.
+  final TerminalSessionsController terminals;
+  final TerminalSettings terminalSettings;
 
   /// 탐색기에서 고른 파일을 연다 (내장 에디터 또는 외부 편집기 — 셸이 정한다).
   final ValueChanged<String> onOpenFile;
@@ -65,7 +74,15 @@ class ExpandedArea extends StatelessWidget {
                 ),
               ),
             ),
-          if (panels.hasCenter) Expanded(child: CenterArea(panels: panels)),
+          if (panels.hasCenter)
+            Expanded(
+              child: CenterArea(
+                panels: panels,
+                workspace: workspace,
+                terminals: terminals,
+                terminalSettings: terminalSettings,
+              ),
+            ),
         ],
       ),
     );
@@ -78,9 +95,18 @@ Widget _fit({required bool fill, required Widget child}) => fill
 
 /// 가운데: 위에 파일 탭 줄(오른쪽 끝에 에디터↔터미널 전환), 아래에 에디터 또는 터미널 중 하나만 보인다.
 class CenterArea extends StatelessWidget {
-  const CenterArea({super.key, required this.panels});
+  const CenterArea({
+    super.key,
+    required this.panels,
+    required this.workspace,
+    required this.terminals,
+    required this.terminalSettings,
+  });
 
   final PanelLayout panels;
+  final Workspace workspace;
+  final TerminalSessionsController terminals;
+  final TerminalSettings terminalSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +172,10 @@ class CenterArea extends StatelessWidget {
               if (panels.terminalShown)
                 _Switchable(
                   visible: shown == CenterView.terminal,
-                  child: _Placeholder(
-                    icon: Icons.terminal_rounded,
-                    body: l10n.panelPlaceholderBody,
+                  child: TerminalHost(
+                    controller: terminals,
+                    settings: terminalSettings,
+                    workspace: workspace,
                   ),
                 ),
             ],
