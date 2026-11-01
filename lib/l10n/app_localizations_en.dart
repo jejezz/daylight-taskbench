@@ -5140,4 +5140,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsTerminalHelp =>
       'Font size applies immediately; scrollback applies to new terminal tabs.';
+
+  @override
+  String get panelClose => 'Close panel';
 }

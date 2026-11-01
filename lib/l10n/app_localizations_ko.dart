@@ -4873,4 +4873,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsTerminalHelp =>
       '새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.';
+
+  @override
+  String get panelClose => '패널 닫기';
 }

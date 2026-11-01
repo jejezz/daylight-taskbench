@@ -14,6 +14,7 @@ class ExplorerPanel extends StatefulWidget {
     required this.workspace,
     required this.onOpenFile,
     this.onQuickOpen,
+    this.onClose,
     this.quickOpenShortcut = '',
   });
 
@@ -22,6 +23,9 @@ class ExplorerPanel extends StatefulWidget {
 
   /// 머리줄의 "파일 이름으로 열기" 단추. null 이면 단추를 보이지 않는다.
   final VoidCallback? onQuickOpen;
+
+  /// 머리줄 오른쪽 끝의 닫기(x) 단추. null 이면 단추를 보이지 않는다.
+  final VoidCallback? onClose;
 
   /// 툴팁에 보일 단축키 (예: `⌘⇧O`).
   final String quickOpenShortcut;
@@ -71,6 +75,7 @@ class _ExplorerPanelState extends State<ExplorerPanel> {
                       ? null
                       : () => setState(() => _revision++),
                 ),
+                if (widget.onClose != null) PanelCloseButton(onPressed: widget.onClose!),
               ],
             ),
             Expanded(

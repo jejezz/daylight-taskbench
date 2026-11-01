@@ -70,6 +70,7 @@ class ExpandedArea extends StatelessWidget {
                   workspace: workspace,
                   onOpenFile: onOpenFile,
                   onQuickOpen: onQuickOpen,
+                  onClose: () => panels.setExplorer(false),
                   quickOpenShortcut: quickOpenShortcut,
                 ),
               ),
@@ -117,44 +118,64 @@ class CenterArea extends StatelessWidget {
       children: [
         PanelHeader(
           children: [
-            // 파일 탭이 들어올 자리 (단계 15). 지금은 현재 보이는 패널 이름만 보인다.
-            Icon(
-              shown == CenterView.terminal
-                  ? Icons.terminal_rounded
-                  : Icons.edit_note_rounded,
-              size: 18,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              shown == CenterView.terminal
-                  ? l10n.panelTerminal
-                  : l10n.panelEditor,
-              style: theme.textTheme.titleSmall,
-            ),
-            const Spacer(),
             if (panels.canSwitchCenter)
-              SegmentedButton<CenterView>(
-                showSelectedIcon: false,
-                style: const ButtonStyle(
-                  visualDensity: VisualDensity.compact,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              // 둘 다 켜져 있으면 전환 단추가 곧 제목이다 (보이는 쪽이 강조된다). 좁은 창(최소 폭)에서는 줄어든다.
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: SegmentedButton<CenterView>(
+                      showSelectedIcon: false,
+                      style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      segments: [
+                        ButtonSegment(
+                          value: CenterView.editor,
+                          icon: const Icon(Icons.edit_note_rounded, size: 16),
+                          label: Text(l10n.panelEditor),
+                        ),
+                        ButtonSegment(
+                          value: CenterView.terminal,
+                          icon: const Icon(Icons.terminal_rounded, size: 16),
+                          label: Text(l10n.panelTerminal),
+                        ),
+                      ],
+                      selected: {shown ?? CenterView.editor},
+                      onSelectionChanged: (s) => panels.showCenter(s.first),
+                    ),
+                  ),
                 ),
-                segments: [
-                  ButtonSegment(
-                    value: CenterView.editor,
-                    icon: const Icon(Icons.edit_note_rounded, size: 16),
-                    label: Text(l10n.panelEditor),
-                  ),
-                  ButtonSegment(
-                    value: CenterView.terminal,
-                    icon: const Icon(Icons.terminal_rounded, size: 16),
-                    label: Text(l10n.panelTerminal),
-                  ),
-                ],
-                selected: {shown ?? CenterView.editor},
-                onSelectionChanged: (s) => panels.showCenter(s.first),
+              )
+            else ...[
+              // 파일 탭이 들어올 자리 (단계 15). 지금은 현재 보이는 패널 이름만 보인다.
+              Icon(
+                shown == CenterView.terminal
+                    ? Icons.terminal_rounded
+                    : Icons.edit_note_rounded,
+                size: 18,
+                color: theme.colorScheme.primary,
               ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  shown == CenterView.terminal
+                      ? l10n.panelTerminal
+                      : l10n.panelEditor,
+                  style: theme.textTheme.titleSmall,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+            // 지금 보이는 쪽(에디터 또는 터미널)을 그 자리에서 끈다. 둘 다 켜져 있으면 다른 쪽은 그대로 남는다.
+            PanelCloseButton(
+              onPressed: () => shown == CenterView.terminal
+                  ? panels.setTerminal(false)
+                  : panels.setEditor(false),
+            ),
           ],
         ),
         Expanded(

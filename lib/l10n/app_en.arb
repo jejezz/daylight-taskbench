@@ -3440,5 +3440,6 @@
   "settingsSectionTerminal": "Terminal",
   "settingsTerminalFontSize": "Font size",
   "settingsTerminalScrollback": "Scrollback lines",
-  "settingsTerminalHelp": "Font size applies immediately; scrollback applies to new terminal tabs."
+  "settingsTerminalHelp": "Font size applies immediately; scrollback applies to new terminal tabs.",
+  "panelClose": "Close panel"
 }

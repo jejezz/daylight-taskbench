@@ -8299,6 +8299,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.'**
   String get settingsTerminalHelp;
+
+  /// No description provided for @panelClose.
+  ///
+  /// In ko, this message translates to:
+  /// **'패널 닫기'**
+  String get panelClose;
 }
 
 class _AppLocalizationsDelegate

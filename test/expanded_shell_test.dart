@@ -165,6 +165,50 @@ void main() {
     expect(find.byType(CenterArea), findsNothing);
   });
 
+  testWidgets('탐색기 머리줄의 x 로 탐색기를 닫는다 — 마지막 패널이면 도킹으로 돌아간다', (tester) async {
+    final panels = await _pump(tester);
+    panels.setExplorer(true);
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('패널 닫기'), findsOneWidget);
+    await tester.tap(find.byTooltip('패널 닫기'));
+    await tester.pumpAndSettle();
+    expect(panels.explorer, isFalse);
+    expect(panels.expanded, isFalse);
+    expect(find.byType(ExpandedArea), findsNothing);
+  });
+
+  testWidgets('가운데 머리줄의 x 는 지금 보이는 쪽만 닫는다 (둘 다 켜져 있으면 다른 쪽은 남는다)', (tester) async {
+    final panels = await _pump(tester);
+    panels
+      ..setEditor(true)
+      ..setTerminal(true); // 터미널이 보인다
+    await tester.pumpAndSettle();
+    expect(panels.center, CenterView.terminal);
+    await tester.tap(find.byTooltip('패널 닫기'));
+    await tester.pumpAndSettle();
+    expect(panels.terminal, isFalse);
+    expect(panels.editor, isTrue);
+    expect(panels.center, CenterView.editor);
+    expect(find.byType(SegmentedButton<CenterView>), findsNothing); // 하나만 남아 전환 단추가 없다
+    await tester.tap(find.byTooltip('패널 닫기'));
+    await tester.pumpAndSettle();
+    expect(panels.expanded, isFalse); // 마지막 패널을 닫으면 도킹
+  });
+
+  testWidgets('탐색기와 가운데에 x 가 각각 있고, 서로 상대 패널은 건드리지 않는다', (tester) async {
+    final panels = await _pump(tester);
+    panels
+      ..setExplorer(true)
+      ..setTerminal(true);
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('패널 닫기'), findsNWidgets(2));
+    await tester.tap(find.byTooltip('패널 닫기').first); // 왼쪽 = 탐색기
+    await tester.pumpAndSettle();
+    expect(panels.explorer, isFalse);
+    expect(panels.terminal, isTrue);
+    expect(panels.expanded, isTrue);
+  });
+
   testWidgets('에디터와 터미널이 둘 다 켜지면 전환 단추가 나오고, 전환해도 가운데는 한 번에 하나만 보인다', (
     tester,
   ) async {

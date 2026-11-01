@@ -3492,5 +3492,6 @@
   "settingsSectionTerminal": "터미널",
   "settingsTerminalFontSize": "글자 크기",
   "settingsTerminalScrollback": "스크롤백 줄 수",
-  "settingsTerminalHelp": "새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다."
+  "settingsTerminalHelp": "새 터미널 탭부터 적용되는 것은 스크롤백뿐이고, 글자 크기는 바로 적용됩니다.",
+  "panelClose": "패널 닫기"
 }
