@@ -20,36 +20,20 @@ String expandTooltip(BuildContext context, PanelLayout panels) {
   return '$action\n$keys';
 }
 
-/// "더 보기" 메뉴용 항목 (좁은 앱 바).
-PopupMenuItem<String> expandMenuItem(BuildContext context, PanelLayout panels) {
-  final l10n = AppLocalizations.of(context);
-  return PopupMenuItem(
-    value: expandChoice,
-    child: Row(
-      children: [
-        Icon(_icon(panels), size: 18),
-        const SizedBox(width: 8),
-        Text(
-          panels.expanded
-              ? l10n.panelsCollapseTooltip
-              : l10n.panelsExpandTooltip,
-        ),
-      ],
-    ),
-  );
-}
-
-/// "더 보기" 메뉴 항목 값.
-const expandChoice = 'expand';
-
 IconData _icon(PanelLayout panels) => panels.expanded
     ? Icons.close_fullscreen_rounded
     : Icons.open_in_full_rounded;
 
+/// 좁은 앱 바에서의 단추 폭 (`shared_bar.dart`의 좁은 아이콘 폭과 같다).
+const compactWidth = 32.0;
+
 class ExpandButton extends StatelessWidget {
-  const ExpandButton({super.key, required this.panels});
+  const ExpandButton({super.key, required this.panels, this.compact = false});
 
   final PanelLayout panels;
+
+  /// 좁은 앱 바: 단추 폭을 줄인다.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +51,15 @@ class ExpandButton extends StatelessWidget {
         size: 20,
         color: theme.colorScheme.primary,
       ),
+      padding: compact ? EdgeInsets.zero : null,
+      style: compact
+          ? IconButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            )
+          : null,
+      constraints: compact
+          ? const BoxConstraints.tightFor(width: compactWidth, height: 44)
+          : null,
       onPressed: panels.toggleAll,
     );
   }

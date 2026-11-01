@@ -332,7 +332,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('도킹 최소 창(380×560)에서는 확장 항목이 "더 보기" 메뉴 안에 있다 (폴더 이름에 자리를 준다)', (
+  testWidgets('도킹 최소 창(380×560)에서도 확장 단추는 가려지지 않고 앱 바에 그대로 있다', (
     tester,
   ) async {
     final panels = await _pump(
@@ -341,13 +341,23 @@ void main() {
       docks: [BranchDock()],
     );
     expect(tester.takeException(), isNull);
-    expect(find.byIcon(Icons.open_in_full_rounded), findsNothing);
-    await tester.tap(find.byTooltip('더 보기'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.textContaining('확장'));
+    expect(find.byIcon(Icons.open_in_full_rounded), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.open_in_full_rounded));
     tester.view.physicalSize = const Size(1240, 820); // 모드가 바뀌면 창이 확장 크기로 커진다
     await tester.pumpAndSettle();
     expect(panels.expanded, isTrue);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('확장 모드에서는 "항상 위" 단추가 숨고, 도킹으로 돌아오면 다시 보인다', (tester) async {
+    final panels = await _pump(tester);
+    final pin = find.byTooltip('항상 위에 표시');
+    expect(pin, findsOneWidget);
+    panels.setExplorer(true);
+    await tester.pumpAndSettle();
+    expect(pin, findsNothing);
+    panels.setExplorer(false);
+    await tester.pumpAndSettle();
+    expect(pin, findsOneWidget);
   });
 }

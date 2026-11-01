@@ -491,7 +491,8 @@ class _TaskbenchShellState extends State<TaskbenchShell>
         onAbout: widget.onAbout,
         panels: widget.panels,
         alwaysOnTop: _pinned,
-        onToggleAlwaysOnTop: _desktop ? _togglePin : null,
+        // 확장 모드에서는 "항상 위"를 숨긴다 (큰 작업창은 다른 창 위에 고정할 일이 없다). 도킹으로 돌아오면 다시 보인다.
+        onToggleAlwaysOnTop: _desktop && !widget.panels.expanded ? _togglePin : null,
       ),
     ],
   );
