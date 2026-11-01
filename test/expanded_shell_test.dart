@@ -8,6 +8,7 @@ import 'package:daylight_taskbench/theme/app_theme.dart';
 import 'package:daylight_taskbench/explorer/explorer_panel.dart';
 import 'package:daylight_taskbench/ui/shell/panels/expanded_area.dart';
 import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
+import 'package:daylight_taskbench/ui/shell/panels/panel_widths.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
 import 'package:daylight_taskbench/workspace/workspace.dart';
@@ -157,10 +158,11 @@ void main() {
     final explorer = tester.getRect(find.byType(ExplorerPanel));
     final dock = tester.getRect(find.text('Probe')); // 도크 열 안
     expect(explorer.left, 0);
+    // 도크 열 바로 앞(구분선 손잡이 폭만큼 앞)까지
     expect(
       explorer.right,
-      greaterThan(1240 - dockColumnWidth - 2),
-    ); // 도크 열 바로 앞까지
+      greaterThan(1240 - dockColumnWidth - PanelWidths.handle - 2),
+    );
     expect(dock.left, greaterThan(explorer.right - 1));
     expect(find.byType(CenterArea), findsNothing);
   });

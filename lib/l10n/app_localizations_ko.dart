@@ -5062,4 +5062,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       '들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.';
+
+  @override
+  String get panelResizeHandle => '패널 너비 조절 (두 번 누르면 기본 너비)';
 }

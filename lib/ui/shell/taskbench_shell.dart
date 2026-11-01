@@ -37,7 +37,9 @@ import '../../window/window_mode.dart';
 import '../style/aurora_background.dart';
 import 'dock_accordion.dart';
 import 'panels/expanded_area.dart';
+import 'panels/panel_divider.dart';
 import 'panels/panel_layout.dart';
+import 'panels/panel_widths.dart';
 import 'shared_bar.dart';
 
 class TaskbenchShell extends StatefulWidget {
@@ -53,6 +55,7 @@ class TaskbenchShell extends StatefulWidget {
     this.terminalSettings,
     this.editor,
     this.editorSettings,
+    this.panelWidths,
     this.pickFolder,
   });
 
@@ -79,6 +82,9 @@ class TaskbenchShell extends StatefulWidget {
   /// 편집기 설정(들여쓰기 선·저장 시 정렬). 테스트에서 바꾼다.
   final EditorSettings? editorSettings;
 
+  /// 탐색기·도크 열 너비(끌어서 조절, 저장). 테스트에서 바꾼다.
+  final PanelWidths? panelWidths;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -93,6 +99,10 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   final _empty = RunEmptyDock();
   late final _opener = widget.opener ?? FileOpener(widget.workspace);
   // 밖에서 받지 않으면 셸이 직접 만들고 직접 정리한다 (처음 쓸 때 만든다).
+  PanelWidths? _ownPanelWidths;
+  PanelWidths get _panelWidths =>
+      widget.panelWidths ??
+      (_ownPanelWidths ??= PanelWidths(widget.workspace.prefs));
   EditorSettings? _ownEditorSettings;
   EditorSettings get _editorSettings =>
       widget.editorSettings ??
@@ -191,6 +201,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
       d.detach(ws);
     }
     WidgetsBinding.instance.removeObserver(this);
+    _ownPanelWidths?.dispose();
     _ownEditor?.dispose();
     _ownEditorSettings?.dispose();
     _ownTerminals?.dispose();
@@ -401,10 +412,20 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   Widget _body(Widget dockColumn) {
     final panels = widget.panels;
     if (!panels.expanded) return dockColumn;
-    // 창이 확장 최소 폭보다 좁은 순간(모드 전환으로 창 크기를 바꾸는 중)에도 넘치지 않게 도크 열 폭을 줄인다.
+    final l10n = AppLocalizations.of(context);
+    final widths = _panelWidths;
+    // 도크 열 폭은 원하는 폭(저장한 값)이되, 왼쪽 영역이 최소 폭을 지킬 수 있게 창이 좁아진 순간에는 줄여서 보인다.
+    // 모드 전환으로 창 크기를 바꾸는 중에도 넘치지 않는다.
     return LayoutBuilder(
       builder: (context, c) {
-        final width = dockColumnWidth.clamp(0.0, c.maxWidth * 0.65);
+        final dock = PanelWidths.dockFit(
+          total: c.maxWidth,
+          areaMin: PanelWidths.areaMin(
+            hasExplorer: panels.explorer,
+            hasCenter: panels.hasCenter,
+          ),
+          preferred: widths.dock,
+        );
         return Row(
           children: [
             Expanded(
@@ -415,17 +436,24 @@ class _TaskbenchShellState extends State<TaskbenchShell>
                 terminals: _terminals,
                 terminalSettings: _terminalSettings,
                 editor: _editor,
+                widths: widths,
                 onQuickOpen: _quickOpen,
                 quickOpenShortcut: _quickOpenShortcut,
               ),
             ),
+            PanelDivider(
+              semanticLabel: l10n.panelResizeHandle,
+              // 왼쪽으로 끌면 도크 열이 넓어진다 (지금 보이는 폭에서 시작한다).
+              onDelta: (dx) => widths.setDock(dock - dx),
+              onReset: widths.resetDock,
+            ),
             SizedBox(
-              width: width,
+              width: dock,
               // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
               // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
               child: MediaQuery(
                 data: MediaQuery.of(context)
-                    .copyWith(size: Size(width, c.maxHeight)),
+                    .copyWith(size: Size(dock, c.maxHeight)),
                 child: dockColumn,
               ),
             ),
@@ -483,6 +511,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
               ...widget.docks,
               settings,
               widget.panels,
+              _panelWidths,
             ]),
             builder: (context, _) {
               final open = ws.isOpen;

@@ -5333,4 +5333,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
+
+  @override
+  String get panelResizeHandle => 'Resize panel (double-click to reset)';
 }

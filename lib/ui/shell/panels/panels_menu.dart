@@ -20,21 +20,40 @@ void applyPanelChoice(PanelLayout panels, String value) {
   }
 }
 
-List<PopupMenuEntry<String>> panelMenuEntries(BuildContext context, PanelLayout panels) {
+List<PopupMenuEntry<String>> panelMenuEntries(
+  BuildContext context,
+  PanelLayout panels,
+) {
   final l10n = AppLocalizations.of(context);
   final theme = Theme.of(context);
   return [
-    CheckedPopupMenuItem(value: 'explorer', checked: panels.explorer, child: Text(l10n.panelExplorer)),
+    CheckedPopupMenuItem(
+      value: 'explorer',
+      checked: panels.explorer,
+      child: Text(l10n.panelExplorer),
+    ),
     CheckedPopupMenuItem(
       value: 'editor',
       checked: panels.editorShown,
       enabled: panels.embeddedEditor,
-      child: Text(panels.embeddedEditor ? l10n.panelEditor : '${l10n.panelEditor} — ${l10n.panelEditorOff}'),
+      child: Text(
+        panels.embeddedEditor
+            ? l10n.panelEditor
+            : '${l10n.panelEditor} — ${l10n.panelEditorOff}',
+      ),
     ),
-    CheckedPopupMenuItem(value: 'terminal', checked: panels.terminal, child: Text(l10n.panelTerminal)),
+    CheckedPopupMenuItem(
+      value: 'terminal',
+      checked: panels.terminal,
+      child: Text(l10n.panelTerminal),
+    ),
     if (panels.expanded) ...[
       const PopupMenuDivider(),
-      PopupMenuItem(enabled: false, height: 32, child: Text(l10n.panelsDockHint, style: theme.textTheme.bodySmall)),
+      PopupMenuItem(
+        enabled: false,
+        height: 32,
+        child: Text(l10n.panelsDockHint, style: theme.textTheme.bodySmall),
+      ),
     ],
   ];
 }

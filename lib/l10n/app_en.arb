@@ -3506,5 +3506,6 @@
   "settingsFormatOnSave": "Format on save",
   "settingsFormatOnSaveNote": "Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.",
   "settingsIndentGuides": "Indent guides",
-  "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts."
+  "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.",
+  "panelResizeHandle": "Resize panel (double-click to reset)"
 }
