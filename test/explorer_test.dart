@@ -379,7 +379,7 @@ void main() {
     setUp(() async => repo = await tempDir('panel'));
     tearDown(() => repo.deleteSync(recursive: true));
 
-    testWidgets('탐색기를 켜면 저장소 트리가 보이고, 파일을 누르면 외부 편집기로 연다', (tester) async {
+    testWidgets('탐색기를 켜면 저장소 트리가 보이고, 내장 에디터를 껐다면 파일을 두 번 눌러 외부 편집기로 연다', (tester) async {
       File('${repo.path}/lib/main.dart')
         ..createSync(recursive: true)
         ..writeAsStringSync('x');
@@ -418,6 +418,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      panels.setEmbeddedEditor(false); // 내장 에디터를 끄면 외부 편집기로 연다
       panels.setExplorer(true);
       await tester.pumpAndSettle();
       await _settle(tester);

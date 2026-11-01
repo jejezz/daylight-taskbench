@@ -41,6 +41,13 @@ dependencies:
   cupertino_icons: ^1.0.8
   package_info_plus: ^10.2.2
   path: ^1.9.1
+  # Daylight 앱 공용 편집기: re_editor 포크(합자 끄기, 세로 블록 선택). 고친 점은 그 저장소의 PATCHES.md.
+  # 편집기 동작은 그 저장소에서 고치고 새 태그를 달아 ref 를 올린다 — 이 저장소에 복사본을 두지 않는다.
+  re_editor:
+    git:
+      url: https://github.com/jejezz/daylight-editor-flutter
+      ref: v0.10.0+1
+  re_highlight: ^0.0.3
   # 터미널 (daylight-workbench 에서 복사). 고친 점은 각 폴더의 PATCHES.md
   # xterm2: 드래그 선택 중 스크롤돼도 시작점이 안 옮겨가게, 한글 IME 결함을 고친 복사본
   xterm2:

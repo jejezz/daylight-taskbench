@@ -8102,12 +8102,6 @@ abstract class AppLocalizations {
   /// **'터미널'**
   String get panelTerminal;
 
-  /// No description provided for @panelPlaceholderBody.
-  ///
-  /// In ko, this message translates to:
-  /// **'이 패널은 다음 단계에서 연결됩니다.'**
-  String get panelPlaceholderBody;
-
   /// No description provided for @panelsDockHint.
   ///
   /// In ko, this message translates to:
@@ -8305,6 +8299,228 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'패널 닫기'**
   String get panelClose;
+
+  /// No description provided for @findNoResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과 없음'**
+  String get findNoResults;
+
+  /// No description provided for @findCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{current}/{total}'**
+  String findCount(int current, int total);
+
+  /// No description provided for @findToggleReplace.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기 보기/숨기기'**
+  String get findToggleReplace;
+
+  /// No description provided for @findHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾기'**
+  String get findHint;
+
+  /// No description provided for @findMatchCase.
+  ///
+  /// In ko, this message translates to:
+  /// **'대소문자 구분'**
+  String get findMatchCase;
+
+  /// No description provided for @findRegex.
+  ///
+  /// In ko, this message translates to:
+  /// **'정규식'**
+  String get findRegex;
+
+  /// No description provided for @findPrevious.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 (Shift+Enter)'**
+  String get findPrevious;
+
+  /// No description provided for @findNext.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음 (Enter)'**
+  String get findNext;
+
+  /// No description provided for @findClose.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾기 닫기 (Esc)'**
+  String get findClose;
+
+  /// No description provided for @findReplaceHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꿀 내용'**
+  String get findReplaceHint;
+
+  /// No description provided for @findReplaceOne.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기'**
+  String get findReplaceOne;
+
+  /// No description provided for @findReplaceAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 바꾸기'**
+  String get findReplaceAll;
+
+  /// No description provided for @editorFileGone.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 파일이 디스크에서 사라졌습니다.'**
+  String get editorFileGone;
+
+  /// No description provided for @editorFileChanged.
+  ///
+  /// In ko, this message translates to:
+  /// **'디스크의 파일이 바뀌었습니다. 저장하면 그쪽 수정을 덮어씁니다.'**
+  String get editorFileChanged;
+
+  /// No description provided for @editorCloseTab.
+  ///
+  /// In ko, this message translates to:
+  /// **'탭 닫기'**
+  String get editorCloseTab;
+
+  /// No description provided for @editorLeaveAsIs.
+  ///
+  /// In ko, this message translates to:
+  /// **'그대로 두기'**
+  String get editorLeaveAsIs;
+
+  /// No description provided for @editorReloadDiscard.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 읽기 (내 수정 버림)'**
+  String get editorReloadDiscard;
+
+  /// No description provided for @editorKeepMine.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 수정 유지'**
+  String get editorKeepMine;
+
+  /// No description provided for @editorSavePromptTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 저장할까요?'**
+  String editorSavePromptTitle(String name);
+
+  /// No description provided for @editorSavePromptBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하지 않은 수정이 있습니다.'**
+  String get editorSavePromptBody;
+
+  /// No description provided for @editorDontSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 안 함'**
+  String get editorDontSave;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장'**
+  String get commonSave;
+
+  /// No description provided for @editorZoomHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'Ctrl+스크롤 또는 Ctrl +/- 로 글자 크기 조절 · 클릭하면 100%'**
+  String get editorZoomHint;
+
+  /// No description provided for @editorFoldAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 접기'**
+  String get editorFoldAll;
+
+  /// No description provided for @editorUnfoldAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 펴기'**
+  String get editorUnfoldAll;
+
+  /// No description provided for @messageFileTooLarge.
+  ///
+  /// In ko, this message translates to:
+  /// **'2MB보다 큰 파일은 열지 않습니다: {name}'**
+  String messageFileTooLarge(String name);
+
+  /// No description provided for @messageNotUtf8Open.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 파일(UTF-8)이 아니라서 열 수 없습니다: {name}'**
+  String messageNotUtf8Open(String name);
+
+  /// No description provided for @messageReadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 읽지 못했습니다: {error}'**
+  String messageReadFailed(String error);
+
+  /// No description provided for @messageSaveFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하지 못했습니다: {error}'**
+  String messageSaveFailed(String error);
+
+  /// No description provided for @messageDiskChangedSaveBlocked.
+  ///
+  /// In ko, this message translates to:
+  /// **'디스크의 파일이 바뀌었습니다. 저장하기 전에 \"다시 읽기\"나 \"내 수정 유지\"를 먼저 고르세요.'**
+  String get messageDiskChangedSaveBlocked;
+
+  /// No description provided for @messageChangedNotUtf8.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}이(가) 디스크에서 바뀌었지만 글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.'**
+  String messageChangedNotUtf8(String name);
+
+  /// No description provided for @messageChangedReloaded.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}이(가) 디스크에서 바뀌어 다시 읽었습니다.'**
+  String messageChangedReloaded(String name);
+
+  /// No description provided for @messageReloadedFromDisk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}을(를) 디스크 내용으로 다시 읽었습니다.'**
+  String messageReloadedFromDisk(String name);
+
+  /// No description provided for @messageNotUtf8Reload.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.'**
+  String get messageNotUtf8Reload;
+
+  /// No description provided for @languagePlain.
+  ///
+  /// In ko, this message translates to:
+  /// **'텍스트'**
+  String get languagePlain;
+
+  /// No description provided for @editorOpenFromExplorer.
+  ///
+  /// In ko, this message translates to:
+  /// **'탐색기에서 파일을 열면 여기에 나타납니다'**
+  String get editorOpenFromExplorer;
+
+  /// No description provided for @editorSaveTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 (⌘/Ctrl+S)'**
+  String get editorSaveTooltip;
 }
 
 class _AppLocalizationsDelegate

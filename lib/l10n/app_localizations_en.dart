@@ -5026,9 +5026,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get panelTerminal => 'Terminal';
 
   @override
-  String get panelPlaceholderBody => 'This panel is connected in a later step.';
-
-  @override
   String get panelsDockHint => 'Close all panels to return to dock mode';
 
   @override
@@ -5143,4 +5140,138 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get panelClose => 'Close panel';
+
+  @override
+  String get findNoResults => 'No results';
+
+  @override
+  String findCount(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get findToggleReplace => 'Show/hide replace';
+
+  @override
+  String get findHint => 'Find';
+
+  @override
+  String get findMatchCase => 'Match case';
+
+  @override
+  String get findRegex => 'Regular expression';
+
+  @override
+  String get findPrevious => 'Previous (Shift+Enter)';
+
+  @override
+  String get findNext => 'Next (Enter)';
+
+  @override
+  String get findClose => 'Close find (Esc)';
+
+  @override
+  String get findReplaceHint => 'Replace with';
+
+  @override
+  String get findReplaceOne => 'Replace';
+
+  @override
+  String get findReplaceAll => 'Replace all';
+
+  @override
+  String get editorFileGone => 'This file has disappeared from disk.';
+
+  @override
+  String get editorFileChanged =>
+      'The file on disk has changed. Saving will overwrite those edits.';
+
+  @override
+  String get editorCloseTab => 'Close tab';
+
+  @override
+  String get editorLeaveAsIs => 'Leave as is';
+
+  @override
+  String get editorReloadDiscard => 'Reload (discard my edits)';
+
+  @override
+  String get editorKeepMine => 'Keep my edits';
+
+  @override
+  String editorSavePromptTitle(String name) {
+    return 'Save $name?';
+  }
+
+  @override
+  String get editorSavePromptBody => 'There are unsaved changes.';
+
+  @override
+  String get editorDontSave => 'Don\'t save';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get editorZoomHint =>
+      'Ctrl+scroll or Ctrl +/- to resize text · click for 100%';
+
+  @override
+  String get editorFoldAll => 'Fold all';
+
+  @override
+  String get editorUnfoldAll => 'Unfold all';
+
+  @override
+  String messageFileTooLarge(String name) {
+    return 'Files over 2MB are not opened: $name';
+  }
+
+  @override
+  String messageNotUtf8Open(String name) {
+    return 'Not a text (UTF-8) file, can\'t open: $name';
+  }
+
+  @override
+  String messageReadFailed(String error) {
+    return 'Couldn\'t read the file: $error';
+  }
+
+  @override
+  String messageSaveFailed(String error) {
+    return 'Couldn\'t save: $error';
+  }
+
+  @override
+  String get messageDiskChangedSaveBlocked =>
+      'The file on disk has changed. Before saving, choose \"Reload\" or \"Keep my edits\".';
+
+  @override
+  String messageChangedNotUtf8(String name) {
+    return '$name changed on disk but is not a text (UTF-8) file, so it was not reloaded.';
+  }
+
+  @override
+  String messageChangedReloaded(String name) {
+    return '$name changed on disk and was reloaded.';
+  }
+
+  @override
+  String messageReloadedFromDisk(String name) {
+    return 'Reloaded $name from disk.';
+  }
+
+  @override
+  String get messageNotUtf8Reload =>
+      'Not a text (UTF-8) file, so it was not reloaded.';
+
+  @override
+  String get languagePlain => 'Text';
+
+  @override
+  String get editorOpenFromExplorer =>
+      'Files you open in the explorer appear here';
+
+  @override
+  String get editorSaveTooltip => 'Save (⌘/Ctrl+S)';
 }
