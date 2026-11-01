@@ -5274,4 +5274,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorSaveTooltip => 'Save (⌘/Ctrl+S)';
+
+  @override
+  String get messageFormatted => 'Formatted';
+
+  @override
+  String get messageAlreadyFormatted => 'Already formatted';
+
+  @override
+  String get formatNoDart =>
+      'dart command not found. Make sure the Flutter SDK bin folder is on your PATH.';
+
+  @override
+  String formatTempWriteFailed(String error) {
+    return 'Couldn\'t write a temp file: $error';
+  }
+
+  @override
+  String get formatFailed => 'Couldn\'t format.';
+
+  @override
+  String formatFailedDetail(String detail) {
+    return 'Couldn\'t format: $detail';
+  }
+
+  @override
+  String formatJsonInvalid(String detail) {
+    return 'Invalid JSON, couldn\'t format: $detail';
+  }
+
+  @override
+  String get editorFormat => 'Format (Ctrl+Alt+L)';
+
+  @override
+  String get editorEdit => 'Edit';
+
+  @override
+  String get editorPreview => 'View';
+
+  @override
+  String markdownImage(String alt) {
+    return '(image: $alt)';
+  }
+
+  @override
+  String get markdownImageUnavailable => '(image unavailable)';
+
+  @override
+  String get settingsFormatOnSave => 'Format on save';
+
+  @override
+  String get settingsFormatOnSaveNote =>
+      'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
+
+  @override
+  String get settingsIndentGuides => 'Indent guides';
+
+  @override
+  String get settingsIndentGuidesNote =>
+      'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
 }

@@ -65,6 +65,8 @@ dependencies:
   file_selector: ^1.1.0
   desktop_drop: ^0.8.4
   flutter_markdown_plus: ^1.0.12
+  # Markdown 미리보기에서 GitHub 문법 확장(ExtensionSet.gitHubFlavored)을 쓴다
+  markdown: ^7.3.1
 
 dev_dependencies:
   flutter_test:

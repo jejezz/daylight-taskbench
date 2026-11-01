@@ -13,6 +13,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:re_editor/re_editor.dart';
 
 import 'editor_tab.dart';
+import 'formatters.dart';
 
 enum EditorMessageKind {
   fileTooLarge,
@@ -24,6 +25,13 @@ enum EditorMessageKind {
   changedReloaded,
   reloadedFromDisk,
   notUtf8Reload,
+  formatted,
+  alreadyFormatted,
+  formatNoDart,
+  formatTempWriteFailed,
+  formatFailed,
+  formatFailedDetail,
+  formatJsonInvalid,
 }
 
 /// 화면이 번역해서 보여 주는 알림 하나. [arg]는 파일 이름 또는 오류 문구.
@@ -41,6 +49,14 @@ String pathKey(String path) {
 }
 
 class EditorController extends ChangeNotifier {
+  EditorController({this.formatDart, this.formatOnSave});
+
+  /// Dart 글을 정렬한다 (`dart format`). 없으면 Dart 정렬 기능을 쓸 수 없다.
+  final Future<FormatResult> Function(String path, String text)? formatDart;
+
+  /// 저장하기 직전에 정렬할지. 없으면 정렬하지 않는다.
+  final bool Function()? formatOnSave;
+
   /// 이보다 큰 파일은 열지 않는다.
   static const maxFileBytes = 2 * 1024 * 1024;
 
@@ -95,6 +111,7 @@ class EditorController extends ChangeNotifier {
     await openFile(path);
     final tab = tabFor(path);
     if (tab == null) return;
+    tab.preview = false; // Markdown 보기에서는 커서도 줄도 보이지 않는다
     activeIndex = tabs.indexOf(tab);
     final lines = tab.controller.codeLines;
     final index = (line - 1).clamp(0, lines.length - 1);
@@ -177,6 +194,11 @@ class EditorController extends ChangeNotifier {
       message = const EditorMessage(EditorMessageKind.diskChangedSaveBlocked);
       notifyListeners();
       return false;
+    }
+    if (formatOnSave?.call() ?? false) {
+      // 문법 오류 등으로 정렬하지 못해도 저장은 한다 — 정렬은 덤이다.
+      final r = await _formatted(tab);
+      if (r != null && r.ok) _applyFormatted(tab, r.text!);
     }
     try {
       await File(tab.path).writeAsString(tab.controller.text);
@@ -321,6 +343,62 @@ class EditorController extends ChangeNotifier {
   /// 내 글을 유지한다. 다음에 저장하면 디스크의 파일을 내 글로 덮어쓰거나(바뀐 경우) 다시 만든다(삭제된 경우).
   void keepMine(EditorTab tab) {
     tab.external = ExternalChange.none;
+    notifyListeners();
+  }
+
+  // --- 정렬 · 미리보기 -------------------------------------------------------
+
+  /// 이 탭의 글을 정렬할 수 있는가 (Dart · JSON · ARB).
+  bool canFormat(EditorTab tab) => tab.language.isDart || tab.language.isJson;
+
+  Future<FormatResult?> _formatted(EditorTab tab) async {
+    if (tab.language.isJson) return formatJson(tab.controller.text);
+    final format = formatDart;
+    if (tab.language.isDart && format != null) {
+      return format(tab.path, tab.controller.text);
+    }
+    return null;
+  }
+
+  /// 정렬한 글로 편집기 글을 바꾼다 (실행 취소할 수 있다). 바꿨으면 true.
+  bool _applyFormatted(EditorTab tab, String text) {
+    if (text == tab.controller.text) return false;
+    final line = tab.controller.selection.extentIndex;
+    tab.controller.runRevocableOp(() => tab.controller.text = text);
+    final last = tab.controller.codeLines.length - 1;
+    tab.controller.selection = CodeLineSelection.collapsed(
+      index: line > last ? last : line,
+      offset: 0,
+    );
+    return true;
+  }
+
+  /// 지금 탭의 글을 정렬한다. 성공하면 편집기 글을 바꾸되 실행 취소할 수 있다.
+  Future<void> formatActive() async {
+    final tab = activeTab;
+    if (tab == null) return;
+    final r = await _formatted(tab);
+    if (r == null) return;
+    final failure = r.failure;
+    if (failure != null) {
+      message = EditorMessage(switch (failure.kind) {
+        FormatFailureKind.noDart => EditorMessageKind.formatNoDart,
+        FormatFailureKind.tempWriteFailed => EditorMessageKind.formatTempWriteFailed,
+        FormatFailureKind.failed => EditorMessageKind.formatFailed,
+        FormatFailureKind.failedDetail => EditorMessageKind.formatFailedDetail,
+        FormatFailureKind.jsonInvalid => EditorMessageKind.formatJsonInvalid,
+      }, failure.detail);
+    } else if (_applyFormatted(tab, r.text!)) {
+      message = const EditorMessage(EditorMessageKind.formatted);
+    } else {
+      message = const EditorMessage(EditorMessageKind.alreadyFormatted);
+    }
+    notifyListeners();
+  }
+
+  /// Markdown 탭의 편집 ↔ 보기를 바꾼다.
+  void togglePreview(EditorTab tab) {
+    tab.preview = !tab.preview;
     notifyListeners();
   }
 

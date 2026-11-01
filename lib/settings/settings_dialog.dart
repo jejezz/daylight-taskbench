@@ -13,6 +13,7 @@ import '../core/tool_paths.dart';
 import '../docks/branch/repo/repo_prefs.dart';
 import '../docks/flutty/secrets/secrets_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../editor/editor_settings.dart';
 import '../terminal/terminal_settings.dart';
 import '../ui/shell/panels/panel_layout.dart';
 import '../workspace/workspace_scope.dart';
@@ -270,7 +271,7 @@ class _AppearanceSection extends StatelessWidget {
   }
 }
 
-/// 에디터 구역 (§1.13): 내장 에디터를 쓸지. 끄면 에디터 패널이 없고 파일은 외부 VS Code 로 열린다.
+/// 에디터 구역 (§1.13): 내장 에디터를 쓸지(끄면 에디터 패널이 없고 파일은 외부 VS Code 로 열린다), 들여쓰기 선, 저장할 때 정렬.
 class _EditorSection extends StatelessWidget {
   const _EditorSection();
 
@@ -278,13 +279,37 @@ class _EditorSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final panels = PanelLayoutScope.of(context);
-    return SwitchListTile(
-      contentPadding: EdgeInsets.zero,
-      dense: true,
-      title: Text(l10n.settingsEditorEmbedded),
-      subtitle: Text(l10n.settingsEditorEmbeddedHelp),
-      value: panels.embeddedEditor,
-      onChanged: panels.setEmbeddedEditor,
+    final editor = EditorSettingsScope.maybeOf(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          title: Text(l10n.settingsEditorEmbedded),
+          subtitle: Text(l10n.settingsEditorEmbeddedHelp),
+          value: panels.embeddedEditor,
+          onChanged: panels.setEmbeddedEditor,
+        ),
+        if (editor != null) ...[
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            title: Text(l10n.settingsIndentGuides),
+            subtitle: Text(l10n.settingsIndentGuidesNote),
+            value: editor.indentGuides,
+            onChanged: editor.setIndentGuides,
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            title: Text(l10n.settingsFormatOnSave),
+            subtitle: Text(l10n.settingsFormatOnSaveNote),
+            value: editor.formatOnSave,
+            onChanged: editor.setFormatOnSave,
+          ),
+        ],
+      ],
     );
   }
 }

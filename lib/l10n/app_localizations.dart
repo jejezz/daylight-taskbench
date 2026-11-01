@@ -8521,6 +8521,102 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'저장 (⌘/Ctrl+S)'**
   String get editorSaveTooltip;
+
+  /// No description provided for @messageFormatted.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬했습니다'**
+  String get messageFormatted;
+
+  /// No description provided for @messageAlreadyFormatted.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 정렬되어 있습니다'**
+  String get messageAlreadyFormatted;
+
+  /// No description provided for @formatNoDart.
+  ///
+  /// In ko, this message translates to:
+  /// **'dart 명령을 찾을 수 없습니다. Flutter SDK의 bin 폴더가 PATH에 있는지 확인하세요.'**
+  String get formatNoDart;
+
+  /// No description provided for @formatTempWriteFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'임시 파일을 쓰지 못했습니다: {error}'**
+  String formatTempWriteFailed(String error);
+
+  /// No description provided for @formatFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬하지 못했습니다.'**
+  String get formatFailed;
+
+  /// No description provided for @formatFailedDetail.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬하지 못했습니다: {detail}'**
+  String formatFailedDetail(String detail);
+
+  /// No description provided for @formatJsonInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'JSON 문법 오류라 정렬하지 못했습니다: {detail}'**
+  String formatJsonInvalid(String detail);
+
+  /// No description provided for @editorFormat.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬 (Ctrl+Alt+L)'**
+  String get editorFormat;
+
+  /// No description provided for @editorEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집'**
+  String get editorEdit;
+
+  /// No description provided for @editorPreview.
+  ///
+  /// In ko, this message translates to:
+  /// **'보기'**
+  String get editorPreview;
+
+  /// No description provided for @markdownImage.
+  ///
+  /// In ko, this message translates to:
+  /// **'(이미지: {alt})'**
+  String markdownImage(String alt);
+
+  /// No description provided for @markdownImageUnavailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'(이미지를 불러올 수 없습니다)'**
+  String get markdownImageUnavailable;
+
+  /// No description provided for @settingsFormatOnSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장할 때 자동 정렬'**
+  String get settingsFormatOnSave;
+
+  /// No description provided for @settingsFormatOnSaveNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.'**
+  String get settingsFormatOnSaveNote;
+
+  /// No description provided for @settingsIndentGuides.
+  ///
+  /// In ko, this message translates to:
+  /// **'들여쓰기 선'**
+  String get settingsIndentGuides;
+
+  /// No description provided for @settingsIndentGuidesNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.'**
+  String get settingsIndentGuidesNote;
 }
 
 class _AppLocalizationsDelegate
