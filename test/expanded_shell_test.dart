@@ -157,7 +157,7 @@ void main() {
     await tester.pumpAndSettle();
     final explorer = tester.getRect(find.byType(ExplorerPanel));
     final dock = tester.getRect(find.text('Probe')); // 도크 열 안
-    expect(explorer.left, 0);
+    expect(explorer.left, PanelWidths.pad + 1); // 창 가장자리 여백 + 카드 테두리
     // 도크 열 바로 앞(구분선 손잡이 폭만큼 앞)까지
     expect(
       explorer.right,

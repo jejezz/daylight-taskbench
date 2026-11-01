@@ -35,8 +35,11 @@ class PanelWidths extends ChangeNotifier {
   /// 가운데(에디터·터미널)의 최소 폭.
   static const minCenter = 270.0;
 
-  /// 구분선(끄는 자리)의 폭.
-  static const handle = 6.0;
+  /// 패널 카드 사이의 간격 = 구분선(끄는 자리)의 폭.
+  static const handle = 8.0;
+
+  /// 확장 영역의 창 가장자리 쪽(왼쪽·위·아래) 여백.
+  static const pad = 8.0;
 
   final SharedPreferences _prefs;
   double _explorer;
@@ -87,9 +90,9 @@ class PanelWidths extends ChangeNotifier {
 
   // ── 창 크기에 맞춘 계산 (순수 함수) ─────────────────────────────────────
 
-  /// 도크 열 왼쪽 영역(탐색기 + 가운데)이 가져야 하는 최소 폭.
+  /// 도크 열 왼쪽 영역(여백 + 탐색기 + 가운데)이 가져야 하는 최소 폭.
   static double areaMin({required bool hasExplorer, required bool hasCenter}) {
-    var w = 0.0;
+    var w = pad;
     if (hasExplorer) w += minExplorer;
     if (hasCenter) w += minCenter;
     if (hasExplorer && hasCenter) w += handle;
@@ -107,7 +110,7 @@ class PanelWidths extends ChangeNotifier {
     return preferred.clamp(minDock, upper < minDock ? minDock : upper);
   }
 
-  /// 왼쪽 영역 폭 [area] 안에서 탐색기가 실제로 가질 폭. 가운데가 없으면 영역 전체를 쓰고, 있으면 가운데가
+  /// 왼쪽 영역에서 여백을 뺀 폭 [area] 안에서 탐색기가 실제로 가질 폭. 가운데가 없으면 영역 전체를 쓰고, 있으면 가운데가
   /// [minCenter]를 지킬 수 있게 줄인다.
   static double explorerFit({
     required double area,
