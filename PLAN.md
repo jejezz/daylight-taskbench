@@ -730,6 +730,12 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 
 - 패널 드롭다운 메뉴를 없애고 **확장 단추 하나**로 바꿨다: 보이는 패널이 하나라도 있으면 모두 끄고(도킹으로), 없으면 모두 켠다(내장 에디터를 껐으면 에디터 제외). 한 패널만 닫는 일은 각 패널 머리줄의 x 가 맡는다. 단추 설명(툴팁)에 개별 패널 단축키를 적는다. 좁은 막대에서는 "더 보기" 메뉴의 한 항목이다. 알림은 한 번만 보내 창 크기가 여러 번 바뀌지 않는다(`PanelLayout.toggleAll`).
 
+### 시작할 때 깜빡임 수정 (2026-11-01)
+
+- **원인**: macOS 는 `.xib`의 800×600 빈 창이 시작 즉시 보였다가 Dart 가 크기·위치를 바꿨고(`MainFlutterWindow.swift`에 window_manager 의 `hiddenWindowAtLaunch()` 호출이 없었다), Windows 는 `flutter_window.cpp`의 첫 프레임 자동 `Show()`가 남아 Dart 의 배치 전에 1280×720 창이 보였다(`main.dart` 주석이 지우라고 한 줄).
+- **수정**: macOS `order` 재정의에서 `hiddenWindowAtLaunch()` 호출, Windows 자동 `Show()` 삭제 — 창은 첫 프레임 뒤 Dart 의 `show()`로만 보인다. 덧붙여 macOS 는 매번 가운데로 뜨던 것을 **도킹 모드의 창 위치를 기억**(`window_pos_dock`)해 복원하고, 기억한 위치가 어느 모니터에도 안 걸치면 가운데로 둔다.
+- 확인 못 함: 실제 시작 화면(macOS·Windows)은 사용자 몫. Windows 는 이 환경에서 빌드도 못 했다.
+
 ## 6. 위험과 결정이 필요한 것
 
 **위험**

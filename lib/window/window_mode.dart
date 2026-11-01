@@ -101,6 +101,17 @@ abstract final class WindowModeMath {
     return saved;
   }
 
+  /// 창의 왼쪽 위가 [pos] 일 때, 제목 표시줄을 잡을 수 있을 만큼(가로 100·세로 50) 어느 모니터 작업 영역 [areas]
+  /// 에 걸쳐 있는가.
+  static bool positionVisible(Offset pos, Size size, List<Rect> areas) {
+    final window = pos & size;
+    for (final a in areas) {
+      final i = window.intersect(a);
+      if (i.width >= 100 && i.height >= 50) return true;
+    }
+    return false;
+  }
+
   /// 저장한 크기가 최소 크기보다 작거나 이상하면 기본 크기로 돌린다.
   static Size sanitize(Size? saved, WindowModeSpec spec) {
     if (saved == null ||
@@ -139,6 +150,9 @@ class WindowModeController with WindowListener {
   /// 도킹 모드의 크기를 저장하는 키 (Windows 가 아닌 곳).
   static const dockSizeKey = 'window_size_dock';
 
+  /// 도킹 모드의 창 위치(왼쪽 위, 논리 좌표)를 저장하는 키 (Windows 가 아닌 곳 — Windows 는 [WindowPlacement]).
+  static const dockPosKey = 'window_pos_dock';
+
   final SharedPreferences _prefs;
   WindowPlacement? _placement;
   WindowMode _mode = WindowMode.dock;
@@ -152,6 +166,38 @@ class WindowModeController with WindowListener {
     WindowModeMath.parseSize(_prefs.getString(dockSizeKey)),
     dockSpec,
   );
+
+  /// 마지막으로 기억한 도킹 창 위치. 없거나 이상하면 null.
+  Offset? get savedPosition {
+    final raw = _prefs.getString(dockPosKey);
+    if (raw == null) return null;
+    final parts = raw.split(',');
+    if (parts.length != 2) return null;
+    final x = double.tryParse(parts[0]);
+    final y = double.tryParse(parts[1]);
+    if (x == null || y == null || !x.isFinite || !y.isFinite) return null;
+    return Offset(x, y);
+  }
+
+  /// 기억한 위치로 창을 옮긴다. 기억한 위치가 없거나 지금은 어느 모니터에도 (제목 표시줄을 잡을 만큼) 걸치지
+  /// 않으면(모니터를 뗐을 때) false — 부르는 쪽이 가운데에 둔다. Windows 는 [WindowPlacement]가 하므로 false.
+  Future<bool> restorePosition(Size windowSize) async {
+    final pos = savedPosition;
+    if (pos == null || _placement != null) return false;
+    try {
+      final displays = await screenRetriever.getAllDisplays();
+      final areas = [
+        for (final d in displays)
+          (d.visiblePosition ?? Offset.zero) & (d.visibleSize ?? d.size),
+      ];
+      if (!WindowModeMath.positionVisible(pos, windowSize, areas)) return false;
+      await windowManager.setPosition(pos);
+      return true;
+    } catch (e) {
+      debugPrint('window position restore failed: $e');
+      return false;
+    }
+  }
 
   /// Windows 의 배치 도우미 (그 밖 OS 는 null).
   WindowPlacement? get placement => _placement;
@@ -168,7 +214,29 @@ class WindowModeController with WindowListener {
     windowManager.removeListener(this);
   }
 
-  // ── 크기 기억 ────────────────────────────────────────────────────────────
+  // ── 크기·위치 기억 ───────────────────────────────────────────────────────
+
+  @override
+  void onWindowMoved() {
+    // 위치는 도킹 모드에서만 기억한다 (확장은 오른쪽 가장자리를 고정해 왼쪽이 움직이므로, 다음 시작이 어긋난다).
+    if (_mode != WindowMode.dock || _placement != null) return;
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), _savePosition);
+  }
+
+  Future<void> _savePosition() async {
+    try {
+      if (await windowManager.isMaximized() ||
+          await windowManager.isFullScreen() ||
+          await windowManager.isMinimized()) {
+        return;
+      }
+      final pos = await windowManager.getPosition();
+      await _prefs.setString(dockPosKey, '${pos.dx},${pos.dy}');
+    } catch (e) {
+      debugPrint('window position save failed: $e');
+    }
+  }
 
   @override
   void onWindowResized() {

@@ -27,14 +27,8 @@ bool FlutterWindow::OnCreate() {
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
-  flutter_controller_->engine()->SetNextFrameCallback([&]() {
-    this->Show();
-  });
-
-  // Flutter can complete the first frame before the "show window" callback is
-  // registered. The following call ensures a frame is pending to ensure the
-  // window is shown. It is a no-op if the first frame hasn't completed yet.
-  flutter_controller_->ForceRedraw();
+  // 창을 여기서 보이지 않는다. Dart(lib/main.dart)가 첫 프레임을 그리고 크기·위치를 정한 뒤
+  // windowManager.show() 로 보인다. 첫 프레임 때 바로 Show() 하면 1280×720 기본 창이 먼저 보였다가 옮겨져 깜빡인다.
 
   return true;
 }
