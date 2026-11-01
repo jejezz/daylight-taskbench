@@ -5014,7 +5014,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'A merge or rebase is in progress. Build results are unreliable while conflicts exist.';
 
   @override
-  String get panelsTooltip => 'Panels';
+  String get panelsExpandTooltip => 'Expand';
+
+  @override
+  String get panelsCollapseTooltip => 'Back to dock';
 
   @override
   String get panelExplorer => 'Explorer';
@@ -5024,12 +5027,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get panelTerminal => 'Terminal';
-
-  @override
-  String get panelsDockHint => 'Close all panels to return to dock mode';
-
-  @override
-  String get panelEditorOff => 'The built-in editor is off';
 
   @override
   String get settingsSectionEditor => 'Editor';

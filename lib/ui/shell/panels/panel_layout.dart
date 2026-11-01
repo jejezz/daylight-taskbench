@@ -91,6 +91,22 @@ class PanelLayout extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 확장 단추: 보이는 패널이 하나라도 있으면 모두 끄고(도킹으로), 하나도 없으면 모두 켠다.
+  /// 내장 에디터를 껐으면 에디터는 켜지 않는다. 창 크기가 세 번 바뀌지 않도록 알림은 한 번만 보낸다.
+  /// 각 패널의 개별 닫기는 패널 머리줄의 x 가 맡는다.
+  void toggleAll() {
+    if (expanded) {
+      _explorer = false;
+      _editor = false;
+      _terminal = false;
+    } else {
+      _explorer = true;
+      _editor = _embeddedEditor;
+      _terminal = true;
+    }
+    notifyListeners();
+  }
+
   /// 단축키: 탐색기를 켜고 끈다.
   void toggleExplorer() => setExplorer(!_explorer);
 

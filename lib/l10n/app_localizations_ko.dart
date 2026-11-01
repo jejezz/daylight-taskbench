@@ -4749,7 +4749,10 @@ class AppLocalizationsKo extends AppLocalizations {
       '병합·리베이스 등이 진행 중입니다. 충돌 중에는 빌드 결과를 믿을 수 없습니다.';
 
   @override
-  String get panelsTooltip => '패널';
+  String get panelsExpandTooltip => '확장';
+
+  @override
+  String get panelsCollapseTooltip => '도킹으로 접기';
 
   @override
   String get panelExplorer => '탐색기';
@@ -4759,12 +4762,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get panelTerminal => '터미널';
-
-  @override
-  String get panelsDockHint => '패널을 모두 닫으면 도킹 모드로 돌아갑니다';
-
-  @override
-  String get panelEditorOff => '내장 에디터를 사용하지 않습니다';
 
   @override
   String get settingsSectionEditor => '에디터';

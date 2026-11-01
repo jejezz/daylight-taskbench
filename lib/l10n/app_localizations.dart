@@ -8078,11 +8078,17 @@ abstract class AppLocalizations {
   /// **'병합·리베이스 등이 진행 중입니다. 충돌 중에는 빌드 결과를 믿을 수 없습니다.'**
   String get fdOperationInProgress;
 
-  /// No description provided for @panelsTooltip.
+  /// No description provided for @panelsExpandTooltip.
   ///
   /// In ko, this message translates to:
-  /// **'패널'**
-  String get panelsTooltip;
+  /// **'확장'**
+  String get panelsExpandTooltip;
+
+  /// No description provided for @panelsCollapseTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'도킹으로 접기'**
+  String get panelsCollapseTooltip;
 
   /// No description provided for @panelExplorer.
   ///
@@ -8101,18 +8107,6 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'터미널'**
   String get panelTerminal;
-
-  /// No description provided for @panelsDockHint.
-  ///
-  /// In ko, this message translates to:
-  /// **'패널을 모두 닫으면 도킹 모드로 돌아갑니다'**
-  String get panelsDockHint;
-
-  /// No description provided for @panelEditorOff.
-  ///
-  /// In ko, this message translates to:
-  /// **'내장 에디터를 사용하지 않습니다'**
-  String get panelEditorOff;
 
   /// No description provided for @settingsSectionEditor.
   ///
