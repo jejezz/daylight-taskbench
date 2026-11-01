@@ -79,41 +79,110 @@ class EditorZoomScope extends InheritedNotifier<EditorZoom> {
   static double scaleOf(BuildContext context) => maybeOf(context)?.value ?? 1;
 }
 
-/// Ctrl(macOS는 Cmd)을 누른 채 마우스 휠을 굴리면 배율을 바꾼다.
+/// Ctrl(macOS는 Cmd)을 누른 채 마우스 휠을 굴리거나 트랙패드를 두 손가락으로 쓸면 배율을 바꾼다.
 ///
-/// 스크롤 가능한 자식은 같은 휠 이벤트로 스스로 스크롤하므로, 배율을 바꾸는 휠에서는
-/// [scrollers]의 위치를 이벤트가 끝난 직후 원래대로 돌려 놓는다.
-class ZoomWheel extends StatelessWidget {
+/// 트랙패드의 두 손가락 쓸기는 휠(`PointerScrollEvent`)이 아니라 `PointerPanZoom*` 이벤트로 온다 — 휠만 보면 트랙패드에서는
+/// 아무 일도 안 일어난다. 쓸기는 [panStep] 픽셀마다 한 단계씩 바꾸고(이벤트가 아주 잦아서 그대로 쓰면 너무 빠르다), 핀치(`scale`)도
+/// 시작 때의 배율에 누적 배율을 곱해 반영한다.
+///
+/// 스크롤 가능한 자식은 같은 이벤트로 스스로 스크롤하므로, 배율을 바꾸는 동안에는 [scrollers]의 위치를 이벤트가 끝난 직후
+/// 원래대로 돌려 놓는다.
+class ZoomWheel extends StatefulWidget {
   const ZoomWheel({super.key, this.scrollers = const [], required this.child});
 
   final List<ScrollController> scrollers;
   final Widget child;
 
+  /// 트랙패드로 쓸어서 한 단계(10%)를 바꾸는 데 필요한 거리.
+  static const panStep = 24.0;
+
   @override
-  Widget build(BuildContext context) {
-    final zoom = EditorZoomScope.maybeOf(context);
-    return Listener(
-      onPointerSignal: (event) {
-        if (zoom == null || event is! PointerScrollEvent) return;
-        final keyboard = HardwareKeyboard.instance;
-        if (!keyboard.isControlPressed && !keyboard.isMetaPressed) return;
-        final saved = <ScrollController, double>{
-          for (final c in scrollers)
-            if (c.hasClients) c: c.offset,
-        };
-        if (event.scrollDelta.dy < 0) {
-          zoom.zoomIn();
-        } else if (event.scrollDelta.dy > 0) {
-          zoom.zoomOut();
-        }
-        // 스크롤 위젯이 이 이벤트를 처리한 뒤(같은 이벤트 처리가 끝난 직후, 다음 프레임 전)에 되돌린다.
-        scheduleMicrotask(() {
-          saved.forEach((c, offset) {
-            if (c.hasClients && c.offset != offset) c.jumpTo(offset);
-          });
-        });
-      },
-      child: child,
-    );
+  State<ZoomWheel> createState() => _ZoomWheelState();
+}
+
+class _ZoomWheelState extends State<ZoomWheel> {
+  Map<ScrollController, double> _saved = const {};
+  bool _zooming = false;
+  double _panned = 0;
+  double? _pinchBase;
+
+  static bool get _modifier {
+    final keyboard = HardwareKeyboard.instance;
+    return keyboard.isControlPressed || keyboard.isMetaPressed;
   }
+
+  Map<ScrollController, double> _snapshot() => {
+    for (final c in widget.scrollers)
+      if (c.hasClients) c: c.offset,
+  };
+
+  /// 스크롤 위젯이 이 이벤트를 처리한 뒤(같은 이벤트 처리가 끝난 직후, 다음 프레임 전)에 되돌린다.
+  void _restoreAfterEvent() {
+    final saved = _saved;
+    scheduleMicrotask(() {
+      saved.forEach((c, offset) {
+        if (c.hasClients && c.offset != offset) c.jumpTo(offset);
+      });
+    });
+  }
+
+  void _wheel(PointerSignalEvent event) {
+    final zoom = EditorZoomScope.maybeOf(context);
+    if (zoom == null || event is! PointerScrollEvent || !_modifier) return;
+    _saved = _snapshot();
+    if (event.scrollDelta.dy < 0) {
+      zoom.zoomIn();
+    } else if (event.scrollDelta.dy > 0) {
+      zoom.zoomOut();
+    }
+    _restoreAfterEvent();
+  }
+
+  void _panZoomStart(PointerPanZoomStartEvent event) {
+    _zooming = _modifier;
+    _panned = 0;
+    _pinchBase = null;
+    if (_zooming) _saved = _snapshot();
+  }
+
+  void _panZoomUpdate(PointerPanZoomUpdateEvent event) {
+    final zoom = EditorZoomScope.maybeOf(context);
+    if (zoom == null) return;
+    // 도중에 키를 눌렀다 떼도 따라간다: 시작 때 수정키가 없었어도 지금 눌려 있으면 배율 쪽으로 넘어간다.
+    if (!_zooming && _modifier) {
+      _zooming = true;
+      _saved = _snapshot();
+    }
+    if (!_zooming) return;
+    // 핀치: 시작할 때의 배율에 누적 배율을 곱한다 (이벤트마다 곱하면 반올림 오차가 쌓인다).
+    if (event.scale != 1) {
+      _pinchBase ??= zoom.value;
+      zoom.setValue(_pinchBase! * event.scale);
+    }
+    // 쓸기: 위로(dy<0) 확대, 아래로 축소. 마우스 휠과 같은 방향.
+    _panned += event.panDelta.dy;
+    while (_panned <= -ZoomWheel.panStep) {
+      zoom.zoomIn();
+      _panned += ZoomWheel.panStep;
+    }
+    while (_panned >= ZoomWheel.panStep) {
+      zoom.zoomOut();
+      _panned -= ZoomWheel.panStep;
+    }
+    _restoreAfterEvent();
+  }
+
+  void _panZoomEnd(PointerPanZoomEndEvent event) {
+    _restoreAfterEvent();
+    _zooming = false;
+  }
+
+  @override
+  Widget build(BuildContext context) => Listener(
+    onPointerSignal: _wheel,
+    onPointerPanZoomStart: _panZoomStart,
+    onPointerPanZoomUpdate: _panZoomUpdate,
+    onPointerPanZoomEnd: _panZoomEnd,
+    child: widget.child,
+  );
 }
