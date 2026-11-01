@@ -304,15 +304,24 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     if (!panels.expanded) return dockColumn;
     // 창이 확장 최소 폭보다 좁은 순간(모드 전환으로 창 크기를 바꾸는 중)에도 넘치지 않게 도크 열 폭을 줄인다.
     return LayoutBuilder(
-      builder: (context, c) => Row(
-        children: [
-          Expanded(child: ExpandedArea(panels: panels)),
-          SizedBox(
-            width: dockColumnWidth.clamp(0, c.maxWidth * 0.65),
-            child: dockColumn,
-          ),
-        ],
-      ),
+      builder: (context, c) {
+        final width = dockColumnWidth.clamp(0.0, c.maxWidth * 0.65);
+        return Row(
+          children: [
+            Expanded(child: ExpandedArea(panels: panels)),
+            SizedBox(
+              width: width,
+              // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
+              // 이유로 Git 칸이 "넓은 창 배치"(왼쪽 레일)로 바뀌고 단추 라벨 힌트가 좁은 열에 넘친다 (§1.13).
+              child: MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(size: Size(width, c.maxHeight)),
+                child: dockColumn,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

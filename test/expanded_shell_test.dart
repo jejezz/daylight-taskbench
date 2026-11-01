@@ -43,6 +43,23 @@ class _CounterState extends State<_Counter> {
       TextButton(onPressed: () => setState(() => n++), child: Text('count $n'));
 }
 
+/// 칸이 보는 화면 크기를 글자로 보인다.
+class _SizeProbeDock extends DockModule {
+  @override
+  String get id => 'size-probe';
+  @override
+  IconData get icon => Icons.straighten_rounded;
+  @override
+  String title(AppLocalizations l10n) => 'SizeProbe';
+  @override
+  Widget summary(BuildContext context, Workspace w) => const Text('요약');
+  @override
+  Widget body(BuildContext context, Workspace w) {
+    final size = MediaQuery.sizeOf(context);
+    return Text('size ${size.width}x${size.height}');
+  }
+}
+
 Future<PanelLayout> _pump(
   WidgetTester tester, {
   Size size = const Size(1240, 820),
@@ -174,6 +191,22 @@ void main() {
   testWidgets('저장된 패널 상태로 시작하면 확장 모드다', (tester) async {
     await _pump(tester, prefs: {'panel_explorer': true, 'panel_terminal': true});
     expect(find.byType(ExpandedArea), findsOneWidget);
+  });
+
+  testWidgets('확장 모드에서 도크 열 안의 칸은 창이 아니라 자기 열의 크기를 화면 크기로 본다', (tester) async {
+    // Git 칸은 MediaQuery 폭이 840 이상이면 "넓은 창 배치"(왼쪽 레일)로 바뀐다. 확장하면 창은 넓어도 열은 440이다.
+    final panels = await _pump(tester, docks: [_SizeProbeDock()]);
+    expect(find.text('size 1240x'), findsNothing);
+    expect(find.textContaining('size 1240.0x'), findsOneWidget); // 도킹: 창 전체
+
+    panels.setExplorer(true);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('size 440.0x'), findsOneWidget); // 확장: 도크 열 폭
+    expect(find.textContaining('size 1240.0x'), findsNothing);
+
+    panels.setExplorer(false);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('size 1240.0x'), findsOneWidget);
   });
 
   testWidgets('확장 모드 최소 창(960×560)에서 오버플로 없이 그려진다', (tester) async {
