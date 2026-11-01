@@ -121,7 +121,8 @@ void main() {
     final name = find.textContaining('android_project', findRichText: true);
     expect(name, findsOneWidget);
     // 이름이 차지하는 폭. 전에는 남는 폭을 Spacer 와 반씩 나눠 약 60px 만 받았다.
-    expect(tester.getSize(name).width, greaterThan(130));
+    // 확장 단추(32px)가 좁은 막대에도 보이게 되면서 이름 몫이 128px 로 줄었다 — 약 60px 이던 때보다는 충분히 크다.
+    expect(tester.getSize(name).width, greaterThan(120));
     // 편집기 단추는 이름 바로 옆에 그대로 있다 (오른쪽 끝으로 밀리지 않는다).
     expect(tester.getRect(find.byIcon(Icons.description_outlined)).left - tester.getRect(name).right, lessThan(40));
   });
