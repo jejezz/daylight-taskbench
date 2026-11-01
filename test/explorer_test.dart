@@ -16,6 +16,7 @@ import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
 import 'package:daylight_taskbench/workspace/git_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -163,18 +164,108 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('폴더를 누르면 펼치고 다시 누르면 접는다. 파일을 누르면 경로를 돌려준다', (tester) async {
-      String? opened;
-      await pump(tester, onOpen: (p) => opened = p);
+    /// 줄 하나의 배경(선택 강조). 강조가 없으면 null.
+    Color? highlight(WidgetTester tester, String rel) {
+      final row = find.byKey(ValueKey('tree-row:${root.path}/$rel'));
+      return tester
+          .widget<Material>(
+            find.descendant(of: row, matching: find.byType(Material)).first,
+          )
+          .color;
+    }
+
+    testWidgets('폴더를 한 번 누르면 접고 펼친다 (더블클릭의 두 번째 클릭은 다시 접지 않는다)', (tester) async {
+      await pump(tester);
       expect(find.text('top.dart'), findsNothing);
       await tester.tap(find.text('lib'));
+      await tester.pump();
+      await tester.tap(find.text('lib')); // 곧바로 다시 — 더블클릭
+      await _settle(tester);
+      expect(find.text('top.dart'), findsOneWidget); // 펼친 채로 남는다 (다시 접지 않는다)
+      // _settle 이 더블클릭 시간(350ms)보다 오래 걸렸으므로, 이어지는 한 번은 새 클릭이라 접는다.
+      await tester.tap(find.text('lib'));
+      await _settle(tester);
+      expect(find.text('top.dart'), findsNothing);
+    });
+
+    testWidgets('파일을 한 번 누르면 선택만 되고(강조) 열리지 않는다. 두 번 누르면 열린다', (tester) async {
+      final opened = <String>[];
+      await pump(tester, onOpen: opened.add);
+      expect(highlight(tester, 'Alpha.dart'), isNull);
+      await tester.tap(find.text('Alpha.dart'));
+      await tester.pump();
+      expect(highlight(tester, 'Alpha.dart'), isNotNull); // 선택 강조
+      expect(opened, isEmpty); // 한 번 눌러서는 열리지 않는다
+      await tester.tap(find.text('Alpha.dart'));
+      await tester.pump();
+      expect(opened, ['${root.path}/Alpha.dart']);
+    });
+
+    testWidgets('다른 파일을 누르면 선택이 옮겨 가고, 이어서 한 번 더 눌러도 열리지 않는다 (같은 파일일 때만 더블클릭)', (tester) async {
+      final opened = <String>[];
+      await pump(tester, onOpen: opened.add);
+      await tester.tap(find.text('Alpha.dart'));
+      await tester.pump();
+      await tester.tap(find.text('zeta.txt'));
+      await tester.pump();
+      expect(highlight(tester, 'Alpha.dart'), isNull);
+      expect(highlight(tester, 'zeta.txt'), isNotNull);
+      expect(opened, isEmpty);
+    });
+
+    testWidgets('방향키: ↓↑ 로 선택이 옮겨 가고 Enter 로 파일을 연다', (tester) async {
+      final opened = <String>[];
+      await pump(tester, onOpen: opened.add);
+      await tester.tap(find.text('lib')); // 포커스를 주고 폴더를 선택·펼침
+      await _settle(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown); // lib/deep
+      await tester.pump();
+      expect(highlight(tester, 'lib/deep'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown); // lib/top.dart
+      await tester.pump();
+      expect(highlight(tester, 'lib/top.dart'), isNotNull);
+      expect(highlight(tester, 'lib/deep'), isNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pump();
+      expect(highlight(tester, 'lib/deep'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      expect(opened, ['${root.path}/lib/top.dart']);
+    });
+
+    testWidgets('방향키: → 로 폴더를 펼치고 다시 → 로 첫 자식으로, ← 로 접거나 부모로 간다', (tester) async {
+      await pump(tester);
+      await tester.tap(find.text('Alpha.dart')); // 포커스·선택
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp); // lib (폴더가 앞)
+      await tester.pump();
+      expect(highlight(tester, 'lib'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight); // 펼치기
       await _settle(tester);
       expect(find.text('top.dart'), findsOneWidget);
-      await tester.tap(find.text('top.dart'));
-      expect(opened, '${root.path}/lib/top.dart');
-      await tester.tap(find.text('lib'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight); // 첫 자식 lib/deep
+      await tester.pump();
+      expect(highlight(tester, 'lib/deep'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft); // deep 은 접힌 폴더 → 부모 lib
+      await tester.pump();
+      expect(highlight(tester, 'lib'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft); // lib 접기
       await _settle(tester);
       expect(find.text('top.dart'), findsNothing);
+    });
+
+    testWidgets('방향키: Home/End 로 처음과 끝 줄로 간다', (tester) async {
+      await pump(tester);
+      await tester.tap(find.text('Alpha.dart'));
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.end);
+      await tester.pump();
+      expect(highlight(tester, 'zeta.txt'), isNotNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.home);
+      await tester.pump();
+      expect(highlight(tester, 'lib'), isNull);
+      expect(highlight(tester, 'zeta.txt'), isNull);
     });
 
     testWidgets('expandTo 까지 길 위의 폴더를 펼친다 (하위 폴더를 열었을 때)', (tester) async {
@@ -333,7 +424,10 @@ void main() {
       expect(find.byType(ExplorerPanel), findsOneWidget);
       // 고른 하위 폴더(lib)까지 펼쳐져 있다
       expect(find.text('main.dart'), findsOneWidget);
-      await tester.tap(find.text('main.dart'));
+      await tester.tap(find.text('main.dart')); // 한 번은 선택만
+      await tester.pump();
+      expect(started, isNull);
+      await tester.tap(find.text('main.dart')); // 두 번 눌러야 연다
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       expect(started, ['myeditor', '${repo.path}/lib/main.dart']);
       expect(tester.takeException(), isNull);
