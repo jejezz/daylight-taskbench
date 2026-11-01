@@ -1,5 +1,5 @@
 // 편집기 탭 하나 (daylight-workbench 의 studio_controller.dart 에서 EditorTab 을 줄여 옮겼다).
-// [Taskbench에서 달라진 곳] git HEAD 비교(변경 표시·변경점 보기)와 Markdown 미리보기는 아직 없다 (단계 15의 뒤 차례).
+// [Taskbench에서 달라진 곳] git HEAD 비교(변경 표시·변경점 보기)는 아직 없다 (단계 15의 뒤 차례).
 
 import 'package:flutter/widgets.dart';
 import 'package:re_editor/re_editor.dart';
@@ -58,6 +58,9 @@ class EditorTab {
 
   /// 사용자가 골라야 하는 외부 변경. [ExternalChange.none]이면 아무 일도 없다.
   ExternalChange external = ExternalChange.none;
+
+  /// Markdown 만: 렌더링된 모양으로 보는 중인가 (아니면 글을 편집하는 중).
+  bool preview = false;
 
   /// 편집기가 만든 접기 제어. 편집기가 화면에 올라온 뒤에 채워진다.
   CodeChunkController? chunks;

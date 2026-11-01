@@ -20,6 +20,15 @@ String editorMessageText(AppLocalizations l10n, EditorMessage m) =>
       EditorMessageKind.changedReloaded => l10n.messageChangedReloaded(m.arg),
       EditorMessageKind.reloadedFromDisk => l10n.messageReloadedFromDisk(m.arg),
       EditorMessageKind.notUtf8Reload => l10n.messageNotUtf8Reload,
+      EditorMessageKind.formatted => l10n.messageFormatted,
+      EditorMessageKind.alreadyFormatted => l10n.messageAlreadyFormatted,
+      EditorMessageKind.formatNoDart => l10n.formatNoDart,
+      EditorMessageKind.formatTempWriteFailed => l10n.formatTempWriteFailed(
+        m.arg,
+      ),
+      EditorMessageKind.formatFailed => l10n.formatFailed,
+      EditorMessageKind.formatFailedDetail => l10n.formatFailedDetail(m.arg),
+      EditorMessageKind.formatJsonInvalid => l10n.formatJsonInvalid(m.arg),
     };
 
 class EditorHost extends StatefulWidget {

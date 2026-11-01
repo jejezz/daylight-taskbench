@@ -15,6 +15,8 @@ import '../../docks/branch/branch_dock.dart';
 import '../../docks/dock_module.dart';
 import '../../docks/registry.dart';
 import '../../editor/editor_controller.dart';
+import '../../editor/editor_settings.dart';
+import '../../editor/formatters.dart';
 import '../../explorer/file_opener.dart';
 import '../../explorer/project_files.dart';
 import '../../explorer/quick_open.dart';
@@ -50,6 +52,7 @@ class TaskbenchShell extends StatefulWidget {
     this.terminals,
     this.terminalSettings,
     this.editor,
+    this.editorSettings,
     this.pickFolder,
   });
 
@@ -73,6 +76,9 @@ class TaskbenchShell extends StatefulWidget {
   /// 열린 편집기 탭들. 테스트에서 바꾼다.
   final EditorController? editor;
 
+  /// 편집기 설정(들여쓰기 선·저장 시 정렬). 테스트에서 바꾼다.
+  final EditorSettings? editorSettings;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -87,9 +93,17 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   final _empty = RunEmptyDock();
   late final _opener = widget.opener ?? FileOpener(widget.workspace);
   // 밖에서 받지 않으면 셸이 직접 만들고 직접 정리한다 (처음 쓸 때 만든다).
+  EditorSettings? _ownEditorSettings;
+  EditorSettings get _editorSettings =>
+      widget.editorSettings ??
+      (_ownEditorSettings ??= EditorSettings(widget.workspace.prefs));
   EditorController? _ownEditor;
   EditorController get _editor =>
-      widget.editor ?? (_ownEditor ??= EditorController());
+      widget.editor ??
+      (_ownEditor ??= EditorController(
+        formatDart: DartFormatter(widget.workspace.runner).format,
+        formatOnSave: () => _editorSettings.formatOnSave,
+      ));
   TerminalSettings? _ownTerminalSettings;
   TerminalSessionsController? _ownTerminals;
   TerminalSettings get _terminalSettings =>
@@ -178,6 +192,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     }
     WidgetsBinding.instance.removeObserver(this);
     _ownEditor?.dispose();
+    _ownEditorSettings?.dispose();
     _ownTerminals?.dispose();
     _ownTerminalSettings?.dispose();
     super.dispose();
