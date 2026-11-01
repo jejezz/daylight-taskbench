@@ -1,6 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../command_log.dart';
+import '../output_links.dart';
+import '../../workspace/workspace.dart';
+import '../../workspace/workspace_scope.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'copy_output_button.dart';
@@ -32,13 +36,67 @@ class _OutputViewerScreenState extends State<OutputViewerScreen> {
   bool _paused = false;
   String _frozen = '';
 
+  // 오류 위치 링크: 같은 글이면 다시 찾지 않고, 파일이 있는지는 한 번만 본다.
+  final _recognizers = <TapGestureRecognizer>[];
+  final _resolved = <String, String?>{};
+  String? _spansFor;
+  List<InlineSpan> _spans = const [];
+
   String get _live => widget.entry.output.trimRight();
   String get _text => _paused ? _frozen : _live;
 
   @override
   void dispose() {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
     _scroll.dispose();
     super.dispose();
+  }
+
+  /// [text] 를 글자와 (파일이 실제로 있는) 오류 위치 링크로 나눈다.
+  List<InlineSpan> _buildSpans(
+    String text,
+    Workspace? ws,
+    TextStyle linkStyle,
+  ) {
+    if (text == _spansFor) return _spans;
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    _recognizers.clear();
+    _spansFor = text;
+    if (ws == null || !ws.canOpenFiles) return _spans = [TextSpan(text: text)];
+    final bases = [
+      if (ws.selectedDir != null) ws.selectedDir!,
+      if (ws.root != null && ws.root != ws.selectedDir) ws.root!,
+    ];
+    final spans = <InlineSpan>[];
+    var at = 0;
+    for (final link in findOutputLinks(text)) {
+      final key = '${link.package}|${link.path}';
+      final file = _resolved.putIfAbsent(
+        key,
+        () => resolveOutputLink(link, bases),
+      );
+      if (file == null) continue;
+      if (link.start > at) {
+        spans.add(TextSpan(text: text.substring(at, link.start)));
+      }
+      final recognizer = TapGestureRecognizer()
+        ..onTap = () => ws.requestOpenLocation(file, link.line, link.column);
+      _recognizers.add(recognizer);
+      spans.add(
+        TextSpan(
+          text: text.substring(link.start, link.end),
+          style: linkStyle,
+          recognizer: recognizer,
+        ),
+      );
+      at = link.end;
+    }
+    if (at < text.length) spans.add(TextSpan(text: text.substring(at)));
+    return _spans = spans;
   }
 
   void _togglePause() => setState(() {
@@ -100,8 +158,18 @@ class _OutputViewerScreenState extends State<OutputViewerScreen> {
                     padding: const EdgeInsets.all(AppSpacing.lg),
                     child: SizedBox(
                       width: double.infinity,
-                      child: SelectableText(
-                        text,
+                      child: SelectableText.rich(
+                        TextSpan(
+                          children: _buildSpans(
+                            text,
+                            WorkspaceScope.maybeOf(context),
+                            TextStyle(
+                              color: theme.colorScheme.primary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
                         style: AppFonts.mono.copyWith(fontSize: 12),
                       ),
                     ),

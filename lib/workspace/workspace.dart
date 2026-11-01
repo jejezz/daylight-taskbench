@@ -148,6 +148,27 @@ class Workspace extends ChangeNotifier {
 
   Future<void> requestPickFolder() async => pickFolderHandler?.call();
 
+  /// 셸이 등록하는 파일 열기 처리 — 내장 에디터가 켜져 있으면 거기로, 아니면 외부 편집기로 (§1.13).
+  /// 칸·출력 뷰어는 이것을 통해 파일(과 줄·칸)을 연다. 등록된 곳이 없으면 false.
+  Future<void> Function(String path)? openFileHandler;
+  Future<void> Function(String path, int line, int column)? openLocationHandler;
+
+  bool get canOpenFiles => openFileHandler != null;
+
+  Future<bool> requestOpenFile(String path) async {
+    final h = openFileHandler;
+    if (h == null) return false;
+    await h(path);
+    return true;
+  }
+
+  Future<bool> requestOpenLocation(String path, int line, int column) async {
+    final h = openLocationHandler;
+    if (h == null) return false;
+    await h(path, line, column);
+    return true;
+  }
+
   /// 칸이 "지금 중단하면 안 되는 일(빌드·실행·병합 중)"을 알려 주는 검사를 등록한다.
   void registerBusyCheck(bool Function() check) => _busy.add(check);
   void unregisterBusyCheck(bool Function() check) => _busy.remove(check);

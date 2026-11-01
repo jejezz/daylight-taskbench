@@ -10,6 +10,7 @@ import '../git/error_hints.dart';
 import '../git/status.dart';
 import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import '../repo/repo_controller.dart';
+import 'package:daylight_taskbench/workspace/workspace_scope.dart';
 import 'repo_scope.dart';
 import 'services.dart';
 import 'widgets.dart';
@@ -124,6 +125,10 @@ abstract final class RepoActions {
   static Future<void> openInEditor(BuildContext context, RepoController repo, FileChange file) async {
     final services = ServicesScope.of(context);
     final path = '${repo.root}${Platform.pathSeparator}${file.path.replaceAll('/', Platform.pathSeparator)}';
+    // 셸이 있으면 셸의 규칙(내장 에디터가 켜져 있으면 거기, 아니면 편집기 명령·VS Code)으로 연다.
+    final ws = WorkspaceScope.maybeOf(context);
+    if (ws != null && await ws.requestOpenFile(path)) return;
+    if (!context.mounted) return;
     final editor = services.prefs.editorCommand;
     if (editor.isNotEmpty) {
       final parts = editor.split(RegExp(r'\s+'));
