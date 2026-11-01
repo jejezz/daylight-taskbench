@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:daylight_taskbench/window/window_mode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -160,5 +161,37 @@ void main() {
   test('도크 열 440 + 확장 영역이 들어가도록 확장 최소 폭을 정했다', () {
     expect(expandedSpec.minimum.width, greaterThanOrEqualTo(440 + 240 + 270));
     expect(dockSpec.minimum, const Size(380, 560)); // PLAN §1.5 그대로
+  });
+
+  group('도킹 창 위치 기억 (macOS)', () {
+    const screens = [Rect.fromLTWH(0, 25, 1600, 875)];
+    const size = Size(440, 960);
+
+    test('모니터 안의 위치는 그대로 쓴다', () {
+      expect(WindowModeMath.positionVisible(const Offset(1100, 40), size, screens), isTrue);
+    });
+
+    test('거의 화면 밖(가로 100 미만만 걸침)이면 쓰지 않는다 — 모니터를 뗐을 때', () {
+      expect(WindowModeMath.positionVisible(const Offset(1550, 40), size, screens), isFalse);
+      expect(WindowModeMath.positionVisible(const Offset(3000, 40), size, screens), isFalse);
+      expect(WindowModeMath.positionVisible(const Offset(100, 880), size, screens), isFalse);
+    });
+
+    test('다른 모니터에 걸쳐 있으면 그 모니터 기준으로 본다', () {
+      const two = [Rect.fromLTWH(0, 25, 1600, 875), Rect.fromLTWH(1600, 0, 1920, 1080)];
+      expect(WindowModeMath.positionVisible(const Offset(2000, 100), size, two), isTrue);
+    });
+
+    test('저장한 위치를 읽고, 이상한 값은 무시한다', () async {
+      SharedPreferences.setMockInitialValues({WindowModeController.dockPosKey: '120.5,48'});
+      var c = WindowModeController(await SharedPreferences.getInstance());
+      expect(c.savedPosition, const Offset(120.5, 48));
+      SharedPreferences.setMockInitialValues({WindowModeController.dockPosKey: 'x,y'});
+      c = WindowModeController(await SharedPreferences.getInstance());
+      expect(c.savedPosition, isNull);
+      SharedPreferences.setMockInitialValues({});
+      c = WindowModeController(await SharedPreferences.getInstance());
+      expect(c.savedPosition, isNull);
+    });
   });
 }

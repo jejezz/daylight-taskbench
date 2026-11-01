@@ -117,12 +117,17 @@ Future<Future<void> Function()> _prepareWindow(
   final options = WindowOptions(
     size: size,
     minimumSize: windowMode.spec.minimum,
-    center: placement == null,
+    // 기억한 위치가 있으면(macOS·Linux) 아래에서 그리로 옮기고, 없거나 화면 밖이면 가운데로 둔다.
+    center: false,
     title: AppIdentity.displayName,
   );
   final placed = Completer<void>();
   windowManager.waitUntilReadyToShow(options, () async {
-    await placement?.placeInitially();
+    if (placement != null) {
+      await placement.placeInitially();
+    } else if (!await windowMode.restorePosition(size)) {
+      await windowManager.setAlignment(Alignment.center);
+    }
     placed.complete();
   });
   return () async {
