@@ -3558,5 +3558,6 @@
   "settingsFormatOnSave": "저장할 때 자동 정렬",
   "settingsFormatOnSaveNote": "Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.",
   "settingsIndentGuides": "들여쓰기 선",
-  "settingsIndentGuidesNote": "들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다."
+  "settingsIndentGuidesNote": "들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.",
+  "panelResizeHandle": "패널 너비 조절 (두 번 누르면 기본 너비)"
 }

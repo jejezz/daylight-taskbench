@@ -33,6 +33,7 @@ import 'window/window_mode.dart';
 import 'editor/editor_settings.dart';
 import 'editor/editor_zoom.dart';
 import 'terminal/terminal_settings.dart';
+import 'ui/shell/panels/panel_widths.dart';
 import 'ui/shell/panels/panel_layout.dart';
 
 final bool _isDesktop =
@@ -83,6 +84,7 @@ Future<void> main() async {
         terminalSettings: TerminalSettings(prefs),
         editorZoom: EditorZoom(prefs),
         editorSettings: EditorSettings(prefs),
+        panelWidths: PanelWidths(prefs),
         windowMode: _isDesktop ? windowMode : null,
       ),
     ),
@@ -145,6 +147,7 @@ class App extends StatefulWidget {
     required this.terminalSettings,
     required this.editorZoom,
     required this.editorSettings,
+    required this.panelWidths,
     this.windowMode,
   });
 
@@ -152,6 +155,7 @@ class App extends StatefulWidget {
   final TerminalSettings terminalSettings;
   final EditorZoom editorZoom;
   final EditorSettings editorSettings;
+  final PanelWidths panelWidths;
   final WindowModeController? windowMode;
   final AppSettings settings;
   final Workspace workspace;
@@ -275,6 +279,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                         panels: widget.panels,
                         terminalSettings: widget.terminalSettings,
                         editorSettings: widget.editorSettings,
+                        panelWidths: widget.panelWidths,
                         windowMode: widget.windowMode,
                       ),
                     ),
