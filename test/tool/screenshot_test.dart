@@ -97,9 +97,12 @@ void main() {
         tester.view.physicalSize = size;
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
-        SharedPreferences.setMockInitialValues({'panel_explorer': true, 'panel_editor': true, 'panel_terminal': true, 'panel_center': 'terminal'});
+        SharedPreferences.setMockInitialValues({});
         final settings = await AppSettings.load();
-        final panels = PanelLayout(await SharedPreferences.getInstance());
+        final panels = PanelLayout(await SharedPreferences.getInstance())
+          ..setExplorer(true)
+          ..setEditor(true)
+          ..setTerminal(true);
         final ws = await makeWorkspace();
         ws.attachForTest(FakeGitStateSource(const GitState(root: '/Users/me/dev/my_app', branch: 'feature/login', sha: 'abc1234', upstream: 'origin/feature/login', ahead: 2, changedCount: 3)));
         final key = GlobalKey();

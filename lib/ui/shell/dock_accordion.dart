@@ -14,6 +14,9 @@ import '../../theme/taskbench_style.dart';
 const double dockTitleHeight = 40;
 const double _gap = 8;
 
+/// 펼친 칸의 내용이 이보다 낮아지지 않는다. 창이 너무 낮으면 칸 안이 넘치는 대신 열 전체가 스크롤된다.
+const double _minBodyHeight = 280;
+
 class DockAccordion extends StatelessWidget {
   const DockAccordion({
     super.key,
@@ -36,7 +39,9 @@ class DockAccordion extends StatelessWidget {
       final border = (context.style.enabled ? 2.0 : 4.0);
       final chrome = docks.length * (dockTitleHeight + border) + (docks.length + 1) * _gap;
       final bodyHeight = (c.maxHeight - chrome).clamp(0.0, double.infinity);
-      return Padding(
+      // 평소에는 높이가 정확히 맞아 스크롤이 생기지 않는다. 창을 아주 낮게 줄였을 때만 스크롤된다 (넘침 오류 대신).
+      return SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.fromLTRB(_gap, _gap, _gap, 0),
         child: Column(
           children: [
@@ -48,7 +53,7 @@ class DockAccordion extends StatelessWidget {
                   AnimatedContainer(
                     duration: duration,
                     curve: Curves.easeOut,
-                    height: dock.id == expandedId ? bodyHeight : 0,
+                    height: dock.id == expandedId ? (bodyHeight < _minBodyHeight ? _minBodyHeight : bodyHeight) : 0,
                     child: TickerMode(
                       enabled: dock.id == expandedId,
                       // 접힌 칸은 그리지 않지만 State 는 유지한다.
@@ -61,6 +66,7 @@ class DockAccordion extends StatelessWidget {
             ],
           ],
         ),
+      ),
       );
     });
   }

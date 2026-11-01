@@ -44,12 +44,9 @@ Future<void> main() async {
   // (window-placement.md §5 — windows/runner/flutter_window.cpp의 자동 show()도 지워야 한다).
   Future<void> Function()? showWindow;
   final prefs = await SharedPreferences.getInstance();
-  // 패널이 하나라도 켜져 있으면 확장 모드로 시작한다 (§1.13) — 창 크기도 그 모드의 것을 쓴다.
+  // 패널 켜짐은 저장하지 않는다 — 항상 도킹 모드(기본 화면)로 시작한다 (§1.13).
   final panels = PanelLayout(prefs);
-  final windowMode = WindowModeController(
-    prefs,
-    initial: panels.windowMode,
-  );
+  final windowMode = WindowModeController(prefs);
   if (_isDesktop) {
     await windowManager.ensureInitialized();
     showWindow = await _prepareWindow(windowMode);

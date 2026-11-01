@@ -75,7 +75,12 @@ Future<PanelLayout> _pump(
   final ws = await makeWorkspace();
   ws.attachForTest(
     FakeGitStateSource(
-      const GitState(root: '/r', branch: 'main', sha: 'aaaaaaa1', upstream: 'origin/main'),
+      const GitState(
+        root: '/r',
+        branch: 'main',
+        sha: 'aaaaaaa1',
+        upstream: 'origin/main',
+      ),
     ),
     selectedDir: '/r',
   );
@@ -148,12 +153,17 @@ void main() {
     final explorer = tester.getRect(find.byType(ExplorerPlaceholder));
     final dock = tester.getRect(find.text('Probe')); // 도크 열 안
     expect(explorer.left, 0);
-    expect(explorer.right, greaterThan(1240 - dockColumnWidth - 2)); // 도크 열 바로 앞까지
+    expect(
+      explorer.right,
+      greaterThan(1240 - dockColumnWidth - 2),
+    ); // 도크 열 바로 앞까지
     expect(dock.left, greaterThan(explorer.right - 1));
     expect(find.byType(CenterArea), findsNothing);
   });
 
-  testWidgets('에디터와 터미널이 둘 다 켜지면 전환 단추가 나오고, 전환해도 가운데는 한 번에 하나만 보인다', (tester) async {
+  testWidgets('에디터와 터미널이 둘 다 켜지면 전환 단추가 나오고, 전환해도 가운데는 한 번에 하나만 보인다', (
+    tester,
+  ) async {
     final panels = await _pump(tester);
     panels
       ..setEditor(true)
@@ -179,11 +189,16 @@ void main() {
     expect(panels.center, CenterView.terminal);
   });
 
-  testWidgets('앱 바의 패널 메뉴로 켜고 끈다. 켜져 있으면 "모두 닫으면 도킹으로 돌아간다" 안내가 보인다', (tester) async {
+  testWidgets('앱 바의 패널 메뉴로 켜고 끈다. 켜져 있으면 "모두 닫으면 도킹으로 돌아간다" 안내가 보인다', (
+    tester,
+  ) async {
     final panels = await _pump(tester);
     await tester.tap(find.byTooltip('패널'));
     await tester.pumpAndSettle();
-    expect(find.text('패널을 모두 닫으면 도킹 모드로 돌아갑니다'), findsNothing); // 도킹 모드에서는 안내 없음
+    expect(
+      find.text('패널을 모두 닫으면 도킹 모드로 돌아갑니다'),
+      findsNothing,
+    ); // 도킹 모드에서는 안내 없음
     await tester.tap(find.widgetWithText(CheckedPopupMenuItem<String>, '탐색기'));
     await tester.pumpAndSettle();
     expect(panels.explorer, isTrue);
@@ -200,9 +215,12 @@ void main() {
     expect(find.textContaining('내장 에디터를 사용하지 않습니다'), findsOneWidget);
   });
 
-  testWidgets('저장된 패널 상태로 시작하면 확장 모드다', (tester) async {
-    await _pump(tester, prefs: {'panel_explorer': true, 'panel_terminal': true});
-    expect(find.byType(ExpandedArea), findsOneWidget);
+  testWidgets('패널 켜짐은 저장되지 않아서 항상 도킹 모드로 시작한다', (tester) async {
+    await _pump(
+      tester,
+      prefs: {'panel_explorer': true, 'panel_terminal': true},
+    ); // 옛 저장값이 있어도
+    expect(find.byType(ExpandedArea), findsNothing);
   });
 
   testWidgets('확장 모드에서 도크 열 안의 칸은 창이 아니라 자기 열의 크기를 화면 크기로 본다', (tester) async {
@@ -221,13 +239,37 @@ void main() {
     expect(find.textContaining('size 1240.0x'), findsOneWidget);
   });
 
+  testWidgets('창을 아주 낮게 줄여도 도크 열은 넘침 오류 대신 스크롤된다 (도킹·확장 모두)', (tester) async {
+    final panels = await _pump(tester, size: const Size(440, 160), docks: [_ProbeDock(), _SizeProbeDock()]);
+    expect(tester.takeException(), isNull); // 도킹, 높이 160
+    panels.setExplorer(true);
+    tester.view.physicalSize = const Size(1240, 160);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull); // 확장, 높이 160
+  });
+
   testWidgets('확장 모드 최소 창(960×560)에서 오버플로 없이 그려진다', (tester) async {
-    await _pump(tester, size: const Size(960, 560), prefs: {'panel_explorer': true, 'panel_editor': true, 'panel_terminal': true}, docks: [BranchDock()]);
+    final panels = await _pump(
+      tester,
+      size: const Size(960, 560),
+      docks: [BranchDock()],
+    );
+    panels
+      ..setExplorer(true)
+      ..setEditor(true)
+      ..setTerminal(true);
+    await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('도킹 최소 창(380×560)에서는 패널 항목이 "더 보기" 메뉴 안에 있다 (폴더 이름에 자리를 준다)', (tester) async {
-    final panels = await _pump(tester, size: const Size(380, 560), docks: [BranchDock()]);
+  testWidgets('도킹 최소 창(380×560)에서는 패널 항목이 "더 보기" 메뉴 안에 있다 (폴더 이름에 자리를 준다)', (
+    tester,
+  ) async {
+    final panels = await _pump(
+      tester,
+      size: const Size(380, 560),
+      docks: [BranchDock()],
+    );
     expect(tester.takeException(), isNull);
     expect(find.byTooltip('패널'), findsNothing);
     await tester.tap(find.byTooltip('더 보기'));

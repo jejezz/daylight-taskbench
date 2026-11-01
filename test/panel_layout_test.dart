@@ -97,23 +97,44 @@ void main() {
     expect(p.canSwitchCenter, isTrue);
   });
 
-  test('저장했다가 다시 읽는다 — 시작 모드도 거기서 정해진다', () async {
+  test('패널 켜짐은 저장하지 않는다 — 다시 시작하면 항상 도킹 모드다', () async {
     final p = await _layout();
     p
       ..setExplorer(true)
       ..setEditor(true)
+      ..setTerminal(true);
+    final again = PanelLayout(await SharedPreferences.getInstance());
+    expect(again.explorer || again.editor || again.terminal, isFalse);
+    expect(again.expanded, isFalse);
+    expect(again.windowMode, WindowMode.dock);
+  });
+
+  test('저장하는 것은 가운데에서 마지막으로 본 쪽과 내장 에디터 설정뿐이다', () async {
+    final p = await _layout();
+    p
+      ..setEditor(true)
       ..setTerminal(true)
-      ..showCenter(CenterView.editor);
-    final prefs = await SharedPreferences.getInstance();
-    final again = PanelLayout(prefs);
-    expect(again.explorer && again.editor && again.terminal, isTrue);
+      ..showCenter(CenterView.editor)
+      ..setEmbeddedEditor(false);
+    final again = PanelLayout(await SharedPreferences.getInstance());
+    expect(again.embeddedEditor, isFalse);
+    again.setEmbeddedEditor(true);
+    again
+      ..setEditor(true)
+      ..setTerminal(true);
+    // 켤 때마다 방금 켠 쪽이 보이므로, 마지막 선택은 둘을 켠 뒤 직접 고른 값으로 확인한다
+    again.showCenter(CenterView.editor);
     expect(again.center, CenterView.editor);
-    expect(PanelLayout.startsExpanded(prefs), isTrue);
   });
 
   test('알 수 없는 저장값은 기본(에디터)으로 읽는다', () async {
-    final p = await _layout({'panel_center': 'nope', 'panel_editor': true, 'panel_terminal': true});
-    expect(p.center, CenterView.editor);
+    final p = await _layout({'panel_center': 'nope'});
+    p
+      ..setEditor(true)
+      ..setTerminal(true);
+    p.setTerminal(false);
+    p.setTerminal(true);
+    expect(p.center, CenterView.terminal); // 켠 쪽이 보인다 — 저장값이 이상해도 깨지지 않는다
   });
 
   test('창 크기 모드: 도킹 / 탐색기만(가운데 자리 없음) / 가운데가 있는 전체', () async {

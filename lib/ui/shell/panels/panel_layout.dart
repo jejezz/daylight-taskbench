@@ -11,32 +11,24 @@ import '../../../window/window_mode.dart' show WindowMode;
 enum CenterView { editor, terminal }
 
 class PanelLayout extends ChangeNotifier {
+  /// 탐색기·에디터·터미널 켜짐은 **저장하지 않는다** — 앱은 항상 도킹 모드(기본 화면)로 시작한다.
+  /// 저장하는 것은 내장 에디터 설정과 가운데에서 마지막으로 본 쪽뿐이다.
   PanelLayout(this._prefs)
-    : _explorer = _prefs.getBool(explorerKey) ?? false,
-      _editor = _prefs.getBool(editorKey) ?? false,
-      _terminal = _prefs.getBool(terminalKey) ?? false,
-      _embeddedEditor = _prefs.getBool(embeddedEditorKey) ?? true,
+    : _embeddedEditor = _prefs.getBool(embeddedEditorKey) ?? true,
       _preferred =
           CenterView.values.asNameMap()[_prefs.getString(centerKey)] ??
           CenterView.editor;
 
   /// 저장 키 — 앱 공통 목록(`keys_test`)에 있다.
-  static const explorerKey = 'panel_explorer';
-  static const editorKey = 'panel_editor';
-  static const terminalKey = 'panel_terminal';
   static const centerKey = 'panel_center';
   static const embeddedEditorKey = 'editor_embedded';
 
   final SharedPreferences _prefs;
-  bool _explorer;
-  bool _editor;
-  bool _terminal;
+  bool _explorer = false;
+  bool _editor = false;
+  bool _terminal = false;
   bool _embeddedEditor;
   CenterView _preferred;
-
-  /// 창을 만들기 전에(저장된 값만으로) 확장 모드로 시작할지 안다.
-  static bool startsExpanded(SharedPreferences prefs) =>
-      PanelLayout(prefs).expanded;
 
   bool get explorer => _explorer;
 
@@ -74,7 +66,6 @@ class PanelLayout extends ChangeNotifier {
   void setExplorer(bool on) {
     if (on == _explorer) return;
     _explorer = on;
-    _prefs.setBool(explorerKey, on);
     notifyListeners();
   }
 
@@ -82,7 +73,6 @@ class PanelLayout extends ChangeNotifier {
   void setEditor(bool on) {
     if (on == _editor) return;
     _editor = on;
-    _prefs.setBool(editorKey, on);
     if (on) _remember(CenterView.editor);
     notifyListeners();
   }
@@ -90,7 +80,6 @@ class PanelLayout extends ChangeNotifier {
   void setTerminal(bool on) {
     if (on == _terminal) return;
     _terminal = on;
-    _prefs.setBool(terminalKey, on);
     if (on) _remember(CenterView.terminal);
     notifyListeners();
   }
@@ -125,7 +114,6 @@ class PanelLayoutScope extends InheritedNotifier<PanelLayout> {
   static PanelLayout of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<PanelLayoutScope>()!.notifier!;
 
-  static PanelLayout? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<PanelLayoutScope>()
-      ?.notifier;
+  static PanelLayout? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<PanelLayoutScope>()?.notifier;
 }

@@ -11,9 +11,8 @@ const _commonKeys = {
   'style_state_tint', // 앱 공통 설정 (localization.md §5 `<기능>_<이름>`)
   'recent_dirs', 'dock_expanded', 'editor_command', // Workspace · 셸 · 편집기에서 열기(공통)
   'window_placement', // 창 크기·위치 (window-placement.md 템플릿)
-  'window_placement_expanded', 'window_size_dock', 'window_size_expanded',
-  'window_placement_explorer', 'window_size_explorer', // 모드별 창 크기 (§1.13)
-  'panel_explorer', 'panel_editor', 'panel_terminal', 'panel_center', 'editor_embedded', // 확장 패널 (§1.13)
+  'window_size_dock', 'window_width_dock', 'window_width_explorer', 'window_width_expanded', // 모드별 창 크기 (§1.13)
+  'panel_center', 'editor_embedded', // 확장 패널: 가운데 마지막 선택 · 내장 에디터 설정 (§1.13)
 };
 
 /// 칸 id 접두어. 칸이 늘면 여기에 더한다.

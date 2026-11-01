@@ -1,9 +1,12 @@
 // 도킹 모드와 확장 모드의 창 크기 (PLAN.md §1.13). 모드는 패널 켜짐에서 파생되고(PanelLayout),
 // 이 클래스는 모드가 바뀔 때 창 크기를 그 모드의 크기로 바꾸고 모드별로 기억한다.
 //
-// - Windows: 기존 [WindowPlacement](모니터 배율 보정)를 모드마다 하나씩 쓴다. 기억한 곳이 없으면 가운데에 연다.
-// - 그 밖: 크기만 기억하고, **도크 열이 있는 오른쪽 가장자리를 고정한 채** 왼쪽으로 늘어나거나 줄어든다.
-//   (창이 화면 밖으로 나가지 않게 모니터 작업 영역 안으로 맞춘다.)
+// - 모드가 바뀌면 **너비만** 그 모드의 것으로 바꾼다. 높이는 사용자가 맞춰 둔 그대로 둔다 (패널을 켰다고
+//   창 높이가 바뀌면 안 된다). 너비는 모드별로 기억한다.
+// - **도크 열이 있는 오른쪽 가장자리를 고정한 채** 왼쪽으로 늘어나거나 줄어든다. 창이 화면 밖으로 나가지 않게
+//   모니터 작업 영역 안으로 맞춘다.
+// - 앱은 항상 도킹 모드로 시작한다 (패널 켜짐은 저장하지 않는다). Windows 는 기존 [WindowPlacement]가 도킹
+//   모드의 위치·크기를 기억한다 (다른 모드에서는 저장하지 않아 다음 시작이 큰 창으로 열리지 않는다).
 
 import 'dart:async';
 import 'dart:ui';
@@ -22,41 +25,32 @@ class WindowModeSpec {
   const WindowModeSpec({
     required this.size,
     required this.minimum,
-    required this.placementKey,
-    required this.sizeKey,
+    required this.widthKey,
   });
 
   final Size size;
   final Size minimum;
 
-  /// Windows 의 [WindowPlacement] 저장 키.
-  final String placementKey;
-
-  /// 그 밖 OS 의 크기 저장 키.
-  final String sizeKey;
+  /// 이 모드의 마지막 너비를 저장하는 키.
+  final String widthKey;
 }
 
-/// 도킹: 편집기 옆 세로 창 (§1.5). 확장: 도크 열 440 + 확장 영역 (§1.13).
+/// 도킹: 편집기 옆 세로 창 (§1.5). 탐색기만: 탐색기 240 + 도크 열 440. 확장: 도크 열 440 + 확장 영역 (§1.13).
 /// 확장의 최소 폭 960 = 도크 열 440 + 확장 영역 520 (탐색기 240 + 가운데 최소 270 + 여백).
 const dockSpec = WindowModeSpec(
   size: Size(440, 960),
   minimum: Size(380, 560),
-  placementKey: 'window_placement',
-  sizeKey: 'window_size_dock',
+  widthKey: 'window_width_dock',
 );
-
-/// 탐색기만 켠 상태: 탐색기 240 + 도크 열 440.
 const explorerSpec = WindowModeSpec(
   size: Size(680, 960),
   minimum: Size(680, 560),
-  placementKey: 'window_placement_explorer',
-  sizeKey: 'window_size_explorer',
+  widthKey: 'window_width_explorer',
 );
 const expandedSpec = WindowModeSpec(
   size: Size(1240, 820),
   minimum: Size(960, 560),
-  placementKey: 'window_placement_expanded',
-  sizeKey: 'window_size_expanded',
+  widthKey: 'window_width_expanded',
 );
 
 WindowModeSpec specOf(WindowMode mode) => switch (mode) {
@@ -85,6 +79,28 @@ abstract final class WindowModeMath {
     return Rect.fromLTWH(left, top, w, h);
   }
 
+  /// 모드가 바뀔 때의 목표 크기: 너비는 그 모드의 기억(없으면 기본), 높이는 지금 높이 그대로.
+  /// 둘 다 그 모드의 최소 크기보다 작아지지 않는다.
+  static Size target({
+    required double? savedWidth,
+    required double currentHeight,
+    required WindowModeSpec spec,
+  }) {
+    final width = sanitizeWidth(savedWidth, spec);
+    final height = currentHeight.isFinite && currentHeight > spec.minimum.height
+        ? currentHeight
+        : spec.minimum.height;
+    return Size(width, height);
+  }
+
+  /// 저장한 너비가 없거나 최소 너비보다 작거나 이상하면 그 모드의 기본 너비로 돌린다.
+  static double sanitizeWidth(double? saved, WindowModeSpec spec) {
+    if (saved == null || !saved.isFinite || saved < spec.minimum.width) {
+      return spec.size.width;
+    }
+    return saved;
+  }
+
   /// 저장한 크기가 최소 크기보다 작거나 이상하면 기본 크기로 돌린다.
   static Size sanitize(Size? saved, WindowModeSpec spec) {
     if (saved == null ||
@@ -109,55 +125,50 @@ abstract final class WindowModeMath {
 }
 
 class WindowModeController with WindowListener {
-  WindowModeController(this._prefs, {required this.initial}) : _mode = initial {
+  WindowModeController(this._prefs) {
     if (WindowPlacement.enabled) {
-      for (final m in WindowMode.values) {
-        _placements[m] = WindowPlacement(
-          _prefs,
-          defaultSize: specOf(m).size,
-          key: specOf(m).placementKey,
-        );
-      }
+      _placement = WindowPlacement(
+        _prefs,
+        defaultSize: dockSpec.size,
+        // 도킹 모드가 아닐 때는 위치·크기를 저장하지 않는다 — 다음 시작은 항상 도킹이다.
+        isDocked: () => _mode != WindowMode.dock,
+      );
     }
   }
 
+  /// 도킹 모드의 크기를 저장하는 키 (Windows 가 아닌 곳).
+  static const dockSizeKey = 'window_size_dock';
+
   final SharedPreferences _prefs;
-  final WindowMode initial;
-  final _placements = <WindowMode, WindowPlacement>{};
-  WindowMode _mode;
+  WindowPlacement? _placement;
+  WindowMode _mode = WindowMode.dock;
   Timer? _debounce;
 
   WindowMode get mode => _mode;
   WindowModeSpec get spec => specOf(_mode);
 
-  /// 시작할 때 쓸 창 크기: 기억한 크기가 있으면 그것, 없으면 그 모드의 기본.
+  /// 시작할 때 쓸 창 크기: 도킹 모드에서 기억한 크기가 있으면 그것, 없으면 기본.
   Size get initialSize => WindowModeMath.sanitize(
-    WindowModeMath.parseSize(_prefs.getString(spec.sizeKey)),
-    spec,
+    WindowModeMath.parseSize(_prefs.getString(dockSizeKey)),
+    dockSpec,
   );
 
-  /// Windows 에서 시작 모드의 배치 도우미 (그 밖 OS 는 null).
-  WindowPlacement? get placement => _placements[_mode];
+  /// Windows 의 배치 도우미 (그 밖 OS 는 null).
+  WindowPlacement? get placement => _placement;
 
   /// 창을 보인 뒤에 한 번 부른다.
   void attach() {
-    if (WindowPlacement.enabled) {
-      placement?.attach();
-    } else {
-      windowManager.addListener(this);
-    }
+    _placement?.attach();
+    windowManager.addListener(this);
   }
 
   void detach() {
     _debounce?.cancel();
-    if (WindowPlacement.enabled) {
-      placement?.detach();
-    } else {
-      windowManager.removeListener(this);
-    }
+    _placement?.detach();
+    windowManager.removeListener(this);
   }
 
-  // ── 그 밖 OS: 크기 기억 ──────────────────────────────────────────────────
+  // ── 크기 기억 ────────────────────────────────────────────────────────────
 
   @override
   void onWindowResized() {
@@ -165,6 +176,7 @@ class WindowModeController with WindowListener {
     _debounce = Timer(const Duration(milliseconds: 500), _saveSize);
   }
 
+  /// 지금 모드의 너비를 저장한다. 도킹 모드는 (Windows 가 아니면) 크기도 저장한다.
   Future<void> _saveSize() async {
     try {
       if (await windowManager.isMaximized() ||
@@ -173,7 +185,10 @@ class WindowModeController with WindowListener {
         return;
       }
       final size = await windowManager.getSize();
-      await _prefs.setString(spec.sizeKey, '${size.width},${size.height}');
+      await _prefs.setDouble(spec.widthKey, size.width);
+      if (_mode == WindowMode.dock && _placement == null) {
+        await _prefs.setString(dockSizeKey, '${size.width},${size.height}');
+      }
     } catch (e) {
       debugPrint('window size save failed: $e');
     }
@@ -181,13 +196,15 @@ class WindowModeController with WindowListener {
 
   // ── 모드 전환 ────────────────────────────────────────────────────────────
 
-  /// 모드가 바뀌었을 때 창을 그 모드의 크기로 바꾼다. 같은 모드면 아무것도 하지 않는다.
+  /// 모드가 바뀌었을 때 창의 **너비만** 그 모드의 것으로 바꾼다 (높이는 그대로). 같은 모드면 아무것도 하지 않는다.
   Future<void> switchTo(WindowMode next) async {
     if (next == _mode) return;
     final prev = _mode;
     final from = specOf(prev);
     final to = specOf(next);
     try {
+      await _saveSize(); // 떠나는 모드의 너비를 기억한다
+      _mode = next;
       // 줄일 때는 최소 크기를 먼저 낮추고, 늘릴 때는 늘린 뒤에 올린다 (창이 최소 크기에 걸려 안 줄어드는 것을 막는다).
       await windowManager.setMinimumSize(
         Size(
@@ -199,29 +216,19 @@ class WindowModeController with WindowListener {
               : to.minimum.height,
         ),
       );
-      if (WindowPlacement.enabled) {
-        final old = _placements[prev];
-        await old?.saveNow();
-        old?.detach();
-        _mode = next;
-        final fresh = _placements[next];
-        await fresh?.placeInitially();
-        fresh?.attach();
-      } else {
-        await _saveSize();
-        _mode = next;
-        final current = await windowManager.getBounds();
-        final target = WindowModeMath.sanitize(
-          WindowModeMath.parseSize(_prefs.getString(to.sizeKey)),
-          to,
-        );
-        final bounds = WindowModeMath.anchoredRight(
+      final current = await windowManager.getBounds();
+      final target = WindowModeMath.target(
+        savedWidth: _prefs.getDouble(to.widthKey),
+        currentHeight: current.height,
+        spec: to,
+      );
+      await windowManager.setBounds(
+        WindowModeMath.anchoredRight(
           current,
           target,
           work: await _workAreaOf(current),
-        );
-        await windowManager.setBounds(bounds);
-      }
+        ),
+      );
       await windowManager.setMinimumSize(to.minimum);
     } catch (e) {
       // 크기를 못 바꿔도 앱은 계속 쓸 수 있어야 한다.
