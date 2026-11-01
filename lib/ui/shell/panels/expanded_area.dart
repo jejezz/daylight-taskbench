@@ -6,7 +6,10 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../explorer/explorer_panel.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../workspace/workspace.dart';
+import 'panel_header.dart';
 import 'panel_layout.dart';
 
 /// 도크 열의 폭 (확장 모드). 도킹 모드의 기본 폭(440)과 같게 해서 앱 바·브랜치 줄·아코디언이 도킹 모드와
@@ -16,13 +19,23 @@ const double dockColumnWidth = 440;
 /// 탐색기 폭. 이후 단계에서 끌어서 조절하게 할 수 있다.
 const double explorerWidth = 240;
 
-/// 패널 위쪽 머리줄(탐색기 제목 · 파일 탭 줄)의 높이. 도크 열의 디렉터리 바(44)와 같아서 선이 이어진다.
-const double panelHeaderHeight = 44;
-
 class ExpandedArea extends StatelessWidget {
-  const ExpandedArea({super.key, required this.panels});
+  const ExpandedArea({
+    super.key,
+    required this.panels,
+    required this.workspace,
+    required this.onOpenFile,
+    this.onQuickOpen,
+    this.quickOpenShortcut = '',
+  });
 
   final PanelLayout panels;
+  final Workspace workspace;
+
+  /// 탐색기에서 고른 파일을 연다 (내장 에디터 또는 외부 편집기 — 셸이 정한다).
+  final ValueChanged<String> onOpenFile;
+  final VoidCallback? onQuickOpen;
+  final String quickOpenShortcut;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +57,12 @@ class ExpandedArea extends StatelessWidget {
                   color: scheme.surfaceContainerLow,
                   border: Border(right: divider),
                 ),
-                child: const ExplorerPlaceholder(),
+                child: ExplorerPanel(
+                  workspace: workspace,
+                  onOpenFile: onOpenFile,
+                  onQuickOpen: onQuickOpen,
+                  quickOpenShortcut: quickOpenShortcut,
+                ),
               ),
             ),
           if (panels.hasCenter) Expanded(child: CenterArea(panels: panels)),
@@ -57,54 +75,6 @@ class ExpandedArea extends StatelessWidget {
 Widget _fit({required bool fill, required Widget child}) => fill
     ? Expanded(child: child)
     : SizedBox(width: explorerWidth, child: child);
-
-/// 패널 머리줄: 아래에 선이 있는 [panelHeaderHeight] 높이의 줄.
-class _Header extends StatelessWidget {
-  const _Header({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: panelHeaderHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Theme.of(context).dividerColor),
-        ),
-      ),
-      child: Row(children: children),
-    );
-  }
-}
-
-class ExplorerPlaceholder extends StatelessWidget {
-  const ExplorerPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Column(
-      children: [
-        _Header(
-          children: [
-            Text(l10n.panelExplorer, style: theme.textTheme.titleSmall),
-            const Spacer(),
-            Icon(Icons.refresh_rounded, size: 18, color: theme.disabledColor),
-          ],
-        ),
-        Expanded(
-          child: _Placeholder(
-            icon: Icons.folder_copy_outlined,
-            body: l10n.panelPlaceholderBody,
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 /// 가운데: 위에 파일 탭 줄(오른쪽 끝에 에디터↔터미널 전환), 아래에 에디터 또는 터미널 중 하나만 보인다.
 class CenterArea extends StatelessWidget {
@@ -119,7 +89,7 @@ class CenterArea extends StatelessWidget {
     final shown = panels.center;
     return Column(
       children: [
-        _Header(
+        PanelHeader(
           children: [
             // 파일 탭이 들어올 자리 (단계 15). 지금은 현재 보이는 패널 이름만 보인다.
             Icon(

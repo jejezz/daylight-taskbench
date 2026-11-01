@@ -4815,4 +4815,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String chooseRepoBody(String path) {
     return '\"$path\" 안에 저장소가 여럿 있습니다.';
   }
+
+  @override
+  String get explorerRefresh => '트리 새로 고침';
+
+  @override
+  String explorerQuickOpenTooltip(String shortcut) {
+    return '파일 이름으로 열기 ($shortcut)';
+  }
+
+  @override
+  String get quickOpenHint => '파일 이름 일부를 입력하세요';
+
+  @override
+  String get quickOpenNoMatch => '맞는 파일이 없습니다';
+
+  @override
+  String get quickOpenLoading => '파일 목록을 읽는 중…';
 }

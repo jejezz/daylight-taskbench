@@ -3472,5 +3472,11 @@
   "initRepoConfirm": "저장소 만들기",
   "chooseRepoTitle": "저장소 고르기",
   "chooseRepoBody": "\"{path}\" 안에 저장소가 여럿 있습니다.",
-  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}}
+  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}},
+  "explorerRefresh": "트리 새로 고침",
+  "explorerQuickOpenTooltip": "파일 이름으로 열기 ({shortcut})",
+  "@explorerQuickOpenTooltip": {"placeholders": {"shortcut": {"type": "String"}}},
+  "quickOpenHint": "파일 이름 일부를 입력하세요",
+  "quickOpenNoMatch": "맞는 파일이 없습니다",
+  "quickOpenLoading": "파일 목록을 읽는 중…"
 }

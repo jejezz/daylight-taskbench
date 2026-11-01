@@ -3420,5 +3420,11 @@
   "initRepoConfirm": "Create repository",
   "chooseRepoTitle": "Choose a repository",
   "chooseRepoBody": "There are several repositories inside \"{path}\".",
-  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}}
+  "@chooseRepoBody": {"placeholders": {"path": {"type": "String"}}},
+  "explorerRefresh": "Refresh tree",
+  "explorerQuickOpenTooltip": "Open by file name ({shortcut})",
+  "@explorerQuickOpenTooltip": {"placeholders": {"shortcut": {"type": "String"}}},
+  "quickOpenHint": "Type part of a file name",
+  "quickOpenNoMatch": "No matching files",
+  "quickOpenLoading": "Reading the file list…"
 }

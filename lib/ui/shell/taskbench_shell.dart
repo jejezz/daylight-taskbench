@@ -14,6 +14,9 @@ import '../../app_identity.dart';
 import '../../docks/branch/branch_dock.dart';
 import '../../docks/dock_module.dart';
 import '../../docks/registry.dart';
+import '../../explorer/file_opener.dart';
+import '../../explorer/project_files.dart';
+import '../../explorer/quick_open.dart';
 import '../../l10n/app_localizations.dart';
 import '../../settings/app_settings.dart';
 import '../../settings/settings_dialog.dart';
@@ -40,6 +43,7 @@ class TaskbenchShell extends StatefulWidget {
     required this.onAbout,
     required this.panels,
     this.windowMode,
+    this.opener,
     this.pickFolder,
   });
 
@@ -53,6 +57,9 @@ class TaskbenchShell extends StatefulWidget {
   /// 모드가 바뀔 때 창 크기를 맞추는 쪽. 테스트에서는 null.
   final WindowModeController? windowMode;
 
+  /// 탐색기에서 고른 파일을 여는 쪽. 테스트에서 바꾼다.
+  final FileOpener? opener;
+
   /// 폴더 고르기 창. 테스트에서 바꾼다.
   final Future<String?> Function()? pickFolder;
 
@@ -65,6 +72,7 @@ class _TaskbenchShellState extends State<TaskbenchShell>
   static const _expandedKey = 'dock_expanded';
 
   final _empty = RunEmptyDock();
+  late final _opener = widget.opener ?? FileOpener(widget.workspace);
   StreamSubscription<HeadChange>? _heads;
   String? _expandedId;
   bool _dragging = false;
@@ -256,6 +264,41 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     );
   }
 
+  // ── 파일 열기 ───────────────────────────────────────────────────────────
+
+  /// 탐색기·빠른 열기에서 고른 파일을 연다. 내장 에디터(단계 15)가 붙기 전과 내장 에디터를 껐을 때는 외부 편집기다
+  /// — 내장 에디터가 생기면 여기 한 곳만 바꾸면 된다 (PLAN.md §1.13).
+  Future<void> _openFile(String path) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await _opener.open(path);
+    if (!mounted) return;
+    switch (result) {
+      case OpenFileResult.opened:
+        break;
+      case OpenFileResult.noEditor:
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.editorOpenNoEditor)),
+        );
+      case OpenFileResult.failed:
+        messenger.showSnackBar(SnackBar(content: Text(l10n.editorOpenFailed)));
+    }
+  }
+
+  /// 파일 이름으로 열기 (⌘/Ctrl+Shift+O). ⌘P 는 Git 칸의 Push 가 쓴다.
+  Future<void> _quickOpen() async {
+    final root = ws.root;
+    if (root == null) return;
+    final picked = await showQuickOpen(
+      context,
+      root: root,
+      files: listProjectFiles(root),
+    );
+    if (picked != null && mounted) await _openFile(picked);
+  }
+
+  String get _quickOpenShortcut => Platform.isMacOS ? '⌘⇧O' : 'Ctrl+Shift+O';
+
   // ── 칸 ──────────────────────────────────────────────────────────────────
 
   void _select(String id) {
@@ -307,7 +350,15 @@ class _TaskbenchShellState extends State<TaskbenchShell>
         final width = dockColumnWidth.clamp(0.0, c.maxWidth * 0.65);
         return Row(
           children: [
-            Expanded(child: ExpandedArea(panels: panels)),
+            Expanded(
+              child: ExpandedArea(
+                panels: panels,
+                workspace: ws,
+                onOpenFile: _openFile,
+                onQuickOpen: _quickOpen,
+                quickOpenShortcut: _quickOpenShortcut,
+              ),
+            ),
             SizedBox(
               width: width,
               // 도크 열 안의 칸들은 창이 아니라 **자기 열의 크기**를 화면 크기로 본다. 그렇지 않으면 창이 넓다는
@@ -332,6 +383,14 @@ class _TaskbenchShellState extends State<TaskbenchShell>
     final shortcuts = <ShortcutActivator, VoidCallback>{
       SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac):
           _pickAndOpen,
+      SingleActivator(
+        LogicalKeyboardKey.keyO,
+        control: !mac,
+        meta: mac,
+        shift: true,
+      ): () {
+        if (ws.isOpen) _quickOpen();
+      },
       SingleActivator(LogicalKeyboardKey.comma, control: !mac, meta: mac): () =>
           showSettingsDialog(context),
       SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac):

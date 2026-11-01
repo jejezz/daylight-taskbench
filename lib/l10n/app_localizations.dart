@@ -8197,6 +8197,36 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'\"{path}\" 안에 저장소가 여럿 있습니다.'**
   String chooseRepoBody(String path);
+
+  /// No description provided for @explorerRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'트리 새로 고침'**
+  String get explorerRefresh;
+
+  /// No description provided for @explorerQuickOpenTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 이름으로 열기 ({shortcut})'**
+  String explorerQuickOpenTooltip(String shortcut);
+
+  /// No description provided for @quickOpenHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 이름 일부를 입력하세요'**
+  String get quickOpenHint;
+
+  /// No description provided for @quickOpenNoMatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'맞는 파일이 없습니다'**
+  String get quickOpenNoMatch;
+
+  /// No description provided for @quickOpenLoading.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 목록을 읽는 중…'**
+  String get quickOpenLoading;
 }
 
 class _AppLocalizationsDelegate

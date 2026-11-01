@@ -5,6 +5,7 @@ import 'package:daylight_taskbench/docks/dock_module.dart';
 import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
+import 'package:daylight_taskbench/explorer/explorer_panel.dart';
 import 'package:daylight_taskbench/ui/shell/panels/expanded_area.dart';
 import 'package:daylight_taskbench/ui/shell/panels/panel_layout.dart';
 import 'package:daylight_taskbench/ui/shell/taskbench_shell.dart';
@@ -150,7 +151,7 @@ void main() {
     final panels = await _pump(tester);
     panels.setExplorer(true);
     await tester.pumpAndSettle();
-    final explorer = tester.getRect(find.byType(ExplorerPlaceholder));
+    final explorer = tester.getRect(find.byType(ExplorerPanel));
     final dock = tester.getRect(find.text('Probe')); // 도크 열 안
     expect(explorer.left, 0);
     expect(
