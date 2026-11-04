@@ -166,11 +166,30 @@ class GradleTaskInfo {
 }
 
 /// `./gradlew tasks --all -q` 출력: `build - Assembles and tests this project.` 줄들.
+///
+/// 설명이 없는 작업(Compose 데스크톱 플러그인의 `run`·`packageDmg` 등)은 **이름만 한 줄**로 나온다.
+/// 그런 줄은 그룹 제목 밑줄(`-----`) 뒤부터 빈 줄 전까지만 작업으로 읽는다 — 안내 문구를 작업으로 착각하지 않게.
 List<GradleTaskInfo> parseTasks(String output) {
   final out = <GradleTaskInfo>[];
   final seen = <String>{};
-  for (final m in RegExp(r'^(:?[A-Za-z][\w:.\-]*) - (.*)$', multiLine: true).allMatches(output)) {
-    if (seen.add(m.group(1)!)) out.add(GradleTaskInfo(m.group(1)!, m.group(2)!.trim()));
+  void add(String name, String description) {
+    if (seen.add(name)) out.add(GradleTaskInfo(name, description));
+  }
+
+  final described = RegExp(r'^(:?[A-Za-z][\w:.\-]*) - (.*)$');
+  final bare = RegExp(r'^:?[A-Za-z][\w:.\-]*$');
+  var inGroup = false;
+  for (final raw in output.split('\n')) {
+    final line = raw.trimRight();
+    if (RegExp(r'^-{3,}$').hasMatch(line)) {
+      inGroup = true;
+    } else if (line.isEmpty) {
+      inGroup = false;
+    } else if (described.firstMatch(line) case final m?) {
+      add(m.group(1)!, m.group(2)!.trim());
+    } else if (inGroup && bare.hasMatch(line)) {
+      add(line, '');
+    }
   }
   return out;
 }

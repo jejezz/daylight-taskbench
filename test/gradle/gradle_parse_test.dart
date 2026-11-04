@@ -73,6 +73,45 @@ plugins {
     test('주석 안의 플러그인은 무시한다', () {
       expect(isAndroidApplication(parsePlugins('// id("com.android.application")\nplugins { }')), isFalse);
     });
+
+    test('Compose 데스크톱 앱: 플러그인 + compose.desktop { application { … } } (application 플러그인은 없다)', () {
+      const build = '''
+plugins {
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.compose") version "2.2.20"
+    id("org.jetbrains.compose") version "1.9.0"
+}
+dependencies {
+    implementation(compose.desktop.currentOs)
+}
+compose.desktop {
+    application {
+        mainClass = "art.example.MainKt"
+    }
+}
+''';
+      final p = parsePlugins(build);
+      expect(isJvmApplication(p), isFalse);
+      expect(isComposeDesktopApplication(p, build), isTrue);
+    });
+
+    test('Compose 데스크톱: 점으로 이은 형태와 버전 카탈로그 별칭', () {
+      const dotted = 'plugins { id("org.jetbrains.compose") }\ncompose.desktop.application {\n  mainClass = "MainKt"\n}';
+      expect(isComposeDesktopApplication(parsePlugins(dotted), dotted), isTrue);
+      const catalog = 'plugins { alias(libs.plugins.jetbrains.compose) }\ncompose.desktop {\n    application { mainClass = "MainKt" }\n}';
+      expect(isComposeDesktopApplication(parsePlugins(catalog), catalog), isTrue);
+    });
+
+    test('Compose 데스크톱 앱이 아닌 것: 의존성만, application 블록 없음, 플러그인 없음, 주석', () {
+      const depOnly = 'plugins { id("org.jetbrains.compose") }\ndependencies { implementation(compose.desktop.currentOs) }';
+      expect(isComposeDesktopApplication(parsePlugins(depOnly), depOnly), isFalse);
+      const noBlock = 'plugins { id("org.jetbrains.compose") }\ncompose.desktop { }';
+      expect(isComposeDesktopApplication(parsePlugins(noBlock), noBlock), isFalse);
+      const noPlugin = 'plugins { kotlin("jvm") }\ncompose.desktop { application { } }';
+      expect(isComposeDesktopApplication(parsePlugins(noPlugin), noPlugin), isFalse);
+      const commented = 'plugins { id("org.jetbrains.compose") }\n// compose.desktop { application { } }\n/* compose.desktop.application { } */';
+      expect(isComposeDesktopApplication(parsePlugins(commented), commented), isFalse);
+    });
   });
 
   group('Android 빌드 정보', () {

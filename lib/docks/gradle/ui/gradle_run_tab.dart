@@ -120,13 +120,29 @@ class _GradleRunTabState extends State<GradleRunTab> {
         ],
         _Labeled(
           l10n.grActionLabel,
-          DropdownButton<GradleAction>(
-            isExpanded: true,
-            isDense: true,
-            value: c.actions.contains(c.action) ? c.action : null,
-            items: [for (final a in c.actions) DropdownMenuItem(value: a, child: Text(gradleActionLabel(l10n, a)))],
-            onChanged: c.running ? null : (a) => a == null ? null : c.selectAction(a),
-          ),
+          // Android 앱은 동작이 일곱 개이고 변형·기기까지 고르므로 드롭다운. 그 밖의 Gradle 은 동작이 몇 개 안 되고
+          // 닫힌 드롭다운에서는 `실행` 이 있다는 것조차 보이지 않아, 전부 펼쳐 보이는 칩으로 둔다 (계획서 §4.1b "바로가기").
+          c.isAndroid
+              ? DropdownButton<GradleAction>(
+                  isExpanded: true,
+                  isDense: true,
+                  value: c.actions.contains(c.action) ? c.action : null,
+                  items: [for (final a in c.actions) DropdownMenuItem(value: a, child: Text(gradleActionLabel(l10n, a)))],
+                  onChanged: c.running ? null : (a) => a == null ? null : c.selectAction(a),
+                )
+              : Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    for (final a in c.actions)
+                      ChoiceChip(
+                        label: Text(gradleActionLabel(l10n, a)),
+                        selected: c.action == a,
+                        visualDensity: VisualDensity.compact,
+                        onSelected: c.running ? null : (_) => c.selectAction(a),
+                      ),
+                  ],
+                ),
         ),
         if (c.action == GradleAction.task) ..._taskPicker(l10n, theme),
         const SizedBox(height: AppSpacing.sm),
