@@ -73,6 +73,14 @@ bool _hasPlugin(Set<String> plugins, String id) {
 bool isAndroidApplication(Set<String> plugins) => _hasPlugin(plugins, 'com.android.application');
 bool isAndroidLibrary(Set<String> plugins) => _hasPlugin(plugins, 'com.android.library');
 bool isJvmApplication(Set<String> plugins) => plugins.contains('application');
+
+/// Compose Multiplatform **데스크톱 앱**: Compose 플러그인과 `compose.desktop { application { … } }` 블록.
+/// 이 플러그인이 `run`·`package*` 작업을 만들어 주므로 `application` 플러그인이 없어도 실행할 수 있는 JVM 앱이다.
+/// `implementation(compose.desktop.currentOs)` 같은 의존성 선언만 있는 모듈(라이브러리)은 아니다.
+bool isComposeDesktopApplication(Set<String> plugins, String build) {
+  final hasPlugin = plugins.contains('org.jetbrains.compose') || plugins.any((p) => p.startsWith('alias:') && p.contains('compose'));
+  return hasPlugin && RegExp(r'\bcompose\s*\.\s*desktop\s*(?:\.\s*application\b|\{\s*application\b)').hasMatch(_stripComments(build));
+}
 bool isSpringBoot(Set<String> plugins) => plugins.any((p) => p.contains('org.springframework.boot'));
 
 /// Android 모듈 build.gradle(.kts) 에서 읽을 수 있는 값. 못 읽은 것은 null·빈 목록.

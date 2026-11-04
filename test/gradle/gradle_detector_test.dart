@@ -133,6 +133,35 @@ void main() {
       expect(p.hasWrapper, isFalse);
     });
 
+    test('Compose 데스크톱 단일 프로젝트: application 플러그인 없이도 실행할 수 있는 JVM 앱', () async {
+      write(tmp, 'settings.gradle.kts', 'rootProject.name = "compose-app"');
+      write(tmp, 'build.gradle.kts', '''
+plugins {
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.compose") version "2.2.20"
+    id("org.jetbrains.compose") version "1.9.0"
+}
+dependencies { implementation(compose.desktop.currentOs) }
+compose.desktop {
+    application { mainClass = "app.MainKt" }
+}
+''');
+      write(tmp, 'gradlew', '#!/bin/sh\n');
+      final p = await GradleProject.read(tmp.path);
+      expect(p.shape, GradleShape.jvm);
+      expect(p.modules.single.kind, ModuleKind.jvmApp);
+      expect(p.modules.single.path, ':');
+      expect(p.modules.single.isRunnable, isTrue);
+    });
+
+    test('Compose 의존성만 있는 라이브러리 모듈은 실행 대상이 아니다', () async {
+      write(tmp, 'settings.gradle.kts', 'include(":ui")');
+      write(tmp, 'ui/build.gradle.kts', 'plugins { id("org.jetbrains.compose") }\ndependencies { implementation(compose.desktop.currentOs) }');
+      final m = (await GradleProject.read(tmp.path)).modules.single;
+      expect(m.kind, ModuleKind.other);
+      expect(m.isRunnable, isFalse);
+    });
+
     test('Spring Boot 모듈', () async {
       write(tmp, 'settings.gradle', "include 'server'");
       write(tmp, 'server/build.gradle', "plugins {\n  id 'org.springframework.boot' version '3.2.0'\n}");

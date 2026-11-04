@@ -76,7 +76,7 @@ class GradleProject {
                 ? ModuleKind.androidLibrary
                 : isSpringBoot(plugins)
                     ? ModuleKind.springBoot
-                    : isJvmApplication(plugins)
+                    : isJvmApplication(plugins) || isComposeDesktopApplication(plugins, build)
                         ? ModuleKind.jvmApp
                         : ModuleKind.other;
         final android = kind == ModuleKind.androidApp || kind == ModuleKind.androidLibrary ? parseAndroidBuild(build) : null;

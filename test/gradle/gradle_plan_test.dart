@@ -49,6 +49,46 @@ void main() {
       expect(parseTasks(out).first.description, 'Assembles the outputs of this project.');
     });
 
+    test('설명 없는 작업(Compose 데스크톱 플러그인)은 이름만 한 줄로 나와도 읽는다', () {
+      // 실제 `./gradlew tasks --all -q` 출력의 일부: Compose 그룹은 `이름 - 설명`이 아니라 이름만 나온다.
+      const out = '''
+Build tasks
+-----------
+build - Assembles and tests this project.
+jar - Assembles a jar archive containing the classes of the 'main' feature.
+
+Compose desktop tasks
+---------------------
+checkRuntime
+createDistributable
+packageDmg
+run
+
+Other tasks
+-----------
+compileKotlin - Compiles the compilation 'main' in target ''.
+
+Pattern: clean<TaskName>: Cleans the output files of a specific task.
+BUILD
+''';
+      final tasks = parseTasks(out);
+      expect(tasks.map((t) => t.name), ['build', 'jar', 'checkRuntime', 'createDistributable', 'packageDmg', 'run', 'compileKotlin']);
+      expect(tasks.firstWhere((t) => t.name == 'run').description, isEmpty);
+      expect(tasks.firstWhere((t) => t.name == 'build').description, 'Assembles and tests this project.');
+    });
+
+    test('Windows 줄바꿈(CRLF)과 하위 프로젝트 작업 이름', () {
+      const out = 'Compose desktop tasks\r\n---------------------\r\nrun\r\n:app:packageMsi\r\n\r\nOther tasks\r\n-----------\r\nclean - Deletes the build directory.\r\n';
+      final tasks = parseTasks(out);
+      expect(tasks.map((t) => t.name), ['run', ':app:packageMsi', 'clean']);
+      expect(tasks.last.description, 'Deletes the build directory.');
+    });
+
+    test('같은 이름은 한 번만', () {
+      expect(parseTasks('G\n-\n').map((t) => t.name), isEmpty);
+      expect(parseTasks('A\n---\nrun\nrun\nrun - again\n').map((t) => t.name), ['run']);
+    });
+
     test('변형을 (flavor, 빌드 타입)으로 나눈다 — 긴 빌드 타입부터', () {
       expect(splitVariant('freeDebug', ['debug', 'release']), ('free', 'debug'));
       expect(splitVariant('debug', ['debug', 'release']), ('', 'debug'));

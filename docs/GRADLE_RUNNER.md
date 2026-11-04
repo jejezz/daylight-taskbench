@@ -14,13 +14,13 @@
 
 **목표**: 고른 폴더가 Gradle 프로젝트이면 칸이 켜진다. 모양이 둘이다 (§4.0).
 - **Android 앱**이면: 버튼으로 **빌드 · USB 기기에 설치 · 실행 · 테스트 · 린트**.
-- **그 밖의 Gradle 프로젝트**(Java·Kotlin JVM, Spring Boot 등)면: `./gradlew tasks`에서 읽은 **작업 선택기**와 바로가기(`build` · `test` · `run`/`bootRun` · `clean`).
+- **그 밖의 Gradle 프로젝트**(Java·Kotlin JVM, Spring Boot, Compose 데스크톱 앱 등)면: `./gradlew tasks`에서 읽은 **작업 선택기**와 바로가기(`build` · `test` · `run`/`bootRun` · `clean`).
 
 어느 쪽이든 출력을 스트림으로 보고, 버튼이 실행할 **정확한 명령을 그대로 보여 준다**. 도구(JDK, Android SDK, Gradle 래퍼)는 사용자가 설치한 것을 쓴다.
 
 **Flutter 칸과의 관계**: Flutter 프로젝트도 `android/` 안에 Gradle 프로젝트를 가진다. 그런 폴더는 **Flutter Runner의 몫**이다 (§3 제외 규칙). Gradle 칸은 *Flutter가 아닌* Gradle 프로젝트 — 네이티브 Android(Kotlin/Java)와 JVM 프로젝트 — 를 위한 것이다.
 
-**하지 않는 것**: Play 스토어 업로드, 키스토어 만들기·관리, AVD(에뮬레이터) 만들기·시작 (이미 떠 있는 에뮬레이터는 `adb`가 보여 주므로 대상으로는 나온다), 디버거, Gradle 스크립트 편집, Kotlin Multiplatform·Compose Multiplatform 데스크톱 타깃, Android Studio·IntelliJ를 대신하는 프로젝트 가져오기, JVM 앱의 디버거·프로파일러, Gradle 플러그인 개발.
+**하지 않는 것**: Play 스토어 업로드, 키스토어 만들기·관리, AVD(에뮬레이터) 만들기·시작 (이미 떠 있는 에뮬레이터는 `adb`가 보여 주므로 대상으로는 나온다), 디버거, Gradle 스크립트 편집, Kotlin Multiplatform·Compose Multiplatform의 Android·iOS·웹 타깃 (**Compose 데스크톱 앱의 `run`은 지원한다** — PLAN.md 결정 25), Android Studio·IntelliJ를 대신하는 프로젝트 가져오기, JVM 앱의 디버거·프로파일러, Gradle 플러그인 개발.
 
 ## 2. 이름
 
@@ -43,6 +43,7 @@
 - 모듈 목록은 `include(":app", ":feature:x")` / `include ':app'` 줄에서 읽는다. 읽지 못하면 `app/`을 시험한다 (Android Studio 기본 구조).
 - 어떤 모듈의 `build.gradle(.kts)`에 `com.android.application`(`id("com.android.application")`, `alias(libs.plugins.android.application)` 포함)이 있으면 **Android 앱** 모양 — 그 모듈들이 실행 대상이다. 라이브러리 모듈(`com.android.library`)은 목록에서 뺀다.
 - 없으면 **일반 Gradle** 모양. `application` 플러그인·`org.springframework.boot` 플러그인이 있으면 `run`/`bootRun` 바로가기를 켠다.
+  - **Compose 데스크톱 앱**: Compose 플러그인(`id("org.jetbrains.compose")` 또는 버전 카탈로그 별칭)과 `compose.desktop { application { … } }`(또는 `compose.desktop.application { … }`) 블록이 함께 있으면 `application` 플러그인이 없어도 `run` 바로가기를 켠다 — 그 플러그인이 `run`·`package*` 작업을 만들어 준다. `implementation(compose.desktop.currentOs)` 같은 의존성 선언만 있는 모듈은 실행 대상이 아니다.
 
 `findWithDepth`는 depth 0 → 1이므로 "프로젝트 루트에서 연 경우"와 "그 위 폴더(`~/work`)에서 연 경우 `myapp/`이 depth 1에서 잡히는 경우" 둘 다 된다. 여럿이면 칸 머리 드롭다운 + `gradle.project_choice:<dir>`.
 
@@ -74,7 +75,7 @@ Flutty와 같은 틀: 칸 머리(프로젝트 드롭다운 · 버전 · 칩 — 
 
 ### 4.1b 일반 Gradle의 Run 탭
 
-1. **작업 선택기**: `./gradlew tasks --all -q`(설정 단계라 느림 → 칸이 처음 펼쳐질 때 백그라운드, 폴더·브랜치별 캐시)로 읽은 작업을 그룹별로 검색해 고른다. 읽는 동안·실패했을 때는 바로가기만 보인다.
+1. **작업 선택기**: `./gradlew tasks --all -q`(설정 단계라 느림 → 칸이 처음 펼쳐질 때 백그라운드, 폴더·브랜치별 캐시)로 읽은 작업을 그룹별로 검색해 고른다. 읽는 동안·실패했을 때는 바로가기만 보인다. 플러그인이 만든 작업 중에는 **설명이 없어 이름만 한 줄로 나오는 것**(Compose 데스크톱의 `run`·`packageDmg`)이 있다 — 그룹 제목 밑줄 뒤부터 빈 줄 전까지의 한 단어 줄도 작업으로 읽는다.
 2. **바로가기**: `build` · `test` · `check` · `clean` · (`application`이면 `run`, Spring Boot면 `bootRun`).
 3. **프로젝트** 드롭다운(`:app`, `:core` …): 고르면 `:<project>:<task>`로 만든다.
 4. **고급**: `--offline` · `--stacktrace` · `--no-daemon` · `--continue`, 추가 인자 한 줄.
