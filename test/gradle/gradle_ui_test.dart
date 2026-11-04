@@ -130,6 +130,33 @@ void main() {
     expect(find.text('Load task list'), findsOneWidget);
   });
 
+  testWidgets('JVM 프로젝트: 동작이 칩으로 전부 보이고(드롭다운을 열기 전에도 `Run` 이 보인다), 누르면 단추와 명령이 바뀐다', (tester) async {
+    write('settings.gradle.kts', 'rootProject.name = "app"');
+    write('build.gradle.kts', 'plugins {\n  id("org.jetbrains.compose") version "1.9.0"\n}\ncompose.desktop {\n  application { mainClass = "MainKt" }\n}');
+    write('gradlew', '#!/bin/sh\n');
+    await pump(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(DropdownButton<GradleAction>), findsNothing, reason: 'JVM 모양은 드롭다운이 아니다');
+    for (final label in const ['Build', 'Test', 'Check', 'Clean', 'Run', 'Other task…']) {
+      expect(find.widgetWithText(ChoiceChip, label), findsOneWidget, reason: label);
+    }
+    expect(tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Build')).selected, isTrue, reason: '기본은 빌드');
+    expect(find.widgetWithText(FilledButton, 'Build'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Run'));
+    await tester.pump();
+    expect(tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Run')).selected, isTrue);
+    expect(find.widgetWithText(FilledButton, 'Run'), findsOneWidget, reason: '큰 단추가 고른 동작 이름으로 바뀐다');
+    expect(find.textContaining('./gradlew --console=plain run', findRichText: true), findsOneWidget, reason: '명령 미리보기');
+  });
+
+  testWidgets('Android 앱은 동작을 드롭다운으로 고른다', (tester) async {
+    androidApp();
+    await pump(tester);
+    expect(find.byType(DropdownButton<GradleAction>), findsOneWidget);
+    expect(find.byType(ChoiceChip), findsNothing);
+  });
+
   testWidgets('Doctor 탭: 점검 결과가 한 줄씩 보이고, 해결 단계는 펼쳐 본다', (tester) async {
     androidApp();
     final (_, _) = await pump(tester);
