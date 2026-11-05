@@ -615,6 +615,14 @@ Flutty Dock 이식 완료. 실제 앱으로 확인했다(칸 펼침 → 프로�
 - **9f**: README(영·한)·스크린샷(`gradle.png`). **실제 앱으로 보다가 잡은 오류**: 루트 build 파일의 `plugins { id("com.android.application") apply false }`를 적용한 플러그인으로 읽어 루트가 Android 앱 모듈이 되던 것 — 실제 Android Studio 구조에서 흔한 형태라 `apply false` 줄은 건너뛰도록 고치고 테스트를 더했다.
 - **알려 둠**: 실제 Gradle·기기로 설치해 열어 본 적은 없다 (테스트와 스크린샷은 가짜 `gradlew`·`adb`). `ANDROID_SERIAL`로 기기를 좁히는 방식과 `monkey`로 앱을 여는 방식은 직접 확인이 필요하다.
 
+### Avalonia runner 추가 (2026-11-05)
+
+Daylight Commander를 Compose Desktop에서 Avalonia(.NET)로 옮기며, 눈으로 확인하는 실행기가 필요해 Gradle 칸과 같은 구조로 더했다. 설명은 [docs/AVALONIA_RUNNER.md](docs/AVALONIA_RUNNER.md).
+
+- 칸 `avalonia`(제목 `Avalonia Runner`, ARB 접두어 `av`, 설정 키 접두어 `avalonia.`), `lib/docks/avalonia/`.
+- 동작: 실행(`dotnet run -c Release --project`), 빌드, 테스트(`dotnet test <솔루션>`), AOT 게시, AOT 게시 후 실행, 정리.
+- 실제 앱(`daylight-commander-avalonia`)으로 확인: 테스트 10개 통과, `dotnet run` 창 구동·중지, NativeAOT 게시(약 50초)와 exe 실행·중지.
+
 ### 단계 10 결과 (2026-11-01) — 확장 모드 통합 기준 정리
 
 비교 결과는 [docs/WORKBENCH_MERGE.md](docs/WORKBENCH_MERGE.md). 코드는 바꾸지 않았다.

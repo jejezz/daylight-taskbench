@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../core/tool_paths.dart';
 import '../l10n/app_localizations.dart';
 import '../workspace/workspace.dart';
+import 'avalonia/avalonia_dock.dart';
 import 'branch/branch_dock.dart';
 import 'dock_module.dart';
 import 'flutty/flutty_dock.dart';
@@ -15,6 +16,7 @@ List<DockModule> createDocks({ToolPaths? tools}) => [
       BranchDock(),
       FluttyDock(tools: tools),
       GradleDock(tools: tools),
+      AvaloniaDock(tools: tools),
       // 나중에: RustDock(), ElectronDock() …
     ];
 

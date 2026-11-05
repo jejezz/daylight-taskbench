@@ -1,0 +1,224 @@
+// Avalonia Runner 칸 — Avalonia(.NET) 앱을 `dotnet run`·테스트·NativeAOT 게시로 돌린다 (docs/AVALONIA_RUNNER.md).
+//
+// 공유 영역의 폴더에서 Avalonia 프로젝트를 depth 0 → 1 로 찾고(여럿이면 드롭다운), 고른 프로젝트의 솔루션과 앱 csproj 를 읽는다.
+// 브랜치가 바뀌면(onHeadChange) 접혀 있어도 다시 찾는다 (§1.10). 구조는 Gradle 칸과 같다.
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+
+import '../../core/check_status.dart';
+import '../../core/run_session.dart';
+import '../../core/tool_paths.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/taskbench_style.dart';
+import '../../workspace/git_state.dart';
+import '../../workspace/project_detector.dart';
+import '../../workspace/workspace.dart';
+import '../dock_module.dart';
+import 'detect/avalonia_detector.dart';
+import 'detect/avalonia_project.dart';
+import 'run/avalonia_controller.dart';
+import 'ui/avalonia_dock_body.dart';
+import 'ui/avalonia_labels.dart';
+
+class AvaloniaDock extends DockModule {
+  // ignore: prefer_initializing_formals
+  AvaloniaDock({this.detector = const AvaloniaDetector(), this.tools, AvaloniaController? controller}) : _controller = controller;
+
+  final ProjectDetector detector;
+
+  /// 설정 창 "도구" 구역에 dotnet·vswhere 줄을 더하려고 받는다 (없으면 더하지 않음 — 테스트).
+  final ToolPaths? tools;
+
+  AvaloniaController? _controller;
+
+  /// 화면과 테스트가 읽는다. [attach] 전에는 null.
+  AvaloniaController? get controller => _controller;
+
+  /// 실행 중에 브랜치가 바뀌었다는 알림 (배너). 사용자가 닫거나 실행이 끝나면 사라진다.
+  String? branchChangedWhileRunning;
+
+  List<DetectedProject> _projects = const [];
+
+  /// 고른 프로젝트의 상세. 아직 읽는 중이거나 프로젝트가 없으면 null.
+  AvaloniaProject? get project => _controller?.project;
+
+  String? _forDir;
+  int _generation = 0;
+  Workspace? _workspace;
+  bool _disposed = false;
+
+  List<DetectedProject> get projects => _projects;
+
+  /// 여럿일 때 고른 프로젝트. 선택은 고른 폴더별로 기억한다 (`avalonia.project_choice:<dir>`).
+  DetectedProject? selected(Workspace w) {
+    if (_projects.isEmpty) return null;
+    final saved = w.prefs.getString('avalonia.project_choice:${w.selectedDir}');
+    return _projects.firstWhere((p) => p.path == saved, orElse: () => _projects.first);
+  }
+
+  Future<void> choose(Workspace w, DetectedProject p) async {
+    await w.prefs.setString('avalonia.project_choice:${w.selectedDir}', p.path);
+    await _readProject(w);
+    notifyListeners();
+  }
+
+  @override
+  String get id => 'avalonia';
+
+  @override
+  IconData get icon => Icons.play_circle_outline_rounded;
+
+  @override
+  bool get isRunner => true;
+
+  @override
+  String title(AppLocalizations l10n) => l10n.dockAvaloniaTitle;
+
+  @override
+  bool appliesTo(Workspace w) => _projects.isNotEmpty;
+
+  @override
+  void attach(Workspace w) {
+    _workspace = w;
+    _controller ??= AvaloniaController(runner: w.runner, prefs: w.prefs);
+    _controller!.addListener(_onController);
+    _registerTools();
+    w.addListener(_onWorkspace);
+    _onWorkspace();
+  }
+
+  void _registerTools() {
+    final t = tools;
+    if (t == null) return;
+    t.register(const ToolSpec('dotnet', 'dotnet (.NET SDK)'));
+    // vswhere 를 직접 지정하면 그 폴더가 PATH 앞에 들어가 NativeAOT 링크가 찾는다 (ToolPaths.effectivePath).
+    t.register(const ToolSpec('vswhere', 'vswhere (Visual Studio Installer)'));
+    final previous = t.onChanged;
+    t.onChanged = () {
+      previous?.call();
+      _controller?.toolsChanged();
+    };
+  }
+
+  @override
+  void detach(Workspace w) {
+    w.removeListener(_onWorkspace);
+    _controller?.removeListener(_onController);
+    _workspace = null;
+    _generation++; // 진행 중이던 검색 결과는 버린다
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  /// 칸이 처음 펼쳐질 때 환경 점검을 시작한다.
+  void ensureStarted() => _controller?.ensureStarted();
+
+  void dismissBranchBanner() {
+    branchChangedWhileRunning = null;
+    notifyListeners();
+  }
+
+  void _onController() {
+    final c = _controller;
+    if (c != null && !c.running) branchChangedWhileRunning = null;
+    if (!_disposed) notifyListeners();
+  }
+
+  void _onWorkspace() {
+    final w = _workspace;
+    if (w == null) return;
+    if (w.selectedDir != _forDir) _detect(w);
+  }
+
+  Future<void> _detect(Workspace w) async {
+    final dir = w.selectedDir;
+    _forDir = dir;
+    final gen = ++_generation;
+    var found = const <DetectedProject>[];
+    if (dir != null) {
+      try {
+        found = await detector.detect(dir);
+      } on FileSystemException {
+        // 브랜치를 바꾸는 사이 파일이 사라졌다 — 없는 것으로 보고, 다음 변화에서 다시 찾는다.
+      }
+    }
+    if (gen != _generation || _disposed) return;
+    _projects = found;
+    await _readProject(w, generation: gen);
+    if (gen != _generation || _disposed) return;
+    notifyListeners();
+  }
+
+  Future<void> _readProject(Workspace w, {int? generation}) async {
+    final picked = selected(w);
+    AvaloniaProject? detail;
+    if (picked != null) {
+      detail = await AvaloniaProject.read(picked.path, name: picked.name, version: picked.version);
+    }
+    if (_disposed || (generation != null && generation != _generation)) return;
+    _controller?.setProject(detail);
+  }
+
+  @override
+  void onHeadChange(Workspace w, HeadChange change) {
+    // 브랜치에 따라 프로젝트가 생기거나 사라질 수 있다 — 다시 찾는다 (§1.10).
+    if (change.kind != HeadChangeKind.branch && change.kind != HeadChangeKind.commit) return;
+    if (change.kind == HeadChangeKind.branch && (_controller?.running ?? false)) {
+      // 실행 중이면 중지하지 않고 알리기만 한다 (확정된 결정 12번).
+      branchChangedWhileRunning = change.to.branch ?? change.to.sha ?? '';
+      notifyListeners();
+    }
+    if (change.kind == HeadChangeKind.branch) _controller?.markDiagnosticsStale();
+    _detect(w);
+  }
+
+  /// 병합·rebase 등이 진행 중이면 빌드 결과를 믿기 어렵다 (§1.10).
+  bool operationInProgress(Workspace w) => (w.git?.operation ?? RepoOperation.none) != RepoOperation.none;
+
+  @override
+  TaskbenchMood mood(Workspace w) {
+    final c = _controller;
+    if (c == null) return TaskbenchMood.idle;
+    if (c.busy) return TaskbenchMood.working;
+    if (c.statuses.contains(StepStatus.failed)) return TaskbenchMood.failed;
+    if (branchChangedWhileRunning != null || operationInProgress(w) || c.diagnosticsStale) return TaskbenchMood.warning;
+    if (c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) return TaskbenchMood.success;
+    // dotnet 을 못 찾는 등 실행 전에 알아야 할 실패는 눈에 띄게 한다.
+    if (c.checks.any((x) => x.status == CheckStatus.fail)) return TaskbenchMood.warning;
+    return TaskbenchMood.idle;
+  }
+
+  @override
+  bool busy(Workspace w) => _controller?.busy ?? false;
+
+  @override
+  Widget summary(BuildContext context, Workspace w) {
+    final l10n = AppLocalizations.of(context);
+    final p = selected(w);
+    final c = _controller;
+    if (p == null) return const SizedBox.shrink();
+    // 실행 중·실패·완료는 접힌 채로도 보여야 한다 (§1.5). 평소에는 프로젝트 이름과 버전.
+    final action = c == null ? '' : avaloniaActionLabel(l10n, c.lastAction ?? c.action);
+    final String text;
+    if (c != null && c.busy && c.running) {
+      text = l10n.avSummaryRunning(action);
+    } else if (c != null && c.statuses.contains(StepStatus.failed)) {
+      text = l10n.avSummaryFailed(action);
+    } else if (c != null && c.statuses.isNotEmpty && c.statuses.every((s) => s == StepStatus.done)) {
+      text = l10n.avSummaryDone(action);
+    } else {
+      text = [p.name, ?p.version].join(' · ');
+    }
+    return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall);
+  }
+
+  @override
+  Widget body(BuildContext context, Workspace w) => AvaloniaDockBody(dock: this, workspace: w);
+}

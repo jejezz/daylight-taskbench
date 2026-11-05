@@ -62,8 +62,7 @@ import 'app_localizations_ko.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,8 +70,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,18 +82,17 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('ko'),
+    Locale('ko')
   ];
 
   /// No description provided for @aboutTooltip.
@@ -1403,7 +1400,7 @@ abstract class AppLocalizations {
   /// No description provided for @dockNoProjectBody.
   ///
   /// In ko, this message translates to:
-  /// **'이 폴더와 한 단계 아래 폴더에서 Flutter나 Gradle 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.'**
+  /// **'이 폴더와 한 단계 아래 폴더에서 Flutter·Gradle·Avalonia 프로젝트를 찾지 못했습니다. 폴더를 바꾸거나 프로젝트가 있는 폴더를 선택하세요.'**
   String get dockNoProjectBody;
 
   /// No description provided for @dockProjects.
@@ -8671,10 +8668,291 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'저장하지 못한 파일이 있어 종료를 취소했습니다'**
   String get quitSaveFailed;
+
+  /// No description provided for @dockAvaloniaTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Avalonia Runner'**
+  String get dockAvaloniaTitle;
+
+  /// No description provided for @avShape.
+  ///
+  /// In ko, this message translates to:
+  /// **'Avalonia 앱'**
+  String get avShape;
+
+  /// No description provided for @avNoSolution.
+  ///
+  /// In ko, this message translates to:
+  /// **'솔루션 없음'**
+  String get avNoSolution;
+
+  /// No description provided for @avReadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 파일을 읽지 못했습니다: {reason}'**
+  String avReadFailed(String reason);
+
+  /// No description provided for @avTabRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get avTabRun;
+
+  /// No description provided for @avTabLog.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록'**
+  String get avTabLog;
+
+  /// No description provided for @avActionLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'동작'**
+  String get avActionLabel;
+
+  /// No description provided for @avAppLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 프로젝트'**
+  String get avAppLabel;
+
+  /// No description provided for @avActionRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get avActionRun;
+
+  /// No description provided for @avActionBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get avActionBuild;
+
+  /// No description provided for @avActionTest.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트'**
+  String get avActionTest;
+
+  /// No description provided for @avActionPublishAot.
+  ///
+  /// In ko, this message translates to:
+  /// **'AOT 게시'**
+  String get avActionPublishAot;
+
+  /// No description provided for @avActionAotRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'AOT 게시 후 실행'**
+  String get avActionAotRun;
+
+  /// No description provided for @avActionClean.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리'**
+  String get avActionClean;
+
+  /// No description provided for @avOptionsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'옵션'**
+  String get avOptionsTitle;
+
+  /// No description provided for @avOptDebug.
+  ///
+  /// In ko, this message translates to:
+  /// **'Debug 로 빌드 (끄면 Release)'**
+  String get avOptDebug;
+
+  /// No description provided for @avRidField.
+  ///
+  /// In ko, this message translates to:
+  /// **'런타임 식별자 (비우면 이 컴퓨터용)'**
+  String get avRidField;
+
+  /// No description provided for @avAotDirField.
+  ///
+  /// In ko, this message translates to:
+  /// **'AOT 게시 폴더'**
+  String get avAotDirField;
+
+  /// No description provided for @avExtraArgs.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가 인자'**
+  String get avExtraArgs;
+
+  /// No description provided for @avCommandsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get avCommandsTitle;
+
+  /// No description provided for @avStepDotnet.
+  ///
+  /// In ko, this message translates to:
+  /// **'dotnet'**
+  String get avStepDotnet;
+
+  /// No description provided for @avStepLaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 실행'**
+  String get avStepLaunch;
+
+  /// No description provided for @avStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지'**
+  String get avStop;
+
+  /// No description provided for @avCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get avCancel;
+
+  /// No description provided for @avPathNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'AOT 링크가 vswhere 를 찾도록 PATH 에 Visual Studio Installer 폴더를 더해 실행합니다.'**
+  String get avPathNote;
+
+  /// No description provided for @avBlockNoApp.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 폴더에서 실행할 Avalonia 앱 프로젝트(csproj)를 찾지 못했습니다.'**
+  String get avBlockNoApp;
+
+  /// No description provided for @avBlockNoSolution.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트는 솔루션 파일(.slnx/.sln)이 있는 폴더에서만 돌릴 수 있습니다.'**
+  String get avBlockNoSolution;
+
+  /// No description provided for @avHintAotLinker.
+  ///
+  /// In ko, this message translates to:
+  /// **'NativeAOT 링크 도구를 찾지 못했습니다. Visual Studio 의 “C++를 사용한 데스크톱 개발”을 설치하고, vswhere.exe 가 있는 폴더를 PATH 나 도구 경로에 넣으세요.'**
+  String get avHintAotLinker;
+
+  /// No description provided for @avHintSdk.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치된 .NET SDK 가 이 프로젝트가 요구하는 버전과 맞지 않습니다. global.json 과 `dotnet --list-sdks` 를 확인하세요.'**
+  String get avHintSdk;
+
+  /// No description provided for @avHintFileLocked.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 프로세스가 출력 파일을 쓰고 있습니다. 이미 실행 중인 앱을 닫고 다시 해 보세요.'**
+  String get avHintFileLocked;
+
+  /// No description provided for @avHintRestore.
+  ///
+  /// In ko, this message translates to:
+  /// **'NuGet 패키지를 내려받지 못했습니다. 네트워크를 확인하고 다시 해 보세요.'**
+  String get avHintRestore;
+
+  /// No description provided for @avHintRid.
+  ///
+  /// In ko, this message translates to:
+  /// **'런타임 식별자(RID)가 맞지 않습니다. 옵션에서 이 컴퓨터에 맞는 값(예: win-x64, osx-arm64)을 지정하세요.'**
+  String get avHintRid;
+
+  /// No description provided for @avHintMissingCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'“{name}”을(를) 찾지 못했습니다. .NET SDK 가 설치되어 있는지 확인하거나 도구 경로에서 지정하세요.'**
+  String avHintMissingCommand(String name);
+
+  /// No description provided for @avChecksTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'환경 점검'**
+  String get avChecksTitle;
+
+  /// No description provided for @avChecksStale.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치가 바뀌었습니다 — 다시 점검하세요.'**
+  String get avChecksStale;
+
+  /// No description provided for @avRecheck.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 점검'**
+  String get avRecheck;
+
+  /// No description provided for @avCheckDotnetOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'.NET SDK {version}'**
+  String avCheckDotnetOk(String version);
+
+  /// No description provided for @avCheckDotnetFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'.NET SDK 를 찾지 못했습니다 (dotnet)'**
+  String get avCheckDotnetFail;
+
+  /// No description provided for @avCheckProjectOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Avalonia 앱 프로젝트 {count}개'**
+  String avCheckProjectOk(String count);
+
+  /// No description provided for @avCheckProjectFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Avalonia 앱 프로젝트를 찾지 못했습니다'**
+  String get avCheckProjectFail;
+
+  /// No description provided for @avCheckSolutionOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'솔루션 {name}'**
+  String avCheckSolutionOk(String name);
+
+  /// No description provided for @avCheckSolutionWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'솔루션 파일이 없어 테스트를 돌릴 수 없습니다'**
+  String get avCheckSolutionWarn;
+
+  /// No description provided for @avCheckAotOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'AOT 링크 도구(vswhere)를 쓸 수 있습니다'**
+  String get avCheckAotOk;
+
+  /// No description provided for @avCheckAotWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'vswhere.exe 를 찾지 못했습니다 — AOT 게시가 링크에서 실패할 수 있습니다'**
+  String get avCheckAotWarn;
+
+  /// No description provided for @avSummaryRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 중…'**
+  String avSummaryRunning(String action);
+
+  /// No description provided for @avSummaryFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 실패'**
+  String avSummaryFailed(String action);
+
+  /// No description provided for @avSummaryDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{action} 완료'**
+  String avSummaryDone(String action);
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -8683,26 +8961,25 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ko'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'ko'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'ko':
-      return AppLocalizationsKo();
+    case 'en': return AppLocalizationsEn();
+    case 'ko': return AppLocalizationsKo();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }
