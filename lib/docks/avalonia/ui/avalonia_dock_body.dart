@@ -1,4 +1,4 @@
-// Avalonia Runner 칸의 내용: 프로젝트 머리 → 안내 줄 → 탭(실행 · 기록).
+// Avalonia Runner 칸의 내용: 프로젝트 머리 → 안내 줄 → 탭(실행 · 점검 · 기록).
 
 import 'package:flutter/material.dart';
 
@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../workspace/workspace.dart';
 import '../avalonia_dock.dart';
+import 'avalonia_doctor_tab.dart';
 import 'avalonia_run_tab.dart';
 
 class AvaloniaDockBody extends StatefulWidget {
@@ -22,7 +23,7 @@ class AvaloniaDockBody extends StatefulWidget {
 }
 
 class _AvaloniaDockBodyState extends State<AvaloniaDockBody> with SingleTickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 2, vsync: this);
+  late final TabController _tabs = TabController(length: 3, vsync: this);
 
   @override
   void initState() {
@@ -98,6 +99,7 @@ class _AvaloniaDockBodyState extends State<AvaloniaDockBody> with SingleTickerPr
               unselectedLabelStyle: const TextStyle(fontSize: 12),
               tabs: [
                 _tab(Icons.play_circle_outline_rounded, l10n.avTabRun),
+                _tab(Icons.health_and_safety_outlined, l10n.grTabDoctor),
                 _tab(Icons.history_rounded, l10n.avTabLog),
               ],
             ),
@@ -106,6 +108,7 @@ class _AvaloniaDockBodyState extends State<AvaloniaDockBody> with SingleTickerPr
                 controller: _tabs,
                 children: [
                   AvaloniaRunTab(controller: c, log: w.runner.log),
+                  AvaloniaDoctorTab(controller: c),
                   LogTab(log: w.runner.log),
                 ],
               ),

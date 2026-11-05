@@ -16,13 +16,13 @@ Avalonia(.NET) 앱을 Taskbench에서 빌드·실행·테스트하는 칸이다.
 - 어셈블리 이름(= 실행 파일 이름)은 MSBuild를 돌리지 않고 읽는다: csproj의 `<AssemblyName>` 이 `$(AppFileName)` 같으면
   폴더 루트의 `Directory.Build.props` 속성으로 푼다. 버전은 같은 파일의 `AppVersion`/`Version`.
 
-## 동작 (칸 위쪽 드롭다운)
+## 동작 (칸 위쪽 칩, 이 순서)
 
 | 동작 | 명령 (작업 폴더 = 프로젝트 루트) |
 |---|---|
-| 실행 | `dotnet run -c Release --project <csproj>` — 앱 창이 닫히거나 **중지**를 누를 때까지 계속 돈다 |
 | 빌드 | `dotnet build <csproj> -c Release` |
 | 테스트 | `dotnet test <솔루션>` (솔루션이 없으면 막힘) |
+| 실행 | `dotnet run -c Release --project <csproj>` — 앱 창이 닫히거나 **중지**를 누를 때까지 계속 돈다 |
 | AOT 게시 | `dotnet publish <csproj> -c Release -r <RID> -p:PublishAot=true -o <AOT 폴더>` |
 | AOT 게시 후 실행 | 위 게시 → `<AOT 폴더>\<어셈블리>.exe` 실행 (시작 속도를 재는 용도) |
 | 정리 | `dotnet clean <솔루션> -c Release` |
@@ -47,7 +47,7 @@ Avalonia(.NET) 앱을 Taskbench에서 빌드·실행·테스트하는 칸이다.
 
 ## 환경 점검
 
-칸을 처음 펼칠 때(그리고 **다시 점검** 단추) `dotnet --version`, 앱 프로젝트 수, 솔루션 파일, AOT 링크 도구(vswhere)를 확인해 한 줄씩 보인다.
+**점검** 탭에서, 칸을 처음 펼칠 때(그리고 **다시 점검** 단추) `dotnet --version`, 앱 프로젝트 수, 솔루션 파일, AOT 링크 도구(vswhere)를 확인해 한 줄씩 보인다.
 `dotnet` 을 못 찾으면 칸 색이 경고가 된다.
 
 ## 실패 설명
