@@ -95,6 +95,16 @@ void main() {
     expect(find.textContaining('dotnet test App.slnx', findRichText: true), findsOneWidget);
   });
 
+  testWidgets('동작은 드롭다운이 아니라 칩 여섯 개로 펼쳐 보이고, 누르면 명령이 바뀐다', (tester) async {
+    await pump(tester);
+    expect(find.byType(DropdownButton<AvaloniaAction>), findsNothing);
+    expect(find.byType(ChoiceChip), findsNWidgets(AvaloniaAction.values.length));
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Test'));
+    await tester.pump();
+    expect(find.textContaining('dotnet test App.slnx', findRichText: true), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('환경 점검 결과가 한 줄씩 보인다', (tester) async {
     await pump(tester);
     await tester.runAsync(() => dockControllerChecks(tester));

@@ -95,12 +95,19 @@ class _AvaloniaRunTabState extends State<AvaloniaRunTab> {
         ],
         _Labeled(
           l10n.avActionLabel,
-          DropdownButton<AvaloniaAction>(
-            isExpanded: true,
-            isDense: true,
-            value: c.action,
-            items: [for (final a in c.actions) DropdownMenuItem(value: a, child: Text(avaloniaActionLabel(l10n, a)))],
-            onChanged: c.running ? null : (a) => a == null ? null : c.selectAction(a),
+          // 동작이 여섯 개뿐이고 닫힌 드롭다운에서는 `실행` 이 있다는 것조차 보이지 않아, 전부 펼쳐 보이는 칩으로 둔다 (Gradle 칸과 같다).
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              for (final a in c.actions)
+                ChoiceChip(
+                  label: Text(avaloniaActionLabel(l10n, a)),
+                  selected: c.action == a,
+                  visualDensity: VisualDensity.compact,
+                  onSelected: c.running ? null : (_) => c.selectAction(a),
+                ),
+            ],
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
