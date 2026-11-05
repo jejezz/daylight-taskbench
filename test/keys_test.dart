@@ -19,7 +19,7 @@ const _commonKeys = {
 };
 
 /// 칸 id 접두어. 칸이 늘면 여기에 더한다.
-const _dockPrefixes = ['branch.', 'flutty.', 'gradle.', 'rust.', 'electron.'];
+const _dockPrefixes = ['branch.', 'flutty.', 'gradle.', 'avalonia.', 'rust.', 'electron.'];
 
 List<File> _dartFiles(String dir) => [
       for (final e in Directory(dir).listSync(recursive: true))
