@@ -79,7 +79,7 @@ class AvaloniaController extends ChangeNotifier {
   static const _optionsKeyPrefix = 'avalonia.options:';
 
   /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다.
-  static const tabIds = ['run', 'log'];
+  static const tabIds = ['run', 'doctor', 'log'];
 
   AvaloniaProject? project;
   AvaloniaApp? app;

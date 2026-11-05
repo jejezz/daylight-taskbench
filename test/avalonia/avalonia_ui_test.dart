@@ -99,6 +99,8 @@ void main() {
     await pump(tester);
     expect(find.byType(DropdownButton<AvaloniaAction>), findsNothing);
     expect(find.byType(ChoiceChip), findsNWidgets(AvaloniaAction.values.length));
+    final labels = [for (final c in tester.widgetList<ChoiceChip>(find.byType(ChoiceChip))) ((c.label as Text).data)];
+    expect(labels, ['Build', 'Test', 'Run', 'Publish AOT', 'Publish AOT and run', 'Clean']);
     await tester.tap(find.widgetWithText(ChoiceChip, 'Test'));
     await tester.pump();
     expect(find.textContaining('dotnet test App.slnx', findRichText: true), findsOneWidget);
@@ -107,6 +109,9 @@ void main() {
 
   testWidgets('환경 점검 결과가 한 줄씩 보인다', (tester) async {
     await pump(tester);
+    expect(find.textContaining('.NET SDK 10.0.402'), findsNothing, reason: '실행 탭에는 점검이 없다');
+    await tester.tap(find.text('Doctor'));
+    await tester.pumpAndSettle();
     await tester.runAsync(() => dockControllerChecks(tester));
     await tester.pump();
     expect(find.textContaining('.NET SDK 10.0.402'), findsOneWidget);

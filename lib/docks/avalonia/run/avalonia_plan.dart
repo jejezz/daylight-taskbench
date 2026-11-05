@@ -8,12 +8,14 @@ import '../../../core/run_session.dart';
 import '../detect/avalonia_project.dart';
 
 enum AvaloniaAction {
-  /// `dotnet run` — 개발 실행. 앱 창이 닫힐 때까지 계속 돈다.
-  run,
+  // 화면의 칩 순서이기도 하다 (Gradle 칸처럼): 빌드 → 테스트 → 실행 → AOT → 정리.
   build,
 
   /// `dotnet test <솔루션>`.
   test,
+
+  /// `dotnet run` — 개발 실행. 앱 창이 닫힐 때까지 계속 돈다.
+  run,
 
   /// NativeAOT 로 게시만 한다.
   publishAot,

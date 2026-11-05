@@ -1,11 +1,9 @@
-// 실행 탭: 앱·동작·옵션 → 실행할 명령 → 시작/중지 → 환경 점검 → 출력 (docs/AVALONIA_RUNNER.md §4.1).
+// 실행 탭: 앱·동작·옵션 → 실행할 명령 → 시작/중지 → 출력 (docs/AVALONIA_RUNNER.md §4.1).
 // Gradle Run 탭과 같은 틀이다: 화면에 보이는 명령이 곧 실제로 실행되는 명령이다.
 
 import 'package:flutter/material.dart';
 
-import '../../../core/check_status.dart';
 import '../../../core/command_log.dart';
-import '../../../core/ui/check_status_icon.dart';
 import '../../../core/ui/command_text.dart';
 import '../../../core/ui/output_section.dart';
 import '../../../core/ui/section_widgets.dart';
@@ -34,16 +32,6 @@ String _failureText(AppLocalizations l10n, AvaloniaFailure f) => switch (f) {
       AvaloniaFailure.restore => l10n.avHintRestore,
       AvaloniaFailure.rid => l10n.avHintRid,
     };
-
-String _checkText(AppLocalizations l10n, AvaloniaCheck c) {
-  final ok = c.status == CheckStatus.ok;
-  return switch (c.id) {
-    AvaloniaCheckId.dotnet => ok ? l10n.avCheckDotnetOk(c.value ?? '') : l10n.avCheckDotnetFail,
-    AvaloniaCheckId.project => ok ? l10n.avCheckProjectOk(c.value ?? '') : l10n.avCheckProjectFail,
-    AvaloniaCheckId.solution => ok ? l10n.avCheckSolutionOk(c.value ?? '') : l10n.avCheckSolutionWarn,
-    AvaloniaCheckId.aot => ok ? l10n.avCheckAotOk : l10n.avCheckAotWarn,
-  };
-}
 
 class AvaloniaRunTab extends StatefulWidget {
   const AvaloniaRunTab({super.key, required this.controller, required this.log});
@@ -171,33 +159,7 @@ class _AvaloniaRunTabState extends State<AvaloniaRunTab> {
             child: Text(_failureText(l10n, c.hint!), style: TextStyle(color: theme.colorScheme.error)),
           ),
         const SizedBox(height: AppSpacing.lg),
-        _checks(l10n, theme),
-        const SizedBox(height: AppSpacing.lg),
         OutputSection(log: widget.log),
-      ],
-    );
-  }
-
-  Widget _checks(AppLocalizations l10n, ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(
-          l10n.avChecksTitle,
-          trailing: c.diagnosing
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : TextButton(onPressed: c.busy ? null : c.runDiagnostics, child: Text(l10n.avRecheck)),
-        ),
-        if (c.diagnosticsStale) Text(l10n.avChecksStale, style: theme.textTheme.bodySmall),
-        for (final k in c.checks)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: const EdgeInsets.only(top: 2), child: CheckStatusIcon(k.status)),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(child: Text(_checkText(l10n, k), style: theme.textTheme.bodySmall)),
-            ]),
-          ),
       ],
     );
   }
