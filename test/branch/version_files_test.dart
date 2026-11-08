@@ -87,6 +87,31 @@ void main() {
       expect(cargo, contains('name = "serde"\nversion = "1.0.0"'));
     });
 
+    test('Avalonia Directory.Build.props: AppVersion + AppBuild, 기본값으로 감지', () {
+      const props = '<Project>\n  <PropertyGroup>\n    <AppVersion>1.0.0</AppVersion>\n    <AppBuild>1</AppBuild>\n'
+          '    <AppId>art.zoomon.x</AppId>\n  </PropertyGroup>\n  <PropertyGroup>\n    <Version>\$(AppVersion)</Version>\n'
+          '    <TargetFramework>net10.0</TargetFramework>\n  </PropertyGroup>\n</Project>\n';
+      File('${dir.path}/Directory.Build.props').writeAsStringSync(props);
+      final files = detectVersionFiles(dir.path);
+      expect((files.single.kind, files.single.path, files.single.version.toString(), files.single.versionCode),
+          (VersionFileKind.dotnetProps, 'Directory.Build.props', '1.0.0', 1));
+      final out = bumpFile(files.single, props, v('1.1.0-rc.1'));
+      expect(out, contains('<AppVersion>1.1.0-rc.1</AppVersion>'));
+      expect(out, contains('<AppBuild>2</AppBuild>')); // build number는 항상 +1
+      expect(out, contains('<Version>\$(AppVersion)</Version>')); // 참조 줄은 그대로
+      expect(out, contains('<AppId>art.zoomon.x</AppId>'));
+      expect(files.single.hasBuild, isFalse); // 버전 문자열에 +build를 붙이지 않는다
+    });
+
+    test('Directory.Build.props에 AppVersion이 없으면 숫자 <Version>을 쓰고, 참조뿐이면 감지하지 않는다', () {
+      File('${dir.path}/Directory.Build.props').writeAsStringSync('<Project><PropertyGroup><Version>2.3.4</Version></PropertyGroup></Project>');
+      final f = detectVersionFiles(dir.path).single;
+      expect((f.version.toString(), f.versionCode), ('2.3.4', null));
+      expect(bumpFile(f, '<Version>2.3.4</Version>', v('2.4.0')), '<Version>2.4.0</Version>');
+      File('${dir.path}/Directory.Build.props').writeAsStringSync('<Project><PropertyGroup><Version>\$(Other)</Version></PropertyGroup></Project>');
+      expect(detectVersionFiles(dir.path), isEmpty);
+    });
+
     test('android app/build.gradle and custom override', () {
       Directory('${dir.path}/app').createSync();
       File('${dir.path}/app/build.gradle.kts').writeAsStringSync('versionCode = 3\nversionName = "0.3.0"\n');

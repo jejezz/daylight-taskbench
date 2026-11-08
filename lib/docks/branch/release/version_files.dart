@@ -13,7 +13,9 @@ import 'dart:io';
 import '../git/commits.dart';
 import '../git/tags.dart';
 
-enum VersionFileKind { pubspec, packageJson, cargo, pyproject, gradle, csproj, pom, setupCfg, setupPy, plain, custom }
+/// [dotnetProps]는 .NET 저장소 루트의 `Directory.Build.props` — Avalonia 앱처럼 버전·정체성을 한 파일에 두는 경우다.
+/// `<AppVersion>`(없으면 숫자로 된 `<Version>`)이 버전이고, `<AppBuild>`가 있으면 build number로 보고 올릴 때 +1 한다.
+enum VersionFileKind { pubspec, packageJson, cargo, pyproject, gradle, csproj, dotnetProps, pom, setupCfg, setupPy, plain, custom }
 
 class VersionFile {
   const VersionFile(this.kind, this.path, this.version, {this.pattern, this.versionCode});
@@ -27,7 +29,7 @@ class VersionFile {
   /// [VersionFileKind.custom]의 정규식 (캡처 그룹 1이 버전).
   final String? pattern;
 
-  /// Android `versionCode` (build.gradle). 있으면 버전을 올릴 때 +1.
+  /// 별도 줄에 있는 build number: Android `versionCode`(build.gradle), .NET `<AppBuild>`(Directory.Build.props). 있으면 버전을 올릴 때 +1.
   final int? versionCode;
 
   /// 버전 문자열 안에 build number(`+N`)를 쓰는 형식은 pubspec뿐이다.
@@ -96,6 +98,7 @@ List<VersionFile> detectVersionFiles(String root, {CustomVersionFile? custom}) {
   final result = <VersionFile>[];
   for (final (kind, rel) in [
     (VersionFileKind.pubspec, pubspec),
+    (VersionFileKind.dotnetProps, 'Directory.Build.props'),
     (VersionFileKind.packageJson, 'package.json'),
     (VersionFileKind.cargo, 'Cargo.toml'),
     (VersionFileKind.pyproject, 'pyproject.toml'),
@@ -112,13 +115,20 @@ List<VersionFile> detectVersionFiles(String root, {CustomVersionFile? custom}) {
     if (text == null) continue;
     final v = readVersion(kind, text);
     if (v == null) continue;
-    final code = kind == VersionFileKind.gradle ? _versionCode.firstMatch(text)?.group(1) : null;
+    final code = switch (kind) {
+      VersionFileKind.gradle => _versionCode.firstMatch(text)?.group(1),
+      VersionFileKind.dotnetProps => _appBuild.firstMatch(text)?.group(1),
+      _ => null,
+    };
     result.add(VersionFile(kind, rel, v, versionCode: code == null ? null : int.parse(code)));
   }
   return result;
 }
 
 final _versionCode = RegExp(r'\bversionCode\s*=?\s*(\d+)');
+
+/// Directory.Build.props의 `<AppBuild>N</AppBuild>` (Daylight Commander Avalonia 규약).
+final _appBuild = RegExp(r'<AppBuild>\s*(\d+)\s*</AppBuild>');
 
 /// TOML·INI의 `[name]` 표 본문 범위. 없으면 null.
 ({int start, int end})? _table(String text, String name) {
@@ -169,6 +179,10 @@ final _tomlVersionLine = RegExp(r'^version[ \t]*=[ \t]*"([^"]+)"', multiLine: tr
       return _group(RegExp(r'''\bversionName\s*=?\s*["']([^"']+)["']'''), text);
     case VersionFileKind.csproj:
       return _group(RegExp(r'<Version>\s*([^<\s]+)\s*</Version>'), text);
+    case VersionFileKind.dotnetProps:
+      // <AppVersion>이 원본이다. 없으면 숫자로 시작하는 <Version> (`$(AppVersion)` 같은 참조는 건너뛴다).
+      return _group(RegExp(r'<AppVersion>\s*([^<\s]+)\s*</AppVersion>'), text) ??
+          _group(RegExp(r'<Version>\s*(\d[^<\s]*)\s*</Version>'), text);
     case VersionFileKind.pom:
       // <parent>의 version과 의존성의 version을 피해서, 프로젝트 자신의 version.
       final parent = RegExp(r'<parent>[\s\S]*?</parent>').firstMatch(text);
@@ -210,16 +224,19 @@ String writeVersion(VersionFileKind kind, String text, SemVer v, {String? patter
   return text.replaceRange(s.start, s.end, kind == VersionFileKind.pubspec ? v.toString() : v.name);
 }
 
-/// [VersionFile] 하나를 [next]로 올린 내용. gradle은 versionCode도 +1.
+/// [VersionFile] 하나를 [next]로 올린 내용. gradle은 versionCode, Directory.Build.props는 `<AppBuild>`도 +1.
 String bumpFile(VersionFile f, String text, SemVer next) {
   var out = writeVersion(f.kind, text, next, pattern: f.pattern);
-  if (f.kind == VersionFileKind.gradle) {
-    final m = _versionCode.firstMatch(out);
-    if (m != null) {
-      final code = int.parse(m.group(1)!) + 1;
-      final s = m.start + m.group(0)!.lastIndexOf(m.group(1)!);
-      out = out.replaceRange(s, s + m.group(1)!.length, '$code');
-    }
+  final counter = switch (f.kind) {
+    VersionFileKind.gradle => _versionCode,
+    VersionFileKind.dotnetProps => _appBuild,
+    _ => null,
+  };
+  final m = counter?.firstMatch(out);
+  if (m != null) {
+    final code = int.parse(m.group(1)!) + 1;
+    final s = m.start + m.group(0)!.lastIndexOf(m.group(1)!);
+    out = out.replaceRange(s, s + m.group(1)!.length, '$code');
   }
   return out;
 }
