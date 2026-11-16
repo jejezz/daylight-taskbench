@@ -18,6 +18,7 @@ import '../terminal/terminal_settings.dart';
 import '../ui/shell/panels/panel_layout.dart';
 import '../workspace/workspace_scope.dart';
 import 'app_settings.dart';
+import 'settings_fonts.dart';
 import 'settings_menus.dart';
 
 enum SettingsSection {
@@ -248,6 +249,8 @@ class _AppearanceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final settings = AppSettingsScope.of(context);
+    final editor = EditorSettingsScope.maybeOf(context);
+    final bodySmall = Theme.of(context).textTheme.bodySmall;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -255,8 +258,20 @@ class _AppearanceSection extends StatelessWidget {
         const ModeSegmentedButton(),
         _Heading(l10n.settingsPalette),
         const ColorPaletteChips(),
-        _Heading(l10n.settingsFontSize),
-        const FontScaleSegmentedButton(),
+        _Heading(l10n.settingsUiFont),
+        const UiFontPicker(),
+        if (editor != null) ...[
+          _Heading(l10n.settingsEditorFont),
+          EditorFontPicker(settings: editor),
+          const SizedBox(height: 6),
+          Text(l10n.settingsEditorFontHelp, style: bodySmall),
+          _Heading(l10n.settingsEditorScheme),
+          EditorSchemePicker(settings: editor),
+          const SizedBox(height: 6),
+          Text(l10n.settingsEditorSchemeHelp, style: bodySmall),
+        ],
+        _Heading(l10n.settingsTextScale),
+        const TextScaleSlider(),
         const SizedBox(height: 8),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,

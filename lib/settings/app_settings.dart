@@ -15,7 +15,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
 
 class AppSettings extends ChangeNotifier {
-  AppSettings._(this._prefs, this._themeMode, this._locale, this._palette, this._textScale, this._stateTint);
+  AppSettings._(
+    this._prefs,
+    this._themeMode,
+    this._locale,
+    this._palette,
+    this._textScale,
+    this._stateTint,
+    this._uiFont,
+  );
 
   /// 저장 키 — 모든 앱 공통 (localization.md §5, settings.md §4). 바꾸지 않는다.
   static const themeModeKey = 'theme_mode';
@@ -23,9 +31,16 @@ class AppSettings extends ChangeNotifier {
   static const paletteKey = 'theme_palette';
   static const textScaleKey = 'text_scale';
   static const stateTintKey = 'style_state_tint';
+  static const uiFontKey = 'ui_font_family';
 
-  /// 글자 크기 선택지 (settings.md): 작게 / 보통 / 크게.
-  static const textScales = [0.9, 1.0, 1.15];
+  /// 화면 글자 크기 배율의 범위와 한 칸 (설정 창 슬라이더). 1.0 이 기본.
+  static const minTextScale = 0.8;
+  static const maxTextScale = 1.5;
+  static const textScaleStep = 0.05;
+
+  /// 0.05 단위로 맞추고 범위 안으로 가둔다 (부동소수 오차가 쌓이지 않게).
+  static double snapTextScale(double value) =>
+      ((value.clamp(minTextScale, maxTextScale)) * 20).round() / 20;
 
   final SharedPreferences _prefs;
   ThemeMode _themeMode;
@@ -33,6 +48,7 @@ class AppSettings extends ChangeNotifier {
   ColorPalette _palette;
   double _textScale;
   bool _stateTint;
+  String? _uiFont;
 
   /// 저장된 값을 읽는다. [legacyKeys]는 예전 앱이 쓰던 키를 새 키로 한 번
   /// 옮긴다 — 키를 그냥 바꾸면 사용자 설정이 사라진다.
@@ -48,13 +64,16 @@ class AppSettings extends ChangeNotifier {
     final code = prefs.getString(localeKey);
     final palette = ColorPalette.values.asNameMap()[prefs.getString(paletteKey)] ?? ColorPalette.saturn;
     final scale = prefs.getDouble(textScaleKey);
+    final font = prefs.getString(uiFontKey);
     return AppSettings._(
       prefs,
       mode,
       code == null ? null : Locale(code),
       palette,
-      textScales.contains(scale) ? scale! : 1.0,
+      // 범위 밖(예전 버전·손으로 고친 값)은 기본으로 돌아간다.
+      scale != null && scale >= minTextScale && scale <= maxTextScale ? snapTextScale(scale) : 1.0,
       prefs.getBool(stateTintKey) ?? true,
+      font == null || font.isEmpty ? null : font,
     );
   }
 
@@ -96,10 +115,26 @@ class AppSettings extends ChangeNotifier {
   }
 
   Future<void> setTextScale(double scale) async {
-    if (scale == _textScale) return;
-    _textScale = scale;
+    final v = snapTextScale(scale);
+    if (v == _textScale) return;
+    _textScale = v;
     notifyListeners();
-    await _prefs.setDouble(textScaleKey, scale);
+    await _prefs.setDouble(textScaleKey, v);
+  }
+
+  /// 화면(메뉴·본문) 글꼴 이름. null = 앱 기본 글꼴(SeoulNamsan).
+  String? get uiFont => _uiFont;
+
+  Future<void> setUiFont(String? family) async {
+    final v = family == null || family.isEmpty ? null : family;
+    if (v == _uiFont) return;
+    _uiFont = v;
+    notifyListeners();
+    if (v == null) {
+      await _prefs.remove(uiFontKey);
+    } else {
+      await _prefs.setString(uiFontKey, v);
+    }
   }
 
   Future<void> setStateTint(bool value) async {

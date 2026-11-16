@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../ui/shell/panels/panel_header.dart';
 import '../workspace/workspace.dart';
 import 'file_tree.dart';
+import 'new_file.dart';
 
 class ExplorerPanel extends StatefulWidget {
   const ExplorerPanel({
@@ -36,6 +37,19 @@ class ExplorerPanel extends StatefulWidget {
 
 class _ExplorerPanelState extends State<ExplorerPanel> {
   int _revision = 0;
+
+  /// 새 파일 이름을 묻고 만든 뒤 트리를 새로 읽고 에디터로 연다. 위치는 고른 하위 폴더(없으면 저장소 루트).
+  Future<void> _newFile(String root) async {
+    final base = widget.workspace.selectedDir ?? root;
+    final outcome = await showDialog<NewFileOutcome>(
+      context: context,
+      builder: (_) => _NewFileDialog(rootDir: root, baseDir: base),
+    );
+    if (outcome == null || !mounted) return;
+    setState(() => _revision++);
+    final path = outcome.path;
+    if (path != null) widget.onOpenFile(path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +81,13 @@ class _ExplorerPanelState extends State<ExplorerPanel> {
                     onPressed: widget.onQuickOpen,
                   ),
                 IconButton(
+                  tooltip: l10n.explorerNewFile,
+                  visualDensity: VisualDensity.compact,
+                  iconSize: 18,
+                  icon: const Icon(Icons.note_add_outlined),
+                  onPressed: root == null ? null : () => _newFile(root),
+                ),
+                IconButton(
                   tooltip: l10n.explorerRefresh,
                   visualDensity: VisualDensity.compact,
                   iconSize: 18,
@@ -92,6 +113,108 @@ class _ExplorerPanelState extends State<ExplorerPanel> {
           ],
         );
       },
+    );
+  }
+}
+
+/// 새 파일 이름 입력 대화상자. 만들면 [NewFileOutcome]을, 취소하면 null 을 돌려준다.
+class _NewFileDialog extends StatefulWidget {
+  const _NewFileDialog({required this.rootDir, required this.baseDir});
+
+  final String rootDir;
+  final String baseDir;
+
+  @override
+  State<_NewFileDialog> createState() => _NewFileDialogState();
+}
+
+class _NewFileDialogState extends State<_NewFileDialog> {
+  final _name = TextEditingController();
+  String? _error;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  Future<void> _create() async {
+    if (_busy) return;
+    final l10n = AppLocalizations.of(context);
+    setState(() => _busy = true);
+    final outcome = await createNewFile(
+      rootDir: widget.rootDir,
+      baseDir: widget.baseDir,
+      input: _name.text,
+    );
+    if (!mounted) return;
+    switch (outcome.result) {
+      case NewFileResult.created:
+        Navigator.pop(context, outcome);
+      case NewFileResult.exists:
+        setState(() {
+          _busy = false;
+          _error = l10n.explorerNewFileExists;
+        });
+      case NewFileResult.invalid:
+        setState(() {
+          _busy = false;
+          _error = l10n.explorerNewFileInvalid;
+        });
+      case NewFileResult.failed:
+        setState(() {
+          _busy = false;
+          _error = l10n.explorerNewFileFailed(outcome.error ?? '');
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.explorerNewFileTitle),
+      content: SizedBox(
+        width: 360,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.explorerNewFileBase(widget.baseDir),
+              style: Theme.of(context).textTheme.bodySmall,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _name,
+              autofocus: true,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: l10n.explorerNewFileHint,
+                errorText: _error,
+                errorMaxLines: 3,
+              ),
+              onChanged: (_) {
+                if (_error != null) setState(() => _error = null);
+              },
+              onSubmitted: (_) => _create(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.commonCancel),
+        ),
+        FilledButton(
+          onPressed: _busy ? null : _create,
+          child: Text(l10n.explorerNewFileCreate),
+        ),
+      ],
     );
   }
 }
