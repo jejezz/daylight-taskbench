@@ -15,6 +15,7 @@ const _commonKeys = {
   'panel_center', 'editor_embedded', // 확장 패널: 가운데 마지막 선택 · 내장 에디터 설정 (§1.13)
   'terminal_font_size', 'terminal_scrollback', // 터미널 설정 (§1.13)
   'panel_width_explorer', 'panel_width_dock', // 확장 패널 너비 (§1.13)
+  'ui_font_family', 'editor_font_family', 'editor_color_scheme', // 화면 글꼴 · 편집기 글꼴 · 편집기 색상 구성표
   'editor_zoom', 'indent_guides', 'format_on_save', // 에디터: 글자 크기 배율 · 들여쓰기 선 · 저장 시 정렬 (§1.13)
 };
 

@@ -1,6 +1,7 @@
 import 'package:daylight_taskbench/l10n/app_localizations.dart';
 import 'package:daylight_taskbench/settings/app_settings.dart';
 import 'package:daylight_taskbench/settings/settings_dialog.dart';
+import 'package:daylight_taskbench/settings/system_fonts.dart';
 import 'package:daylight_taskbench/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<AppSettings> _pump(WidgetTester tester, Size size) async {
   SharedPreferences.setMockInitialValues({});
+  // 테스트에서 OS 에 글꼴을 묻지 않는다 (진짜 프로세스 실행이 fake async 안에서 멈춘다).
+  SystemFonts.instance.debugSet(['Segoe UI', 'Consolas', 'Cascadia Mono']);
   final settings = await AppSettings.load();
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -58,8 +61,7 @@ void main() {
     await tester.tap(find.text('청록'));
     await tester.pump();
     expect(settings.palette, ColorPalette.teal);
-    await tester.tap(find.text('크게'));
-    await tester.pump();
+    await settings.setTextScale(1.15);
     expect(settings.textScale, 1.15);
     await tester.ensureVisible(find.byType(Switch));
     await tester.tap(find.byType(Switch));
@@ -76,10 +78,33 @@ void main() {
   });
 
   test('알 수 없는 저장값은 기본값으로 돌아간다', () async {
-    SharedPreferences.setMockInitialValues({'theme_palette': 'nope', 'text_scale': 3.0, 'theme_mode': 'x'});
+    SharedPreferences.setMockInitialValues({'theme_palette': 'nope', 'text_scale': 3.0, 'theme_mode': 'x', 'ui_font_family': ''});
     final s = await AppSettings.load();
     expect(s.palette, ColorPalette.saturn);
     expect(s.textScale, 1.0);
     expect(s.stateTint, isTrue);
+    expect(s.uiFont, isNull);
+  });
+
+  test('글자 크기 배율은 5% 단위로 맞추고 범위 안으로 가둔다', () async {
+    SharedPreferences.setMockInitialValues({});
+    final s = await AppSettings.load();
+    await s.setTextScale(1.234);
+    expect(s.textScale, 1.25);
+    await s.setTextScale(0.1);
+    expect(s.textScale, AppSettings.minTextScale);
+    await s.setTextScale(9);
+    expect(s.textScale, AppSettings.maxTextScale);
+  });
+
+  test('화면 글꼴은 저장되고 기본으로 되돌리면 키가 지워진다', () async {
+    SharedPreferences.setMockInitialValues({});
+    final s = await AppSettings.load();
+    await s.setUiFont('Segoe UI');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('ui_font_family'), 'Segoe UI');
+    expect((await AppSettings.load()).uiFont, 'Segoe UI');
+    await s.setUiFont(null);
+    expect(prefs.containsKey('ui_font_family'), isFalse);
   });
 }

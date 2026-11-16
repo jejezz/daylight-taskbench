@@ -8965,6 +8965,114 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{action} 완료'**
   String avSummaryDone(String action);
+
+  /// No description provided for @settingsUiFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'글꼴'**
+  String get settingsUiFont;
+
+  /// No description provided for @settingsFontDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} (기본)'**
+  String settingsFontDefault(String name);
+
+  /// No description provided for @settingsFontSearchHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'글꼴 이름을 입력해 찾기'**
+  String get settingsFontSearchHint;
+
+  /// No description provided for @settingsEditorFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기 글꼴'**
+  String get settingsEditorFont;
+
+  /// No description provided for @settingsEditorFontHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교 창의 좌우 편집기에 쓰는 글꼴입니다. 줄과 글자 열이 맞도록 고정폭 글꼴만 고를 수 있습니다.'**
+  String get settingsEditorFontHelp;
+
+  /// No description provided for @settingsEditorScheme.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기 색상 구성표'**
+  String get settingsEditorScheme;
+
+  /// No description provided for @settingsEditorSchemeHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기의 바탕·글자·문법 색입니다. 앱 테마와 다르게 골라도 차이 줄 색이 맞춰집니다.'**
+  String get settingsEditorSchemeHelp;
+
+  /// No description provided for @settingsEditorSchemeFollow.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 테마를 따름'**
+  String get settingsEditorSchemeFollow;
+
+  /// No description provided for @settingsTextScale.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 글자 크기'**
+  String get settingsTextScale;
+
+  /// No description provided for @settingsTextScaleReset.
+  ///
+  /// In ko, this message translates to:
+  /// **'100%로 되돌리기'**
+  String get settingsTextScaleReset;
+
+  /// No description provided for @explorerNewFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 파일'**
+  String get explorerNewFile;
+
+  /// No description provided for @explorerNewFileTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 파일 만들기'**
+  String get explorerNewFileTitle;
+
+  /// No description provided for @explorerNewFileHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 이름 (폴더/이름.확장자 도 가능)'**
+  String get explorerNewFileHint;
+
+  /// No description provided for @explorerNewFileBase.
+  ///
+  /// In ko, this message translates to:
+  /// **'만들 위치: {dir}'**
+  String explorerNewFileBase(String dir);
+
+  /// No description provided for @explorerNewFileCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'만들기'**
+  String get explorerNewFileCreate;
+
+  /// No description provided for @explorerNewFileExists.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 있는 파일입니다.'**
+  String get explorerNewFileExists;
+
+  /// No description provided for @explorerNewFileInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름이 올바르지 않습니다. 저장소 밖이거나 쓸 수 없는 글자가 있습니다.'**
+  String get explorerNewFileInvalid;
+
+  /// No description provided for @explorerNewFileFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 만들지 못했습니다: {error}'**
+  String explorerNewFileFailed(String error);
 }
 
 class _AppLocalizationsDelegate

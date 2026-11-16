@@ -5550,4 +5550,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String avSummaryDone(String action) {
     return '$action done';
   }
+
+  @override
+  String get settingsUiFont => 'Font';
+
+  @override
+  String settingsFontDefault(String name) {
+    return '$name (default)';
+  }
+
+  @override
+  String get settingsFontSearchHint => 'Type a font name to search';
+
+  @override
+  String get settingsEditorFont => 'Editor font';
+
+  @override
+  String get settingsEditorFontHelp =>
+      'The font used in the editor. Only fixed-width fonts can be chosen so that columns line up.';
+
+  @override
+  String get settingsEditorScheme => 'Editor color scheme';
+
+  @override
+  String get settingsEditorSchemeHelp =>
+      'Background, text and syntax colors of the editor. You can pick one that differs from the app theme.';
+
+  @override
+  String get settingsEditorSchemeFollow => 'Follow app theme';
+
+  @override
+  String get settingsTextScale => 'Screen text size';
+
+  @override
+  String get settingsTextScaleReset => 'Reset to 100%';
+
+  @override
+  String get explorerNewFile => 'New file';
+
+  @override
+  String get explorerNewFileTitle => 'Create a new file';
+
+  @override
+  String get explorerNewFileHint => 'File name (folder/name.ext also works)';
+
+  @override
+  String explorerNewFileBase(String dir) {
+    return 'Created in: $dir';
+  }
+
+  @override
+  String get explorerNewFileCreate => 'Create';
+
+  @override
+  String get explorerNewFileExists => 'That file already exists.';
+
+  @override
+  String get explorerNewFileInvalid =>
+      'Invalid name. It points outside the project or contains characters that cannot be used.';
+
+  @override
+  String explorerNewFileFailed(String error) {
+    return 'Could not create the file: $error';
+  }
 }

@@ -157,7 +157,7 @@ abstract final class _HighContrast {
 }
 
 abstract final class AppTheme {
-  static ThemeData dark({bool dense = true, ColorPalette palette = ColorPalette.saturn}) => _base(
+  static ThemeData dark({bool dense = true, ColorPalette palette = ColorPalette.saturn, String? fontFamily}) => _base(
         palette == ColorPalette.highContrast
             ? _HighContrast.scheme(Brightness.dark)
             : palette.apply(const ColorScheme(
@@ -188,9 +188,10 @@ abstract final class AppTheme {
         textLow: palette == ColorPalette.highContrast ? _HighContrast.dimDark : AppColors.textLow,
         dense: dense,
         decorate: palette != ColorPalette.highContrast,
+        fontFamily: fontFamily,
       );
 
-  static ThemeData light({bool dense = true, ColorPalette palette = ColorPalette.saturn}) => _base(
+  static ThemeData light({bool dense = true, ColorPalette palette = ColorPalette.saturn, String? fontFamily}) => _base(
         palette == ColorPalette.highContrast
             ? _HighContrast.scheme(Brightness.light)
             : palette.apply(const ColorScheme(
@@ -221,24 +222,32 @@ abstract final class AppTheme {
         textLow: palette == ColorPalette.highContrast ? _HighContrast.dimLight : AppColors.textLowLight,
         dense: dense,
         decorate: palette != ColorPalette.highContrast,
+        fontFamily: fontFamily,
       );
 
+  /// 화면 글꼴 [fontFamily] 에 없는 글리프는 SeoulNamsan, 그다음 OS 한글 글꼴이 채운다.
+  static List<String> fallbackFor(String? fontFamily) =>
+      fontFamily == null || fontFamily == AppFonts.family ? AppFonts.fallback : [AppFonts.family, ...AppFonts.fallback];
+
   /// [dense]: 데스크톱 밀도(본문 13)와 모바일 밀도(본문 15), ui-ux.md §4.
+  /// [fontFamily]: 사용자가 고른 화면 글꼴. null 이면 앱 기본(SeoulNamsan). [Taskbench에서 달라진 곳]
   static ThemeData _base(ColorScheme scheme,
-      {required Color background, required Color textLow, required bool dense, bool decorate = true}) {
+      {required Color background, required Color textLow, required bool dense, bool decorate = true, String? fontFamily}) {
+    final family = fontFamily ?? AppFonts.family;
+    final fallback = fallbackFor(fontFamily);
     final hi = scheme.onSurface;
     final mid = scheme.onSurfaceVariant;
     final body = dense ? 13.0 : 15.0;
     final small = dense ? 11.5 : 13.0;
     const buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(AppRadius.button)));
     final buttonSize = Size(0, dense ? 36 : 44);
-    final buttonText = TextStyle(fontFamily: AppFonts.family, fontSize: body, fontWeight: FontWeight.w700);
+    final buttonText = TextStyle(fontFamily: family, fontFamilyFallback: fallback, fontSize: body, fontWeight: FontWeight.w700);
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      fontFamily: AppFonts.family,
-      fontFamilyFallback: AppFonts.fallback,
+      fontFamily: family,
+      fontFamilyFallback: fallback,
       // settings.md: Theme.of(context).dividerColor 를 읽는 분할선도 팔레트를 따르게 한다.
       dividerColor: scheme.outlineVariant,
       extensions: [TaskbenchStyle.of(scheme, enabled: decorate)],
@@ -265,7 +274,7 @@ abstract final class AppTheme {
         // 앱 바 높이는 앱마다 따로 정하지 않고 여기서만 정한다 (ui-ux.md §4).
         toolbarHeight: dense ? 44 : kToolbarHeight,
         foregroundColor: hi,
-        titleTextStyle: TextStyle(fontFamily: AppFonts.family, fontSize: dense ? 16 : 20, fontWeight: FontWeight.w700, color: hi),
+        titleTextStyle: TextStyle(fontFamily: family, fontFamilyFallback: fallback, fontSize: dense ? 16 : 20, fontWeight: FontWeight.w700, color: hi),
       ),
       cardTheme: CardThemeData(
         color: scheme.surface,
@@ -311,7 +320,7 @@ abstract final class AppTheme {
       // 액션 글자색이 배경과 구분되도록 명시 (dove-zip의 "복사" 버튼 문제).
       snackBarTheme: SnackBarThemeData(
         backgroundColor: scheme.surfaceContainerHighest,
-        contentTextStyle: TextStyle(fontFamily: AppFonts.family, fontSize: body, color: hi),
+        contentTextStyle: TextStyle(fontFamily: family, fontFamilyFallback: fallback, fontSize: body, color: hi),
         actionTextColor: scheme.primary,
         behavior: SnackBarBehavior.floating,
       ),

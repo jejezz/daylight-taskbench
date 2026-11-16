@@ -5269,4 +5269,67 @@ class AppLocalizationsKo extends AppLocalizations {
   String avSummaryDone(String action) {
     return '$action 완료';
   }
+
+  @override
+  String get settingsUiFont => '글꼴';
+
+  @override
+  String settingsFontDefault(String name) {
+    return '$name (기본)';
+  }
+
+  @override
+  String get settingsFontSearchHint => '글꼴 이름을 입력해 찾기';
+
+  @override
+  String get settingsEditorFont => '편집기 글꼴';
+
+  @override
+  String get settingsEditorFontHelp =>
+      '비교 창의 좌우 편집기에 쓰는 글꼴입니다. 줄과 글자 열이 맞도록 고정폭 글꼴만 고를 수 있습니다.';
+
+  @override
+  String get settingsEditorScheme => '편집기 색상 구성표';
+
+  @override
+  String get settingsEditorSchemeHelp =>
+      '편집기의 바탕·글자·문법 색입니다. 앱 테마와 다르게 골라도 차이 줄 색이 맞춰집니다.';
+
+  @override
+  String get settingsEditorSchemeFollow => '앱 테마를 따름';
+
+  @override
+  String get settingsTextScale => '화면 글자 크기';
+
+  @override
+  String get settingsTextScaleReset => '100%로 되돌리기';
+
+  @override
+  String get explorerNewFile => '새 파일';
+
+  @override
+  String get explorerNewFileTitle => '새 파일 만들기';
+
+  @override
+  String get explorerNewFileHint => '파일 이름 (폴더/이름.확장자 도 가능)';
+
+  @override
+  String explorerNewFileBase(String dir) {
+    return '만들 위치: $dir';
+  }
+
+  @override
+  String get explorerNewFileCreate => '만들기';
+
+  @override
+  String get explorerNewFileExists => '이미 있는 파일입니다.';
+
+  @override
+  String get explorerNewFileInvalid =>
+      '이름이 올바르지 않습니다. 저장소 밖이거나 쓸 수 없는 글자가 있습니다.';
+
+  @override
+  String explorerNewFileFailed(String error) {
+    return '파일을 만들지 못했습니다: $error';
+  }
 }

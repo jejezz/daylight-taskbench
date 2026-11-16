@@ -252,10 +252,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                       theme: AppTheme.light(
                         dense: _isDesktop,
                         palette: widget.settings.palette,
+                        fontFamily: widget.settings.uiFont,
                       ),
                       darkTheme: AppTheme.dark(
                         dense: _isDesktop,
                         palette: widget.settings.palette,
+                        fontFamily: widget.settings.uiFont,
                       ),
                       themeMode: widget.settings.themeMode,
                       locale: widget.settings.locale,

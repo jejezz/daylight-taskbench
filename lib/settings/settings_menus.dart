@@ -181,23 +181,3 @@ class LanguageSegmentedButton extends StatelessWidget {
     );
   }
 }
-
-/// 설정 화면 "화면" 구역의 글자 크기 (settings.md): 작게 · 보통 · 크게.
-class FontScaleSegmentedButton extends StatelessWidget {
-  const FontScaleSegmentedButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final settings = AppSettingsScope.of(context);
-    final l10n = AppLocalizations.of(context);
-    final labels = [l10n.fontScaleSmall, l10n.fontScaleNormal, l10n.fontScaleLarge];
-    return SegmentedButton<double>(
-      showSelectedIcon: false,
-      segments: [
-        for (var i = 0; i < AppSettings.textScales.length; i++) ButtonSegment(value: AppSettings.textScales[i], label: Text(labels[i])),
-      ],
-      selected: {settings.textScale},
-      onSelectionChanged: (s) => settings.setTextScale(s.first),
-    );
-  }
-}
