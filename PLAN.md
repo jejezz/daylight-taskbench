@@ -383,7 +383,7 @@ lib/
     dock_module.dart      ← Dock 인터페이스·레지스트리 (§4)
     branch/               ← branch-dock-flutter/lib 의 git/ github/ repo/ release/ ui/ 를 옮김
     flutty/               ← flutty-dock-flutter/lib 의 install/ doctor/ devices/ flutter/ secrets/ ui/ 를 옮김
-    (rust/ electron/      ← 확장 단계 7·8, §4)
+    (rust/ node/          ← 확장 단계 7·8, §4)
   core/           command_runner · command_log · vscode · tool_paths (공통, §3.2)
   about/ settings/ theme/ update/ window/ l10n/   (공통)
 ```
@@ -427,7 +427,7 @@ Flutty Dock은 사실상 **"프로젝트 종류별 실행기(runner)"** 의 첫 
 |---|---|---|---|
 | **Flutter** (Flutty, 지금) | `pubspec.yaml` + `flutter: sdk: flutter` | USB 기기·데스크톱에 빌드/설치/실행, 서명, 환경 점검 | 대상 = 기기 목록, 핫 리로드, iOS 서명 |
 | **Rust** | `Cargo.toml` (워크스페이스면 멤버의 bin 목록) | `cargo build/run/test`, 프로필 debug/release, 대상 triple, features, bin 선택, `clippy`/`fmt` | 대상 = 이 컴퓨터 + (선택) 크로스 triple. 기기 없음. 오래 도는 프로세스 + 출력 스트림 |
-| **Electron** | `package.json`에 `electron` 의존성 | `start`/`dev` 스크립트 실행, 패키징(`electron-builder`/`forge` 스크립트), Node·패키지 매니저(npm/pnpm/yarn) 자동 판별 | 대상 = 이 컴퓨터. 스크립트 목록에서 고름. 패키징 산출물 폴더 열기 |
+| **Node** (Electron 포함, 결정 26) | `package.json` (+ scripts 또는 알려진 의존성) | `start`/`dev` 스크립트 실행, 패키징(`electron-builder`/`forge` 스크립트), Node·패키지 매니저(npm/pnpm/yarn) 자동 판별 | 대상 = 이 컴퓨터. 스크립트 목록에서 고름. 패키징 산출물 폴더 열기 |
 
 ### 4.1 구조: 칸(Dock) = 모듈, 감지가 칸을 켠다
 
@@ -511,7 +511,7 @@ abstract class ProjectDetector {
 | **5. 연결** | §3.4 연결점, `onHeadChange` 정책 전부(§1.10 표), 접힌 제목 요약, 빈 상태 | §1.7 전부 통과 |
 | **6. 릴리스 준비** | README(영·한), 스크린샷, 설치 프로그램, `flutter-app-release-check` | `v0.1.0` 태그 가능 |
 | **7. Rust runner** (확장) | `RunSession` 추출 → Rust 감지·칸·설정 구역·환경 점검(cargo/rustup) | 계획서 [docs/RUST_RUNNER.md](docs/RUST_RUNNER.md) 작성됨(승인 대기, 질문 §10) — 승인 후 시작 |
-| **8. Electron runner** (확장) | Electron 감지·칸·스크립트 실행·패키징 | 〃 `docs/ELECTRON_RUNNER.md` + `RunnerModule` 모양 재검증 |
+| **8. Node runner** (확장) | `package.json` 감지·스크립트 역할 분류·실행/빌드/패키징 칸. Electron은 종류 중 하나 (결정 26) | 계획서 [docs/NODE_RUNNER.md](docs/NODE_RUNNER.md) 작성됨(§10 결정 확정, 구현 보류) — 8a 감지·8b Run·8c Doctor·8d 연결·8e 마무리 |
 | **9. Gradle runner** (후보, 순서 미정) | Gradle 프로젝트 감지·칸 — Android 앱은 설치/실행·환경 점검(adb 공통화), 그 밖은 작업 선택기 | 계획서 [docs/GRADLE_RUNNER.md](docs/GRADLE_RUNNER.md) — **9a(공통 추출)·9b(감지·칸 뼈대)·9c(Run·Devices·Log 탭)·9d(Doctor·도구)·9e(연결) 완료**, 9f(README·스크린샷·릴리스)만 남음 |
 | **10. 통합 기준 정리** (확장 모드, §1.13) | workbench `lib/branchdock/`·`core/`·`devices/`·`flutter/`·`install/`와 taskbench의 같은 코드를 **diff로 읽는다.** import 경로·접두어 차이와 실제 로직 차이를 가르고, workbench에만 있는 개선을 목록으로 만든다. 필요한 것만 taskbench에 반영 (코드 변경은 이 단계에서 최소) | `docs/WORKBENCH_MERGE.md`에 차이 목록·반영/버림 결정이 있고, 반영한 것은 테스트와 함께 통과. 사용자 확인 |
 | **11. 확장 셸** | 패널 켜짐 상태(탐색기·에디터·터미널)와 **파생 모드**(§1.13), **도크 열을 독립 위젯으로 분리**, 확장 패널 자리를 **빈 자리표시자**로 놓기, 모드별 창 크기·위치 기억, 도킹 전환 비활성화·툴팁, 에디터↔터미널 전환 껍데기, 설정 "내장 에디터 사용" | 도킹↔확장 전환에서 **도크 열의 펼침 칸·스크롤·실행 중 빌드가 그대로**, §1.7 화면 검증 + 모드 전환 골든. **화면 확정 지점 — 사용자가 보고 승인** |
@@ -803,3 +803,4 @@ Daylight Commander를 Compose Desktop에서 Avalonia(.NET)로 옮기며, 눈으�
 23. ✅ **패널(탐색기·에디터·터미널)의 켜짐은 저장하지 않는다 — 앱은 항상 도킹 모드(기본 화면)로 시작한다** (2026-11-01, 사용자 제안·확정). 저장하는 것은 내장 에디터 설정(`editor_embedded`)과 가운데에서 마지막으로 본 쪽(`panel_center`), 모드별 너비뿐이다. 근거: 켜 둔 채 종료하면 다음 시작이 큰 창으로 열려 좁힐 수 없다는 실사용 지적.
 24. ✅ **모드가 바뀌어도 창 높이는 유지한다** (너비만 바뀜). 탐색기를 켠 채 에디터를 켜면 높이가 바뀌던 문제 (사용자 지적).
 25. ✅ **Gradle Runner가 Compose 데스크톱 앱의 `run`을 지원한다** (2026-11-05, 사용자 확정). 계획서(GRADLE_RUNNER §1)는 "Compose Multiplatform 데스크톱 타깃"을 하지 않는 것에 두었지만, 같은 JVM 프로젝트라 칸이 이미 빌드·테스트·작업 선택은 해 주고 `run`만 막혀 있었다. 근거: 실제 Compose 데스크톱 프로젝트에서 `./gradlew --console=plain run`이 뜨는 것과, 막히던 두 곳을 확인했다 — ① 루트에 `application` 플러그인이 없어 모듈 없음(`noModule`)이 되어 `build`·`test`·`check`·`run` 바로가기가 전부 막힘, ② Compose 플러그인의 작업이 설명 없이 이름만 한 줄로 나와 `parseTasks`가 `run`·`packageDmg`를 빠뜨림. 고친 것: `isComposeDesktopApplication`(Compose 플러그인 + `compose.desktop { application { … } }` 블록)이면 `jvmApp`으로 보고, `parseTasks`는 그룹 안의 한 단어 줄도 작업으로 읽는다. **하지 않은 것**: Android·iOS·웹 타깃, `packageDmg` 같은 패키징 바로가기(작업 선택기로는 고를 수 있다), 버전 칩(이 프로젝트는 `version = appVersion`처럼 문자열이 아니라 못 읽는다). **알려 둠**: JDK를 지정하지 않으면 `java_home`의 JDK로 `run`이 실행된다 — `run`은 `jvmToolchain`을 따르지 않고 Gradle을 돌리는 JDK를 쓰므로, 특정 JDK가 필요하면 설정 창의 `java` 경로를 지정한다. `test/gradle/gradle_controller_test.dart`의 "실행 파일이 없으면(127)"은 시스템에 `gradle`이 설치돼 있으면 실패한다(이번 변경과 무관, `main`에서도 같음).
+26. ✅ **Electron runner를 `Node Runner`로 넓힌다** (2026-11-20, 사용자 확정). `package.json` 하나로 Electron 앱·웹 프런트엔드·서버·일반 Node를 같은 방식으로 다룰 수 있으므로 칸은 **프로젝트 종류별이 아니라 `package.json` 기준**으로 하나만 둔다. Electron은 칸 안의 종류(패키징 산출물 폴더 열기, `ELECTRON_RUN_AS_NODE` 점검)다. id `node`, 설정 키 접두어 `node.`(예약해 둔 `electron.`은 `node.`로 바꾼다), 칸 제목 `Node Runner`. `package.json`에는 "실행 명령" 표시가 없으므로 스크립트 이름·값으로 역할을 **추정**하고, 틀리면 스크립트 목록에서 직접 고른다. 계획서 [docs/NODE_RUNNER.md](docs/NODE_RUNNER.md).
